@@ -434,3 +434,21 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
   padding: 0 150px;
   margin: 0 auto;
 }
+ul.slick-dots li {
+  margin: 0 5px;
+}
+ul.slick-dots li button:before {
+  opacity: 1;
+  color: #EAF1F3;
+  transition: color 300ms cubic-bezier(0, 0, 0, .2);
+}
+ul.slick-dots li.slick-active button:before {
+  opacity: 1;
+  color: #65B5A1;
+}
+.slick-dots li button:before {
+  font-size: 10px;
+}
+ul.slick-dots {
+  bottom: -76px
+}
