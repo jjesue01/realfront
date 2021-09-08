@@ -1,17 +1,31 @@
 import React from 'react'
 import styles from './HowItWorks.module.sass'
-import SectionTitle from "../../section-title/SectionTitle";
+import SectionTitle from "../section-title/SectionTitle";
 import Image from "next/image";
-import Typography from "../../Typography";
-import Button from "../../button/Button";
+import Typography from "../Typography";
+import Button from "../button/Button";
 
-function HowItWorks() {
+function HowItWorks({ center = false }) {
   return (
     <section className={styles.root}>
       <div className="container">
-        <SectionTitle>
+        <SectionTitle center={center}>
           How it works?
         </SectionTitle>
+        {
+          center &&
+            <Typography
+              fontFamily={'Lato'}
+              fontWeight={500}
+              fontSize={18}
+              lHeight={32}
+              margin={'24px auto 0'}
+              align={'center'}
+              maxWidth={615}
+              color={'rgba(55, 65, 81, 0.8)'}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Feugiat nulla scelerisque orci, enim morbi tellus mauris. Nam sit tincidunt at sagittis sem enim ut nunc maecenas.
+            </Typography>
+        }
       </div>
       <div className={styles.stepsContainer}>
         <div className={styles.steps}>

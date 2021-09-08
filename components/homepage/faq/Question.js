@@ -2,9 +2,16 @@ import React, { useEffect, useRef } from 'react'
 import cn from 'classnames'
 import styles from './FAQ.module.sass'
 
-function Question ({ index, content, children, opened, onClick }){
+function Question ({ index, content, children, opened, onClick, type = 'homepage' }){
   const wrapperRef = useRef()
   const contentRef = useRef()
+
+  const questionClassNames = cn(
+    styles.question,
+    {
+      [styles.questionAbout]: type === 'about'
+    }
+  )
 
   function handleClick() {
     const result = opened ? -1 : index;
@@ -22,7 +29,7 @@ function Question ({ index, content, children, opened, onClick }){
   }, [opened])
 
   return (
-    <div className={styles.question}>
+    <div className={questionClassNames}>
       <button onClick={ handleClick } className={ cn(styles.btnQuestion, { [styles.btnQuestionOpened]: opened }) }>
         { content }
         <span className={styles.icon} />

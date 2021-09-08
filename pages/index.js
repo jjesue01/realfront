@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Layout from "../components/layout";
 import Hero from "../components/homepage/hero/Hero";
 import TrendingIn from "../components/homepage/trending-in/TrendingIn";
-import HowItWorks from "../components/homepage/how-it works/HowItWorks";
+import HowItWorks from "../components/how-it works/HowItWorks";
 import BrowseByCity from "../components/homepage/browse-by-city/BrowseByCity";
 import FAQ from "../components/homepage/faq/FAQ";
 

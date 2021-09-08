@@ -8,11 +8,28 @@
 .question
   width: 100%
   border-bottom: 1px solid #D3D9E1
+.questionAbout
+  border: 1px solid #D3D9E1
+  margin-bottom: 24px
+  &:last-child
+    margin: 0
+  .btnQuestion
+    padding: 31px 98px 31px 31px
+    line-height: 24px
+    span
+      right: 32px
+      top: 50%
+      transform: translateY(-50%)
+  .answerContent
+    padding: 32px
+  .btnQuestionOpened
+    border-bottom: 1px solid #D3D9E1
 .answerWrapper
   overflow: hidden
   width: 100%
   transition: height 300ms cubic-bezier(0, 0, 0, 1)
 .btnQuestion
+  width: 100%
   position: relative
   background: none
   border: none
@@ -77,6 +94,12 @@
     line-height: 22px
     font-weight: 400
     color: rgba(55, 65, 81, 0.8)
+  h6
+    font-size: 16px
+    font-weight: 600
+    line-height: 20px
+    color: #111111
+    margin: 0
 .actions
   width: 100%
   margin-top: 60px
