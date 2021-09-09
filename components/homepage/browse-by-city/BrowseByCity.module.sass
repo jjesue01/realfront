@@ -9,7 +9,6 @@
   grid-column-gap: 30px
   grid-row-gap: 50px
 .city
-  max-width: 360px
   width: 100%
 .cityImage
   width: 100%
@@ -21,3 +20,20 @@
   width: 100%
   display: flex
   justify-content: center
+
+@media (max-width: 1000px)
+  .cities
+    grid-template-columns: repeat(2, 1fr)
+  .cityImage
+    height: 200px
+
+@media (max-width: 800px)
+  .root
+    padding: 90px 0 70px
+
+@media (max-width: 700px)
+  .cities
+    grid-template-columns: repeat(1, 1fr)
+    margin-top: 50px
+  .cityImage
+    height: 250px

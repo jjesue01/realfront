@@ -21,6 +21,9 @@ const items = [
   {
     img: '/trending-2.jpg',
   },
+  {
+    img: '/trending-2.jpg',
+  },
 ]
 
 function NextArrow({ onClick }) {
@@ -54,6 +57,23 @@ function TrendingIn() {
     adaptiveHeight: true,
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
+    responsive: [
+      {
+        breakpoint: 1100,
+        settings: {
+          arrows: false
+        }
+      },
+      {
+        breakpoint: 900,
+        settings: {
+          arrows: false,
+          infinite: false,
+          slidesToShow: 1
+        }
+      }
+    ]
+
   }
   return (
     <section className={styles.root}>
@@ -77,7 +97,7 @@ function TrendingIn() {
           <Slider {...sliderSettings}>
             {
               items.map(({ img }, index) => (
-                <div key={index} className={styles.collectionWrapper}>
+                <div key={index+img} className={styles.collectionWrapper}>
                   <div className={styles.collection}>
                     <div className={styles.mainImageWrapper}>
                       <Image src={img} layout="fill" objectFit="cover" />

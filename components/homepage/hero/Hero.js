@@ -40,7 +40,7 @@ function Hero() {
                 placeholder="Enter an address, neighborhood, city or ZIP code" />
               <Button className={styles.btnSubmit} type="accent" htmlType="submit">
                 <SearchIcon />
-                Search
+                <span>Search</span>
               </Button>
             </form>
           </div>

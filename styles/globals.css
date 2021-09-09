@@ -452,3 +452,21 @@ ul.slick-dots li.slick-active button:before {
 ul.slick-dots {
   bottom: -76px
 }
+
+@media (max-width: 1400px) {
+  .container {
+    padding: 0 70px;
+  }
+}
+
+@media (max-width: 800px) {
+  ul.slick-dots {
+    bottom: -47px
+  }
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 0 20px;
+  }
+}
