@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.sass'
 import Button from "./button/Button";
 import Typography from "./Typography";
 import cn from "classnames";
+import NavLink from "./nav-link/NavLink";
+import WalletIcon from '/public/icons/wallet.svg'
+import WalletMenu from "./wallet-menu/WalletMenu";
 
 const marketplaceLinks = [
   {
@@ -60,12 +63,23 @@ const companyLinks = [
 ]
 
 function Layout({ children }) {
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [walletOpened, setWalletOpened] = useState(false)
+
+  function toggleLogIn() {
+    setLoggedIn(prevState => !prevState)
+  }
+
+  function toggleWallet() {
+    setWalletOpened(prevState => !prevState)
+  }
+
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
         <div className={styles.wideContainer}>
           <Link href="/" passHref>
-            <a>
+            <a className={styles.homeLink}>
               <Image
                 src="/logo.svg"
                 width={94}
@@ -76,26 +90,36 @@ function Layout({ children }) {
           <div className={styles.content}>
             <ul className={styles.links}>
               <li>
-                <Link href="/about">About</Link>
+                <NavLink href="/about">About</NavLink>
               </li>
               <li>
-                <Link href="/marketplace">Marketplace</Link>
+                <NavLink href="/marketplace">Marketplace</NavLink>
               </li>
               <li>
-                <Link href="/faq">FAQ</Link>
+                <NavLink href="/faq">FAQ</NavLink>
               </li>
             </ul>
             <div className={styles.actions}>
               <Button type="outlined">
                 Create
               </Button>
-              <Button type="accent">
-                Connect Wallet
-              </Button>
+              {
+                loggedIn ?
+                  <button
+                    onClick={toggleWallet}
+                    className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
+                    <WalletIcon />
+                  </button>
+                  :
+                  <Button onClick={toggleLogIn} type="accent">
+                    Connect Wallet
+                  </Button>
+              }
             </div>
           </div>
         </div>
       </header>
+      <WalletMenu opened={walletOpened} onLogOut={toggleLogIn} onClose={toggleWallet} />
       {children}
       <footer className={styles.footer}>
         <div className={styles.navContainer}>

@@ -10,7 +10,7 @@ import FAQ from "../components/homepage/faq/FAQ";
 export default function Home() {
 
   return (
-    <Layout>
+    <main>
       <Head>
         <title>HOMEJAB - NFT Marketplace</title>
         <meta name="description" content="NFT Marketplace" />
@@ -20,13 +20,11 @@ export default function Home() {
         <link rel="stylesheet" type="text/css"
               href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"/>
       </Head>
-      <main>
-        <Hero />
-        <TrendingIn />
-        <HowItWorks />
-        <BrowseByCity />
-        <FAQ />
-      </main>
-    </Layout>
+      <Hero />
+      <TrendingIn />
+      <HowItWorks />
+      <BrowseByCity />
+      <FAQ />
+    </main>
   )
 }

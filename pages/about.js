@@ -9,21 +9,19 @@ import FAQ from "../components/about/faq/FAQ";
 
 function About() {
   return (
-    <Layout>
+    <main>
       <Head>
         <title>HOMEJAB - About</title>
       </Head>
-      <main>
-        <CommonHero
-          title={'About'}
-          description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque amet vel facilisis imperdiet mi pellentesque tincidunt turpis.'}
-          imgUrl={'/about-hero.jpg'} />
-        <AboutUs />
-        <HowItWorks center />
-        <WhoIsItFor />
-        <FAQ />
-      </main>
-    </Layout>
+      <CommonHero
+        title={'About'}
+        description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque amet vel facilisis imperdiet mi pellentesque tincidunt turpis.'}
+        imgUrl={'/about-hero.jpg'} />
+      <AboutUs />
+      <HowItWorks center />
+      <WhoIsItFor />
+      <FAQ />
+    </main>
   )
 }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './TrendingIn.module.sass'
 import SectionTitle from "../../section-title/SectionTitle";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import Slider from "react-slick";
 import Image from "next/image";
 import Typography from "../../Typography";
 import cn from "classnames";
+import CityPicker from "../city-picker/CityPicker";
 
 const items = [
   {
@@ -23,6 +24,41 @@ const items = [
   },
   {
     img: '/trending-2.jpg',
+  },
+]
+
+const options = [
+  {
+    label: 'New York',
+    value: 'New York'
+  },
+  {
+    label: 'Los Angeles',
+    value: 'Los Angeles'
+  },
+  {
+    label: 'Chicago',
+    value: 'Chicago'
+  },
+  {
+    label: 'Houston',
+    value: 'Houston'
+  },
+  {
+    label: 'Philadelphia',
+    value: 'Philadelphia'
+  },
+  {
+    label: 'Phoenix',
+    value: 'Phoenix'
+  },
+  {
+    label: 'Washington',
+    value: 'Washington'
+  },
+  {
+    label: 'Miami',
+    value: 'Miami'
   },
 ]
 
@@ -47,6 +83,8 @@ function PrevArrow({ onClick }) {
 }
 
 function TrendingIn() {
+  const [city, setCity] = useState('New York')
+
   const sliderSettings = {
     dots: true,
     arrows: true,
@@ -73,8 +111,12 @@ function TrendingIn() {
         }
       }
     ]
-
   }
+
+  function handleChange(value) {
+    setCity(value)
+  }
+
   return (
     <section className={styles.root}>
       <div className="container">
@@ -83,10 +125,7 @@ function TrendingIn() {
             <SectionTitle>
               Trending in
             </SectionTitle>
-            <button>
-              <span>New York</span>
-              <ArrowShort />
-            </button>
+            <CityPicker value={city} onChange={handleChange} options={options} />
           </div>
           <Link href="/marketplace">
             See all
@@ -100,7 +139,7 @@ function TrendingIn() {
                 <div key={index+img} className={styles.collectionWrapper}>
                   <div className={styles.collection}>
                     <div className={styles.mainImageWrapper}>
-                      <Image src={img} layout="fill" objectFit="cover" />
+                      <Image src={img} layout="fill" objectFit="cover" alt="apartments" />
                     </div>
                     <div className={styles.collectionContent}>
                       <div className={styles.collectionInfo}>
