@@ -29,57 +29,65 @@ function CityPicker({ className, onChange, value, options }) {
   function handleClick(value) {
     return function () {
       onChange(value)
+      togglePicker()
     }
   }
 
   function togglePicker() {
+    if (!opened) setSearchValue('')
     setOpened(prevState => !prevState)
   }
 
   return (
-    <div className={cn(className, styles.root, { [styles.opened]: opened })}>
-      <button onClick={togglePicker}>
-        <span>{label}</span>
-        <ArrowShort />
-      </button>
-      <div className={styles.picker}>
-        <div className={styles.header}>
-          <Typography
-            fontWeight={600}
-            fontSize={14}
-            lHeight={20}
-            color={'#111'}>
-            Choose a city
-          </Typography>
-          <div className={styles.inputWrapper}>
-            <Input
-              className={styles.input}
-              name="city"
-              value={searchValue}
-              placeholder="Search"
-              onChange={handleInputChange} />
-            <SearchIcon />
+    <>
+      {
+        opened &&
+        <div onClick={togglePicker} className={styles.closeLayer} />
+      }
+      <div className={cn(className, styles.root, { [styles.opened]: opened })}>
+        <button onClick={togglePicker}>
+          <span>{label}</span>
+          <ArrowShort />
+        </button>
+        <div className={styles.picker}>
+          <div className={styles.header}>
+            <Typography
+              fontWeight={600}
+              fontSize={14}
+              lHeight={20}
+              color={'#111'}>
+              Choose a city
+            </Typography>
+            <div className={styles.inputWrapper}>
+              <Input
+                className={styles.input}
+                name="city"
+                value={searchValue}
+                placeholder="Search"
+                onChange={handleInputChange} />
+              <SearchIcon />
+            </div>
           </div>
-        </div>
-        <div className={styles.optionsWrapper}>
-          <div className={styles.optionsContainer}>
-            <div className={styles.optionsContent}>
-              {
-                optionsList.length > 0 ?
-                  optionsList
-                  :
-                  <Typography
-                    fontSize={14}
-                    color={'rgba(55, 65, 81, 0.8)'}
-                    margin={'10px 0 0 24px'}>
-                    No cities
-                  </Typography>
-              }
+          <div className={styles.optionsWrapper}>
+            <div className={styles.optionsContainer}>
+              <div className={styles.optionsContent}>
+                {
+                  optionsList.length > 0 ?
+                    optionsList
+                    :
+                    <Typography
+                      fontSize={14}
+                      color={'#111'}
+                      margin={'10px 0 0 24px'}>
+                      No cities
+                    </Typography>
+                }
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

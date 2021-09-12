@@ -32,7 +32,7 @@ function HowItWorks({ center = false }) {
           <div className={styles.step}>
             <div className={styles.stepImage}>
               <Image
-                src="/images/hiw-1.svg"
+                src="/images/hiw-1.png"
                 width={60}
                 height={52}
                 alt="Wallet" />
@@ -58,7 +58,7 @@ function HowItWorks({ center = false }) {
           <div className={styles.step}>
             <div className={styles.stepImage}>
               <Image
-                src="/images/hiw-2.svg"
+                src="/images/hiw-2.png"
                 width={62}
                 height={60}
                 alt="Collection" />
@@ -84,7 +84,7 @@ function HowItWorks({ center = false }) {
           <div className={styles.step}>
             <div className={styles.stepImage}>
               <Image
-                src="/images/hiw-3.svg"
+                src="/images/hiw-3.png"
                 width={61}
                 height={47}
                 alt="Crown" />
@@ -110,7 +110,7 @@ function HowItWorks({ center = false }) {
           <div className={styles.step}>
             <div className={styles.stepImage}>
               <Image
-                src="/images/hiw-4.svg"
+                src="/images/hiw-4.png"
                 width={72}
                 height={69}
                 alt="Sale" />

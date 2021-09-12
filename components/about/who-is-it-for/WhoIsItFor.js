@@ -6,28 +6,28 @@ import Typography from "../../Typography";
 
 const items = [
   {
-    iconUrl: '/images/about-who-1.svg',
+    iconUrl: '/images/about-who-1.png',
     title: 'Photographers',
     description: '',
     iconWidth: 31,
     iconHeight: 34
   },
   {
-    iconUrl: '/images/about-who-2.svg',
+    iconUrl: '/images/about-who-2.png',
     title: 'Real estate agents',
     description: '',
     iconWidth: 36,
     iconHeight: 36
   },
   {
-    iconUrl: '/images/about-who-3.svg',
+    iconUrl: '/images/about-who-3.png',
     title: 'Developers',
     description: '',
     iconWidth: 34,
     iconHeight: 32
   },
   {
-    iconUrl: '/images/about-who-4.svg',
+    iconUrl: '/images/about-who-4.png',
     title: 'Businesses',
     description: '',
     iconWidth: 39,
