@@ -60,12 +60,12 @@ function CityPicker({ className, onChange, value, options }) {
             </Typography>
             <div className={styles.inputWrapper}>
               <Input
-                className={styles.input}
+                size="small"
+                iconRight={<SearchIcon />}
                 name="city"
                 value={searchValue}
                 placeholder="Search"
                 onChange={handleInputChange} />
-              <SearchIcon />
             </div>
           </div>
           <div className={styles.optionsWrapper}>

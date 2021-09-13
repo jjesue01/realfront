@@ -33,6 +33,7 @@ function Hero() {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
             <form onSubmit={handleSubmit} className={styles.form}>
               <Input
+                className={styles.searchInput}
                 type="search"
                 name="search"
                 value={searchValue}

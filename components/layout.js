@@ -8,6 +8,8 @@ import cn from "classnames";
 import NavLink from "./nav-link/NavLink";
 import WalletIcon from '/public/icons/wallet.svg'
 import WalletMenu from "./wallet-menu/WalletMenu";
+import ConnectWallet from "./dialogs/connect-wallet/ConnectWallet";
+import {useRouter} from "next/router";
 
 const marketplaceLinks = [
   {
@@ -63,15 +65,26 @@ const companyLinks = [
 ]
 
 function Layout({ children }) {
-  const [loggedIn, setLoggedIn] = useState(false)
+  const router = useRouter()
+  const [user, setUser] = useState({})
   const [walletOpened, setWalletOpened] = useState(false)
+  const [connectOpened, setConnectOpened] = useState(false)
 
-  function toggleLogIn() {
-    setLoggedIn(prevState => !prevState)
+  function togglePopup() {
+    setConnectOpened(prevState => !prevState)
   }
 
   function toggleWallet() {
     setWalletOpened(prevState => !prevState)
+  }
+
+  function handleLogin(user) {
+    togglePopup()
+    setUser({ ...user })
+  }
+
+  function handleLogout() {
+    setUser({})
   }
 
   return (
@@ -104,14 +117,14 @@ function Layout({ children }) {
                 Create
               </Button>
               {
-                loggedIn ?
+                user.walletId ?
                   <button
                     onClick={toggleWallet}
                     className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
                     <WalletIcon />
                   </button>
                   :
-                  <Button onClick={toggleLogIn} type="accent">
+                  <Button onClick={togglePopup} type="accent">
                     Connect Wallet
                   </Button>
               }
@@ -119,100 +132,114 @@ function Layout({ children }) {
           </div>
         </div>
       </header>
-      <WalletMenu opened={walletOpened} onLogOut={toggleLogIn} onClose={toggleWallet} />
+      {
+        user.walletId &&
+        <WalletMenu
+          user={user}
+          opened={walletOpened}
+          onLogOut={handleLogout}
+          onClose={toggleWallet} />
+      }
       {children}
-      <footer className={styles.footer}>
-        <div className={styles.navContainer}>
-          <div className={styles.wideContainer}>
-            <div className={styles.navContent}>
-              <div className={styles.navInfo}>
-                <Link href="/" passHref>
-                  <a>
-                    <Image
-                      src="/logo.svg"
-                      width={94}
-                      height={16}
-                      alt="HOMEJAB logo" />
-                  </a>
+      <ConnectWallet
+        opened={connectOpened}
+        onClose={togglePopup}
+        onLogin={handleLogin} />
+      {
+        router.pathname !== '/marketplace' &&
+        <footer className={styles.footer}>
+          <div className={styles.navContainer}>
+            <div className={styles.wideContainer}>
+              <div className={styles.navContent}>
+                <div className={styles.navInfo}>
+                  <Link href="/" passHref>
+                    <a>
+                      <Image
+                        src="/logo.svg"
+                        width={94}
+                        height={16}
+                        alt="HOMEJAB logo" />
+                    </a>
+                  </Link>
+                  <Typography
+                    fontSize={12}
+                    lHeight={24}
+                    maxWidth={373}
+                    margin="24px 0 0"
+                    color={`rgba(55, 65, 81, 0.6)`}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras. Sollicitudin nulla orci vitae ut turpis vitae neque.
+                  </Typography>
+                </div>
+                <div className={styles.navLinks}>
+                  <div className={cn(styles.navCol, styles.colMarketplace)}>
+                    <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
+                      Marketplace
+                    </Typography>
+                    <ul className={styles.list}>
+                      {
+                        marketplaceLinks.map(({ name, link }) => (
+                          <li key={name}>
+                            <Link href={link}>
+                              { name }
+                            </Link>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                  <div className={cn(styles.navCol, styles.colAccount)}>
+                    <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
+                      My account
+                    </Typography>
+                    <ul className={styles.list}>
+                      {
+                        accountLinks.map(({ name, link }) => (
+                          <li key={name}>
+                            <Link href={link}>
+                              { name }
+                            </Link>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                  <div className={cn(styles.navCol, styles.colCompany)}>
+                    <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
+                      Company
+                    </Typography>
+                    <ul className={styles.list}>
+                      {
+                        companyLinks.map(({ name, link }) => (
+                          <li key={name}>
+                            <Link href={link}>
+                              { name }
+                            </Link>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={styles.rightsContainer}>
+            <div className={styles.wideContainer}>
+              <Typography fontSize={12} color="rgba(255, 255, 255, 0.5)">
+                © {new Date().getFullYear()} Homejab.LCC. All rights reserved.
+              </Typography>
+              <div className={styles.terms}>
+                <Link href="/privacy-policy">
+                  Privacy Policy
                 </Link>
-                <Typography
-                  fontSize={12}
-                  lHeight={24}
-                  maxWidth={373}
-                  margin="24px 0 0"
-                  color={`rgba(55, 65, 81, 0.6)`}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras. Sollicitudin nulla orci vitae ut turpis vitae neque.
-                </Typography>
-              </div>
-              <div className={styles.navLinks}>
-                <div className={cn(styles.navCol, styles.colMarketplace)}>
-                  <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
-                    Marketplace
-                  </Typography>
-                  <ul className={styles.list}>
-                    {
-                      marketplaceLinks.map(({ name, link }) => (
-                        <li key={name}>
-                          <Link href={link}>
-                            { name }
-                          </Link>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-                <div className={cn(styles.navCol, styles.colAccount)}>
-                  <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
-                    My account
-                  </Typography>
-                  <ul className={styles.list}>
-                    {
-                      accountLinks.map(({ name, link }) => (
-                        <li key={name}>
-                          <Link href={link}>
-                            { name }
-                          </Link>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-                <div className={cn(styles.navCol, styles.colCompany)}>
-                  <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
-                    Company
-                  </Typography>
-                  <ul className={styles.list}>
-                    {
-                      companyLinks.map(({ name, link }) => (
-                        <li key={name}>
-                          <Link href={link}>
-                            { name }
-                          </Link>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
+                <Link href="/terms-of-service">
+                  Terms of Service
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.rightsContainer}>
-          <div className={styles.wideContainer}>
-            <Typography fontSize={12} color="rgba(255, 255, 255, 0.5)">
-              © {new Date().getFullYear()} Homejab.LCC. All rights reserved.
-            </Typography>
-            <div className={styles.terms}>
-              <Link href="/privacy-policy">
-                Privacy Policy
-              </Link>
-              <Link href="/terms-of-service">
-                Terms of Service
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      }
     </div>
   )
 }

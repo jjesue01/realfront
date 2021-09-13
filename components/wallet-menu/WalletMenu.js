@@ -8,7 +8,7 @@ import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
 
-function WalletMenu({ opened, onLogOut, onClose }) {
+function WalletMenu({ opened, onLogOut, onClose, user }) {
   const router = useRouter()
 
   function handleLogout() {
@@ -44,7 +44,7 @@ function WalletMenu({ opened, onLogOut, onClose }) {
           </div>
           <div className={styles.walletId}>
             <Typography fontSize={20} color={'#111'}>
-              0xa364b0313...8815
+              { user.walletId.slice(0, 11) }...{ user.walletId.slice(-4) }
             </Typography>
             <button className={styles.btnCopy}>
               <CopyIcon />
