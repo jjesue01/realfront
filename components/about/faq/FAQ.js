@@ -66,7 +66,7 @@ function FAQ() {
                   </p>
                   <div className={styles.imageContainer}>
                     <div className={styles.imageWrapper}>
-                      <Image src={imageUrl} width={587} height={332} layout="responsive" />
+                      <Image src={imageUrl} width={587} height={332} layout="responsive" alt={title} />
                     </div>
                   </div>
                 </div>

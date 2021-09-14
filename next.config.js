@@ -7,6 +7,15 @@ module.exports = {
 
       use: ['@svgr/webpack'],
     });
+    const IGNORES = [
+      'electron'
+    ];
+    config.externals.push(({ context, request }, cb) => {
+      if (IGNORES.indexOf(request) >= 0) {
+        return cb(null, "require('" + request + "')");
+      }
+      return cb();
+    })
 
     return config;
   },
