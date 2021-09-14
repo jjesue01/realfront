@@ -4,6 +4,8 @@ import Head from "next/head";
 import Input from "../components/input/Input";
 import SearchIcon from "../public/icons/search-icon.svg";
 import cn from "classnames";
+import CollectionFilter from "../components/marketplace/filters/collection-filter/CollectionFilter";
+import PriceFilter from "../components/marketplace/filters/price-filter/PriceFilter";
 
 function Marketplace() {
   const [filters, setFilters] = useState({
@@ -19,6 +21,7 @@ function Marketplace() {
   })
 
   function handleChange({ target: { name, value } }) {
+    console.log(value)
     setFilters(prevState => ({ ...prevState, [name]: value }))
   }
 
@@ -39,6 +42,14 @@ function Marketplace() {
               size="small"
               iconRight={<SearchIcon />}
               placeholder="Enter an address" />
+            <CollectionFilter
+              className={styles.filter}
+              name="collection"
+              onChange={handleChange} />
+            <PriceFilter
+              className={styles.filter}
+              name="price"
+              onChange={handleChange} />
           </div>
         </div>
       </div>

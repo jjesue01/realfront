@@ -13,11 +13,19 @@ function Input({
   size = 'default',
   iconRight
 }) {
+  const inputClassNames = cn(
+    styles.input,
+    {
+      [styles.small]: size === 'small',
+      [styles.iconRight]: !!iconRight
+    }
+  )
+
   return (
     <div className={cn(className, styles.inputContainer)}>
       <div className={styles.inputWrapper}>
         <input
-          className={cn(styles.input, { [styles.small]: size === 'small' })}
+          className={inputClassNames}
           type={type}
           name={name}
           value={value}
