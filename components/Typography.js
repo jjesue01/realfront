@@ -7,7 +7,7 @@ function Typography({
   className,
   fontSize,
   fontWeight = 400,
-  color,
+  color = '#111',
   align = 'left',
   margin = '0',
   lHeight = 1.3,

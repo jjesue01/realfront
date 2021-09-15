@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from './FilterWrapper.module.sass'
 import cn from "classnames";
 
-function FilterWrapper({ className, title, onApply, children }) {
+function FilterWrapper({ className, title, onApply, onClose = () => {}, children }) {
   const [opened, setOpened] = useState(false)
 
   function toggleFilter() {
@@ -14,11 +14,16 @@ function FilterWrapper({ className, title, onApply, children }) {
     toggleFilter()
   }
 
+  function handleClose() {
+    toggleFilter()
+    onClose()
+  }
+
   return (
     <>
       {
         opened &&
-          <div onClick={toggleFilter} className={styles.closeLayer} />
+          <div onClick={handleClose} className={styles.closeLayer} />
       }
       <div className={cn(className, styles.root, { [styles.opened]: opened })}>
         <button onClick={toggleFilter} className={styles.btnFilter}>

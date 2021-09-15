@@ -33,6 +33,8 @@
   width: 45%
   height: 100%
   border-left: 1px solid #ECEFF4
+  display: flex
+  flex-direction: column
 .filtersContent
   width: 100%
   display: flex
@@ -55,4 +57,82 @@
     stroke: #1DC3A6
 .filter
   margin-right: 24px
+.resetFilters
+  display: flex
+  align-items: center
+  justify-content: center
+  p
+    white-space: nowrap
+.btnReset
+  padding: 0
+  width: 36px
+  min-width: 36px
+  height: 36px
+  background-color: #FFFFFF
+  position: relative
+  outline: none
+  border: 1px solid #D3D9E1
+  border-radius: 50%
+  margin-right: 16px
+  cursor: pointer
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: background-color, border-color
+  &::after, &::before
+    content: ""
+    position: absolute
+    top: 50%
+    left: 50%
+    width: 1px
+    height: 14px
+    background-color: #111
+    transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &::after
+    transform: translate(-50%, -50%) rotate(45deg)
+  &::before
+    transform: translate(-50%, -50%) rotate(-45deg)
+  &:hover
+    background-color: #1DC3A6
+    border-color: #1DC3A6
+    &::after, &::before
+      background-color: #FFFFFF
+.titleContainer
+  width: 100%
+  padding: 29px 29px 35px
+.itemsContainer
+  position: relative
+  flex: 1
+  padding-right: 5px
+  display: flex
+  flex-direction: column
+.scrollContainer
+  position: absolute
+  width: calc(100% - 5px)
+  height: 100%
+  flex: 1
+  overflow-y: auto
+  -webkit-overflow-scrolling: touch
+  &::-webkit-scrollbar
+    width: 7px
+  &::-webkit-scrollbar-track
+    background-color: #fff
+  &::-webkit-scrollbar-thumb
+    background-color: rgba(211, 217, 225, 0.6)
+    border-radius: 100px
+.itemsContent
+  width: 100%
+  padding: 0 20px 0 30px
+.itemsHeader
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+.itemsGrid
+  width: 100%
+  margin-top: 17px
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  grid-column-gap: 23px
+  grid-row-gap: 16px
+  padding-bottom: 32px
+
 

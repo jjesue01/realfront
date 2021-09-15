@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import styles from './CollectionFilter.module.sass'
 import FilterWrapper from "../filter-wrapper/FilterWrapper";
 import Typography from "../../../Typography";
@@ -17,7 +17,7 @@ const options = [
   'Miami',
 ]
 
-function CollectionFilter({ className, name, onChange }) {
+function CollectionFilter({ className, name, onChange, value }) {
   const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
   const [searchValue, setSearchValue] = useState('')
   const [checkedAll, setCheckedAll] = useState(false)
@@ -69,8 +69,28 @@ function CollectionFilter({ className, name, onChange }) {
     })
   }
 
+  const handleReset = useCallback(() => {
+    let updatedCheckedAll = true
+    const updatedData = options.map(item => ({
+      value: item,
+      checked: value.includes(item)
+    }))
+
+    updatedData.forEach(item => {
+      if (!item.checked) updatedCheckedAll = false
+    })
+
+    setCheckedAll(updatedCheckedAll)
+    setData(updatedData)
+    setSearchValue('')
+  }, [value])
+
+  useEffect(function () {
+    handleReset()
+  }, [value, handleReset])
+
   return (
-    <FilterWrapper className={className} title="Collection" onApply={handleApply}>
+    <FilterWrapper className={className} title="Collection" onApply={handleApply} onClose={handleReset}>
       <div className={styles.header}>
         <Typography fontWeight={600} fontSize={14} lHeight={20} color={'#111'}>
           Collection

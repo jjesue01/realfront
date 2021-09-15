@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from './PriceFilter.module.sass'
 import FilterWrapper from "../filter-wrapper/FilterWrapper";
 import Typography from "../../../Typography";
 import Input from "../../../input/Input";
 
-function PriceFilter({ className, name, onChange }) {
+function PriceFilter({ className, name, onChange, value }) {
   const [values, setValues] = useState({
     from: '',
     to: ''
@@ -21,8 +21,20 @@ function PriceFilter({ className, name, onChange }) {
     onChange({ target: { name, value: { ...values } } })
   }
 
+  function handleClose() {
+    setValues({ ...value} )
+  }
+
+  useEffect(function () {
+    setValues({ ...value })
+  }, [value])
+
   return (
-    <FilterWrapper className={className} title="Price" onApply={handleApply}>
+    <FilterWrapper
+      className={className}
+      title="Price"
+      onApply={handleApply}
+      onClose={handleClose}>
       <div className={styles.root}>
         <Typography
           fontSize={14}

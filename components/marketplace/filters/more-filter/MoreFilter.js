@@ -1,14 +1,23 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import styles from './ResourcesFilter.module.sass'
+import React, { useState, useCallback, useEffect } from 'react'
+import styles from './MoreFilter.module.sass'
 import FilterWrapper from "../filter-wrapper/FilterWrapper";
 import Typography from "../../../Typography";
+import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
 
-const options = ['Photo', 'Video']
+const options = [
+  'Aerial',
+  'Ground',
+  'Residential',
+  'Commercial',
+  'Park',
+  'Waterfront',
+]
 
-function ResourcesFilter({ className, name, onChange, value }) {
+function MoreFilter({ className, name, onChange, value }) {
   const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
   const [checkedAll, setCheckedAll] = useState(false)
+  const [keywords, setKeywords] = useState('')
 
   const checkboxesList = data.map(({ value, checked }) => (
     <Checkbox
@@ -18,6 +27,10 @@ function ResourcesFilter({ className, name, onChange, value }) {
       label={value}
       onChange={handleCheckboxChange(value)} />
   ))
+
+  function handleInputChange({ target: { value } }) {
+    setKeywords(value)
+  }
 
   function handleCheckboxChange(value) {
     return function ({ target: { checked } }) {
@@ -44,7 +57,10 @@ function ResourcesFilter({ className, name, onChange, value }) {
     onChange({
       target: {
         name,
-        value: data.filter(({ checked }) => checked).map(({ value }) => value)
+        value: {
+          types: data.filter(({ checked }) => checked).map(({ value }) => value),
+          keywords
+        }
       }
     })
   }
@@ -53,7 +69,7 @@ function ResourcesFilter({ className, name, onChange, value }) {
     let updatedCheckedAll = true
     const updatedData = options.map(item => ({
       value: item,
-      checked: value.includes(item)
+      checked: value.types.includes(item)
     }))
 
     updatedData.forEach(item => {
@@ -62,6 +78,7 @@ function ResourcesFilter({ className, name, onChange, value }) {
 
     setCheckedAll(updatedCheckedAll)
     setData(updatedData)
+    setKeywords(value.keywords)
   }, [value])
 
   useEffect(function () {
@@ -69,14 +86,14 @@ function ResourcesFilter({ className, name, onChange, value }) {
   }, [value, handleReset])
 
   return (
-    <FilterWrapper className={className} title="Resources" onApply={handleApply} onClose={handleReset}>
+    <FilterWrapper className={className} title="More" onApply={handleApply} onClose={handleReset}>
       <div className={styles.root}>
         <Typography
           fontSize={14}
           fontWeight={600}
           lHeight={20}
           color={'#111'}>
-          Price
+          Type
         </Typography>
         <div className={styles.checkboxes}>
           <Checkbox
@@ -87,9 +104,24 @@ function ResourcesFilter({ className, name, onChange, value }) {
             onChange={handleCheckboxChange('all')} />
           { checkboxesList }
         </div>
+        <Typography
+          fontSize={14}
+          fontWeight={600}
+          lHeight={20}
+          margin={'24px 0 0'}
+          color={'#111'}>
+          Keywords
+        </Typography>
+        <Input
+          className={styles.input}
+          name="keywords"
+          value={keywords}
+          onChange={handleInputChange}
+          placeholder="MLS #, yard, etc."
+          size="small" />
       </div>
     </FilterWrapper>
   )
 }
 
-export default ResourcesFilter
+export default MoreFilter
