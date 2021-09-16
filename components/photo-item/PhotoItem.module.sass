@@ -1,6 +1,11 @@
+.rootWrapper
+  position: relative
+div.btnMenu
+  position: absolute
+  top: 12px
+  right: 0
 .root
   width: 100%
-  height: 365px
   border: 1px solid #D3D9E1
   background: #fff
   transition: box-shadow 300ms cubic-bezier(0, 0, 0, 1)
@@ -21,7 +26,7 @@
 .content
   padding: 16px
 .priceContainer
-  padding: 0 16px
+  padding: 0 16px 17px
 .price
   width: 100%
   padding-top: 17px
@@ -29,6 +34,14 @@
   display: flex
   align-items: center
   justify-content: flex-start
+.iconWrapper
+  position: relative
+  display: flex
+.iconHeart
+  position: absolute
+  left: 1px
+  transition: opacity 300ms cubic-bezier(0, 0, 0, 1)
+  opacity: 0
 .btnFavorite
   background: none
   border: none
@@ -40,11 +53,13 @@
   cursor: pointer
   svg, span
     pointer-events: none
-.btnMenu
-  padding: 0 16px
-  background: none
-  border: none
-  outline: none
-  cursor: pointer
-  svg
-    pointer-events: none
+  path
+    transition: fill 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    path
+      fill: #FF6868
+.btnFavoriteActive
+  .iconHeart
+    opacity: 1
+  path
+    fill: #FF6868

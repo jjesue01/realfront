@@ -4,6 +4,8 @@
   display: flex
   flex-direction: column
   padding-top: 82px
+.rootFull
+  height: auto
 .filters
   width: 100%
   height: 73px
@@ -26,15 +28,73 @@
   align-items: flex-start
   justify-content: flex-start
 .mapContainer
-  width: 55%
+  position: relative
+  flex: 1
   height: 100%
   background: #f7f7f7
+.itemsWrapper
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
 .items
-  width: 45%
+  width: 100%
+  max-width: 636px
   height: 100%
   border-left: 1px solid #ECEFF4
   display: flex
   flex-direction: column
+.btnShowMap
+  background: #FFFFFF
+  outline: none
+  padding: 0 16px
+  border: 1px solid #E3E5E9
+  width: 140px
+  height: 50px
+  display: flex
+  align-items: center
+  justify-content: space-between
+  border-radius: 30px
+  cursor: pointer
+  transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    background-color: #F3F7F8
+  span
+    display: block
+    margin-right: 13px
+  svg
+    transform: rotate(180deg)
+    path
+      stroke: #1DC3A6
+.itemsWide
+  max-width: 100%
+  border: none
+  padding-top: 16px
+  .scrollContainer
+    height: auto
+    width: 100%
+    overflow: visible
+  .itemsContent
+    padding: 0
+  .titleContainer
+    padding: 0
+    margin-top: 32px
+    display: flex
+    align-items: center
+    justify-content: space-between
+    .itemsHeader
+      width: fit-content
+      p
+        margin-right: 40px
+        white-space: nowrap
+  .itemsGrid
+    grid-template-columns: repeat(3, 1fr)
+    grid-column-gap: 30px
+    grid-row-gap: 32px
+    .imageWrapper
+      height: 253px
+.imageWrapper
+  width: 100%
 .filtersContent
   width: 100%
   display: flex
@@ -134,5 +194,26 @@
   grid-column-gap: 23px
   grid-row-gap: 16px
   padding-bottom: 32px
+.selectSort
+  max-width: 223px
+.btnHideMap
+  position: absolute
+  top: 16px
+  right: 16px
+  width: 50px
+  height: 50px
+  background-color: #fff
+  border: none
+  border-radius: 50%
+  outline: none
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1)
+  padding: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  cursor: pointer
+  transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    background-color: #F3F7F8
 
 
