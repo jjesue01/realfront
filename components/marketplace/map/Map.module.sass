@@ -48,3 +48,24 @@
   display: flex
   align-items: center
   justify-content: center
+.infoBox
+  position: relative
+  width: 100%
+  max-width: 267px
+  padding: 15px
+  background: #fff
+  border: 1px solid #DBDDE0
+  box-shadow: 0 16px 20px rgba(78, 96, 91, 0.1)
+  p
+    width: fit-content
+  &::after
+    content: ""
+    position: absolute
+    width: 16px
+    height: 16px
+    background: #fff
+    bottom: 0
+    left: 50%
+    border-right: 1px solid #DBDDE0
+    border-bottom: 1px solid #DBDDE0
+    transform: translate(-50%, 50%) rotate(45deg)

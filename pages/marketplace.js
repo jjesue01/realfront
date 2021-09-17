@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styles from '../styles/Marketplace.module.sass'
 import Head from "next/head";
 import Input from "../components/input/Input";
@@ -13,6 +13,7 @@ import Typography from "../components/Typography";
 import PhotoItem from "../components/photo-item/PhotoItem";
 import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
+import Pagination from "../components/pagination/Pagination";
 
 const sortOptions = [
   {
@@ -28,11 +29,15 @@ const sortOptions = [
 const sourceItems = [
   {
     name: 'Item 1',
-    address: 'Nyngan',
+    address: 'New York, NY 10003, USA, 125 E 12th St',
     location: {
       lat: -31.56391,
       lng: 147.154312
-    }
+    },
+    collections: ['New York'],
+    price: 2.59,
+    resources: ['Photo'],
+    types: ['Residential']
   },
   {
     name: 'Item 2',
@@ -40,7 +45,11 @@ const sourceItems = [
     location: {
       lat: -33.718234,
       lng: 150.363181
-    }
+    },
+    collections: ['New York'],
+    price: 1.4,
+    resources: ['Photo'],
+    types: ['Residential']
   },
   {
     name: 'Item 3',
@@ -48,7 +57,11 @@ const sourceItems = [
     location: {
       lat: -33.727111,
       lng: 150.371124
-    }
+    },
+    collections: ['Los Angeles'],
+    price: 0.453,
+    resources: ['Photo'],
+    types: ['Residential']
   },
   {
     name: 'Item 4',
@@ -56,7 +69,11 @@ const sourceItems = [
     location: {
       lat: -33.848588,
       lng: 151.209834
-    }
+    },
+    collections: ['Houston'],
+    price: 2.9,
+    resources: ['Photo'],
+    types: ['Residential']
   },
   {
     name: 'Item 5',
@@ -64,7 +81,11 @@ const sourceItems = [
     location: {
       lat: -33.851702,
       lng: 151.216968
-    }
+    },
+    collections: ['Houston'],
+    price: 5,
+    resources: ['Video'],
+    types: ['Waterfront', 'Commercial']
   },
   {
     name: 'Item 6',
@@ -72,7 +93,11 @@ const sourceItems = [
     location: {
       lat: -34.671264,
       lng: 150.863657
-    }
+    },
+    collections: ['Philadelphia'],
+    price: 2.52,
+    resources: ['Photo'],
+    types: ['Residential']
   },
   {
     name: 'Item 7',
@@ -80,7 +105,11 @@ const sourceItems = [
     location: {
       lat: -35.304724,
       lng: 148.662905,
-    }
+    },
+    collections: ['Philadelphia', 'Miami'],
+    price: 2.3,
+    resources: ['Photo'],
+    types: ['Park']
   },
   {
     name: 'Item 8',
@@ -88,7 +117,11 @@ const sourceItems = [
     location: {
       lat: -36.817685,
       lng: 175.699196
-    }
+    },
+    collections: ['Washington'],
+    price: 1.5,
+    resources: ['Photo', 'Video'],
+    types: ['Residential']
   },
   {
     name: 'Item 9',
@@ -96,12 +129,18 @@ const sourceItems = [
     location: {
       lat: -36.828611,
       lng: 175.790222
-    }
+    },
+    collections: ['Washington'],
+    price: 2.59,
+    resources: ['Photo'],
+    types: ['Residential']
   },
 ]
 
-function Marketplace() {
-  const [data, setData] = useState(sourceItems)
+function Marketplace({ toggleFooter }) {
+  const [sourceData, setSourceData] = useState(sourceItems)
+  const [viewportData, setViewportData] = useState(sourceItems)
+  const [filteredData, setFilteredData] = useState(sourceItems)
   const [isMapHidden, setIsMapHidden] = useState(false)
   const [filters, setFilters] = useState({
     searchValue: '',
@@ -117,6 +156,34 @@ function Marketplace() {
     },
     sortBy: 'price_low'
   })
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
+  const pageCount = Math.ceil(filteredData.length / itemsPerPage)
+
+  const pageItems = isMapHidden ? filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : filteredData;
+
+  const mounted = useRef(false)
+
+  function handleNextPage() {
+
+    if (currentPage < pageCount) {
+      setCurrentPage(prevState => prevState + 1)
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
+    }
+  }
+
+  function handlePrevPage() {
+    if (currentPage > 1) {
+      setCurrentPage(prevState => prevState - 1)
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
+    }
+  }
 
   function handleChange({ target: { name, value } }) {
     console.log(value)
@@ -125,7 +192,8 @@ function Marketplace() {
 
   function toggleMap() {
     setIsMapHidden(prevState => !prevState)
-    setData(sourceItems)
+    toggleFooter()
+    setViewportData(sourceItems)
   }
 
   function handleResetFilters() {
@@ -146,8 +214,82 @@ function Marketplace() {
   }
 
   function handleMapChange(items) {
-    setData([...items])
+    setViewportData([...items])
   }
+
+  function getSortedArray(arr, field) {
+    const splitField = field.split('_')
+    const itemField = splitField[0];
+    const direction = splitField[1]
+
+    const result = arr.sort((a, b) => {
+      if (a[itemField] < b[itemField])
+        return -1
+      if (a[itemField] > b[itemField])
+        return 1
+      return 0
+    })
+
+    if (direction === 'high')
+      return result.reverse()
+
+    return result
+  }
+
+  useEffect(function hideFooter() {
+    if (!mounted.current) {
+      toggleFooter()
+      mounted.current = true
+    }
+  }, [toggleFooter])
+
+  useEffect(function filterData() {
+    let items = isMapHidden ? sourceData : viewportData
+
+    if (filters.searchValue !== '') {
+      items = items.filter(({ name, address }) => `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
+    }
+
+    if (filters.collections.length !== 0) {
+      items = items.filter(({ collections }) => {
+        let result = false
+        filters.collections.forEach(collection => {
+          if (collections.includes(collection)) result = true
+        })
+        return result
+      })
+    }
+
+    if (!!filters.price.from) {
+      items = items.filter(({ price }) => price >= filters.price.from)
+    } else if (!!filters.price.to) {
+      items = items.filter(({ price }) => price <= filters.price.to)
+    }
+
+    if (filters.resources.length !== 0) {
+      items = items.filter(({ resources }) => {
+        let result = false
+        filters.resources.forEach(resource => {
+          if (resources.includes(resource)) result = true
+        })
+        return result
+      })
+    }
+
+    if (filters.more.types.length !== 0) {
+      items = items.filter(({ types }) => {
+        let result = false
+        filters.more.types.forEach(type => {
+          if (types.includes(type)) result = true
+        })
+        return result
+      })
+    }
+
+    items = getSortedArray(items, filters.sortBy)
+
+    setFilteredData([...items])
+  }, [filters, viewportData, sourceData, isMapHidden])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
@@ -224,7 +366,7 @@ function Marketplace() {
                 isMapHidden &&
                 <div className={styles.itemsHeader}>
                   <Typography fontSize={16}>
-                    {data.length || 'No'} results
+                    {filteredData.length || 'No'} results
                   </Typography>
                   <Select
                     className={styles.selectSort}
@@ -244,7 +386,7 @@ function Marketplace() {
                     !isMapHidden &&
                     <div className={styles.itemsHeader}>
                       <Typography fontSize={16}>
-                        {data.length || 'No'} results
+                        {filteredData.length || 'No'} results
                       </Typography>
                       <Select
                         className={styles.selectSort}
@@ -258,11 +400,22 @@ function Marketplace() {
                   }
                   <div className={styles.itemsGrid}>
                     {
-                      data.map(item => (
+                      pageItems.map(item => (
                         <PhotoItem imageClassName={styles.imageWrapper} key={item.name} data={item} />
                       ))
                     }
                   </div>
+                  {
+                    isMapHidden &&
+                      <div className={styles.paginationContainer}>
+                        <Pagination
+                          className={styles.pagination}
+                          currentPage={currentPage}
+                          count={pageCount}
+                          onNext={handleNextPage}
+                          onPrev={handlePrevPage} />
+                      </div>
+                  }
                 </div>
               </div>
             </div>

@@ -69,6 +69,7 @@ function Layout({ children }) {
   const [user, setUser] = useState({})
   const [walletOpened, setWalletOpened] = useState(false)
   const [connectOpened, setConnectOpened] = useState(false)
+  const [showFooter, setShowFooter] = useState(true)
 
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
@@ -76,6 +77,10 @@ function Layout({ children }) {
 
   function toggleWallet() {
     setWalletOpened(prevState => !prevState)
+  }
+
+  function toggleFooter() {
+    setShowFooter(prevState => !prevState)
   }
 
   function handleLogin(user) {
@@ -140,13 +145,15 @@ function Layout({ children }) {
           onLogOut={handleLogout}
           onClose={toggleWallet} />
       }
-      {children}
+      {
+        React.cloneElement(children, { toggleFooter })
+      }
       <ConnectWallet
         opened={connectOpened}
         onClose={togglePopup}
         onLogin={handleLogin} />
       {
-        router.pathname !== '/marketplace' &&
+        showFooter &&
         <footer className={styles.footer}>
           <div className={styles.navContainer}>
             <div className={styles.wideContainer}>

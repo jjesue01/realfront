@@ -67,7 +67,7 @@ function PhotoItem({ imageClassName, data }) {
                 </Typography>
                 <Image src="/icons/ethereum.svg" width={18} height={18} alt="ethereum.svg" />
                 <Typography fontWeight={600} fontSize={16} margin={'0 0 0 8px'}>
-                  2.59
+                  { data.price }
                 </Typography>
               </div>
             </div>
