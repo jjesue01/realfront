@@ -8,7 +8,7 @@ import HeartIcon from '/public/icons/heart.svg'
 import HeartFilledIcon from '/public/icons/heart-filled.svg'
 import ContextMenu from "../context-menu/ContextMenu";
 
-function PhotoItem({ imageClassName, data }) {
+function PhotoItem({ className, imageClassName, data, type }) {
   const [isFavorite, setIsFavorite] = useState(false)
 
   function handleClick(e) {
@@ -22,9 +22,9 @@ function PhotoItem({ imageClassName, data }) {
   }
 
   return (
-    <div className={styles.rootWrapper}>
+    <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
       <ContextMenu className={styles.btnMenu} />
-      <Link href="/" passHref>
+      <Link href={'/photos/111'} passHref>
         <a onClick={handleClick}>
           <div className={styles.root}>
             <div className={styles.header}>
@@ -52,23 +52,27 @@ function PhotoItem({ imageClassName, data }) {
                 objectFit="cover"
                 alt="apartments" />
             </div>
-            <div className={styles.content}>
-              <Typography fontWeight={600} fontSize={16} lHeight={20}>
-                { data.name }
-              </Typography>
-              <Typography fontSize={12} lHeight={15} color={'#878D97'} margin="8px 0 0">
-                { data.address }
-              </Typography>
-            </div>
-            <div className={styles.priceContainer}>
-              <div className={styles.price}>
-                <Typography fontSize={12} color={'#878D97'} margin={'0 16px 0 0'}>
-                  Price
+            <div className={styles.itemData}>
+              <div className={styles.content}>
+                <Typography fontWeight={600} fontSize={16} lHeight={20}>
+                  { data.name }
                 </Typography>
-                <Image src="/icons/ethereum.svg" width={18} height={18} alt="ethereum.svg" />
-                <Typography fontWeight={600} fontSize={16} margin={'0 0 0 8px'}>
-                  { data.price }
+                <Typography fontSize={12} lHeight={15} color={'#878D97'} margin="8px 0 0">
+                  { data.address }
                 </Typography>
+              </div>
+              <div className={styles.priceContainer}>
+                <div className={styles.price}>
+                  <Typography fontSize={12} color={'#878D97'} margin={'0 16px 0 0'}>
+                    Price
+                  </Typography>
+                  <div className={styles.ethereum}>
+                    <Image src="/icons/ethereum.svg" width={18} height={18} alt="ethereum.svg" />
+                    <Typography fontWeight={600} fontSize={16} margin={'0 0 0 8px'}>
+                      { data.price }
+                    </Typography>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
