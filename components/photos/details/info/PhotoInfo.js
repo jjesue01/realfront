@@ -7,12 +7,20 @@ import cn from "classnames";
 import Button from "../../../button/Button";
 import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
+import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 
 function PhotoInfo() {
   const [isFavorite, setIsFavorite] = useState(false)
+  const [menuOpened, setMenuOpened] = useState(false)
+
+  const ownItem = false
 
   function toggleFavorite() {
     setIsFavorite(prevState => !prevState)
+  }
+
+  function toggleMenu() {
+    setMenuOpened(prevState => !prevState)
   }
 
   return (
@@ -65,9 +73,26 @@ function PhotoInfo() {
                         6
                       </Typography>
                     </button>
-                    <button className={cn(styles.btnOutlined, styles.btnMenu)}>
-                      <MenuEllipsisSmall />
-                    </button>
+                    <ContextMenuWrapper
+                      opened={menuOpened}
+                      triggerEl={
+                        <button
+                          onClick={toggleMenu}
+                          className={cn(styles.btnOutlined, styles.btnMenu, { [styles.btnMenuActive]: menuOpened })}>
+                          <MenuEllipsisSmall />
+                        </button>
+                      }
+                      onClose={toggleMenu}>
+                      <button className={styles.btnMenuItem}>
+                        Copy
+                      </button>
+                      <button className={styles.btnMenuItem}>
+                        Share on Facebook
+                      </button>
+                      <button className={styles.btnMenuItem}>
+                        Share to Twitter
+                      </button>
+                    </ContextMenuWrapper>
                   </div>
                 </div>
               </div>
@@ -78,33 +103,45 @@ function PhotoInfo() {
                 lHeight={34}>
                 Item name
               </Typography>
-              <div className={styles.price}>
-                <div className={styles.priceContent}>
-                  <Typography
-                    fontWeight={600}
-                    fontSize={12}
-                    lHeight={15}
-                    color={'#878D97'}>
-                    Current price
-                  </Typography>
-                  <div className={styles.priceDetails}>
-                    <Image src="/icons/ethereum.svg" width={24} height={24} alt="ethereum" />
-                    <Typography
-                      fontSize={28}
-                      fontWeight={600}
-                      lHeight={34}
-                      margin={'0 0 0 12px'}>
-                      2.59
-                    </Typography>
-                    <Typography fontSize={14} color={'#878D97'} margin={'0 0 0 16px'}>
-                      ($3 166,41)
-                    </Typography>
+              {
+                !ownItem ?
+                  <div className={styles.price}>
+                    <div className={styles.priceContent}>
+                      <Typography
+                        fontWeight={600}
+                        fontSize={12}
+                        lHeight={15}
+                        color={'#878D97'}>
+                        Current price
+                      </Typography>
+                      <div className={styles.priceDetails}>
+                        <Image src="/icons/ethereum.svg" width={24} height={24} alt="ethereum" />
+                        <Typography
+                          fontSize={28}
+                          fontWeight={600}
+                          lHeight={34}
+                          margin={'0 0 0 12px'}>
+                          2.59
+                        </Typography>
+                        <Typography fontSize={14} color={'#878D97'} margin={'0 0 0 16px'}>
+                          ($3 166,41)
+                        </Typography>
+                      </div>
+                    </div>
+                    <Button>
+                      Buy now
+                    </Button>
                   </div>
-                </div>
-                <Button>
-                  Buy now
-                </Button>
-              </div>
+                  :
+                  <div className={styles.itemActions}>
+                    <Button type="outlined">
+                      Edit
+                    </Button>
+                    <Button>
+                      Sell
+                    </Button>
+                  </div>
+              }
               <div className={styles.description}>
                 <Typography
                   tag="h3"

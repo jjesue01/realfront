@@ -13,6 +13,12 @@
   margin-right: 30px
 .content
   flex: 1
+  min-width: 417px
+.mainInfo
+  width: 100%
+.collection
+  margin-right: 20px
+  min-width: 160px
 .header
   width: 100%
   display: flex
@@ -28,6 +34,8 @@
   p
     white-space: nowrap
     margin-left: 11px
+  img
+    min-width: 24px
 .btnOutlined
   position: relative
   background: #fff
@@ -49,6 +57,29 @@
     top: 50%
     left: 50%
     transform: translate(-50%, -50%)
+    circle
+      transition: fill 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    circle
+      fill: #1DC3A6
+button.btnMenuItem
+  height: 45px
+  width: 100%
+  text-align: left
+  border-bottom: 1px solid #ECEFF4
+  &:last-child
+    border-bottom: none
+.btnMenuActive
+  circle
+    fill: #1DC3A6
+.itemActions
+  display: flex
+  margin: 44px 0
+  button
+    min-width: 115px
+    margin-right: 12px
+    &:last-child
+      margin: 0
 .price
   margin: 40px 0
   display: flex
@@ -136,3 +167,49 @@
     opacity: 1
   path
     fill: #FF6868
+@media (max-width: 1000px)
+  .row
+    flex-direction: column
+  .content
+    margin-top: 30px
+    display: flex
+    flex-direction: row-reverse
+  .imageWrapper
+    margin: 0 auto
+  .details
+    margin-top: 0
+    margin-right: 30px
+    max-width: 350px
+
+@media (max-width: 860px)
+  .content
+    flex-direction: column
+    min-width: auto
+  .details
+    margin-top: 30px
+    margin-right: 0
+    max-width: 100%
+
+@media (max-width: 460px)
+  .header
+    flex-direction: column-reverse
+    align-items: flex-start
+    margin-bottom: 25px
+  .stats
+    width: 100%
+    justify-content: space-between
+  .collection
+    margin-top: 20px
+  .price
+    flex-direction: column
+    align-items: flex-start
+    margin: 25px 0
+    button
+      width: 100%
+      margin-top: 20px
+  .imageWrapper
+    height: 230px
+  .tags
+    margin-top: 20px
+  .details
+    margin-top: 20px
