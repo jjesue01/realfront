@@ -3,8 +3,9 @@ import styles from './PriceFilter.module.sass'
 import FilterWrapper from "../filter-wrapper/FilterWrapper";
 import Typography from "../../../Typography";
 import Input from "../../../input/Input";
+import cn from "classnames";
 
-function PriceFilter({ className, name, onChange, value }) {
+function PriceFilter({ className, name, onChange, value, mode }) {
   const [values, setValues] = useState({
     from: '',
     to: ''
@@ -15,6 +16,10 @@ function PriceFilter({ className, name, onChange, value }) {
       ...prevState,
       [name]: +value || ''
     }))
+
+    if (mode === 'flat') {
+      onChange({ target: { name: 'price', value: { ...values, [name]: +value } } })
+    }
   }
 
   function handleApply() {
@@ -31,11 +36,12 @@ function PriceFilter({ className, name, onChange, value }) {
 
   return (
     <FilterWrapper
+      mode={mode}
       className={className}
       title="Price"
       onApply={handleApply}
       onClose={handleClose}>
-      <div className={styles.root}>
+      <div className={cn(styles.root, { [styles.flat]: mode === 'flat' })}>
         <Typography
           fontSize={14}
           fontWeight={600}

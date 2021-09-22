@@ -3,10 +3,11 @@ import styles from './ResourcesFilter.module.sass'
 import FilterWrapper from "../filter-wrapper/FilterWrapper";
 import Typography from "../../../Typography";
 import Checkbox from "../../../checkbox/Checkbox";
+import cn from "classnames";
 
 const options = ['Photo', 'Video']
 
-function ResourcesFilter({ className, name, onChange, value }) {
+function ResourcesFilter({ className, name, onChange, value, mode }) {
   const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
   const [checkedAll, setCheckedAll] = useState(false)
 
@@ -37,14 +38,18 @@ function ResourcesFilter({ className, name, onChange, value }) {
 
       setCheckedAll(updatedCheckedAll)
       setData(updatedData)
+
+      if (mode === 'flat')
+        handleApply(updatedData)
     }
   }
 
-  function handleApply() {
+  function handleApply(arr = []) {
+    const result = arr.length !== 0 ? arr : data
     onChange({
       target: {
         name,
-        value: data.filter(({ checked }) => checked).map(({ value }) => value)
+        value: result.filter(({ checked }) => checked).map(({ value }) => value)
       }
     })
   }
@@ -69,14 +74,19 @@ function ResourcesFilter({ className, name, onChange, value }) {
   }, [value, handleReset])
 
   return (
-    <FilterWrapper className={className} title="Resources" onApply={handleApply} onClose={handleReset}>
-      <div className={styles.root}>
+    <FilterWrapper
+      mode={mode}
+      className={className}
+      title="Resources"
+      onApply={handleApply}
+      onClose={handleReset}>
+      <div className={cn(styles.root, { [styles.flat]: mode === 'flat' })}>
         <Typography
           fontSize={14}
           fontWeight={600}
           lHeight={20}
           color={'#111'}>
-          Price
+          Resources
         </Typography>
         <div className={styles.checkboxes}>
           <Checkbox

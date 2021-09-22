@@ -5,6 +5,7 @@ import Typography from "../../../Typography";
 import SearchIcon from "../../../../public/icons/search-icon.svg";
 import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
+import cn from "classnames";
 
 const options = [
   'New York',
@@ -17,7 +18,7 @@ const options = [
   'Miami',
 ]
 
-function CollectionFilter({ className, name, onChange, value }) {
+function CollectionFilter({ className, name, onChange, value, mode }) {
   const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
   const [searchValue, setSearchValue] = useState('')
   const [checkedAll, setCheckedAll] = useState(false)
@@ -53,6 +54,9 @@ function CollectionFilter({ className, name, onChange, value }) {
 
       setCheckedAll(updatedCheckedAll)
       setData(updatedData)
+
+      if (mode === 'flat')
+        handleApply(updatedData)
     }
   }
 
@@ -60,11 +64,12 @@ function CollectionFilter({ className, name, onChange, value }) {
     return data.filter(({ value }) => value.toLowerCase().includes(searchValue.toLowerCase()))
   }
 
-  function handleApply() {
+  function handleApply(arr = []) {
+    const result = arr.length !== 0 ? arr : data
     onChange({
       target: {
         name,
-        value: data.filter(({ checked }) => checked).map(({ value }) => value)
+        value: result.filter(({ checked }) => checked).map(({ value }) => value)
       }
     })
   }
@@ -90,7 +95,12 @@ function CollectionFilter({ className, name, onChange, value }) {
   }, [value, handleReset])
 
   return (
-    <FilterWrapper className={className} title="Collection" onApply={handleApply} onClose={handleReset}>
+    <FilterWrapper
+      mode={mode}
+      className={cn(className, { [styles.flat]: mode === 'flat' })}
+      title="Collection"
+      onApply={handleApply}
+      onClose={handleReset}>
       <div className={styles.header}>
         <Typography fontWeight={600} fontSize={14} lHeight={20} color={'#111'}>
           Collection

@@ -4,6 +4,7 @@ import FilterWrapper from "../filter-wrapper/FilterWrapper";
 import Typography from "../../../Typography";
 import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
+import cn from "classnames";
 
 const options = [
   'Aerial',
@@ -14,7 +15,7 @@ const options = [
   'Waterfront',
 ]
 
-function MoreFilter({ className, name, onChange, value }) {
+function MoreFilter({ className, name, onChange, value, mode }) {
   const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
   const [checkedAll, setCheckedAll] = useState(false)
   const [keywords, setKeywords] = useState('')
@@ -50,6 +51,16 @@ function MoreFilter({ className, name, onChange, value }) {
 
       setCheckedAll(updatedCheckedAll)
       setData(updatedData)
+      if (mode === 'flat')
+        onChange({
+          target: {
+            name,
+            value: {
+              types: data.filter(({ checked }) => checked).map(({ value }) => value),
+              keywords
+            }
+          }
+        })
     }
   }
 
@@ -86,8 +97,13 @@ function MoreFilter({ className, name, onChange, value }) {
   }, [value, handleReset])
 
   return (
-    <FilterWrapper className={className} title="More" onApply={handleApply} onClose={handleReset}>
-      <div className={styles.root}>
+    <FilterWrapper
+      mode={mode}
+      className={className}
+      title="More"
+      onApply={handleApply}
+      onClose={handleReset}>
+      <div className={cn(styles.root, { [styles.flat]: mode === 'flat' })}>
         <Typography
           fontSize={14}
           fontWeight={600}

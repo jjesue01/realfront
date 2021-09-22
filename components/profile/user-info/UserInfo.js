@@ -12,15 +12,40 @@ function UserInfo() {
   return (
     <section className={styles.root}>
       <div className={styles.bg}>
+        <div className={styles.circle1}>
+          <Image
+            src="/images/profile-c1.png"
+            alt="circle"
+            width={429}
+            height={289} />
+        </div>
+        <div className={styles.circle2}>
+          <Image
+            className={styles.circle2}
+            src="/images/profile-c2.png"
+            alt="circle"
+            width={169}
+            height={144} />
+        </div>
+        <div className={styles.circle3}>
+          <Image
+            src="/images/profile-c3.png"
+            alt="circle"
+            width={128}
+            height={91} />
+        </div>
         <button className={cn(styles.btnSettings, styles.btnEdit)}>
           <PenIcon />
         </button>
       </div>
       <div className="container">
         <div className={styles.info}>
-          <div className={styles.userLogo}>
+          <button className={styles.userLogo}>
             <Image src="/icons/user.svg" width={50} height={50} alt="User" />
-          </div>
+            <span className={styles.editWrapper}>
+              <PenIcon /> Edit
+            </span>
+          </button>
           <div className={styles.userNameContainer}>
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
               John Doe

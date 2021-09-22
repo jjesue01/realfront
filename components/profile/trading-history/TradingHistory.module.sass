@@ -1,5 +1,73 @@
 .root
   width: 100%
-  height: 400px
   padding: 31px
   border: 1px solid #D3D9E1
+.table
+  width: 100%
+  margin-top: 32px
+.tableHeader
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  padding-bottom: 7px
+  p
+    font-size: 12px
+    font-weight: 600
+    line-height: 15px
+    color: #878D97
+.col
+  width: 100%
+  overflow: hidden
+  margin-right: 20px
+  p
+    width: 100%
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+  &:last-child
+    margin-right: 0
+.colEvent
+  max-width: 143px
+.colItem
+  max-width: 239px
+.colPrice
+  max-width: 121px
+.colQuantity
+  max-width: 95px
+.colFrom
+  max-width: 119px
+.colTo
+  max-width: 100px
+.colDate
+  max-width: 140px
+.tableItem
+  width: 100%
+  height: 86px
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  .col
+    p
+      font-size: 14px
+      color: #111
+  .colEvent, .colPrice, .colQuantity
+    p
+      font-weight: 600
+  .colDate
+    p
+      color: #878D97
+  .colItem
+    display: flex
+    align-items: center
+    justify-content: flex-start
+.imageContainer
+  padding: 9px 2px
+  border: 1px solid #ECEFF4
+  margin-right: 12px
+.imageWrapper
+  position: relative
+  width: 100%
+  height: 35px
+  min-width: 49px

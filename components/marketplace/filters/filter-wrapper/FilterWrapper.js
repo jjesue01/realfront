@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from './FilterWrapper.module.sass'
 import cn from "classnames";
 
-function FilterWrapper({ className, title, onApply, onClose = () => {}, children }) {
+function FilterWrapper({ className, title, onApply, onClose = () => {}, children, mode }) {
   const [opened, setOpened] = useState(false)
 
   function toggleFilter() {
@@ -18,6 +18,13 @@ function FilterWrapper({ className, title, onApply, onClose = () => {}, children
     toggleFilter()
     onClose()
   }
+
+  if (mode === 'flat')
+    return (
+      <div className={cn(className, styles.content)}>
+        { children }
+      </div>
+    )
 
   return (
     <>

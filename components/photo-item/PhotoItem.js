@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './PhotoItem.module.sass'
 import Link from "next/link";
 import Image from "next/image";
@@ -8,7 +8,7 @@ import HeartIcon from '/public/icons/heart.svg'
 import HeartFilledIcon from '/public/icons/heart-filled.svg'
 import ContextMenu from "../context-menu/ContextMenu";
 
-function PhotoItem({ className, imageClassName, data, type }) {
+function PhotoItem({ className, imageClassName, data, type, favorite = false }) {
   const [isFavorite, setIsFavorite] = useState(false)
 
   function handleClick(e) {
@@ -20,6 +20,10 @@ function PhotoItem({ className, imageClassName, data, type }) {
   function toggleFavorite() {
     setIsFavorite(prevState => !prevState)
   }
+
+  useEffect(function () {
+    setIsFavorite(favorite)
+  }, [favorite])
 
   return (
     <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
