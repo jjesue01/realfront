@@ -92,6 +92,10 @@ function Layout({ children }) {
     setUser({})
   }
 
+  function handleCreate() {
+    router.push('/photos/create')
+  }
+
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
@@ -118,7 +122,7 @@ function Layout({ children }) {
               </li>
             </ul>
             <div className={styles.actions}>
-              <Button type="outlined">
+              <Button onClick={handleCreate} type="outlined">
                 Create
               </Button>
               {
