@@ -4,10 +4,10 @@ import cn from "classnames";
 import Typography from "../Typography";
 import ArrowIcon from '/public/icons/arrow-short.svg'
 
-function Select({ className, value, name, options = [], onChange, size = 'default', placeholder }) {
+function Select({ className, value, name, options = [], onChange, size = 'default', placeholder, label }) {
   const [opened, setOpened] = useState(false)
 
-  const label = options.find(option => option.value === value)?.label || ''
+  const resultText = options.find(option => option.value === value)?.label || ''
 
   const selectClassNames = cn(
     className,
@@ -15,7 +15,8 @@ function Select({ className, value, name, options = [], onChange, size = 'defaul
     {
       [styles.small]: size === 'small',
       [styles.opened]: opened,
-      [styles.noValue]: value === ''
+      [styles.noValue]: value === '',
+      [styles.label]: label
     }
   )
 
@@ -43,9 +44,15 @@ function Select({ className, value, name, options = [], onChange, size = 'defaul
         <div onClick={toggleList} className={styles.closeLayer} />
       }
       <div className={selectClassNames}>
-        <button onClick={toggleList} className={styles.select}>
+        {
+          label &&
+          <label>
+            { label }
+          </label>
+        }
+        <button onClick={toggleList} className={styles.select} type="button">
           <Typography fontSize={14}>
-            { label || placeholder }
+            { resultText || placeholder }
           </Typography>
           <ArrowIcon />
         </button>

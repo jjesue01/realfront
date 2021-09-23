@@ -11,7 +11,9 @@ function Input({
   placeholder,
   label,
   size = 'default',
-  iconRight
+  iconRight,
+  required,
+  subLabel
 }) {
   const inputClassNames = cn(
     styles.input,
@@ -22,13 +24,21 @@ function Input({
   )
 
   return (
-    <div className={cn(className, styles.inputContainer)}>
+    <div className={cn(className, styles.inputContainer, { [styles.label]: label })}>
+      {
+        label &&
+        <label htmlFor={name}>
+          { label }
+        </label>
+      }
       <div className={styles.inputWrapper}>
         <input
+          id={name}
           className={inputClassNames}
           type={type}
           name={name}
           value={value}
+          required={required}
           onChange={onChange}
           placeholder={placeholder}/>
         { iconRight }
