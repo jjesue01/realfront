@@ -10,6 +10,11 @@ import Textarea from "../../textarea/Textarea";
 import CollectionPicker from "./collection-picker/CollectionPicker";
 import FileUploader from "./file-uploader/FileUploader";
 import Image from "next/image";
+import ButtonCircle from "../../button-circle/ButtonCircle";
+import PenIcon from '/public/icons/pen.svg'
+import CreateCollection from "../../dialogs/create-collection/CreateCollection";
+import CreateCongratulation from "../../dialogs/create-congratulation/CreateCongratulation";
+import {useRouter} from "next/router";
 
 const selectOptions = [
   {
@@ -47,7 +52,12 @@ const validationSchema = Yup.object({
 })
 
 function Form() {
+  const router = useRouter()
+  const [createOpened, setCreateOpened] = useState(false)
+  const [isCreated, setIsCreated] = useState(false)
   const [collections, setCollections] = useState(collectionsData)
+  const [jpgFile, setJpgFile] = useState(null)
+  const [rawFile, setRawFile] = useState(null)
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -59,12 +69,46 @@ function Form() {
     },
     validationSchema,
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+      if (jpgFile !== null && rawFile !== null){
+        setIsCreated(true)
+      }
     },
   });
 
   function handleCollectionsChange(data) {
     setCollections([...data])
+  }
+
+  function handleFileJPGChange(file) {
+    setJpgFile(file)
+  }
+
+  function handleFileRAWChange(file) {
+    setRawFile(file)
+  }
+
+  function toggleCreateCollection() {
+    setCreateOpened(prevState => !prevState)
+  }
+  function toggleCongratulations() {
+    setIsCreated(prevState => !prevState)
+  }
+
+  function handleCloseCongratulations() {
+    router.push('/collections')
+  }
+
+  function handleCreateCollection(item) {
+    setCollections(prevCollections => ([
+      ...prevCollections,
+      {
+        id: Date.now(),
+        url: item.logo,
+        name: item.name,
+        description: item.description,
+        checked: false
+      }
+    ]))
   }
 
   return (
@@ -94,28 +138,47 @@ function Form() {
           </Typography>
           <div className={styles.uploaders}>
             <div className={styles.uploader}>
-              <FileUploader>
-                <div className={styles.uploaderContainer}>
-                  <Image src="/images/form-jpg.svg" width={50} height={50} alt="jpg file" />
-                  <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                    Upload JPG file
-                  </Typography>
-                  <p className={styles.uploaderText}>
-                    Drag & drop file or <span>browse media on your device</span>
-                  </p>
-                </div>
+              <FileUploader onChange={handleFileJPGChange} accept=".jpg">
+                { 
+                  jpgFile === null ?
+                    <div className={styles.uploaderContainer}>
+                      <Image src="/images/form-jpg.svg" width={50} height={50} alt="jpg file" />
+                      <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
+                        Upload JPG file
+                      </Typography>
+                      <p className={styles.uploaderText}>
+                        Drag & drop file or <span>browse media on your device</span>
+                      </p>
+                    </div>
+                    :
+                    <div className={styles.imageContainer}>
+                      <Image src={URL.createObjectURL(jpgFile)} layout="fill" objectFit={'cover'} alt="nft item" />
+                      <ButtonCircle className={styles.btnEdit}>
+                        <PenIcon />
+                      </ButtonCircle>
+                    </div>
+                }
               </FileUploader>
             </div>
             <div className={styles.uploader}>
-              <FileUploader>
+              <FileUploader onChange={handleFileRAWChange} accept=".raw">
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
                   <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                    Upload RAW file
+                    { rawFile === null ? 'Upload RAW file' : rawFile.name }
                   </Typography>
-                  <p className={styles.uploaderText}>
-                    Drag & drop file or <span>browse media on your device</span>
-                  </p>
+                  {
+                    rawFile === null &&
+                    <p className={styles.uploaderText}>
+                      Drag & drop file or <span>browse media on your device</span>
+                    </p>
+                  }
+                  {
+                    rawFile !== null &&
+                    <ButtonCircle className={styles.btnEdit}>
+                      <PenIcon />
+                    </ButtonCircle>
+                  }
                 </div>
               </FileUploader>
             </div>
@@ -164,7 +227,7 @@ function Form() {
           className={styles.input}
           collections={collections}
           onChange={handleCollectionsChange}
-          onCreate={() => {}} />
+          onCreate={toggleCreateCollection} />
         <Select
           className={styles.input}
           name="blockchain"
@@ -176,6 +239,15 @@ function Form() {
           Create
         </Button>
       </form>
+      <CreateCollection
+        opened={createOpened}
+        onClose={toggleCreateCollection}
+        onCreate={handleCreateCollection} />
+      <CreateCongratulation
+        name={formik.values.name}
+        imageUrl={jpgFile !== null && URL.createObjectURL(jpgFile)}
+        opened={isCreated}
+        onClose={handleCloseCongratulations} />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import React from "react";
 import styles from './Textarea.module.sass'
 import cn from "classnames";
 
-function Input({
+function Textarea({
   className,
   name,
   value,
@@ -39,4 +39,4 @@ function Input({
   )
 }
 
-export default Input
+export default Textarea

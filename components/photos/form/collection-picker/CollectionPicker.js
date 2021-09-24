@@ -13,7 +13,11 @@ function CollectionsPicker({ className, collections, onCreate, onChange }) {
       className={cn(styles.collection, { [styles.active]: collection.checked })}
       onClick={handleClick(index)}>
       <div className={styles.imageWrapper}>
-        <Image src={collection.url} layout="fill" objectFit="cover" alt="collection" />
+        <Image
+          src={typeof collection.url === 'string' ? collection.url : URL.createObjectURL(collection.url)}
+          layout="fill"
+          objectFit="cover"
+          alt="collection" />
       </div>
       <Typography fontWeight={600} fontSize={14}>
         { collection.name }
@@ -47,7 +51,7 @@ function CollectionsPicker({ className, collections, onCreate, onChange }) {
       </Typography>
       <div className={styles.collections}>
         { collectionsList }
-        <button className={styles.btnAdd} type="button">
+        <button onClick={onCreate} className={styles.btnAdd} type="button">
           <span>Create collection</span>
         </button>
       </div>
