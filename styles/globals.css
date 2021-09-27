@@ -470,6 +470,15 @@ ul.slick-dots {
   overflow: visible !important;
 }
 
+.page-container {
+  width: 100%;
+  padding: 82px 0 100px;
+}
+.border-wrapper {
+  width: 100%;
+  border-top: 1px solid #ECEFF4;
+}
+
 @media (max-width: 1400px) {
   .container {
     padding: 0 70px;

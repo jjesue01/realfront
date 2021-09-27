@@ -69,7 +69,7 @@ function MyCollections() {
   return (
     <main className={styles.root}>
       <Head>
-        <title>HOMEJAB - MyCollections</title>
+        <title>HOMEJAB - My Collections</title>
       </Head>
       <div className={styles.content}>
         <div className="container">

@@ -14,6 +14,7 @@ import PhotoItem from "../components/photo-item/PhotoItem";
 import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
+import {getSortedArray} from "../utils";
 
 const sortOptions = [
   {
@@ -215,25 +216,6 @@ function Marketplace({ toggleFooter }) {
 
   function handleMapChange(items) {
     setViewportData([...items])
-  }
-
-  function getSortedArray(arr, field) {
-    const splitField = field.split('_')
-    const itemField = splitField[0];
-    const direction = splitField[1]
-
-    const result = arr.sort((a, b) => {
-      if (a[itemField] < b[itemField])
-        return -1
-      if (a[itemField] > b[itemField])
-        return 1
-      return 0
-    })
-
-    if (direction === 'high')
-      return result.reverse()
-
-    return result
   }
 
   useEffect(function hideFooter() {

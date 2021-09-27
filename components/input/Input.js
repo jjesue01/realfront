@@ -31,6 +31,10 @@ function Input({
           { label }
         </label>
       }
+      {
+        subLabel &&
+          <p>{subLabel}</p>
+      }
       <div className={styles.inputWrapper}>
         <input
           id={name}

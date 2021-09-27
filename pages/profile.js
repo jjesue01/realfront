@@ -12,6 +12,7 @@ import Select from "../components/select/Select";
 import Button from "../components/button/Button";
 import SideFilter from "../components/profile/filter/SideFilter";
 import {sortOptions, data} from "../components/profile/fixtures";
+import {getSortedArray} from "../utils";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
 const favoritedIds = [1,3,6]
@@ -74,25 +75,6 @@ function MyProfile() {
         keywords: ''
       }
     }))
-  }
-
-  function getSortedArray(arr, field) {
-    const splitField = field.split('_')
-    const itemField = splitField[0];
-    const direction = splitField[1]
-
-    const result = arr.sort((a, b) => {
-      if (a[itemField] < b[itemField])
-        return -1
-      if (a[itemField] > b[itemField])
-        return 1
-      return 0
-    })
-
-    if (direction === 'high')
-      return result.reverse()
-
-    return result
   }
 
   function handleTabChange(value) {
