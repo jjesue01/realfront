@@ -3,9 +3,8 @@ import styles from './ContextMenu.module.sass'
 import MenuIcon from "../../public/icons/menu-ellipsis.svg";
 import cn from "classnames";
 import Link from "next/link";
-import Typography from "../Typography";
 
-function ContextMenu({ className }) {
+function ContextMenu({ className, href }) {
   const [opened, setOpened] = useState(false)
 
   function toggleMenu() {
@@ -23,7 +22,7 @@ function ContextMenu({ className }) {
           <MenuIcon />
         </button>
         <div className={styles.menu}>
-          <Link href={'/about'} passHref>
+          <Link href={href} passHref>
             Edit
           </Link>
           <div className={styles.hr} />

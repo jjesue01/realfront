@@ -27,8 +27,8 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
 
   return (
     <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
-      <ContextMenu className={styles.btnMenu} />
-      <Link href={'/photos/111'} passHref>
+      <ContextMenu href={`/photos/edit/${data.id}`} className={styles.btnMenu} />
+      <Link href={`/photos/${data.id}`} passHref>
         <a onClick={handleClick}>
           <div className={styles.root}>
             <div className={styles.header}>

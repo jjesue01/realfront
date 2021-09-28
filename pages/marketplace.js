@@ -15,6 +15,7 @@ import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
 import {getSortedArray} from "../utils";
+import {data} from "../components/profile/fixtures";
 
 const sortOptions = [
   {
@@ -27,116 +28,7 @@ const sortOptions = [
   },
 ]
 
-const sourceItems = [
-  {
-    name: 'Item 1',
-    address: 'New York, NY 10003, USA, 125 E 12th St',
-    location: {
-      lat: -31.56391,
-      lng: 147.154312
-    },
-    collections: ['New York'],
-    price: 2.59,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 2',
-    address: 'Wentworth Falls',
-    location: {
-      lat: -33.718234,
-      lng: 150.363181
-    },
-    collections: ['New York'],
-    price: 1.4,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 3',
-    address: 'Wentworth Falls',
-    location: {
-      lat: -33.727111,
-      lng: 150.371124
-    },
-    collections: ['Los Angeles'],
-    price: 0.453,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 4',
-    address: 'Sydney',
-    location: {
-      lat: -33.848588,
-      lng: 151.209834
-    },
-    collections: ['Houston'],
-    price: 2.9,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 5',
-    address: 'Sydney',
-    location: {
-      lat: -33.851702,
-      lng: 151.216968
-    },
-    collections: ['Houston'],
-    price: 5,
-    resources: ['Video'],
-    types: ['Waterfront', 'Commercial']
-  },
-  {
-    name: 'Item 6',
-    address: 'Kiama',
-    location: {
-      lat: -34.671264,
-      lng: 150.863657
-    },
-    collections: ['Philadelphia'],
-    price: 2.52,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 7',
-    address: 'Brindabella',
-    location: {
-      lat: -35.304724,
-      lng: 148.662905,
-    },
-    collections: ['Philadelphia', 'Miami'],
-    price: 2.3,
-    resources: ['Photo'],
-    types: ['Park']
-  },
-  {
-    name: 'Item 8',
-    address: 'New Zelenad, Whitianga',
-    location: {
-      lat: -36.817685,
-      lng: 175.699196
-    },
-    collections: ['Washington'],
-    price: 1.5,
-    resources: ['Photo', 'Video'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 9',
-    address: 'New Zelenad, Hahei',
-    location: {
-      lat: -36.828611,
-      lng: 175.790222
-    },
-    collections: ['Washington'],
-    price: 2.59,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-]
+const sourceItems = [...data]
 
 function Marketplace({ toggleFooter }) {
   const [sourceData, setSourceData] = useState(sourceItems)
@@ -158,10 +50,13 @@ function Marketplace({ toggleFooter }) {
     sortBy: 'price_low'
   })
   const [currentPage, setCurrentPage] = useState(1)
+
   const itemsPerPage = 6
   const pageCount = Math.ceil(filteredData.length / itemsPerPage)
-
-  const pageItems = isMapHidden ? filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : filteredData;
+  const pageItems = isMapHidden ?
+    filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    :
+    filteredData
 
   const mounted = useRef(false)
 

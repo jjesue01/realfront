@@ -8,12 +8,15 @@ import Button from "../../../button/Button";
 import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
+import {useRouter} from "next/router";
 
 function PhotoInfo() {
+  const router = useRouter()
+  const { id } = router.query
   const [isFavorite, setIsFavorite] = useState(false)
   const [menuOpened, setMenuOpened] = useState(false)
 
-  const ownItem = false
+  const ownItem = id === '3'
 
   function toggleFavorite() {
     setIsFavorite(prevState => !prevState)
@@ -21,6 +24,12 @@ function PhotoInfo() {
 
   function toggleMenu() {
     setMenuOpened(prevState => !prevState)
+  }
+
+  function goTo(path) {
+    return function () {
+      router.push(path)
+    }
   }
 
   return (
@@ -128,16 +137,16 @@ function PhotoInfo() {
                         </Typography>
                       </div>
                     </div>
-                    <Button>
+                    <Button onClick={goTo('/profile')}>
                       Buy now
                     </Button>
                   </div>
                   :
                   <div className={styles.itemActions}>
-                    <Button type="outlined">
+                    <Button onClick={goTo(`/photos/edit/${id}`)} type="outlined">
                       Edit
                     </Button>
-                    <Button>
+                    <Button onClick={goTo(`/photos/sell/${id}`)}>
                       Sell
                     </Button>
                   </div>

@@ -11,6 +11,7 @@ import Input from "../../input/Input";
 import Textarea from "../../textarea/Textarea";
 import Select from "../../select/Select";
 import Button from "../../button/Button";
+import {useRouter} from "next/router";
 
 const selectOptions = [
   {
@@ -33,6 +34,7 @@ const validationSchema = Yup.object({
 })
 
 function CollectionForm() {
+  const router = useRouter()
   const [files, setFiles] = useState({
     logo: '/collection-logo.jpg',
     featured: null,
@@ -49,7 +51,8 @@ function CollectionForm() {
     },
     validationSchema,
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2))
+      //alert(JSON.stringify(values, null, 2))
+      router.push('/collections')
     },
   });
 
@@ -160,6 +163,8 @@ function CollectionForm() {
         required
         label="Name*" />
       <Input
+        type="url"
+        urlPrefix={'https://homejab.com/assets/'}
         className={styles.formField}
         name="url"
         value={formik.values.url}
@@ -175,11 +180,13 @@ function CollectionForm() {
         placeholder="Describe your collection"
         label="Description" />
       <Input
+        type="number"
         className={styles.formField}
         name="royalties"
         value={formik.values.royalties}
         onChange={formik.handleChange}
         placeholder="Percentage fee"
+        iconRight={<span className={styles.percentIcon}>%</span>}
         subLabel="Collect a fee when a user re-sells an item you originally created. This is deducted from the final sale price and paid monthly to a payout address of your choosing."
         label="Royalties" />
       <Input
@@ -188,7 +195,6 @@ function CollectionForm() {
         value={formik.values.walletAddress}
         onChange={formik.handleChange}
         placeholder="Enter an address, e.g. 0x1ef4... or destination.eth"
-        required
         label="Your payout wallet address" />
       <Select
         className={styles.formField}

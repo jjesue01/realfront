@@ -9,7 +9,7 @@ function CreateItem() {
       <Head>
         <title>HOMEJAB - Create new item</title>
       </Head>
-      <Form />
+      <Form mode="create" />
     </main>
   )
 }

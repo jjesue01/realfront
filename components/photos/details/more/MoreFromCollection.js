@@ -3,48 +3,14 @@ import styles from './MoreFromCollection.module.sass'
 import Typography from "../../../Typography";
 import PhotoItem from "../../../photo-item/PhotoItem";
 import Button from "../../../button/Button";
+import {data} from "../../../profile/fixtures";
 
-const data = [
-  {
-    name: 'Item 1',
-    address: 'New York, Manhattan',
-    location: {
-      lat: -31.56391,
-      lng: 147.154312
-    },
-    collections: ['New York'],
-    price: 2.59,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 2',
-    address: 'Wentworth Falls',
-    location: {
-      lat: -33.718234,
-      lng: 150.363181
-    },
-    collections: ['New York'],
-    price: 1.4,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
-  {
-    name: 'Item 3',
-    address: 'Wentworth Falls',
-    location: {
-      lat: -33.727111,
-      lng: 150.371124
-    },
-    collections: ['Los Angeles'],
-    price: 0.453,
-    resources: ['Photo'],
-    types: ['Residential']
-  },
+const items = [
+  ...data.slice(0, 3)
 ]
 
 function MoreFromCollection() {
-  const itemsList = data.map((item) => (
+  const itemsList = items.map((item) => (
     <PhotoItem
       className={styles.item}
       key={item.name}

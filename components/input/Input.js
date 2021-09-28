@@ -13,13 +13,17 @@ function Input({
   size = 'default',
   iconRight,
   required,
-  subLabel
+  subLabel,
+  urlPrefix,
+  usdRate = 3166.41
 }) {
   const inputClassNames = cn(
     styles.input,
     {
       [styles.small]: size === 'small',
-      [styles.iconRight]: !!iconRight
+      [styles.iconRight]: !!iconRight,
+      [styles.withUrlPrefix]: urlPrefix,
+      [styles.price]: type === 'price'
     }
   )
 
@@ -36,16 +40,28 @@ function Input({
           <p>{subLabel}</p>
       }
       <div className={styles.inputWrapper}>
+        {
+          urlPrefix &&
+            <p className={styles.urlPrefix}>{urlPrefix}</p>
+        }
+        {
+          type === 'price' &&
+          <p className={styles.currency}>eth</p>
+        }
         <input
           id={name}
           className={inputClassNames}
-          type={type}
+          type={type === 'price' ? 'text' : type}
           name={name}
           value={value}
           required={required}
           onChange={onChange}
           placeholder={placeholder}/>
         { iconRight }
+        {
+          type === 'price' &&
+            <p className={styles.usd}>{`($${new Intl.NumberFormat('ru-RU').format(+value * usdRate || 0)})`}</p>
+        }
       </div>
     </div>
   )

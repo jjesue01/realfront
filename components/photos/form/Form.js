@@ -51,7 +51,7 @@ const validationSchema = Yup.object({
   blockchain: Yup.string().required()
 })
 
-function Form() {
+function Form({ mode }) {
   const router = useRouter()
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
@@ -90,9 +90,6 @@ function Form() {
   function toggleCreateCollection() {
     setCreateOpened(prevState => !prevState)
   }
-  function toggleCongratulations() {
-    setIsCreated(prevState => !prevState)
-  }
 
   function handleCloseCongratulations() {
     router.push('/collections')
@@ -119,7 +116,12 @@ function Form() {
           fontSize={36}
           fontWeight={600}
           lHeight={44}>
-          Create new item
+          {
+            mode === 'edit' ?
+              'Edit 366 Madison Ave'
+              :
+              'Create new item'
+          }
         </Typography>
         <div className={styles.uploadSection}>
           <Typography

@@ -10,9 +10,11 @@ import CreateCollection from "../../components/dialogs/create-collection/CreateC
 
 const data = [
   {
+    id: 1,
     name: 'New York, Manhattan'
   },
   {
+    id: 2,
     name: 'Collection name'
   },
 ]
@@ -20,7 +22,7 @@ const data = [
 function Collection({ data }) {
   return (
     <div className={styles.collectionWrapper}>
-      <Link href={'/collections/1'} passHref>
+      <Link href={`/collections/${data.id}`} passHref>
         <a>
           <div className={styles.collection}>
             <div className={styles.mainImageWrapper}>
@@ -42,7 +44,7 @@ function Collection({ data }) {
           </div>
         </a>
       </Link>
-      <ContextMenu className={styles.btnMenu} />
+      <ContextMenu href={`/collections/edit/${data.id}`} className={styles.btnMenu} />
     </div>
   )
 }
