@@ -6,9 +6,18 @@ import CopyIcon from '/public/icons/copy.svg'
 import SettingsIcon from '/public/icons/settings.svg'
 import PenIcon from '/public/icons/pen.svg'
 import cn from "classnames";
+import {useRouter} from "next/router";
 
 
 function UserInfo() {
+  const router = useRouter()
+
+  function goTo(path) {
+    return function () {
+      router.push(path)
+    }
+  }
+
   return (
     <section className={styles.root}>
       <div className={styles.bg}>
@@ -50,7 +59,7 @@ function UserInfo() {
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
               John Doe
             </Typography>
-            <button className={styles.btnSettings}>
+            <button onClick={goTo('/settings')} className={styles.btnSettings}>
               <SettingsIcon />
             </button>
           </div>

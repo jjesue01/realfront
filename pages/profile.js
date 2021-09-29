@@ -13,6 +13,7 @@ import Button from "../components/button/Button";
 import SideFilter from "../components/profile/filter/SideFilter";
 import {sortOptions, data} from "../components/profile/fixtures";
 import {getSortedArray} from "../utils";
+import Tabs from "../components/tabs/Tabs";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
 const favoritedIds = [1,3,6]
@@ -39,15 +40,6 @@ function MyProfile() {
     },
     sortBy: 'price_low'
   })
-
-  const tabsList = tabs.map(tab => (
-    <button
-      key={tab}
-      onClick={handleTabChange(tab)}
-      className={cn(styles.tab, { [styles.tabActive]: tab === currentTab })}>
-      { tab }
-    </button>
-  ))
 
   const itemsList = filteredData.map((item) => (
     <PhotoItem
@@ -77,10 +69,8 @@ function MyProfile() {
     }))
   }
 
-  function handleTabChange(value) {
-    return function () {
-      setCurrentTab(value)
-    }
+  function handleTabChange({ target: { value } }) {
+    setCurrentTab(value)
   }
 
   function toggleFilter() {
@@ -164,9 +154,12 @@ function MyProfile() {
       <UserInfo />
       <div className={styles.content}>
         <div className="container">
-          <div className={styles.tabs}>
-            { tabsList }
-          </div>
+          <Tabs
+            className={styles.tabs}
+            name="currentTab"
+            value={currentTab}
+            onChange={handleTabChange}
+            tabs={tabs} />
           {
             ['collected', 'created'].includes(currentTab) &&
             <div className={styles.filterControls}>
