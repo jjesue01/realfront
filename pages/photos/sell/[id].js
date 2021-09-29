@@ -13,6 +13,7 @@ import Input from "../../../components/input/Input";
 import Select from "../../../components/select/Select";
 import Switcher from "../../../components/switcher/Switcher";
 import cn from "classnames";
+import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
 
 const scheduleOptions = [
   {
@@ -46,6 +47,7 @@ function SellItem() {
   const router = useRouter()
   const { id } = router.query
 
+  const [isDone, setIsDone] = useState(false)
   const [switchers, setSwitchers] = useState({
     schedule: false,
     private: false
@@ -61,7 +63,7 @@ function SellItem() {
     },
     validationSchema,
     onSubmit: values => {
-      router.push(`/photos/${id}`)
+      setIsDone(true)
     },
   });
 
@@ -70,6 +72,11 @@ function SellItem() {
       ...prevSwitchers,
       [name]: value
     }))
+  }
+
+  function handleCloseCongratulations() {
+    setIsDone(false)
+    router.push(`/photos/${id}`)
   }
 
   return (
@@ -187,7 +194,7 @@ function SellItem() {
                       name="buyerAddress"
                       value={formik.values.buyerAddress}
                       onChange={formik.handleChange}
-                      placeholder="Buyer asdress, e.g. 0x489423..."
+                      placeholder="Buyer address, e.g. 0x489423..."
                       subLabel="You can keep your listing public, or your can specify one address that's allowed to buy it."
                       label="Privacy" />
                   </div>
@@ -200,6 +207,11 @@ function SellItem() {
           </div>
         </div>
       </div>
+      <DoneCongratulation
+        imageUrl={'/hero-aparts-big.jpg'}
+        message={`Great! You just set on sale - Item Name`}
+        opened={isDone}
+        onClose={handleCloseCongratulations} />
     </main>
   )
 }

@@ -42,3 +42,10 @@ export function getSortedArray(arr, field) {
 export function getImageUrl(image) {
   return typeof image === 'string' ? image : URL.createObjectURL(image)
 }
+
+export function scrollToTop(top = 0) {
+  window.scrollTo({
+    top,
+    behavior: "smooth"
+  })
+}

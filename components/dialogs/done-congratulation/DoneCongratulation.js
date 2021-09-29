@@ -1,11 +1,11 @@
 import React from 'react'
-import styles from './CreateCongratulation.module.sass'
+import styles from './DoneCongratulation.module.sass'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import Image from "next/image";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 
-function CreateCongratulation({ opened, onClose, name, imageUrl }) {
+function DoneCongratulation({ opened, onClose, imageUrl, message }) {
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
       <div className={styles.dialog}>
@@ -23,7 +23,7 @@ function CreateCongratulation({ opened, onClose, name, imageUrl }) {
           align="center"
           margin={'32px 0 0'}
           color={'#000000'}>
-          Great! You just created - {name}
+          { message }
         </Typography>
         <div className={styles.imageWrapper}>
           {
@@ -60,4 +60,4 @@ function CreateCongratulation({ opened, onClose, name, imageUrl }) {
   )
 }
 
-export default CreateCongratulation
+export default DoneCongratulation

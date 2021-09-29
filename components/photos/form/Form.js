@@ -13,7 +13,7 @@ import Image from "next/image";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 import PenIcon from '/public/icons/pen.svg'
 import CreateCollection from "../../dialogs/create-collection/CreateCollection";
-import CreateCongratulation from "../../dialogs/create-congratulation/CreateCongratulation";
+import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
 
 const selectOptions = [
@@ -70,7 +70,11 @@ function Form({ mode }) {
     validationSchema,
     onSubmit: values => {
       if (jpgFile !== null && rawFile !== null){
-        setIsCreated(true)
+        if (mode === 'create') {
+          setIsCreated(true)
+        } else {
+          router.push(`/photos/${router.query.id}`)
+        }
       }
     },
   });
@@ -237,17 +241,32 @@ function Form({ mode }) {
           value={formik.values.blockchain}
           onChange={formik.handleChange}
           label="Blockchain" />
-        <Button className={styles.btnSubmit} htmlType="submit">
-          Create
-        </Button>
+        <div className={styles.actions}>
+          {
+            mode === 'create' ?
+              <Button htmlType="submit">
+                Create
+              </Button>
+              :
+              <Button className={styles.btnSave} htmlType="submit">
+                Save
+              </Button>
+          }
+          {
+            mode === 'edit' &&
+              <Button className={styles.btnDelete} type="outlined">
+                Delete item
+              </Button>
+          }
+        </div>
       </form>
       <CreateCollection
         opened={createOpened}
         onClose={toggleCreateCollection}
         onCreate={handleCreateCollection} />
-      <CreateCongratulation
-        name={formik.values.name}
+      <DoneCongratulation
         imageUrl={jpgFile !== null && URL.createObjectURL(jpgFile)}
+        message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         onClose={handleCloseCongratulations} />
     </div>

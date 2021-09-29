@@ -14,6 +14,7 @@ import SideFilter from "../components/profile/filter/SideFilter";
 import {sortOptions, data} from "../components/profile/fixtures";
 import {getSortedArray} from "../utils";
 import Tabs from "../components/tabs/Tabs";
+import {useRouter} from "next/router";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
 const favoritedIds = [1,3,6]
@@ -21,6 +22,7 @@ const boughtItems = [2,9,7]
 const userId = 1
 
 function MyProfile() {
+  const router = useRouter()
   const [sourceData, setSourceData] = useState(data)
   const [filteredData, setFilteredData] = useState(data)
   const [currentTab, setCurrentTab] = useState('collected')
@@ -145,6 +147,13 @@ function MyProfile() {
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
   }, [filters, sourceData, currentTab])
+
+  useEffect(function initTab() {
+    const { query } = router;
+
+    if (query.tab)
+      setCurrentTab(query.tab)
+  }, [router])
 
   return (
     <main className={styles.root}>

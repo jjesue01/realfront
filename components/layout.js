@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.sass'
@@ -49,7 +49,7 @@ const accountLinks = [
   },
   {
     name: 'My Favorites',
-    link: '/favorites'
+    link: '/profile?tab=favorited'
   },
   {
     name: 'My Account Settings',
@@ -95,6 +95,19 @@ function Layout({ children }) {
   function handleCreate() {
     router.push('/photos/create')
   }
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      if (router.pathname !== url && router.pathname === '/marketplace')
+        setShowFooter(true)
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+  }, [router])
 
   return (
     <div className={styles.wrapper}>

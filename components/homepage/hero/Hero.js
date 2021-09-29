@@ -4,8 +4,10 @@ import Image from "next/image";
 import Input from "../../input/Input";
 import Button from "../../button/Button";
 import SearchIcon from "../../../icons/search-icon.svg";
+import {useRouter} from "next/router";
 
 function Hero() {
+  const router = useRouter()
   const [searchValue, setSearchValue] = useState('')
 
   function handleChange({ target: { value } }) {
@@ -16,7 +18,7 @@ function Hero() {
     e.preventDefault()
     e.stopPropagation()
 
-    console.log(searchValue)
+    router.push(`/marketplace?search=${searchValue}`)
   }
 
   return (

@@ -14,8 +14,9 @@ import PhotoItem from "../components/photo-item/PhotoItem";
 import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
-import {getSortedArray} from "../utils";
+import {getSortedArray, scrollToTop} from "../utils";
 import {data} from "../components/profile/fixtures";
+import {useRouter} from "next/router";
 
 const sortOptions = [
   {
@@ -31,6 +32,7 @@ const sortOptions = [
 const sourceItems = [...data]
 
 function Marketplace({ toggleFooter }) {
+  const router = useRouter()
   const [sourceData, setSourceData] = useState(sourceItems)
   const [viewportData, setViewportData] = useState(sourceItems)
   const [filteredData, setFilteredData] = useState(sourceItems)
@@ -64,25 +66,18 @@ function Marketplace({ toggleFooter }) {
 
     if (currentPage < pageCount) {
       setCurrentPage(prevState => prevState + 1)
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      })
+      scrollToTop()
     }
   }
 
   function handlePrevPage() {
     if (currentPage > 1) {
       setCurrentPage(prevState => prevState - 1)
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      })
+      scrollToTop()
     }
   }
 
   function handleChange({ target: { name, value } }) {
-    console.log(value)
     setFilters(prevState => ({ ...prevState, [name]: value }))
   }
 
@@ -124,7 +119,8 @@ function Marketplace({ toggleFooter }) {
     let items = isMapHidden ? sourceData : viewportData
 
     if (filters.searchValue !== '') {
-      items = items.filter(({ name, address }) => `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
+      items = items.filter(({ name, address }) =>
+        `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
     }
 
     if (filters.collections.length !== 0) {
@@ -167,6 +163,13 @@ function Marketplace({ toggleFooter }) {
 
     setFilteredData([...items])
   }, [filters, viewportData, sourceData, isMapHidden])
+
+  useEffect(function initSearch() {
+    const { search } = router.query;
+
+    if (search)
+      setFilters(prevFilters => ({ ...prevFilters, searchValue: search }))
+  }, [router])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
