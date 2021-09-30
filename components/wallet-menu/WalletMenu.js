@@ -7,6 +7,7 @@ import CopyIcon from '/public/icons/copy.svg'
 import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
 
 function WalletMenu({ opened, onLogOut, onClose, user }) {
   const router = useRouter()
@@ -44,7 +45,7 @@ function WalletMenu({ opened, onLogOut, onClose, user }) {
           </div>
           <div className={styles.walletId}>
             <Typography fontSize={20} color={'#111'}>
-              { user.walletId.slice(0, 11) }...{ user.walletId.slice(-4) }
+              { user.walletAddress.slice(0, 11) }...{ user.walletAddress.slice(-4) }
             </Typography>
             <button className={styles.btnCopy}>
               <CopyIcon />

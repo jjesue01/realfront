@@ -15,6 +15,7 @@ import PenIcon from '/public/icons/pen.svg'
 import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
+import {useGetUserCollectionsQuery} from "../../../services/collections";
 
 const selectOptions = [
   {
@@ -53,6 +54,7 @@ const validationSchema = Yup.object({
 
 function Form({ mode }) {
   const router = useRouter()
+  // const { data } = useGetUserCollectionsQuery()
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [collections, setCollections] = useState(collectionsData)

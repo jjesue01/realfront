@@ -10,6 +10,9 @@ import WalletIcon from '/public/icons/wallet.svg'
 import WalletMenu from "./wallet-menu/WalletMenu";
 import ConnectWallet from "./dialogs/connect-wallet/ConnectWallet";
 import {useRouter} from "next/router";
+import {useLoginMutation} from "../services/auth";
+import {useDispatch, useSelector} from "react-redux";
+import {logout, setCredentials} from "../features/auth/authSlice";
 
 const marketplaceLinks = [
   {
@@ -65,8 +68,10 @@ const companyLinks = [
 ]
 
 function Layout({ children }) {
+  const dispatch = useDispatch()
+  const auth = useSelector(state => state.auth)
+  const [login, { isLoading }] = useLoginMutation()
   const router = useRouter()
-  const [user, setUser] = useState({})
   const [walletOpened, setWalletOpened] = useState(false)
   const [connectOpened, setConnectOpened] = useState(false)
   const [showFooter, setShowFooter] = useState(true)
@@ -83,13 +88,17 @@ function Layout({ children }) {
     setShowFooter(prevState => !prevState)
   }
 
-  function handleLogin(user) {
+  function handleLogin({ walletId }) {
     togglePopup()
-    setUser({ ...user })
+    login(walletId).unwrap()
+      .then(({ token, user }) => {
+        const credentials = { user, token }
+        dispatch(setCredentials(credentials))
+      })
   }
 
   function handleLogout() {
-    setUser({})
+    dispatch(logout())
   }
 
   function handleCreate() {
@@ -108,6 +117,13 @@ function Layout({ children }) {
       router.events.off('routeChangeStart', handleRouteChange)
     }
   }, [router])
+
+  useEffect(function checkAuth() {
+    const auth = JSON.parse(localStorage.getItem('auth'))
+
+    if (auth?.token)
+      dispatch(setCredentials(auth))
+  }, [dispatch])
 
   return (
     <div className={styles.wrapper}>
@@ -139,7 +155,7 @@ function Layout({ children }) {
                 Create
               </Button>
               {
-                user.walletId ?
+                auth.token ?
                   <button
                     onClick={toggleWallet}
                     className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
@@ -155,9 +171,9 @@ function Layout({ children }) {
         </div>
       </header>
       {
-        user.walletId &&
+        auth.token &&
         <WalletMenu
-          user={user}
+          user={auth.user}
           opened={walletOpened}
           onLogOut={handleLogout}
           onClose={toggleWallet} />

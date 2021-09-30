@@ -10,6 +10,7 @@ import Textarea from "../../textarea/Textarea";
 import Button from "../../button/Button";
 import Image from "next/image";
 import PenIcon from "../../../public/icons/pen.svg";
+import {useCreateCollectionMutation} from "../../../services/collections";
 
 const validationSchema = Yup.object({
   name: Yup.string().required(),
@@ -17,6 +18,7 @@ const validationSchema = Yup.object({
 })
 
 function CreateCollection({ opened, onClose, onCreate }) {
+  const [createCollection, { isLoading }] = useCreateCollectionMutation()
   const [logo, setLogo] = useState(null)
   const formik = useFormik({
     initialValues: {
@@ -24,21 +26,35 @@ function CreateCollection({ opened, onClose, onCreate }) {
       description: '',
     },
     validationSchema,
-    onSubmit: values => {
-      if (logo !== null) {
-        onCreate({ ...values, logo })
-        onClose()
-        formik.setValues({
-          name: '',
-          description: '',
-        })
-        setLogo(null)
-      }
-    },
+    onSubmit: handleSubmit,
   });
 
   function handleLogoChange(file) {
     setLogo(file)
+  }
+
+  function handleSubmit(values) {
+    if (logo !== null) {
+
+      // const formData = new FormData();
+      // formData.append("file", logo, logo.name);
+      // formData.append("name", values.name);
+      // formData.append("description", values.description);
+      //
+      // createCollection(formData).unwrap()
+      //   .then(result => {
+      //     console.log(result)
+      //   })
+
+
+      onCreate({ ...values, logo })
+      onClose()
+      formik.setValues({
+        name: '',
+        description: '',
+      })
+      setLogo(null)
+    }
   }
 
   return (
