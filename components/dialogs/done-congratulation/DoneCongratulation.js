@@ -28,7 +28,7 @@ function DoneCongratulation({ opened, onClose, imageUrl, message }) {
         <div className={styles.imageWrapper}>
           {
             imageUrl &&
-              <Image src={imageUrl} layout="fill" objectFit="cover" alt={name} />
+              <Image src={imageUrl} layout="fill" objectFit="cover" alt="apartments" />
           }
         </div>
         <div className={styles.share}>
