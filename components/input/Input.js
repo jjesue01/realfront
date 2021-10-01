@@ -51,7 +51,7 @@ function Input({
         <input
           id={name}
           className={inputClassNames}
-          type={type === 'price' ? 'text' : type}
+          type={type === 'price' || type === 'url' ? 'text' : type}
           name={name}
           value={value}
           required={required}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from './CollectionForm.module.sass'
 import Typography from "../../Typography";
 import {useFormik} from "formik";
@@ -12,6 +12,10 @@ import Textarea from "../../textarea/Textarea";
 import Select from "../../select/Select";
 import Button from "../../button/Button";
 import {useRouter} from "next/router";
+import {
+  useGetCollectionByIdQuery,
+  useUpdateCollectionMutation
+} from "../../../services/collections";
 
 const selectOptions = [
   {
@@ -35,12 +39,15 @@ const validationSchema = Yup.object({
 
 function CollectionForm() {
   const router = useRouter()
+  const { query: { id } } = useRouter()
+  const [updateCollection] = useUpdateCollectionMutation()
+  const { data: collection  } = useGetCollectionByIdQuery(id)
   const [files, setFiles] = useState({
     logo: '/collection-logo.jpg',
     featured: null,
     banner: null
   })
-  const formik = useFormik({
+  const {setValues, ...formik} = useFormik({
     initialValues: {
       name: 'New York, Manhattan',
       url: '',
@@ -50,10 +57,7 @@ function CollectionForm() {
       blockchain: 'ethereum'
     },
     validationSchema,
-    onSubmit: values => {
-      //alert(JSON.stringify(values, null, 2))
-      router.push('/collections')
-    },
+    onSubmit: handleSubmit,
   });
 
   function handleFileChange(name) {
@@ -64,6 +68,34 @@ function CollectionForm() {
       }))
     }
   }
+
+  function handleSubmit(values) {
+    const data = {
+      ...values,
+      file: files.logo
+    }
+    router.push('/collections')
+    // updateCollection(data).unwrap()
+    //   .then(result => {
+    //
+    //   })
+    //   .catch(result => {
+    //
+    //   })
+  }
+
+  useEffect(function initCollection() {
+    if (collection) {
+      setValues({
+        name: collection.name,
+        url: collection.url || collection._id,
+        description: collection.description || '',
+        royalties: collection.royalties || 0,
+        walletAddress: collection.walletAddress || '',
+        blockchain: collection.blockchain || 'ethereum'
+      })
+    }
+  }, [collection, setValues])
 
   return (
     <form className={styles.root} onSubmit={formik.handleSubmit}>

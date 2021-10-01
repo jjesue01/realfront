@@ -9,12 +9,13 @@ function CollectionsPicker({ className, collections, onCreate, onChange }) {
   const collectionsList = collections.map((collection, index) => (
     <div
       role="button"
-      key={collection.id}
+      key={collection._id}
       className={cn(styles.collection, { [styles.active]: collection.checked })}
       onClick={handleClick(index)}>
       <div className={styles.imageWrapper}>
         <Image
-          src={typeof collection.url === 'string' ? collection.url : URL.createObjectURL(collection.url)}
+          //src={collection.logo}
+          src={'/hero-aparts-big.jpg'}
           layout="fill"
           objectFit="cover"
           alt="collection" />

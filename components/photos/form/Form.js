@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from './Form.module.sass'
 import { useFormik } from "formik";
 import * as Yup from 'yup'
@@ -16,6 +16,8 @@ import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
 import {useGetUserCollectionsQuery} from "../../../services/collections";
+import {useCreateListingMutation} from "../../../services/listings";
+import {decodeTags} from "../../../utils";
 
 const selectOptions = [
   {
@@ -25,21 +27,6 @@ const selectOptions = [
   {
     label: 'Bitcoin',
     value: 'bitcoin'
-  },
-]
-
-const collectionsData = [
-  {
-    id: 1,
-    name: 'New York, Manhattan',
-    url: '/hero-aparts-big.jpg',
-    checked: false
-  },
-  {
-    id: 2,
-    name: 'Collection name',
-    url: '/hero-aparts-big.jpg',
-    checked: false
   },
 ]
 
@@ -54,10 +41,11 @@ const validationSchema = Yup.object({
 
 function Form({ mode }) {
   const router = useRouter()
-  // const { data } = useGetUserCollectionsQuery()
+  const [createListing, { isLoading }] = useCreateListingMutation()
+  const { data: sourceCollections } = useGetUserCollectionsQuery()
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
-  const [collections, setCollections] = useState(collectionsData)
+  const [collections, setCollections] = useState([])
   const [jpgFile, setJpgFile] = useState(null)
   const [rawFile, setRawFile] = useState(null)
   const formik = useFormik({
@@ -70,15 +58,7 @@ function Form({ mode }) {
       blockchain: 'ethereum'
     },
     validationSchema,
-    onSubmit: values => {
-      if (jpgFile !== null && rawFile !== null){
-        if (mode === 'create') {
-          setIsCreated(true)
-        } else {
-          router.push(`/photos/${router.query.id}`)
-        }
-      }
-    },
+    onSubmit: handleSubmit
   });
 
   function handleCollectionsChange(data) {
@@ -105,14 +85,46 @@ function Form({ mode }) {
     setCollections(prevCollections => ([
       ...prevCollections,
       {
-        id: Date.now(),
-        url: item.logo,
-        name: item.name,
-        description: item.description,
-        checked: false
+        ...item,
+        checked: true
       }
     ]))
   }
+
+  function handleSubmit(values) {
+    if (jpgFile !== null && rawFile !== null){
+      if (mode === 'create') {
+        const data = {
+          ...values,
+          file: jpgFile,
+          raw: rawFile,
+          collections: collections.filter(({checked}) => checked).map(({ _id }) => _id),
+          tags: decodeTags(values.tags),
+          longitude: 1,
+          latitude: 2
+        }
+        setIsCreated(true)
+        // createListing(data).unwrap()
+        //   .then(result => {
+        //     console.log(result)
+        //     setIsCreated(true)
+        //   })
+        //   .catch(result => {
+        //     console.log(result)
+        //   })
+
+      } else {
+        router.push(`/photos/${router.query.id}`)
+      }
+    }
+  }
+  useEffect(function initCollections() {
+    if (sourceCollections?.length)
+      setCollections(sourceCollections.map(collection => ({
+        ...collection,
+        checked: false
+      })))
+  }, [sourceCollections])
 
   return (
     <div className={styles.root}>

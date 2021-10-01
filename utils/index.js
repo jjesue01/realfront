@@ -49,3 +49,23 @@ export function scrollToTop(top = 0) {
     behavior: "smooth"
   })
 }
+
+export function getIdToken() {
+  const auth = JSON.parse(localStorage.getItem('auth'))
+  return auth?.token
+}
+
+export function getUser() {
+  const auth = JSON.parse(localStorage.getItem('auth'))
+  return auth?.user
+}
+
+export function decodeTags(tagsStr) {
+  if (!tagsStr) return []
+  return tagsStr.split(', ').map(tag => tag.replace(/#/g, ''))
+}
+
+export function encodeTags(tagsArr) {
+  if (tagsArr.length === 0) return ''
+  return tagsArr.map(tag => '#' + tag).join(', ')
+}

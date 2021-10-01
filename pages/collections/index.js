@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ContextMenu from "../../components/context-menu/ContextMenu";
 import CreateCollection from "../../components/dialogs/create-collection/CreateCollection";
+import {useGetUserCollectionsQuery} from "../../services/collections";
 
 const data = [
   {
@@ -22,7 +23,7 @@ const data = [
 function Collection({ data }) {
   return (
     <div className={styles.collectionWrapper}>
-      <Link href={`/collections/${data.id}`} passHref>
+      <Link href={`/collections/${data._id}`} passHref>
         <a>
           <div className={styles.collection}>
             <div className={styles.mainImageWrapper}>
@@ -44,16 +45,17 @@ function Collection({ data }) {
           </div>
         </a>
       </Link>
-      <ContextMenu href={`/collections/edit/${data.id}`} className={styles.btnMenu} />
+      <ContextMenu href={`/collections/edit/${data._id}`} className={styles.btnMenu} />
     </div>
   )
 }
 
 function MyCollections() {
+  const { data: sourceCollections = [], refetch  } = useGetUserCollectionsQuery()
   const [collections, setCollections] = useState(data)
   const [createOpened, setCreateOpened] = useState(false)
 
-  const collectionsList = collections.map((collection, index) => (
+  const collectionsList = sourceCollections.map((collection, index) => (
     <Collection key={index} data={collection} />
   ))
 
@@ -62,10 +64,11 @@ function MyCollections() {
   }
 
   function handleCreate(collection) {
-    setCollections(prevCollections => ([
-      ...prevCollections,
-      collection
-    ]))
+    // setCollections(prevCollections => ([
+    //   ...prevCollections,
+    //   collection
+    // ]))
+    refetch()
   }
 
   return (

@@ -6,11 +6,11 @@ import ButtonCircle from "../../../button-circle/ButtonCircle";
 import PenIcon from '/public/icons/pen.svg'
 import {useRouter} from "next/router";
 
-function CollectionInfo({ itemsCount }) {
+function CollectionInfo({ itemsCount, collection }) {
   const router = useRouter()
 
   function handleEdit() {
-    router.push('/collections/edit/123')
+    router.push(`/collections/edit/${collection._id}`)
   }
 
   return (
@@ -25,7 +25,7 @@ function CollectionInfo({ itemsCount }) {
           </div>
           <div className={styles.collectionName}>
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
-              New York, Manhattan
+              { collection?.name }
             </Typography>
             <ButtonCircle onClick={handleEdit} className={styles.btnEdit}>
               <PenIcon />

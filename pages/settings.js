@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from '../styles/Settings.module.sass'
 import Head from "next/head";
 import Typography from "../components/Typography";
@@ -6,15 +6,18 @@ import Tabs from "../components/tabs/Tabs";
 import General from "../components/settings/general/General";
 import Button from "../components/button/Button";
 import Notifications from "../components/settings/notifications/Notifications";
+import {useGetCurrentUserQuery, useUpdateUserMutation} from "../services/auth";
 
 const tabs = ['general', 'notification settings']
 
 function Settings() {
+  const { data: user } = useGetCurrentUserQuery()
+  const [updateUser] = useUpdateUserMutation()
   const [currentTab, setCurrentTab] = useState(tabs[0])
   const [general, setGeneral] = useState({
-    walletAddress: '0xa364b0313123c06fb410b69a648b900a66008815',
-    username: 'John Doe',
-    email: 'test@gmail.com',
+    walletAddress: '',
+    username: '',
+    email: '',
     bio: ''
   })
   const [notifications, setNotifications] = useState({
@@ -51,8 +54,29 @@ function Settings() {
     e.preventDefault()
     e.stopPropagation()
 
-    alert('nice!')
+    const data = {
+      ...general
+    }
+
+    updateUser(data).unwrap()
+      .then(result => {
+
+      })
+      .catch(result => {
+
+      })
   }
+
+  useEffect(function initUser() {
+    if (user) {
+      setGeneral({
+        walletAddress: user.walletAddress,
+        username: user.username || '',
+        email: user.email || '',
+        bio: user.bio || ''
+      })
+    }
+  }, [user])
 
   return (
     <main className="page-container">

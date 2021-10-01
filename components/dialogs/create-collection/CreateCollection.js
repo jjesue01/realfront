@@ -36,24 +36,24 @@ function CreateCollection({ opened, onClose, onCreate }) {
   function handleSubmit(values) {
     if (logo !== null) {
 
-      // const formData = new FormData();
-      // formData.append("file", logo, logo.name);
-      // formData.append("name", values.name);
-      // formData.append("description", values.description);
-      //
-      // createCollection(formData).unwrap()
-      //   .then(result => {
-      //     console.log(result)
-      //   })
+      const data = {
+        logo,
+        ...values
+      }
 
+      createCollection(data).unwrap()
+        .then(result => {
+          onCreate({ ...result })
+          onClose()
+          formik.setValues({
+            name: '',
+            description: '',
+          })
+          setLogo(null)
+        })
+        .catch(() => {
 
-      onCreate({ ...values, logo })
-      onClose()
-      formik.setValues({
-        name: '',
-        description: '',
-      })
-      setLogo(null)
+        })
     }
   }
 

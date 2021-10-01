@@ -5,8 +5,12 @@ import CollectionFilters from "../../components/collections/details/filters/Coll
 import CollectionItems from "../../components/collections/details/collection-items/CollectionItems";
 import {data} from "../../components/profile/fixtures";
 import {getSortedArray} from "../../utils";
+import {useGetCollectionByIdQuery} from "../../services/collections";
+import {useRouter} from "next/router";
 
 function MyCollections() {
+  const { query: { id } } = useRouter()
+  const { data: collection  } = useGetCollectionByIdQuery(id)
   const [sourceData, setSourceData] = useState(data)
   const [filteredData, setFilteredData] = useState(data)
   const [filters, setFilters] = useState({
@@ -38,7 +42,7 @@ function MyCollections() {
       <Head>
         <title>HOMEJAB - Collection New York, Manhattan</title>
       </Head>
-      <CollectionInfo itemsCount={sourceData.length} />
+      <CollectionInfo collection={collection} itemsCount={sourceData.length} />
       <CollectionFilters filters={filters} onChange={handleChange} />
       <CollectionItems data={filteredData} />
     </main>
