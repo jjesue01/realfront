@@ -13,6 +13,9 @@ import {useRouter} from "next/router";
 import {useLoginMutation} from "../services/auth";
 import {useDispatch, useSelector} from "react-redux";
 import {logout, setCredentials} from "../features/auth/authSlice";
+import AddFunds from "./dialogs/add-funds/AddFunds";
+import DepositFromExchange from "./dialogs/deposit-from-exchange/DepositFromExchnage";
+import BuyWithCard from "./dialogs/buy-with-card/BuyWithCard";
 
 const marketplaceLinks = [
   {
@@ -73,6 +76,9 @@ function Layout({ children }) {
   const [login, { isLoading }] = useLoginMutation()
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
+  const [addFundsOpened, setAddFundsOpened] = useState(false)
+  const [depositOpened, setDepositOpened] = useState(false)
+  const [buyOpened, setBuyOpened] = useState(false)
   const [connectOpened, setConnectOpened] = useState(false)
   const [showFooter, setShowFooter] = useState(true)
 
@@ -103,6 +109,20 @@ function Layout({ children }) {
 
   function handleCreate() {
     router.push('/photos/create')
+  }
+
+  function toggleAddFunds() {
+    setAddFundsOpened(prevState => !prevState)
+  }
+
+  function toggleDeposit() {
+    toggleAddFunds()
+    setDepositOpened(prevState => !prevState)
+  }
+
+  function toggleBuy() {
+    toggleAddFunds()
+    setBuyOpened(prevState => !prevState)
   }
 
   useEffect(() => {
@@ -172,11 +192,23 @@ function Layout({ children }) {
       </header>
       {
         auth.token &&
-        <WalletMenu
-          user={auth.user}
-          opened={walletOpened}
-          onLogOut={handleLogout}
-          onClose={toggleWallet} />
+        <>
+          <WalletMenu
+            user={auth.user}
+            opened={walletOpened}
+            onLogOut={handleLogout}
+            onAddFunds={toggleAddFunds}
+            onClose={toggleWallet} />
+          <AddFunds
+            opened={addFundsOpened}
+            onExchange={toggleDeposit}
+            onBuy={toggleBuy}
+            onClose={toggleAddFunds} />
+          <DepositFromExchange
+            opened={depositOpened}
+            onClose={toggleDeposit} />
+          <BuyWithCard opened={buyOpened} onClose={toggleBuy} />
+        </>
       }
       {
         React.cloneElement(children, { toggleFooter })

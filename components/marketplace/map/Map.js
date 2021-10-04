@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from './Map.module.sass'
-import {GoogleMap, MarkerClusterer, InfoWindow, Marker, InfoBox, useJsApiLoader} from '@react-google-maps/api';
+import {GoogleMap, MarkerClusterer, InfoWindow, Marker, InfoBox, useLoadScript} from '@react-google-maps/api';
 import cn from "classnames";
 import {debounce} from "../../../utils";
 import Typography from "../../Typography";
@@ -11,6 +11,7 @@ const containerStyle = {
 };
 
 const center = { lat: -38.336358, lng: 151.435169 }
+const libraries = ['places']
 
 function Map({ items, onBoundsChange }) {
   const [map, setMap] = useState(null)
@@ -18,9 +19,9 @@ function Map({ items, onBoundsChange }) {
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(-1)
   const [markers, setMarkers] = useState([])
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA'
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
+    libraries
   })
 
   const onLoad = React.useCallback(function callback(map) {

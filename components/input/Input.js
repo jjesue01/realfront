@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import styles from './Input.module.sass'
 import cn from "classnames";
 
@@ -15,8 +15,10 @@ function Input({
   required,
   subLabel,
   urlPrefix,
-  usdRate = 3166.41
-}) {
+  usdRate = 3166.41,
+  ...otherProps
+}, ref) {
+
   const inputClassNames = cn(
     styles.input,
     {
@@ -49,6 +51,7 @@ function Input({
           <p className={styles.currency}>eth</p>
         }
         <input
+          ref={ref}
           id={name}
           className={inputClassNames}
           type={type === 'price' || type === 'url' ? 'text' : type}
@@ -56,7 +59,8 @@ function Input({
           value={value}
           required={required}
           onChange={onChange}
-          placeholder={placeholder}/>
+          placeholder={placeholder}
+          { ...otherProps } />
         { iconRight }
         {
           type === 'price' &&
@@ -67,4 +71,4 @@ function Input({
   )
 }
 
-export default Input
+export default React.forwardRef(Input)

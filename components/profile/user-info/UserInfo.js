@@ -7,10 +7,13 @@ import SettingsIcon from '/public/icons/settings.svg'
 import PenIcon from '/public/icons/pen.svg'
 import cn from "classnames";
 import {useRouter} from "next/router";
+import {getShortWalletAddress, getUser} from "../../../utils";
+import ButtonCopy from "../../button-copy/ButtonCopy";
 
 
 function UserInfo() {
   const router = useRouter()
+  const user = getUser()
 
   function goTo(path) {
     return function () {
@@ -65,11 +68,11 @@ function UserInfo() {
           </div>
           <div className={styles.walletIdContainer}>
             <Typography fontSize={16} lHeight={20} color={'#5F6774'}>
-              0xa364b0313...8815
+              { getShortWalletAddress(user.walletAddress) }
             </Typography>
-            <button className={styles.btnCopy}>
-              <CopyIcon />
-            </button>
+            <ButtonCopy
+              className={styles.btnCopy}
+              value={user.walletAddress} />
           </div>
           <Typography
             fontSize={16}

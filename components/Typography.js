@@ -1,4 +1,5 @@
 import React from 'react'
+import cn from "classnames";
 
 function Typography({
   tag = 'p',
@@ -16,7 +17,7 @@ function Typography({
   const Tag = tag
 
   return (
-      <Tag className="typography">
+      <Tag className={cn(className, 'typography')}>
         {children}
         <style jsx>{`
           .typography {

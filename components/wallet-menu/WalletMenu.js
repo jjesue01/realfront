@@ -8,8 +8,10 @@ import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
+import ButtonCopy from "../button-copy/ButtonCopy";
+import {getShortWalletAddress} from "../../utils";
 
-function WalletMenu({ opened, onLogOut, onClose, user }) {
+function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   const router = useRouter()
 
   function handleLogout() {
@@ -45,11 +47,11 @@ function WalletMenu({ opened, onLogOut, onClose, user }) {
           </div>
           <div className={styles.walletId}>
             <Typography fontSize={20} color={'#111'}>
-              { user.walletAddress.slice(0, 11) }...{ user.walletAddress.slice(-4) }
+              { getShortWalletAddress(user.walletAddress) }
             </Typography>
-            <button className={styles.btnCopy}>
-              <CopyIcon />
-            </button>
+            <ButtonCopy
+              className={styles.btnCopy}
+              value={user.walletAddress} />
           </div>
           <div className={styles.totalBalance}>
             <Typography fontSize={17} lHeight={21} color={'rgba(0, 0, 0, 0.5)'}>
@@ -67,7 +69,7 @@ function WalletMenu({ opened, onLogOut, onClose, user }) {
             margin={'17px 0 0'}>
             $0.00 USD
           </Typography>
-          <Button className={styles.btnAddFunds}>
+          <Button onClick={onAddFunds} className={styles.btnAddFunds}>
             Add Funds
           </Button>
           <ul className={styles.links}>

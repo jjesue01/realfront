@@ -3,6 +3,7 @@ import styles from './General.module.sass'
 import Input from "../../input/Input";
 import Textarea from "../../textarea/Textarea";
 import CopyIcon from "../../../public/icons/copy.svg";
+import ButtonCopy from "../../button-copy/ButtonCopy";
 
 function General({ onChange, values }) {
   return (
@@ -11,10 +12,9 @@ function General({ onChange, values }) {
         name="walletAddress"
         value={values.walletAddress}
         onChange={onChange}
+        readOnly
         iconRight={
-          <button className={styles.btnCopy} type="button">
-            <CopyIcon />
-          </button>
+          <ButtonCopy className={styles.btnCopy} value={values.walletAddress} />
         }
         label="Your wallet address" />
       <Input

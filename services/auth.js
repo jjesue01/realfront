@@ -6,7 +6,6 @@ export const authApi = createApi({
     baseQuery: fetchBaseQuery({
       baseUrl: process.env.NEXT_PUBLIC_API_URL,
       prepareHeaders: (headers, { getState }) => {
-        // By default, if we have a token in the store, let's use that for authenticated requests
         const token = getIdToken()
         if (token) {
           headers.set('authorization', `${token}`)
@@ -23,14 +22,14 @@ export const authApi = createApi({
       }),
       getCurrentUser: builder.query({
         query: () => {
-          return `/user/${getUser()?._id}`
+          return `/users/me`
         },
       }),
       updateUser: builder.mutation({
-        query: (data) => ({
-          url: `/user`,
+        query: ({ walletAddress, ...data }) => ({
+          url: `/users`,
           method: 'PATCH',
-          body: JSON.stringify(data)
+          body: data
         }),
       }),
   }),

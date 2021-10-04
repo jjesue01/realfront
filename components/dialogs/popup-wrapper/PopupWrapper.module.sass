@@ -42,7 +42,7 @@
   -webkit-overflow-scrolling: touch
   overflow-y: auto
 .btnClose
-  background: none
+  background-color: #fff
   outline: none
   width: 50px
   height: 50px
@@ -53,6 +53,9 @@
   right: 24px
   z-index: 22
   cursor: pointer
+  transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    background-color: #F3F7F8
   &::after, &::before
     content: ""
     height: 17px

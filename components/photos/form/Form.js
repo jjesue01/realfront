@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from './Form.module.sass'
 import { useFormik } from "formik";
 import * as Yup from 'yup'
@@ -18,6 +18,7 @@ import {useRouter} from "next/router";
 import {useGetUserCollectionsQuery} from "../../../services/collections";
 import {useCreateListingMutation} from "../../../services/listings";
 import {decodeTags} from "../../../utils";
+import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 
 const selectOptions = [
   {
@@ -38,9 +39,13 @@ const validationSchema = Yup.object({
   tags: Yup.string(),
   blockchain: Yup.string().required()
 })
-
+const libraries = ['places']
 function Form({ mode }) {
   const router = useRouter()
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
+    libraries
+  })
   const [createListing, { isLoading }] = useCreateListingMutation()
   const { data: sourceCollections } = useGetUserCollectionsQuery()
   const [createOpened, setCreateOpened] = useState(false)
@@ -60,6 +65,8 @@ function Form({ mode }) {
     validationSchema,
     onSubmit: handleSubmit
   });
+  const inputRef = useRef()
+  const autocompleteRef = useRef()
 
   function handleCollectionsChange(data) {
     setCollections([...data])
@@ -98,26 +105,32 @@ function Form({ mode }) {
           ...values,
           file: jpgFile,
           raw: rawFile,
-          collections: collections.filter(({checked}) => checked).map(({ _id }) => _id),
+          collections: collections.filter(({checked}) => checked).map(({ _id }) => _id).join(','),
           tags: decodeTags(values.tags),
           longitude: 1,
           latitude: 2
         }
-        setIsCreated(true)
-        // createListing(data).unwrap()
-        //   .then(result => {
-        //     console.log(result)
-        //     setIsCreated(true)
-        //   })
-        //   .catch(result => {
-        //     console.log(result)
-        //   })
+        //setIsCreated(true)
+        createListing(data).unwrap()
+          .then(result => {
+            console.log(result)
+            setIsCreated(true)
+          })
+          .catch(result => {
+            console.log(result)
+          })
 
       } else {
         router.push(`/photos/${router.query.id}`)
       }
     }
   }
+
+  function handlePlaceChange() {
+    let addressObject = autocompleteRef.current.getPlace()
+    console.log(addressObject)
+  }
+
   useEffect(function initCollections() {
     if (sourceCollections?.length)
       setCollections(sourceCollections.map(collection => ({
@@ -125,6 +138,13 @@ function Form({ mode }) {
         checked: false
       })))
   }, [sourceCollections])
+
+  useEffect(function initAutocomplete() {
+    if (isLoaded) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {})
+      autocompleteRef.current.addListener("place_changed", handlePlaceChange)
+    }
+  }, [isLoaded])
 
   return (
     <div className={styles.root}>
@@ -221,6 +241,7 @@ function Form({ mode }) {
           required
           label="Location*" />
         <Input
+          ref={inputRef}
           className={styles.input}
           name="address"
           value={formik.values.address}

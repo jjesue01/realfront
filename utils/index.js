@@ -1,3 +1,6 @@
+import Typography from "../components/Typography";
+import React from "react";
+
 export function debounce(func, wait, immediate) {
   let timeout;
 
@@ -62,10 +65,14 @@ export function getUser() {
 
 export function decodeTags(tagsStr) {
   if (!tagsStr) return []
-  return tagsStr.split(', ').map(tag => tag.replace(/#/g, ''))
+  return tagsStr.split(', ').map(tag => tag.replace(/#/g, '').join(','))
 }
 
 export function encodeTags(tagsArr) {
   if (tagsArr.length === 0) return ''
   return tagsArr.map(tag => '#' + tag).join(', ')
+}
+
+export function getShortWalletAddress(walletAddress) {
+  return `${walletAddress.slice(0, 11)}...${walletAddress.slice(-4)}`
 }

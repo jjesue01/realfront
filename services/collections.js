@@ -23,7 +23,7 @@ export const collectionsApi = createApi({
         formData.append("description", data.description);
 
         return {
-          url: `/collection`,
+          url: `/collections`,
           method: 'POST',
           body: formData
         }
@@ -38,7 +38,7 @@ export const collectionsApi = createApi({
         formData.append("description", data.description);
 
         return {
-          url: `/collection/${data._id}`,
+          url: `/collections/${data._id}`,
           method: 'PATCH',
           body: formData
         }

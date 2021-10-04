@@ -55,7 +55,8 @@ function Settings() {
     e.stopPropagation()
 
     const data = {
-      ...general
+      ...general,
+      notifications
     }
 
     updateUser(data).unwrap()
