@@ -5,6 +5,7 @@ import Typography from "../../../Typography";
 import ButtonCircle from "../../../button-circle/ButtonCircle";
 import PenIcon from '/public/icons/pen.svg'
 import {useRouter} from "next/router";
+import BannerBackground from "../../../banner-background/BannerBackground";
 
 function CollectionInfo({ itemsCount, collection }) {
   const router = useRouter()
@@ -16,12 +17,24 @@ function CollectionInfo({ itemsCount, collection }) {
   return (
     <div className={styles.root}>
       <div className={styles.bg}>
-        <Image src="/collection-bg.jpg" layout="fill" objectFit="cover" alt={'New York'} />
+        {
+          !!collection?.bannerImage ?
+            <Image src={collection?.bannerImage} layout="fill" objectFit="cover" alt={collection.name} />
+            :
+            <BannerBackground />
+        }
       </div>
       <div className="container">
         <div className={styles.content}>
           <div className={styles.logoWrapper}>
-            <Image src="/collection-logo.jpg" layout="fill" objectFit="cover" alt={'New York'} />
+            {
+              collection?.logoImage &&
+              <Image
+                src={collection.logoImage}
+                layout="fill"
+                objectFit="cover"
+                alt={collection?.name} />
+            }
           </div>
           <div className={styles.collectionName}>
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>

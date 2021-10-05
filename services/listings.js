@@ -24,12 +24,12 @@ export const listingsApi = createApi({
         formData.append("description", data.description);
         formData.append("location", data.location);
         formData.append("address", data.address);
-        // formData.append("collections", JSON.stringify(data.collections));
-        // formData.append("tags", JSON.stringify(data.collections));
-        //formData.append("blockchain", data.blockchain);
+        formData.append("collections", data.collections);
+        formData.append("tags", data.tags);
+        formData.append("blockchain", data.blockchain);
         formData.append("longitude", data.longitude);
         formData.append("latitude", data.latitude);
-        console.log(data)
+
         return {
           url: `/listings`,
           method: 'POST',
@@ -39,14 +39,18 @@ export const listingsApi = createApi({
     }),
     getListings: builder.query({
       query: () => '/listings',
-      transformResponse(baseQueryReturnValue, meta) {
-        return baseQueryReturnValue.docs
-      }
+      // transformResponse(baseQueryReturnValue, meta) {
+      //   return baseQueryReturnValue.docs
+      // }
     }),
+    getListingById: builder.query({
+      query: id => `/listings/${id}`
+    })
   }),
 })
 
 export const {
   useCreateListingMutation,
-  useGetUserListingsQuery
+  useGetListingsQuery,
+  useGetListingByIdQuery
 } = listingsApi

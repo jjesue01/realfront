@@ -9,14 +9,16 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
+import {getUser} from "../../../../utils";
+import {useSelector} from "react-redux";
 
-function PhotoInfo() {
+function PhotoInfo({ listing }) {
   const router = useRouter()
   const { id } = router.query
   const [isFavorite, setIsFavorite] = useState(false)
   const [menuOpened, setMenuOpened] = useState(false)
-
-  const ownItem = id === '3'
+  const user = useSelector(state => state.auth.user)
+  const ownItem = listing?.creator?.ID === user?._id
 
   function toggleFavorite() {
     setIsFavorite(prevState => !prevState)
@@ -37,7 +39,10 @@ function PhotoInfo() {
       <div className="container">
         <div className={styles.row}>
           <div className={styles.imageWrapper}>
-            <Image src={'/hero-aparts-big.jpg'} layout="fill" objectFit="cover" alt="Photo item" />
+            {
+              listing &&
+              <Image src={listing.filePath} layout="fill" objectFit="cover" alt={listing.filePath} />
+            }
           </div>
           <div className={styles.content}>
             <div className={styles.mainInfo}>
@@ -67,7 +72,7 @@ function PhotoInfo() {
                       lHeight={15}
                       color={'#878D97'}
                       margin={'0 0 0 11px'}>
-                      24 views
+                      {listing?.views} views
                     </Typography>
                   </div>
                   <div className={styles.actions}>
@@ -79,7 +84,7 @@ function PhotoInfo() {
                         <HeartFilledIcon className={styles.iconHeart} />
                       </span>
                       <Typography tag="span" fontWeight={600} fontSize={12}>
-                        6
+                        { listing?.likes }
                       </Typography>
                     </button>
                     <ContextMenuWrapper
@@ -110,7 +115,7 @@ function PhotoInfo() {
                 fontWeight={600}
                 fontSize={28}
                 lHeight={34}>
-                Item name
+                { listing?.name }
               </Typography>
               {
                 !ownItem ?
@@ -166,19 +171,18 @@ function PhotoInfo() {
                   lHeight={23}
                   margin={'10px 0 0'}
                   color={'rgba(55, 65, 81, 0.8)'}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras. Sollicitudin nulla orci vitae ut turpis vitae neque.
+                  { listing?.description }
                 </Typography>
               </div>
               <div className={styles.tags}>
-                <span className={styles.tag}>
-                  New York
-                </span>
-                <span className={styles.tag}>
-                  Tag 1
-                </span>
-                <span className={styles.tag}>
-                  Tag 2
-                </span>
+                {
+                  listing?.tags?.length &&
+                    listing.tags.map((tag, i) => (
+                      <span key={tag + i} className={styles.tag}>
+                        {tag}
+                      </span>
+                    ))
+                }
               </div>
             </div>
             <div className={styles.details}>
@@ -196,7 +200,7 @@ function PhotoInfo() {
                     <p>Location</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>New York, NY 10003, USA</p>
+                    <p>{ listing?.location }</p>
                   </div>
                 </div>
                 <div className={styles.field}>
@@ -204,7 +208,7 @@ function PhotoInfo() {
                     <p>Address</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>125 E 12th St</p>
+                    <p>{ listing?.address }</p>
                   </div>
                 </div>
                 <div className={styles.field}>
@@ -228,7 +232,7 @@ function PhotoInfo() {
                     <p>Blockchain</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>Ethereum</p>
+                    <p>{ listing?.blockchain }</p>
                   </div>
                 </div>
               </div>

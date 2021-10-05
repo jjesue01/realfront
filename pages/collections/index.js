@@ -27,11 +27,19 @@ function Collection({ data }) {
         <a>
           <div className={styles.collection}>
             <div className={styles.mainImageWrapper}>
-              <Image src="/hero-aparts-big.jpg" layout="fill" objectFit="cover" alt={data.name} />
+              <Image
+                src={!!data.featureImage ? data.featureImage : data.logoImage}
+                layout="fill"
+                objectFit="cover"
+                alt={data.name} />
             </div>
             <div className={styles.collectionContent}>
               <div className={styles.logoWrapper}>
-                <Image src="/hero-aparts-small.jpg" layout="fill" objectFit="cover" alt={data.name} />
+                <Image
+                  src={data.logoImage}
+                  layout="fill"
+                  objectFit="cover"
+                  alt={data.name} />
               </div>
               <div className={styles.collectionName}>
                 <Typography fontSize={16} fontWeight={600} lHeight={20}>

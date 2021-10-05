@@ -14,6 +14,7 @@ import Select from "../../../components/select/Select";
 import Switcher from "../../../components/switcher/Switcher";
 import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
+import {useGetListingByIdQuery} from "../../../services/listings";
 
 const scheduleOptions = [
   {
@@ -47,6 +48,7 @@ function SellItem() {
   const router = useRouter()
   const { id } = router.query
 
+  const { data: listing } = useGetListingByIdQuery(id)
   const [isDone, setIsDone] = useState(false)
   const [switchers, setSwitchers] = useState({
     schedule: false,
@@ -93,7 +95,14 @@ function SellItem() {
                   <ArrowShortIcon />
                 </div>
                 <div className={styles.collectionImageContainer}>
-                  <Image src="/collection-logo.jpg" layout="fill" objectFit="cover" alt="New York, Manhattan" />
+                  {
+                    listing &&
+                    <Image
+                      src={listing.filePath}
+                      layout="fill"
+                      objectFit="cover"
+                      alt={listing.name} />
+                  }
                 </div>
                 <div className={styles.collectionInfo}>
                   <Typography
@@ -109,7 +118,7 @@ function SellItem() {
                     lHeight={17}
                     color={'#111111'}
                     margin={'8px 0 0'}>
-                    Item name
+                    { listing?.name }
                   </Typography>
                 </div>
               </a>

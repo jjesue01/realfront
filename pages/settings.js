@@ -76,6 +76,9 @@ function Settings() {
         email: user.email || '',
         bio: user.bio || ''
       })
+      setNotifications({
+        ...user.notifications
+      })
     }
   }, [user])
 

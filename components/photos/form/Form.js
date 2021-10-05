@@ -16,9 +16,10 @@ import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
 import {useGetUserCollectionsQuery} from "../../../services/collections";
-import {useCreateListingMutation} from "../../../services/listings";
-import {decodeTags} from "../../../utils";
+import {listingsApi, useCreateListingMutation} from "../../../services/listings";
+import {decodeTags, encodeTags, getImageUrl} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
+import {useDispatch} from "react-redux";
 
 const selectOptions = [
   {
@@ -41,10 +42,12 @@ const validationSchema = Yup.object({
 })
 const libraries = ['places']
 function Form({ mode }) {
+  const dispatch = useDispatch()
   const router = useRouter()
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
-    libraries
+    libraries,
+    language: 'en'
   })
   const [createListing, { isLoading }] = useCreateListingMutation()
   const { data: sourceCollections } = useGetUserCollectionsQuery()
@@ -53,7 +56,10 @@ function Form({ mode }) {
   const [collections, setCollections] = useState([])
   const [jpgFile, setJpgFile] = useState(null)
   const [rawFile, setRawFile] = useState(null)
-  const formik = useFormik({
+  const [location, setLocation] = useState({})
+  const [id, setId] = useState(null)
+  const [ listingName, setListingName] = useState('')
+  const { setValues, ...formik } = useFormik({
     initialValues: {
       name: '',
       location: '',
@@ -85,7 +91,7 @@ function Form({ mode }) {
   }
 
   function handleCloseCongratulations() {
-    router.push('/collections')
+    router.push(`/photos/${id}`)
   }
 
   function handleCreateCollection(item) {
@@ -107,13 +113,12 @@ function Form({ mode }) {
           raw: rawFile,
           collections: collections.filter(({checked}) => checked).map(({ _id }) => _id).join(','),
           tags: decodeTags(values.tags),
-          longitude: 1,
-          latitude: 2
+          ...location
         }
-        //setIsCreated(true)
         createListing(data).unwrap()
           .then(result => {
             console.log(result)
+            setId(result._id)
             setIsCreated(true)
           })
           .catch(result => {
@@ -126,11 +131,6 @@ function Form({ mode }) {
     }
   }
 
-  function handlePlaceChange() {
-    let addressObject = autocompleteRef.current.getPlace()
-    console.log(addressObject)
-  }
-
   useEffect(function initCollections() {
     if (sourceCollections?.length)
       setCollections(sourceCollections.map(collection => ({
@@ -139,12 +139,42 @@ function Form({ mode }) {
       })))
   }, [sourceCollections])
 
+  useEffect(function initListing() {
+    if (mode === 'edit' && router.query.id) {
+      dispatch(listingsApi.endpoints.getListingById.initiate(router.query.id))
+        .then(({ data }) => {
+        setListingName(data.name)
+          setValues({
+            name: data.name,
+            location: data.location,
+            address: data.address,
+            description: data.description,
+            tags: encodeTags(data.tags),
+            blockchain: data.blockchain
+          })
+      })
+    }
+  }, [mode, router.query.id, dispatch, setValues])
+
   useEffect(function initAutocomplete() {
     if (isLoaded) {
+      const handlePlaceChange = () => {
+        const { geometry, formatted_address } = autocompleteRef.current.getPlace()
+
+        setValues(prevValues => ({
+          ...prevValues,
+          address: formatted_address
+        }))
+        setLocation({
+          latitude: geometry.location.lat(),
+          longitude: geometry.location.lng()
+        })
+      }
+
       autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {})
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
-  }, [isLoaded])
+  }, [isLoaded, setValues])
 
   return (
     <div className={styles.root}>
@@ -156,7 +186,7 @@ function Form({ mode }) {
           lHeight={44}>
           {
             mode === 'edit' ?
-              'Edit 366 Madison Ave'
+              `Edit ${listingName}`
               :
               'Create new item'
           }
@@ -192,7 +222,7 @@ function Form({ mode }) {
                     </div>
                     :
                     <div className={styles.imageContainer}>
-                      <Image src={URL.createObjectURL(jpgFile)} layout="fill" objectFit={'cover'} alt="nft item" />
+                      <Image src={getImageUrl(jpgFile)} layout="fill" objectFit={'cover'} alt="nft item" />
                       <ButtonCircle className={styles.btnEdit}>
                         <PenIcon />
                       </ButtonCircle>

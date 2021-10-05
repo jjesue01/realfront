@@ -14,11 +14,10 @@ function CollectionsPicker({ className, collections, onCreate, onChange }) {
       onClick={handleClick(index)}>
       <div className={styles.imageWrapper}>
         <Image
-          //src={collection.logo}
-          src={'/hero-aparts-big.jpg'}
+          src={collection.logoImage}
           layout="fill"
           objectFit="cover"
-          alt="collection" />
+          alt={collection.name} />
       </div>
       <Typography fontWeight={600} fontSize={14}>
         { collection.name }

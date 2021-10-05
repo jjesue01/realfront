@@ -21,7 +21,8 @@ function Map({ items, onBoundsChange }) {
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
-    libraries
+    libraries,
+    language: 'en'
   })
 
   const onLoad = React.useCallback(function callback(map) {

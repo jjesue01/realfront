@@ -64,8 +64,8 @@ export function getUser() {
 }
 
 export function decodeTags(tagsStr) {
-  if (!tagsStr) return []
-  return tagsStr.split(', ').map(tag => tag.replace(/#/g, '').join(','))
+  if (!tagsStr) return ''
+  return tagsStr.split(', ').map(tag => tag.replace(/#/g, '')).join(',')
 }
 
 export function encodeTags(tagsArr) {
@@ -75,4 +75,20 @@ export function encodeTags(tagsArr) {
 
 export function getShortWalletAddress(walletAddress) {
   return `${walletAddress.slice(0, 11)}...${walletAddress.slice(-4)}`
+}
+
+export function buildFormData(data) {
+  const formData = new FormData()
+
+  for (const [key, value] of Object.entries(data)) {
+    const keyLowerCase = key.toLowerCase()
+    if (keyLowerCase.includes('image') || keyLowerCase.includes('file') || keyLowerCase.includes('raw')) {
+      if (typeof value?.name === 'string')
+        formData.append(key, value, value.name)
+    } else {
+      formData.append(key, value)
+    }
+  }
+
+  return formData
 }

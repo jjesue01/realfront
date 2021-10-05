@@ -17,6 +17,7 @@ import Pagination from "../components/pagination/Pagination";
 import {getSortedArray, scrollToTop} from "../utils";
 import {data} from "../components/profile/fixtures";
 import {useRouter} from "next/router";
+import {useGetListingsQuery} from "../services/listings";
 
 const sortOptions = [
   {
@@ -33,6 +34,7 @@ const sourceItems = [...data]
 
 function Marketplace({ toggleFooter }) {
   const router = useRouter()
+  const { data: listings } = useGetListingsQuery()
   const [sourceData, setSourceData] = useState(sourceItems)
   const [viewportData, setViewportData] = useState(sourceItems)
   const [filteredData, setFilteredData] = useState(sourceItems)

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {getIdToken} from "../utils";
+import {buildFormData, getIdToken} from "../utils";
 
 export const collectionsApi = createApi({
   reducerPath: 'collectionsApi',
@@ -18,7 +18,7 @@ export const collectionsApi = createApi({
       query: (data) => {
 
         const formData = new FormData();
-        formData.append("file", data.logo, data.logo.name);
+        formData.append("logoImage", data.logo, data.logo.name);
         formData.append("name", data.name);
         formData.append("description", data.description);
 
@@ -30,17 +30,22 @@ export const collectionsApi = createApi({
       },
     }),
     updateCollection: builder.mutation({
-      query: (data) => {
+      query: ({ id, ...data }) => {
 
-        const formData = new FormData();
-        formData.append("file", data.logo, data.logo.name);
-        formData.append("name", data.name);
-        formData.append("description", data.description);
+        const formData = buildFormData(data)
 
         return {
-          url: `/collections/${data._id}`,
+          url: `/collections/${id}`,
           method: 'PATCH',
           body: formData
+        }
+      },
+    }),
+    deleteCollection: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/collections/${id}`,
+          method: 'DELETE'
         }
       },
     }),
@@ -59,6 +64,7 @@ export const collectionsApi = createApi({
 export const {
   useCreateCollectionMutation,
   useUpdateCollectionMutation,
+  useDeleteCollectionMutation,
   useGetUserCollectionsQuery,
   useGetCollectionByIdQuery
 } = collectionsApi

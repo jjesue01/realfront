@@ -13,6 +13,7 @@ import Select from "../../select/Select";
 import Button from "../../button/Button";
 import {useRouter} from "next/router";
 import {
+  useDeleteCollectionMutation,
   useGetCollectionByIdQuery,
   useUpdateCollectionMutation
 } from "../../../services/collections";
@@ -33,17 +34,17 @@ const validationSchema = Yup.object({
   url: Yup.string(),
   description: Yup.string(),
   royalties: Yup.number().positive().min(0).max(100),
-  walletAddress: Yup.string(),
+  payoutAddress: Yup.string(),
   blockchain: Yup.string().required()
 })
 
 function CollectionForm() {
   const router = useRouter()
-  const { query: { id } } = useRouter()
   const [updateCollection] = useUpdateCollectionMutation()
+  const [deleteCollection] = useDeleteCollectionMutation()
   const { data: collection  } = useGetCollectionByIdQuery(id)
   const [files, setFiles] = useState({
-    logo: '/collection-logo.jpg',
+    logo: null,
     featured: null,
     banner: null
   })
@@ -53,7 +54,7 @@ function CollectionForm() {
       url: '',
       description: '',
       royalties: '',
-      walletAddress: '',
+      payoutAddress: '',
       blockchain: 'ethereum'
     },
     validationSchema,
@@ -72,27 +73,44 @@ function CollectionForm() {
   function handleSubmit(values) {
     const data = {
       ...values,
-      file: files.logo
+      logoImage: files.logo,
+      featureImage: files.featured,
+      bannerImage: files.banner,
+      id
     }
-    router.push('/collections')
-    // updateCollection(data).unwrap()
-    //   .then(result => {
-    //
-    //   })
-    //   .catch(result => {
-    //
-    //   })
+    updateCollection(data).unwrap()
+      .then(result => {
+        router.push('/collections')
+      })
+      .catch(result => {
+
+      })
+  }
+
+  function handleDelete() {
+    deleteCollection(id).unwrap()
+      .then(() => {
+        router.push('/collections')
+      })
+      .catch(() => {
+
+      })
   }
 
   useEffect(function initCollection() {
     if (collection) {
       setValues({
         name: collection.name,
-        url: collection.url || collection._id,
+        url: collection.url,
         description: collection.description || '',
-        royalties: collection.royalties || 0,
-        walletAddress: collection.walletAddress || '',
+        royalties: collection.royalties || '',
+        payoutAddress: collection.payoutAddress || '',
         blockchain: collection.blockchain || 'ethereum'
+      })
+      setFiles({
+        logo: collection.logoImage,
+        featured: collection.featureImage || null,
+        banner: collection.bannerImage || null,
       })
     }
   }, [collection, setValues])
@@ -223,8 +241,8 @@ function CollectionForm() {
         label="Royalties" />
       <Input
         className={styles.formField}
-        name="walletAddress"
-        value={formik.values.walletAddress}
+        name="payoutAddress"
+        value={formik.values.payoutAddress}
         onChange={formik.handleChange}
         placeholder="Enter an address, e.g. 0x1ef4... or destination.eth"
         label="Your payout wallet address" />
@@ -239,7 +257,7 @@ function CollectionForm() {
         <Button className={styles.btnSave} htmlType="submit">
           Save
         </Button>
-        <Button className={styles.btnDelete} type="outlined">
+        <Button onClick={handleDelete} className={styles.btnDelete} type="outlined">
           Delete collection
         </Button>
       </div>
