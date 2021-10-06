@@ -15,6 +15,8 @@ import Switcher from "../../../components/switcher/Switcher";
 import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
 import {useGetListingByIdQuery} from "../../../services/listings";
+import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
+//import {mint} from "../../../services/contract";
 
 const scheduleOptions = [
   {
@@ -47,9 +49,9 @@ const validationSchema = Yup.object({
 function SellItem() {
   const router = useRouter()
   const { id } = router.query
-
   const { data: listing } = useGetListingByIdQuery(id)
   const [isDone, setIsDone] = useState(false)
+  const [lowBalance, setLowBalance] = useState(false)
   const [switchers, setSwitchers] = useState({
     schedule: false,
     private: false
@@ -64,9 +66,7 @@ function SellItem() {
       buyerAddress: ''
     },
     validationSchema,
-    onSubmit: values => {
-      setIsDone(true)
-    },
+    onSubmit: handleSubmit
   });
 
   function handleSwitcherChange({ target: { name, value } }) {
@@ -77,14 +77,27 @@ function SellItem() {
   }
 
   function handleCloseCongratulations() {
-    setIsDone(false)
     router.push(`/photos/${id}`)
+  }
+
+  function toggleSellSteps() {
+    setLowBalance(prevState => !prevState)
+  }
+
+  function handleDone() {
+    toggleSellSteps()
+    setIsDone(true)
+  }
+
+  async function handleSubmit(values) {
+    // const result = await mint(values.royalties)
+    // console.log(result)
   }
 
   return (
     <main className="page-container">
       <Head>
-        <title>HOMEJAB - Sell 366 Madison Ave</title>
+        <title>HOMEJAB - Sell {listing?.name}</title>
       </Head>
       <div className="border-wrapper">
         <div className={styles.nav}>
@@ -216,9 +229,13 @@ function SellItem() {
           </div>
         </div>
       </div>
+      <SellSteps
+        opened={lowBalance}
+        onClose={toggleSellSteps}
+        onDone={handleDone} />
       <DoneCongratulation
-        imageUrl={'/hero-aparts-big.jpg'}
-        message={`Great! You just set on sale - Item Name`}
+        imageUrl={listing?.filePath}
+        message={`Great! You just set on sale - ${listing?.name}`}
         opened={isDone}
         onClose={handleCloseCongratulations} />
     </main>

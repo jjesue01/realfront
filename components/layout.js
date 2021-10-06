@@ -16,6 +16,7 @@ import {logout, setCredentials} from "../features/auth/authSlice";
 import AddFunds from "./dialogs/add-funds/AddFunds";
 import DepositFromExchange from "./dialogs/deposit-from-exchange/DepositFromExchnage";
 import BuyWithCard from "./dialogs/buy-with-card/BuyWithCard";
+import Web3 from "web3";
 
 const marketplaceLinks = [
   {
@@ -141,6 +142,13 @@ function Layout({ children }) {
   useEffect(function checkAuth() {
     if (localStorage) {
       const auth = JSON.parse(localStorage.getItem('auth'))
+
+      if (window.ethereum) {
+        const accounts =  window.ethereum.request({ method: 'eth_requestAccounts' })
+          .then(() => {
+            window.web3 = new Web3(window.ethereum);
+          });
+      }
 
       if (auth?.token)
         dispatch(setCredentials(auth))

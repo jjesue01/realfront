@@ -49,10 +49,10 @@ const tableData = [
   },
 ]
 
-function TradingHistory() {
+function TradingHistory({ data = [] }) {
   const [opened, setOpened] = useState(false);
 
-  const rowsList = tableData.map((item, index) => (
+  const rowsList = data.map((item, index) => (
     <div key={index} className={styles.tableItem}>
       <div className={cn(styles.col, styles.colEvent)}>
         <p>{ item.event }</p>

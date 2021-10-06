@@ -4,14 +4,14 @@ import cn from "classnames";
 import Typography from "../../../Typography";
 import Image from "next/image";
 
-function CollectionsPicker({ className, collections, onCreate, onChange }) {
+function CollectionsPicker({ className, name, value, collections = [], onCreate, onChange }) {
 
   const collectionsList = collections.map((collection, index) => (
     <div
       role="button"
       key={collection._id}
-      className={cn(styles.collection, { [styles.active]: collection.checked })}
-      onClick={handleClick(index)}>
+      className={cn(styles.collection, { [styles.active]: collection._id === value })}
+      onClick={handleClick(collection._id)}>
       <div className={styles.imageWrapper}>
         <Image
           src={collection.logoImage}
@@ -25,11 +25,9 @@ function CollectionsPicker({ className, collections, onCreate, onChange }) {
     </div>
   ))
 
-  function handleClick(index) {
+  function handleClick(id) {
     return function () {
-      const updatedCollections = [...collections];
-      updatedCollections[index].checked = !updatedCollections[index].checked
-      onChange(updatedCollections)
+      onChange({ target: { name, value: id !== value ? id : '' } })
     }
   }
 

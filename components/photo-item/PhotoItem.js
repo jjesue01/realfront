@@ -66,17 +66,20 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
                 </Typography>
               </div>
               <div className={styles.priceContainer}>
-                <div className={styles.price}>
-                  <Typography fontSize={12} color={'#878D97'} margin={'0 16px 0 0'}>
-                    Price
-                  </Typography>
-                  <div className={styles.ethereum}>
-                    <Image src="/icons/ethereum.svg" width={18} height={18} alt="ethereum.svg" />
-                    <Typography fontWeight={600} fontSize={16} margin={'0 0 0 8px'}>
-                      { data.price }
+                {
+                  data.price &&
+                  <div className={styles.price}>
+                    <Typography fontSize={12} color={'#878D97'} margin={'0 16px 0 0'}>
+                      Price
                     </Typography>
+                    <div className={styles.ethereum}>
+                      <Image src="/icons/ethereum.svg" width={18} height={18} alt="ethereum.svg" />
+                      <Typography fontWeight={600} fontSize={16} margin={'0 0 0 8px'}>
+                        { data.price }
+                      </Typography>
+                    </div>
                   </div>
-                </div>
+                }
               </div>
             </div>
           </div>

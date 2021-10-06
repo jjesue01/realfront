@@ -7,12 +7,14 @@ import {data} from "../../components/profile/fixtures";
 import {getSortedArray} from "../../utils";
 import {useGetCollectionByIdQuery} from "../../services/collections";
 import {useRouter} from "next/router";
+import {useGetListingsQuery} from "../../services/listings";
 
 function MyCollections() {
   const { query: { id } } = useRouter()
   const { data: collection  } = useGetCollectionByIdQuery(id)
-  const [sourceData, setSourceData] = useState(data)
-  const [filteredData, setFilteredData] = useState(data)
+  const { data: listings } = useGetListingsQuery({ collection: id })
+  const [sourceData, setSourceData] = useState([])
+  const [filteredData, setFilteredData] = useState([])
   const [filters, setFilters] = useState({
     searchValue: '',
     sortBy: 'price_low'
@@ -36,6 +38,12 @@ function MyCollections() {
     items = getSortedArray(items, filters.sortBy)
     setFilteredData([...items])
   }, [filters, sourceData])
+
+  useEffect(function initListings() {
+    if (listings?.docs?.length !== undefined) {
+      setSourceData([...listings.docs])
+    }
+  }, [listings])
 
   return (
     <main className="page-container">

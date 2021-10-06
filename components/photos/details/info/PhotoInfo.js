@@ -9,7 +9,7 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import {getUser} from "../../../../utils";
+import {getShortWalletAddress, getUser} from "../../../../utils";
 import {useSelector} from "react-redux";
 
 function PhotoInfo({ listing }) {
@@ -60,7 +60,7 @@ function PhotoInfo({ listing }) {
                     fontSize={14}
                     lHeight={17}
                     margin={'8px 0 0'}>
-                    New York, Manhattan
+                    { listing?.collections?.name }
                   </Typography>
                 </div>
                 <div className={styles.stats}>
@@ -176,8 +176,8 @@ function PhotoInfo({ listing }) {
               </div>
               <div className={styles.tags}>
                 {
-                  listing?.tags?.length &&
-                    listing.tags.map((tag, i) => (
+                  listing?.tags?.length !== 0 &&
+                    listing?.tags?.map((tag, i) => (
                       <span key={tag + i} className={styles.tag}>
                         {tag}
                       </span>
@@ -211,22 +211,28 @@ function PhotoInfo({ listing }) {
                     <p>{ listing?.address }</p>
                   </div>
                 </div>
-                <div className={styles.field}>
-                  <div className={cn(styles.detailsCol, styles.colName)}>
-                    <p>Contract Address</p>
+                {
+                  listing?.contractAddress &&
+                  <div className={styles.field}>
+                    <div className={cn(styles.detailsCol, styles.colName)}>
+                      <p>Contract Address</p>
+                    </div>
+                    <div className={cn(styles.detailsCol, styles.colContent)}>
+                      <p>{getShortWalletAddress(listing.walletAddress)}</p>
+                    </div>
                   </div>
-                  <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>0x6d45...0751</p>
+                }
+                {
+                  listing?.tokenID &&
+                  <div className={styles.field}>
+                    <div className={cn(styles.detailsCol, styles.colName)}>
+                      <p>Token ID</p>
+                    </div>
+                    <div className={cn(styles.detailsCol, styles.colContent)}>
+                      <p>{listing?.tokenID}</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.field}>
-                  <div className={cn(styles.detailsCol, styles.colName)}>
-                    <p>Token ID</p>
-                  </div>
-                  <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>4352168</p>
-                  </div>
-                </div>
+                }
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
                     <p>Blockchain</p>

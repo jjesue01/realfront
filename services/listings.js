@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {getIdToken} from "../utils";
+import {buildFormData, getIdToken} from "../utils";
 
 export const listingsApi = createApi({
   reducerPath: 'listingsApi',
@@ -17,14 +17,14 @@ export const listingsApi = createApi({
     createListing: builder.mutation({
       query: (data) => {
         let formData = new FormData()
-
+        console.log('send listing', data)
         formData.append("file", data.file, data.file.name);
         formData.append("raw", data.raw, data.raw.name);
         formData.append("name", data.name);
         formData.append("description", data.description);
         formData.append("location", data.location);
         formData.append("address", data.address);
-        formData.append("collections", data.collections);
+        formData.append("collection", data.collection);
         formData.append("tags", data.tags);
         formData.append("blockchain", data.blockchain);
         formData.append("longitude", data.longitude);
@@ -37,8 +37,32 @@ export const listingsApi = createApi({
         }
       },
     }),
+    updateListing: builder.mutation({
+      query: ({ id, ...data }) => {
+        //delete data.collection
+        const formData = buildFormData(data)
+
+        return {
+          url: `/listings/${id}`,
+          method: 'PATCH',
+          body: formData
+        }
+      },
+    }),
+    deleteListing: builder.mutation({
+      query: id => ({
+        url: `/listings/${id}`,
+        method: 'DELETE',
+      })
+    }),
     getListings: builder.query({
-      query: () => '/listings',
+      query: (params = {}) => ({
+        url: '/listings',
+        // params: {
+        //   limit: 1000,
+        //   ...params
+        // }
+      }),
       // transformResponse(baseQueryReturnValue, meta) {
       //   return baseQueryReturnValue.docs
       // }
@@ -51,6 +75,8 @@ export const listingsApi = createApi({
 
 export const {
   useCreateListingMutation,
+  useUpdateListingMutation,
+  useDeleteListingMutation,
   useGetListingsQuery,
   useGetListingByIdQuery
 } = listingsApi

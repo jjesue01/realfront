@@ -9,8 +9,8 @@ const items = [
   ...data.slice(0, 3)
 ]
 
-function MoreFromCollection() {
-  const itemsList = items.map((item) => (
+function MoreFromCollection({ data = [], onViewCollection }) {
+  const itemsList = data.map((item) => (
     <PhotoItem
       className={styles.item}
       key={item.name}
@@ -28,7 +28,7 @@ function MoreFromCollection() {
           { itemsList }
         </div>
         <div className={styles.actions}>
-          <Button className={styles.btnCollection} type="outlined">
+          <Button onClick={onViewCollection} className={styles.btnCollection} type="outlined">
             View Collection
           </Button>
         </div>

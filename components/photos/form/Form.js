@@ -16,7 +16,12 @@ import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
 import {useGetUserCollectionsQuery} from "../../../services/collections";
-import {listingsApi, useCreateListingMutation} from "../../../services/listings";
+import {
+  listingsApi,
+  useCreateListingMutation,
+  useDeleteListingMutation,
+  useUpdateListingMutation
+} from "../../../services/listings";
 import {decodeTags, encodeTags, getImageUrl} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 import {useDispatch} from "react-redux";
@@ -40,7 +45,9 @@ const validationSchema = Yup.object({
   tags: Yup.string(),
   blockchain: Yup.string().required()
 })
+
 const libraries = ['places']
+
 function Form({ mode }) {
   const dispatch = useDispatch()
   const router = useRouter()
@@ -50,10 +57,11 @@ function Form({ mode }) {
     language: 'en'
   })
   const [createListing, { isLoading }] = useCreateListingMutation()
-  const { data: sourceCollections } = useGetUserCollectionsQuery()
+  const [updateListing] = useUpdateListingMutation()
+  const [deleteListing] = useDeleteListingMutation()
+  const { data: collections, refetch: getCollections } = useGetUserCollectionsQuery()
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
-  const [collections, setCollections] = useState([])
   const [jpgFile, setJpgFile] = useState(null)
   const [rawFile, setRawFile] = useState(null)
   const [location, setLocation] = useState({})
@@ -66,17 +74,14 @@ function Form({ mode }) {
       address: '',
       description: '',
       tags: '',
-      blockchain: 'ethereum'
+      blockchain: 'ethereum',
+      collection: ''
     },
     validationSchema,
     onSubmit: handleSubmit
   });
   const inputRef = useRef()
   const autocompleteRef = useRef()
-
-  function handleCollectionsChange(data) {
-    setCollections([...data])
-  }
 
   function handleFileJPGChange(file) {
     setJpgFile(file)
@@ -94,27 +99,22 @@ function Form({ mode }) {
     router.push(`/photos/${id}`)
   }
 
-  function handleCreateCollection(item) {
-    setCollections(prevCollections => ([
-      ...prevCollections,
-      {
-        ...item,
-        checked: true
-      }
-    ]))
+  function handleCreateCollection() {
+    getCollections()
   }
 
   function handleSubmit(values) {
     if (jpgFile !== null && rawFile !== null){
+
+      const data = {
+        ...values,
+        file: jpgFile,
+        raw: rawFile,
+        tags: decodeTags(values.tags),
+        ...location
+      }
+
       if (mode === 'create') {
-        const data = {
-          ...values,
-          file: jpgFile,
-          raw: rawFile,
-          collections: collections.filter(({checked}) => checked).map(({ _id }) => _id).join(','),
-          tags: decodeTags(values.tags),
-          ...location
-        }
         createListing(data).unwrap()
           .then(result => {
             console.log(result)
@@ -126,32 +126,45 @@ function Form({ mode }) {
           })
 
       } else {
-        router.push(`/photos/${router.query.id}`)
+        data.id = router.query.id
+        updateListing(data).unwrap()
+          .then(result => {
+
+          })
+          .catch(error => {
+
+          })
+        // router.push(`/photos/${router.query.id}`)
       }
     }
   }
 
-  useEffect(function initCollections() {
-    if (sourceCollections?.length)
-      setCollections(sourceCollections.map(collection => ({
-        ...collection,
-        checked: false
-      })))
-  }, [sourceCollections])
+  function handleDelete() {
+    deleteListing(router.query.id).unwrap()
+      .then(result => {
+        router.push('/collections')
+      })
+      .catch(result => {
+
+      })
+  }
 
   useEffect(function initListing() {
     if (mode === 'edit' && router.query.id) {
       dispatch(listingsApi.endpoints.getListingById.initiate(router.query.id))
         .then(({ data }) => {
-        setListingName(data.name)
+          setListingName(data.name)
           setValues({
             name: data.name,
             location: data.location,
             address: data.address,
             description: data.description,
             tags: encodeTags(data.tags),
-            blockchain: data.blockchain
+            blockchain: data.blockchain,
+            collection: data?.collections?.ID || ''
           })
+          setJpgFile(data.filePath)
+          setRawFile(data.rawFileName)
       })
     }
   }, [mode, router.query.id, dispatch, setValues])
@@ -235,7 +248,7 @@ function Form({ mode }) {
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
                   <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                    { rawFile === null ? 'Upload RAW file' : rawFile.name }
+                    { rawFile === null ? 'Upload RAW file' : (rawFile?.name || rawFile )}
                   </Typography>
                   {
                     rawFile === null &&
@@ -297,7 +310,9 @@ function Form({ mode }) {
         <CollectionPicker
           className={styles.input}
           collections={collections}
-          onChange={handleCollectionsChange}
+          name="collection"
+          value={formik.values.collection}
+          onChange={formik.handleChange}
           onCreate={toggleCreateCollection} />
         <Select
           className={styles.input}
@@ -319,7 +334,7 @@ function Form({ mode }) {
           }
           {
             mode === 'edit' &&
-              <Button className={styles.btnDelete} type="outlined">
+              <Button onClick={handleDelete} className={styles.btnDelete} type="outlined">
                 Delete item
               </Button>
           }
@@ -330,7 +345,7 @@ function Form({ mode }) {
         onClose={toggleCreateCollection}
         onCreate={handleCreateCollection} />
       <DoneCongratulation
-        imageUrl={jpgFile !== null && URL.createObjectURL(jpgFile)}
+        imageUrl={jpgFile !== null && getImageUrl(jpgFile)}
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         onClose={handleCloseCongratulations} />
