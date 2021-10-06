@@ -74,6 +74,7 @@ export function encodeTags(tagsArr) {
 }
 
 export function getShortWalletAddress(walletAddress) {
+  if (!walletAddress) return ''
   return `${walletAddress.slice(0, 11)}...${walletAddress.slice(-4)}`
 }
 

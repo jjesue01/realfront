@@ -10,11 +10,12 @@ import {useRouter} from "next/router";
 import {getShortWalletAddress, getUser} from "../../../utils";
 import ButtonCopy from "../../button-copy/ButtonCopy";
 import BannerBackground from "../../banner-background/BannerBackground";
+import {useGetCurrentUserQuery} from "../../../services/auth";
 
 
 function UserInfo() {
   const router = useRouter()
-  const user = getUser()
+  const { data: user = {} } = useGetCurrentUserQuery()
 
   function goTo(path) {
     return function () {

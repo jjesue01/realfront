@@ -139,10 +139,12 @@ function Layout({ children }) {
   }, [router])
 
   useEffect(function checkAuth() {
-    const auth = JSON.parse(localStorage.getItem('auth'))
+    if (localStorage) {
+      const auth = JSON.parse(localStorage.getItem('auth'))
 
-    if (auth?.token)
-      dispatch(setCredentials(auth))
+      if (auth?.token)
+        dispatch(setCredentials(auth))
+    }
   }, [dispatch])
 
   return (

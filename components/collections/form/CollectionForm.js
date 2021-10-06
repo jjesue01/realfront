@@ -40,6 +40,7 @@ const validationSchema = Yup.object({
 
 function CollectionForm() {
   const router = useRouter()
+  const { id } = router.query
   const [updateCollection] = useUpdateCollectionMutation()
   const [deleteCollection] = useDeleteCollectionMutation()
   const { data: collection  } = useGetCollectionByIdQuery(id)
