@@ -13,7 +13,7 @@ function MoreFromCollection({ data = [], onViewCollection }) {
   const itemsList = data.map((item) => (
     <PhotoItem
       className={styles.item}
-      key={item.name}
+      key={item._id}
       data={item}
       type="full" />
   ))

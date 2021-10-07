@@ -70,6 +70,7 @@ const companyLinks = [
     link: '/about'
   }
 ]
+const abi = require('/public/abi.json')
 
 function Layout({ children }) {
   const dispatch = useDispatch()
@@ -100,6 +101,7 @@ function Layout({ children }) {
     login(walletId).unwrap()
       .then(({ token, user }) => {
         const credentials = { user, token }
+
         dispatch(setCredentials(credentials))
       })
   }
@@ -144,8 +146,8 @@ function Layout({ children }) {
       const auth = JSON.parse(localStorage.getItem('auth'))
 
       if (window.ethereum) {
-        const accounts =  window.ethereum.request({ method: 'eth_requestAccounts' })
-          .then(() => {
+        window.ethereum.request({ method: 'eth_requestAccounts' })
+          .then((accounts) => {
             window.web3 = new Web3(window.ethereum);
           });
       }

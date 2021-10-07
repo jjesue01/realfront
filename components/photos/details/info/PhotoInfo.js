@@ -9,7 +9,7 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import {getShortWalletAddress, getUser} from "../../../../utils";
+import {getMoneyView, getShortWalletAddress, getUser} from "../../../../utils";
 import {useSelector} from "react-redux";
 
 function PhotoInfo({ listing }) {
@@ -135,10 +135,10 @@ function PhotoInfo({ listing }) {
                           fontWeight={600}
                           lHeight={34}
                           margin={'0 0 0 12px'}>
-                          2.59
+                          { listing?.price }
                         </Typography>
                         <Typography fontSize={14} color={'#878D97'} margin={'0 0 0 16px'}>
-                          ($3 166,41)
+                          ({listing?.price ? getMoneyView(listing.price * 3466.41) : ''})
                         </Typography>
                       </div>
                     </div>

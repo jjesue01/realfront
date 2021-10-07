@@ -27,8 +27,8 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
 
   return (
     <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
-      <ContextMenu href={`/photos/edit/${data.id}`} className={styles.btnMenu} />
-      <Link href={`/photos/${data.id}`} passHref>
+      <ContextMenu href={`/photos/edit/${data._id}`} className={styles.btnMenu} />
+      <Link href={`/photos/${data._id}`} passHref>
         <a onClick={handleClick}>
           <div className={styles.root}>
             <div className={styles.header}>
@@ -62,7 +62,7 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
                   { data.name }
                 </Typography>
                 <Typography fontSize={12} lHeight={15} color={'#878D97'} margin="8px 0 0">
-                  { data.address }
+                  { data?.collections?.name }
                 </Typography>
               </div>
               <div className={styles.priceContainer}>

@@ -13,7 +13,7 @@ function PhotoDetails() {
   const { data: listing } = useGetListingByIdQuery(id)
   const collectionId = listing?.collections?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id)
-  const { data: listings } = useGetListingsQuery({ collection: collectionId })
+  const { data: listings } = useGetListingsQuery({ collection: collectionId, limit: 3 })
 
   function handleViewCollection() {
     router.push(`/collections/${collectionId}`)

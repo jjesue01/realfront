@@ -7,7 +7,7 @@ function CollectionItems({ data }) {
 
   const itemsList = data.map((item) => (
     <PhotoItem
-      key={item.name}
+      key={item._id}
       data={item}
       type="full" />
   ))

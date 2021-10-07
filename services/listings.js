@@ -55,13 +55,20 @@ export const listingsApi = createApi({
         method: 'DELETE',
       })
     }),
+    publishListing: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/listings/${id}/publish`,
+        method: 'PATCH',
+        body: data
+      })
+    }),
     getListings: builder.query({
       query: (params = {}) => ({
         url: '/listings',
-        // params: {
-        //   limit: 1000,
-        //   ...params
-        // }
+        params: {
+          limit: 1000,
+          ...params
+        }
       }),
       // transformResponse(baseQueryReturnValue, meta) {
       //   return baseQueryReturnValue.docs
@@ -77,6 +84,7 @@ export const {
   useCreateListingMutation,
   useUpdateListingMutation,
   useDeleteListingMutation,
+  usePublishListingMutation,
   useGetListingsQuery,
   useGetListingByIdQuery
 } = listingsApi

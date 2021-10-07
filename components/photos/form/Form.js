@@ -129,12 +129,11 @@ function Form({ mode }) {
         data.id = router.query.id
         updateListing(data).unwrap()
           .then(result => {
-
+            router.push(`/photos/${router.query.id}`)
           })
           .catch(error => {
 
           })
-        // router.push(`/photos/${router.query.id}`)
       }
     }
   }

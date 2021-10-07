@@ -81,8 +81,6 @@ export function getShortWalletAddress(walletAddress) {
 export function buildFormData(data) {
   const formData = new FormData()
 
-  console.log(data)
-
   for (const [key, value] of Object.entries(data)) {
     const keyLowerCase = key.toLowerCase()
     if (keyLowerCase.includes('image') || keyLowerCase.includes('file') || keyLowerCase.includes('raw')) {
@@ -94,4 +92,8 @@ export function buildFormData(data) {
   }
 
   return formData
+}
+
+export function getMoneyView(value) {
+  return `$${new Intl.NumberFormat('ru-RU').format(+value || 0)}`
 }

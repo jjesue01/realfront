@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from '../../../styles/Sell.module.sass'
 import Head from "next/head";
 import Link from "next/link";
@@ -14,9 +14,10 @@ import Select from "../../../components/select/Select";
 import Switcher from "../../../components/switcher/Switcher";
 import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
-import {useGetListingByIdQuery} from "../../../services/listings";
+import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
-//import {mint} from "../../../services/contract";
+import {getUser} from "../../../utils";
+import {error} from "next/dist/build/output/log";
 
 const scheduleOptions = [
   {
@@ -50,13 +51,14 @@ function SellItem() {
   const router = useRouter()
   const { id } = router.query
   const { data: listing } = useGetListingByIdQuery(id)
+  const [publishListing] = usePublishListingMutation()
   const [isDone, setIsDone] = useState(false)
   const [lowBalance, setLowBalance] = useState(false)
   const [switchers, setSwitchers] = useState({
     schedule: false,
     private: false
   })
-  const formik = useFormik({
+  const { setValues, ...formik } = useFormik({
     initialValues: {
       price: 1,
       copies: '',
@@ -89,10 +91,43 @@ function SellItem() {
     setIsDone(true)
   }
 
-  async function handleSubmit(values) {
-    // const result = await mint(values.royalties)
-    // console.log(result)
+  function handleSubmit(values) {
+    const contractApi = require('/services/contract')
+    const user = getUser();
+    contractApi.mint(+values.royalties, user.walletAddress)
+      .then((tokenID) => {
+        const data = {
+          price: values.price,
+          copies: values.copies || 1,
+          royalties: values.royalties || 0,
+          tokenID,
+          id
+        }
+        console.log(tokenID)
+        publishListing(data).unwrap()
+          .then(result => {
+            console.log(result)
+            setIsDone(true)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
+
+  useEffect(function initListing() {
+    if (listing !== undefined && listing.isPublished) {
+      setValues(prevState => ({
+        ...prevState,
+        price: listing.price,
+        copies: listing.copies,
+        royalties: listing.royalties
+      }))
+    }
+  }, [listing, setValues])
 
   return (
     <main className="page-container">
