@@ -1,6 +1,4 @@
 const abi = require('/public/abi.json')
-const busd = require('/public/busd.json')
-
 const contractApi = {};
 
 if (typeof window !== "undefined" && window.web3.eth) {
@@ -13,7 +11,7 @@ if (typeof window !== "undefined" && window.web3.eth) {
    * @return {uint256}
    */
   contractApi.mint = async (royalties, walletAddress) => {
-    const tokenID = await homejab.methods.mint(royalties).call({ from: walletAddress });
+    const tokenID = await homejab.methods.mint(royalties).send({ from: walletAddress });
     return tokenID;
   }
 

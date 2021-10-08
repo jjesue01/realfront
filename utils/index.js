@@ -97,3 +97,16 @@ export function buildFormData(data) {
 export function getMoneyView(value) {
   return `$${new Intl.NumberFormat('ru-RU').format(+value || 0)}`
 }
+
+const privateRoutes = [
+  '/photos/create',
+  '/photos/edit',
+  '/photos/sell',
+  '/collections',
+  '/settings',
+  '/profile',
+]
+
+export function isPrivateRoute(pathname) {
+  return privateRoutes.some(route => pathname.includes(route))
+}

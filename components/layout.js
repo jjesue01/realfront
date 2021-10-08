@@ -17,6 +17,7 @@ import AddFunds from "./dialogs/add-funds/AddFunds";
 import DepositFromExchange from "./dialogs/deposit-from-exchange/DepositFromExchnage";
 import BuyWithCard from "./dialogs/buy-with-card/BuyWithCard";
 import Web3 from "web3";
+import {isPrivateRoute} from "../utils";
 
 const marketplaceLinks = [
   {
@@ -70,7 +71,6 @@ const companyLinks = [
     link: '/about'
   }
 ]
-const abi = require('/public/abi.json')
 
 function Layout({ children }) {
   const dispatch = useDispatch()
@@ -141,6 +141,8 @@ function Layout({ children }) {
     }
   }, [router])
 
+  //console.log(isPrivateRoute(router.pathname))
+
   useEffect(function checkAuth() {
     if (localStorage) {
       const auth = JSON.parse(localStorage.getItem('auth'))
@@ -149,6 +151,12 @@ function Layout({ children }) {
         window.ethereum.request({ method: 'eth_requestAccounts' })
           .then((accounts) => {
             window.web3 = new Web3(window.ethereum);
+            const contractApi = require('/services/contract')
+            web3.eth.getBalance(accounts[0])
+              .then(result => {
+                console.log(web3.utils.fromWei(result, 'ether'))
+              })
+
           });
       }
 
