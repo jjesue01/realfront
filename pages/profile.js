@@ -15,6 +15,8 @@ import {sortOptions, data} from "../components/profile/fixtures";
 import {getSortedArray} from "../utils";
 import Tabs from "../components/tabs/Tabs";
 import {useRouter} from "next/router";
+import {useGetCurrentUserQuery} from "../services/auth";
+import {useGetListingsQuery} from "../services/listings";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
 const favoritedIds = [1,3,6]
@@ -23,8 +25,11 @@ const userId = 1
 
 function MyProfile() {
   const router = useRouter()
-  const [sourceData, setSourceData] = useState(data)
-  const [filteredData, setFilteredData] = useState(data)
+  const { data: user } = useGetCurrentUserQuery()
+  const { data: collectedListings } = useGetListingsQuery({ owner: user?._id })
+  const { data: createdListings } = useGetListingsQuery({ creator: user?._id })
+  const { data: favoriteListings } = useGetListingsQuery()
+  const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
   const [filterOpened, setFilterOpened] = useState(false)
   const [filtersCount, setFiltersCount] = useState(0)
@@ -45,7 +50,7 @@ function MyProfile() {
 
   const itemsList = filteredData.map((item) => (
     <PhotoItem
-      key={item.name}
+      key={item._id}
       data={item}
       favorite={currentTab === 'favorited'}
       type="full" />
@@ -80,22 +85,22 @@ function MyProfile() {
   }
 
   useEffect(function filterData() {
-    let items = [...sourceData]
+    let items = []
     let updatedFiltersCount = 0
 
-    if (currentTab === 'activity') return;
+    if (currentTab === 'activity' || !user || !collectedListings || !createdListings) return;
 
     if (currentTab === 'favorited') {
-      items = items.filter(item => favoritedIds.some(id => item.id === id))
+      items = favoriteListings.docs.filter(item => user.favorites.includes(item._id))
       setFilteredData(items)
       return;
     }
 
     if (currentTab === 'collected')
-      items = items.filter(item => boughtItems.some(id => item.id === id))
+      items = [...collectedListings.docs]
 
     if (currentTab === 'created')
-      items = items.filter(item => item.user_id === userId)
+      items = [...createdListings.docs]
 
     if (filters.searchValue !== '') {
       items = items.filter(({ name, address }) =>
@@ -120,16 +125,16 @@ function MyProfile() {
       if (!filters.price.from) updatedFiltersCount += 1
     }
 
-    if (filters.resources.length !== 0) {
-      items = items.filter(({ resources }) => {
-        let result = false
-        filters.resources.forEach(resource => {
-          if (resources.includes(resource)) result = true
-        })
-        return result
-      })
-      updatedFiltersCount += 1
-    }
+    // if (filters.resources.length !== 0) {
+    //   items = items.filter(({ resources }) => {
+    //     let result = false
+    //     filters.resources.forEach(resource => {
+    //       if (resources.includes(resource)) result = true
+    //     })
+    //     return result
+    //   })
+    //   updatedFiltersCount += 1
+    // }
 
     if (filters.more.types.length !== 0) {
       items = items.filter(({ types }) => {
@@ -146,7 +151,7 @@ function MyProfile() {
 
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
-  }, [filters, sourceData, currentTab])
+  }, [filters, currentTab, user, createdListings, collectedListings])
 
   useEffect(function initTab() {
     const { query } = router;
@@ -160,7 +165,7 @@ function MyProfile() {
       <Head>
         <title>HOMEJAB - My Profile</title>
       </Head>
-      <UserInfo />
+      <UserInfo user={user} />
       <div className={styles.content}>
         <div className="container">
           <Tabs

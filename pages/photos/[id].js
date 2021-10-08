@@ -5,15 +5,18 @@ import TradingHistory from "../../components/photos/details/trading-history/Trad
 import MoreFromCollection from "../../components/photos/details/more/MoreFromCollection";
 import Head from "next/head";
 import {useRouter} from "next/router";
-import {useGetListingByIdQuery, useGetListingsQuery} from "../../services/listings";
+import {useGetListingByIdQuery, useGetListingsQuery, useGetPublishedListingsQuery} from "../../services/listings";
 import {useGetTransactionsByListingIdQuery} from "../../services/transactions";
+import {useGetCurrentUserQuery} from "../../services/auth";
 
 function PhotoDetails() {
   const { query: { id }, ...router } = useRouter()
   const { data: listing } = useGetListingByIdQuery(id)
   const collectionId = listing?.collections?.ID;
+  const { data: user } = useGetCurrentUserQuery()
   const { data: transactions } = useGetTransactionsByListingIdQuery(id)
   const { data: listings } = useGetListingsQuery({ collection: collectionId, limit: 3 })
+  //const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, limit: 3 })
 
   function handleViewCollection() {
     router.push(`/collections/${collectionId}`)
@@ -25,9 +28,9 @@ function PhotoDetails() {
         <title>HOMEJAB - {listing?.name}</title>
       </Head>
       <div className={styles.content}>
-        <PhotoInfo listing={listing} />
+        <PhotoInfo user={user} listing={listing} />
         <TradingHistory data={transactions?.docs} />
-        <MoreFromCollection data={listings?.docs} onViewCollection={handleViewCollection} />
+        <MoreFromCollection user={user} data={listings?.docs} onViewCollection={handleViewCollection} />
       </div>
     </main>
   )

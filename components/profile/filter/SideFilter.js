@@ -39,6 +39,7 @@ function SideFilter({ opened, onClose, filters, onChange }) {
             className={styles.filterItem}
             name="collections"
             value={filters.collections}
+            options={[]}
             onChange={onChange} />
           <PriceFilter
             mode="flat"
@@ -55,6 +56,7 @@ function SideFilter({ opened, onClose, filters, onChange }) {
           <MoreFilter
             mode="flat"
             name="more"
+            options={[]}
             value={filters.more}
             onChange={onChange} />
         </div>

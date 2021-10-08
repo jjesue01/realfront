@@ -7,28 +7,17 @@ import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
 import cn from "classnames";
 
-const options = [
-  'New York',
-  'Los Angeles',
-  'Chicago',
-  'Houston',
-  'Philadelphia',
-  'Phoenix',
-  'Washington',
-  'Miami',
-]
-
-function CollectionFilter({ className, name, onChange, value, mode }) {
-  const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
+function CollectionFilter({ className, name, onChange, value, mode, options = [] }) {
+  const [data, setData] = useState([])
   const [searchValue, setSearchValue] = useState('')
   const [checkedAll, setCheckedAll] = useState(false)
 
-  const checkboxesList = getFilteredData().map(({ value, checked }) => (
+  const checkboxesList = getFilteredData().map(({ value, label, checked }) => (
     <Checkbox
       key={value}
       className={styles.checkbox}
       checked={checked}
-      label={value}
+      label={label}
       onChange={handleCheckboxChange(value)} />
   ))
 
@@ -77,8 +66,8 @@ function CollectionFilter({ className, name, onChange, value, mode }) {
   const handleReset = useCallback(() => {
     let updatedCheckedAll = true
     const updatedData = options.map(item => ({
-      value: item,
-      checked: value.includes(item)
+      ...item,
+      checked: value.includes(item.value)
     }))
 
     updatedData.forEach(item => {
@@ -88,11 +77,17 @@ function CollectionFilter({ className, name, onChange, value, mode }) {
     setCheckedAll(updatedCheckedAll)
     setData(updatedData)
     setSearchValue('')
-  }, [value])
+  }, [value, options])
 
   useEffect(function () {
     handleReset()
   }, [value, handleReset])
+
+  useEffect(function initOptions() {
+    if (options.length !== 0) {
+      setData(options.map(option => ({ ...option, checked: false })))
+    }
+  }, [options])
 
   return (
     <FilterWrapper

@@ -62,6 +62,18 @@ export const listingsApi = createApi({
         body: data
       })
     }),
+    likeListing: builder.mutation({
+      query: (id) => ({
+        url: `/listings/${id}/like`,
+        method: 'PATCH'
+      })
+    }),
+    purchaseListing: builder.mutation({
+      query: (id) => ({
+        url: `/listings/${id}/purchase`,
+        method: 'POST'
+      })
+    }),
     getListings: builder.query({
       query: (params = {}) => ({
         url: '/listings',
@@ -74,6 +86,15 @@ export const listingsApi = createApi({
       //   return baseQueryReturnValue.docs
       // }
     }),
+    getPublishedListings: builder.query({
+      query: (params = {}) => ({
+        url: '/explore',
+        params: {
+          limit: 1000,
+          ...params
+        }
+      }),
+    }),
     getListingById: builder.query({
       query: id => `/listings/${id}`
     })
@@ -85,6 +106,9 @@ export const {
   useUpdateListingMutation,
   useDeleteListingMutation,
   usePublishListingMutation,
+  useLikeListingMutation,
+  usePurchaseListingMutation,
   useGetListingsQuery,
+  useGetPublishedListingsQuery,
   useGetListingByIdQuery
 } = listingsApi

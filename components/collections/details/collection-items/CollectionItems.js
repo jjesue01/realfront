@@ -3,10 +3,11 @@ import styles from './CollectionItems.module.sass'
 import Typography from "../../../Typography";
 import PhotoItem from "../../../photo-item/PhotoItem";
 
-function CollectionItems({ data }) {
+function CollectionItems({ data, user }) {
 
   const itemsList = data.map((item) => (
     <PhotoItem
+      favorite={user?.favorites?.includes(item._id)}
       key={item._id}
       data={item}
       type="full" />

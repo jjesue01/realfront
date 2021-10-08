@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from './PhotoInfo.module.sass'
 import Image from "next/image";
 import Typography from "../../../Typography";
@@ -11,16 +11,27 @@ import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
 import {getMoneyView, getShortWalletAddress, getUser} from "../../../../utils";
 import {useSelector} from "react-redux";
+import {useLikeListingMutation, usePurchaseListingMutation} from "../../../../services/listings";
+import {error} from "next/dist/build/output/log";
 
-function PhotoInfo({ listing }) {
+function PhotoInfo({ listing, user }) {
   const router = useRouter()
   const { id } = router.query
+  const [likeListing] = useLikeListingMutation()
+  const [purchaseListing] = usePurchaseListingMutation()
   const [isFavorite, setIsFavorite] = useState(false)
+  const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
-  const user = useSelector(state => state.auth.user)
   const ownItem = listing?.creator?.ID === user?._id
 
   function toggleFavorite() {
+    likeListing(listing._id)
+    setLikes(prevState => {
+      if (!isFavorite)
+        return prevState + 1
+      else
+        return prevState - 1
+    })
     setIsFavorite(prevState => !prevState)
   }
 
@@ -33,6 +44,33 @@ function PhotoInfo({ listing }) {
       router.push(path)
     }
   }
+
+  function handleBuy() {
+    const contractApi = require('/services/contract')
+
+    //contractApi.listForSell(+listing.tokenID, listing.price, user.walletAddress)
+
+    // contractApi.buy(listing.tokenID, user.walletAddress)
+    //   .then(() => {
+    //     purchaseListing(listing._id)
+    //       .then(result => {
+    //         console.log(result)
+    //       })
+    //       .catch(error => {
+    //         console.log(error)
+    //       })
+      // })
+      // .catch(error => {
+      //   console.log(error)
+      // })
+  }
+
+  useEffect(function initLikes() {
+    if (listing !== undefined && user !== undefined) {
+      setLikes(listing.likes)
+      setIsFavorite(user.favorites.includes(listing._id))
+    }
+  }, [listing, user])
 
   return (
     <section className={styles.root}>
@@ -84,7 +122,7 @@ function PhotoInfo({ listing }) {
                         <HeartFilledIcon className={styles.iconHeart} />
                       </span>
                       <Typography tag="span" fontWeight={600} fontSize={12}>
-                        { listing?.likes }
+                        { likes }
                       </Typography>
                     </button>
                     <ContextMenuWrapper
@@ -142,7 +180,7 @@ function PhotoInfo({ listing }) {
                         </Typography>
                       </div>
                     </div>
-                    <Button onClick={goTo('/profile')}>
+                    <Button onClick={handleBuy}>
                       Buy now
                     </Button>
                   </div>

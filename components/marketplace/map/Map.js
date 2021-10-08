@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import styles from './Map.module.sass'
 import {GoogleMap, MarkerClusterer, InfoWindow, Marker, InfoBox, useLoadScript} from '@react-google-maps/api';
 import cn from "classnames";
@@ -10,7 +10,7 @@ const containerStyle = {
   height: '100%'
 };
 
-const center = { lat: -38.336358, lng: 151.435169 }
+const center = { lat: 34.1880148, lng: -118.4653348 }
 const libraries = ['places']
 
 function Map({ items, onBoundsChange }) {
@@ -48,11 +48,6 @@ function Map({ items, onBoundsChange }) {
     size: { width: 38, height: 38 },
     anchor: { x: 19, y: 19 }
   }
-
-  // const options = {
-  //   imagePath: '/map/m', // so you must have m1.png, m2.png, m3.png, m4.png, m5.png and m6.png in that folder
-  //   clusterClass: styles.cluster
-  // }
 
   const clusterStyles = [
     {
@@ -98,19 +93,23 @@ function Map({ items, onBoundsChange }) {
   ]
 
   const handleBoundsChange = debounce(function () {
-    let bounds = map.getBounds()
-    let viewportItems = []
-    items.forEach(item => {
-      if (bounds.contains(item.location)) {
-        viewportItems.push(item)
-      }
-    })
-    onBoundsChange(viewportItems)
+    if (items.length !== 0) {
+      let bounds = map.getBounds()
+      let viewportItems = []
+
+      items.forEach(item => {
+        const location = {
+          lat: item.geoLocation.coordinates[1],
+          lng: item.geoLocation.coordinates[0],
+        }
+        if (bounds.contains(location)) {
+          viewportItems.push(item)
+        }
+      })
+      onBoundsChange(viewportItems)
+    }
   }, 500)
 
-  function createKey(location) {
-    return location.lat + location.lng
-  }
 
   function handleZoom(value) {
     return function () {
@@ -144,7 +143,7 @@ function Map({ items, onBoundsChange }) {
           mapContainerStyle={containerStyle}
           center={center}
           options={{ disableDefaultUI: true }}
-          zoom={4}
+          zoom={3}
           onLoad={onLoad}
           onBoundsChanged={handleBoundsChange}
           onUnmount={onUnmount}>
@@ -155,8 +154,8 @@ function Map({ items, onBoundsChange }) {
                   <Marker
                     onLoad={handleMarkerLoad(index)}
                     title={item.name}
-                    key={createKey(item.location)}
-                    position={item.location}
+                    key={item._id}
+                    position={{ lat: item.geoLocation.coordinates[1], lng: item.geoLocation.coordinates[0] }}
                     onClick={handleMarkerClick(index)}
                     icon={activeMarkerIndex === index ? activeIcon : defaultIcon}
                     clusterer={clusterer}

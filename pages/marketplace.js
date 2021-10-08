@@ -15,9 +15,9 @@ import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
 import {getSortedArray, scrollToTop} from "../utils";
-import {data} from "../components/profile/fixtures";
 import {useRouter} from "next/router";
-import {useGetListingsQuery} from "../services/listings";
+import { useGetPublishedListingsQuery } from "../services/listings";
+import {useGetCurrentUserQuery} from "../services/auth";
 
 const sortOptions = [
   {
@@ -30,14 +30,14 @@ const sortOptions = [
   },
 ]
 
-const sourceItems = [...data]
-
 function Marketplace({ toggleFooter }) {
   const router = useRouter()
-  const { data: listings } = useGetListingsQuery()
-  const [sourceData, setSourceData] = useState(sourceItems)
-  const [viewportData, setViewportData] = useState(sourceItems)
-  const [filteredData, setFilteredData] = useState(sourceItems)
+  const { data: listings } = useGetPublishedListingsQuery()
+  const { data: user } = useGetCurrentUserQuery()
+  const [sourceData, setSourceData] = useState([])
+  const [viewportData, setViewportData] = useState([])
+  const [filteredData, setFilteredData] = useState([])
+  const [options, setOptions] = useState({ collections: [], tags: [] })
   const [isMapHidden, setIsMapHidden] = useState(false)
   const [filters, setFilters] = useState({
     searchValue: '',
@@ -55,7 +55,7 @@ function Marketplace({ toggleFooter }) {
   })
   const [currentPage, setCurrentPage] = useState(1)
 
-  const itemsPerPage = 6
+  const itemsPerPage = 15
   const pageCount = Math.ceil(filteredData.length / itemsPerPage)
   const pageItems = isMapHidden ?
     filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -86,7 +86,7 @@ function Marketplace({ toggleFooter }) {
   function toggleMap() {
     setIsMapHidden(prevState => !prevState)
     toggleFooter()
-    setViewportData(sourceItems)
+    setViewportData([...sourceData])
   }
 
   function handleResetFilters() {
@@ -125,14 +125,8 @@ function Marketplace({ toggleFooter }) {
         `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
     }
 
-    if (filters.collections.length !== 0) {
-      items = items.filter(({ collections }) => {
-        let result = false
-        filters.collections.forEach(collection => {
-          if (collections.includes(collection)) result = true
-        })
-        return result
-      })
+    if (filters.collections.length !== 0 && filters.collections.length !== options.collections.length) {
+      items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
     }
 
     if (!!filters.price.from) {
@@ -141,21 +135,21 @@ function Marketplace({ toggleFooter }) {
       items = items.filter(({ price }) => price <= filters.price.to)
     }
 
-    if (filters.resources.length !== 0) {
-      items = items.filter(({ resources }) => {
-        let result = false
-        filters.resources.forEach(resource => {
-          if (resources.includes(resource)) result = true
-        })
-        return result
-      })
-    }
+    // if (filters.resources.length !== 0) {
+    //   items = items.filter(({ resources }) => {
+    //     let result = false
+    //     filters.resources.forEach(resource => {
+    //       if (resources.includes(resource)) result = true
+    //     })
+    //     return result
+    //   })
+    // }
 
     if (filters.more.types.length !== 0) {
-      items = items.filter(({ types }) => {
+      items = items.filter(({ tags }) => {
         let result = false
         filters.more.types.forEach(type => {
-          if (types.includes(type)) result = true
+          if (tags.includes(type)) result = true
         })
         return result
       })
@@ -164,7 +158,7 @@ function Marketplace({ toggleFooter }) {
     items = getSortedArray(items, filters.sortBy)
 
     setFilteredData([...items])
-  }, [filters, viewportData, sourceData, isMapHidden])
+  }, [filters, viewportData, sourceData, isMapHidden, options])
 
   useEffect(function initSearch() {
     const { search } = router.query;
@@ -172,6 +166,31 @@ function Marketplace({ toggleFooter }) {
     if (search)
       setFilters(prevFilters => ({ ...prevFilters, searchValue: search }))
   }, [router])
+
+  useEffect(function initListings() {
+    if (listings !== undefined) {
+      const collectionOptions = new Set()
+      let tagOptions = []
+
+      setSourceData([...listings.docs])
+      setFilteredData([...listings.docs])
+      setViewportData([...listings.docs])
+
+      listings.docs.forEach(({ collections, tags }) => {
+        if (collections?.name)
+          collectionOptions.add(JSON.stringify({
+            label: collections.name,
+            value: collections.ID
+          }))
+        if (tags.length !== 0 && tags[0] !== '')
+          tagOptions = [...tagOptions, ...tags]
+        setOptions({
+          collections: [...collectionOptions].map(collection => JSON.parse(collection)),
+          tags: [...new Set(tagOptions)]
+        })
+      })
+    }
+  }, [listings])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
@@ -194,6 +213,7 @@ function Marketplace({ toggleFooter }) {
               className={styles.filter}
               name="collections"
               value={filters.collections}
+              options={options.collections}
               onChange={handleChange} />
             <PriceFilter
               className={styles.filter}
@@ -209,6 +229,7 @@ function Marketplace({ toggleFooter }) {
               className={styles.filter}
               name="more"
               value={filters.more}
+              options={options.tags}
               onChange={handleChange} />
           </div>
           <div className={styles.resetFilters}>
@@ -223,7 +244,7 @@ function Marketplace({ toggleFooter }) {
         {
           !isMapHidden &&
           <div className={styles.mapContainer}>
-            <Map items={sourceItems} onBoundsChange={handleMapChange} />
+            <Map items={sourceData} onBoundsChange={handleMapChange} />
             <button onClick={toggleMap} className={styles.btnHideMap}>
               <ArrowLongIcon />
             </button>
@@ -283,7 +304,11 @@ function Marketplace({ toggleFooter }) {
                   <div className={styles.itemsGrid}>
                     {
                       pageItems.map(item => (
-                        <PhotoItem imageClassName={styles.imageWrapper} key={item.name} data={item} />
+                        <PhotoItem
+                          imageClassName={styles.imageWrapper}
+                          key={item.name}
+                          favorite={user?.favorites?.includes(item._id)}
+                          data={item} />
                       ))
                     }
                   </div>

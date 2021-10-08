@@ -3,15 +3,16 @@ import Head from "next/head";
 import CollectionInfo from "../../components/collections/details/collection-info/CollectionInfo";
 import CollectionFilters from "../../components/collections/details/filters/CollectionFilters";
 import CollectionItems from "../../components/collections/details/collection-items/CollectionItems";
-import {data} from "../../components/profile/fixtures";
 import {getSortedArray} from "../../utils";
 import {useGetCollectionByIdQuery} from "../../services/collections";
 import {useRouter} from "next/router";
 import {useGetListingsQuery} from "../../services/listings";
+import {useGetCurrentUserQuery} from "../../services/auth";
 
 function MyCollections() {
   const { query: { id } } = useRouter()
   const { data: collection  } = useGetCollectionByIdQuery(id)
+  const { data: user } = useGetCurrentUserQuery()
   const { data: listings } = useGetListingsQuery({ collection: id })
   const [sourceData, setSourceData] = useState([])
   const [filteredData, setFilteredData] = useState([])
@@ -52,7 +53,7 @@ function MyCollections() {
       </Head>
       <CollectionInfo collection={collection} itemsCount={sourceData.length} />
       <CollectionFilters filters={filters} onChange={handleChange} />
-      <CollectionItems data={filteredData} />
+      <CollectionItems user={user} data={filteredData} />
     </main>
   )
 }

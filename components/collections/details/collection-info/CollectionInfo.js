@@ -49,11 +49,11 @@ function CollectionInfo({ itemsCount, collection }) {
               <p>{ itemsCount }</p>
               <span>items</span>
             </div>
-            <div className={styles.vl} />
-            <div className={styles.countItem}>
-              <p>2</p>
-              <span>owners</span>
-            </div>
+            {/*<div className={styles.vl} />*/}
+            {/*<div className={styles.countItem}>*/}
+            {/*  <p>2</p>*/}
+            {/*  <span>owners</span>*/}
+            {/*</div>*/}
           </div>
         </div>
       </div>

@@ -3,15 +3,11 @@ import styles from './MoreFromCollection.module.sass'
 import Typography from "../../../Typography";
 import PhotoItem from "../../../photo-item/PhotoItem";
 import Button from "../../../button/Button";
-import {data} from "../../../profile/fixtures";
 
-const items = [
-  ...data.slice(0, 3)
-]
-
-function MoreFromCollection({ data = [], onViewCollection }) {
+function MoreFromCollection({ data = [], onViewCollection, user }) {
   const itemsList = data.map((item) => (
     <PhotoItem
+      favorite={user?.favorites?.includes(item._id)}
       className={styles.item}
       key={item._id}
       data={item}

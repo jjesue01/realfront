@@ -7,15 +7,13 @@ import SettingsIcon from '/public/icons/settings.svg'
 import PenIcon from '/public/icons/pen.svg'
 import cn from "classnames";
 import {useRouter} from "next/router";
-import {getShortWalletAddress, getUser} from "../../../utils";
+import {getShortWalletAddress} from "../../../utils";
 import ButtonCopy from "../../button-copy/ButtonCopy";
 import BannerBackground from "../../banner-background/BannerBackground";
-import {useGetCurrentUserQuery} from "../../../services/auth";
 
 
-function UserInfo() {
+function UserInfo({ user }) {
   const router = useRouter()
-  const { data: user = {} } = useGetCurrentUserQuery()
 
   function goTo(path) {
     return function () {
@@ -41,7 +39,7 @@ function UserInfo() {
           </button>
           <div className={styles.userNameContainer}>
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
-              John Doe
+              { user?.username || 'John Doe' }
             </Typography>
             <button onClick={goTo('/settings')} className={styles.btnSettings}>
               <SettingsIcon />
@@ -49,11 +47,11 @@ function UserInfo() {
           </div>
           <div className={styles.walletIdContainer}>
             <Typography fontSize={16} lHeight={20} color={'#5F6774'}>
-              { getShortWalletAddress(user.walletAddress) }
+              { getShortWalletAddress(user?.walletAddress) }
             </Typography>
             <ButtonCopy
               className={styles.btnCopy}
-              value={user.walletAddress} />
+              value={user?.walletAddress} />
           </div>
           <Typography
             fontSize={16}
@@ -62,7 +60,7 @@ function UserInfo() {
             margin={'16px 0 0'}
             maxWidth={555}
             align="center">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lacus mattis accumsan, diam sed.
+            { user?.bio }
           </Typography>
         </div>
       </div>

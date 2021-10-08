@@ -7,9 +7,13 @@ import cn from "classnames";
 import HeartIcon from '/public/icons/heart.svg'
 import HeartFilledIcon from '/public/icons/heart-filled.svg'
 import ContextMenu from "../context-menu/ContextMenu";
+import {useLikeListingMutation} from "../../services/listings";
+import {useGetCurrentUserQuery} from "../../services/auth";
 
 function PhotoItem({ className, imageClassName, data, type, favorite = false }) {
   const [isFavorite, setIsFavorite] = useState(false)
+  const [likes, setLikes] = useState(0)
+  const [likeListing] = useLikeListingMutation()
 
   function handleClick(e) {
     const { target: { tagName } } = e
@@ -18,12 +22,20 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
   }
 
   function toggleFavorite() {
+    likeListing(data._id)
+    setLikes(prevState => {
+      if (!isFavorite)
+        return prevState + 1
+      else
+        return prevState - 1
+    })
     setIsFavorite(prevState => !prevState)
   }
 
   useEffect(function () {
     setIsFavorite(favorite)
-  }, [favorite])
+    setLikes(data.likes)
+  }, [favorite, data])
 
   return (
     <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
@@ -45,13 +57,13 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
                   fontSize={12}
                   color={'#878D97'}
                   margin={'0 0 0 9px'}>
-                  5
+                  { likes }
                 </Typography>
               </button>
             </div>
             <div className={cn(imageClassName, styles.imageWrapper)}>
               <Image
-                src="/hero-aparts-big.jpg"
+                src={data.filePath}
                 layout="fill"
                 objectFit="cover"
                 alt="apartments" />

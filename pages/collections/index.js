@@ -46,7 +46,7 @@ function Collection({ data }) {
                   {data.name}
                 </Typography>
                 <Typography tag="span" fontSize={10} fontWeight={600} lHeight={12} color={'#5F6774'} margin={'8px 0 0'}>
-                  1 item
+                  {data.listingCount || 0} item{ (data.listingCount > 1 || !data.listingCount) && 's'   }
                 </Typography>
               </div>
             </div>
@@ -60,7 +60,6 @@ function Collection({ data }) {
 
 function MyCollections() {
   const { data: sourceCollections = [], refetch  } = useGetUserCollectionsQuery()
-  const [collections, setCollections] = useState(data)
   const [createOpened, setCreateOpened] = useState(false)
 
   const collectionsList = sourceCollections.map((collection, index) => (

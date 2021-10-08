@@ -6,17 +6,8 @@ import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
 import cn from "classnames";
 
-const options = [
-  'Aerial',
-  'Ground',
-  'Residential',
-  'Commercial',
-  'Park',
-  'Waterfront',
-]
-
-function MoreFilter({ className, name, onChange, value, mode }) {
-  const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
+function MoreFilter({ className, name, onChange, value, mode, options }) {
+  const [data, setData] = useState([])
   const [checkedAll, setCheckedAll] = useState(false)
   const [keywords, setKeywords] = useState('')
 
@@ -90,11 +81,17 @@ function MoreFilter({ className, name, onChange, value, mode }) {
     setCheckedAll(updatedCheckedAll)
     setData(updatedData)
     setKeywords(value.keywords)
-  }, [value])
+  }, [value, options])
 
   useEffect(function () {
     handleReset()
   }, [value, handleReset])
+
+  useEffect(function initOptions() {
+    if (options.length !== 0) {
+      setData(options.map(option => ({ value: option, checked: false })))
+    }
+  }, [options])
 
   return (
     <FilterWrapper
