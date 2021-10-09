@@ -94,7 +94,7 @@ function SellItem() {
   function handleSubmit(values) {
     const contractApi = require('/services/contract')
     const user = getUser();
-    contractApi.mint(+values.royalties, user.walletAddress)
+    contractApi.mintAndList(+values.royalties, values.price, user.walletAddress)
       .then((tokenID) => {
         const data = {
           price: values.price,

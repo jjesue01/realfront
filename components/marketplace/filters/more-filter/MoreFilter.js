@@ -6,7 +6,7 @@ import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
 import cn from "classnames";
 
-function MoreFilter({ className, name, onChange, value, mode, options }) {
+function MoreFilter({ className, name, onChange, value, mode, options = [] }) {
   const [data, setData] = useState([])
   const [checkedAll, setCheckedAll] = useState(false)
   const [keywords, setKeywords] = useState('')
@@ -47,7 +47,7 @@ function MoreFilter({ className, name, onChange, value, mode, options }) {
           target: {
             name,
             value: {
-              types: data.filter(({ checked }) => checked).map(({ value }) => value),
+              types: updatedData.filter(({ checked }) => checked).map(({ value }) => value),
               keywords
             }
           }

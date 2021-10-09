@@ -14,7 +14,7 @@ import {useSelector} from "react-redux";
 import {useLikeListingMutation, usePurchaseListingMutation} from "../../../../services/listings";
 import {error} from "next/dist/build/output/log";
 
-function PhotoInfo({ listing, user }) {
+function PhotoInfo({ listing, user, onBuy }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -43,26 +43,6 @@ function PhotoInfo({ listing, user }) {
     return function () {
       router.push(path)
     }
-  }
-
-  function handleBuy() {
-    const contractApi = require('/services/contract')
-
-    //contractApi.listForSell(+listing.tokenID, listing.price, user.walletAddress)
-
-    // contractApi.buy(listing.tokenID, user.walletAddress)
-    //   .then(() => {
-    //     purchaseListing(listing._id)
-    //       .then(result => {
-    //         console.log(result)
-    //       })
-    //       .catch(error => {
-    //         console.log(error)
-    //       })
-      // })
-      // .catch(error => {
-      //   console.log(error)
-      // })
   }
 
   useEffect(function initLikes() {
@@ -180,7 +160,7 @@ function PhotoInfo({ listing, user }) {
                         </Typography>
                       </div>
                     </div>
-                    <Button onClick={handleBuy}>
+                    <Button onClick={onBuy}>
                       Buy now
                     </Button>
                   </div>

@@ -2,7 +2,7 @@ import React from "react";
 import styles from './Button.module.sass'
 import cn from'classnames'
 
-function Button({ className, children, type = 'accent', htmlType = 'button', onClick }) {
+function Button({ className, children, type = 'accent', htmlType = 'button', onClick, disabled = false }) {
 
   const buttonClassNames = cn(
     className,
@@ -10,6 +10,7 @@ function Button({ className, children, type = 'accent', htmlType = 'button', onC
     {
       [styles.buttonAccent]: type === 'accent',
       [styles.buttonOutlined]: type === 'outlined',
+      [styles.disabled]: disabled,
     }
   )
 

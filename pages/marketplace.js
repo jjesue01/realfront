@@ -14,7 +14,7 @@ import PhotoItem from "../components/photo-item/PhotoItem";
 import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
-import {getSortedArray, scrollToTop} from "../utils";
+import {buildFilterOptions, getSortedArray, scrollToTop} from "../utils";
 import {useRouter} from "next/router";
 import { useGetPublishedListingsQuery } from "../services/listings";
 import {useGetCurrentUserQuery} from "../services/auth";
@@ -169,26 +169,12 @@ function Marketplace({ toggleFooter }) {
 
   useEffect(function initListings() {
     if (listings !== undefined) {
-      const collectionOptions = new Set()
-      let tagOptions = []
-
+      setOptions({
+        ...buildFilterOptions(listings.docs)
+      })
       setSourceData([...listings.docs])
       setFilteredData([...listings.docs])
       setViewportData([...listings.docs])
-
-      listings.docs.forEach(({ collections, tags }) => {
-        if (collections?.name)
-          collectionOptions.add(JSON.stringify({
-            label: collections.name,
-            value: collections.ID
-          }))
-        if (tags.length !== 0 && tags[0] !== '')
-          tagOptions = [...tagOptions, ...tags]
-        setOptions({
-          collections: [...collectionOptions].map(collection => JSON.parse(collection)),
-          tags: [...new Set(tagOptions)]
-        })
-      })
     }
   }, [listings])
 

@@ -95,7 +95,8 @@ export function buildFormData(data) {
 }
 
 export function getMoneyView(value) {
-  return `$${new Intl.NumberFormat('ru-RU').format(+value || 0)}`
+  return `$${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 })
+    .format(+value || 0)}`
 }
 
 const privateRoutes = [
@@ -109,4 +110,24 @@ const privateRoutes = [
 
 export function isPrivateRoute(pathname) {
   return privateRoutes.some(route => pathname.includes(route))
+}
+
+export function buildFilterOptions(listings) {
+  const collectionOptions = new Set()
+  let tagOptions = []
+
+  listings.forEach(({ collections, tags }) => {
+    if (collections?.name)
+      collectionOptions.add(JSON.stringify({
+        label: collections.name,
+        value: collections.ID
+      }))
+    if (tags.length !== 0 && tags[0] !== '')
+      tagOptions = [...tagOptions, ...tags]
+  })
+
+  return {
+    collections: [...collectionOptions].map(collection => JSON.parse(collection)),
+    tags: [...new Set(tagOptions)]
+  }
 }

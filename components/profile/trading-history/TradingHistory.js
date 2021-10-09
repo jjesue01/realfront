@@ -4,37 +4,7 @@ import Typography from "../../Typography";
 import cn from "classnames";
 import Image from "next/image";
 
-const data = [
-  {
-    event: 'Minted',
-    name: 'Item name',
-    price: 0.79,
-    quantity: 1,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'Minted',
-    name: 'Item name',
-    price: 0.79,
-    quantity: 1,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'Minted',
-    name: 'Item name',
-    price: 0.79,
-    quantity: 1,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-]
-
-function TradingHistory() {
+function TradingHistory({ data = [] }) {
 
   const rowsList = data.map((item, index) => (
     <div key={index} className={styles.tableItem}>
@@ -44,10 +14,13 @@ function TradingHistory() {
       <div className={cn(styles.col, styles.colItem)}>
         <div className={styles.imageContainer}>
           <div className={styles.imageWrapper}>
-            <Image src="/hero-aparts-big.jpg" layout="fill" objectFit="cover" alt={item.name} />
+            {
+              item?.listingID?.filePath &&
+              <Image src={item.listingID.filePath} layout="fill" objectFit="cover" alt={item?.listingID?.name} />
+            }
           </div>
         </div>
-        <p>{ item.name }</p>
+        <p>{ item?.listingID?.name }</p>
       </div>
       <div className={cn(styles.col, styles.colPrice)}>
         <p>{ item.price }</p>

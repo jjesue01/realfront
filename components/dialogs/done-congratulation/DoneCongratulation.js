@@ -21,7 +21,8 @@ function DoneCongratulation({ opened, onClose, imageUrl, message }) {
           fontWeight={600}
           lHeight={17}
           align="center"
-          margin={'32px 0 0'}
+          margin={'32px auto 0'}
+          maxWidth={427}
           color={'#000000'}>
           { message }
         </Typography>

@@ -8,7 +8,7 @@ import PriceFilter from "../../marketplace/filters/price-filter/PriceFilter";
 import ResourcesFilter from "../../marketplace/filters/resources-filter/ResourcesFilter";
 import MoreFilter from "../../marketplace/filters/more-filter/MoreFilter";
 
-function SideFilter({ opened, onClose, filters, onChange }) {
+function SideFilter({ opened, onClose, filters, onChange, options }) {
   const filterRef = useRef()
 
   useEffect(function toggleScrollLock() {
@@ -39,7 +39,7 @@ function SideFilter({ opened, onClose, filters, onChange }) {
             className={styles.filterItem}
             name="collections"
             value={filters.collections}
-            options={[]}
+            options={options?.collections}
             onChange={onChange} />
           <PriceFilter
             mode="flat"
@@ -56,7 +56,7 @@ function SideFilter({ opened, onClose, filters, onChange }) {
           <MoreFilter
             mode="flat"
             name="more"
-            options={[]}
+            options={options?.tags || []}
             value={filters.more}
             onChange={onChange} />
         </div>

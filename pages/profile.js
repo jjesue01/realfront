@@ -12,11 +12,12 @@ import Select from "../components/select/Select";
 import Button from "../components/button/Button";
 import SideFilter from "../components/profile/filter/SideFilter";
 import {sortOptions, data} from "../components/profile/fixtures";
-import {getSortedArray} from "../utils";
+import {buildFilterOptions, getSortedArray} from "../utils";
 import Tabs from "../components/tabs/Tabs";
 import {useRouter} from "next/router";
 import {useGetCurrentUserQuery} from "../services/auth";
 import {useGetListingsQuery} from "../services/listings";
+import {useGetProfileTransactionsQuery} from "../services/transactions";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
 const favoritedIds = [1,3,6]
@@ -28,9 +29,14 @@ function MyProfile() {
   const { data: user } = useGetCurrentUserQuery()
   const { data: collectedListings } = useGetListingsQuery({ owner: user?._id })
   const { data: createdListings } = useGetListingsQuery({ creator: user?._id })
-  const { data: favoriteListings } = useGetListingsQuery()
+  const { data: favoriteListings } = useGetListingsQuery({ liked: true })
+  const { data: transactions } = useGetProfileTransactionsQuery()
   const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
+  const [options, setOptions] = useState({
+    collected: { collections: [], tags: [] },
+    created: { collections: [], tags: [] },
+  })
   const [filterOpened, setFilterOpened] = useState(false)
   const [filtersCount, setFiltersCount] = useState(0)
   const [filters, setFilters] = useState({
@@ -88,10 +94,10 @@ function MyProfile() {
     let items = []
     let updatedFiltersCount = 0
 
-    if (currentTab === 'activity' || !user || !collectedListings || !createdListings) return;
+    if (currentTab === 'activity' || !user || !collectedListings || !createdListings || !favoriteListings) return;
 
     if (currentTab === 'favorited') {
-      items = favoriteListings.docs.filter(item => user.favorites.includes(item._id))
+      items = [...favoriteListings.docs]
       setFilteredData(items)
       return;
     }
@@ -108,15 +114,10 @@ function MyProfile() {
     }
 
     if (filters.collections.length !== 0) {
-      items = items.filter(({ collections }) => {
-        let result = false
-        filters.collections.forEach(collection => {
-          if (collections.includes(collection)) result = true
-        })
-        return result
-      })
+      items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
       updatedFiltersCount += 1
     }
+
     if (!!filters.price.from) {
       items = items.filter(({ price }) => price >= filters.price.from)
       updatedFiltersCount += 1
@@ -137,10 +138,10 @@ function MyProfile() {
     // }
 
     if (filters.more.types.length !== 0) {
-      items = items.filter(({ types }) => {
+      items = items.filter(({ tags }) => {
         let result = false
         filters.more.types.forEach(type => {
-          if (types.includes(type)) result = true
+          if (tags.includes(type)) result = true
         })
         return result
       })
@@ -151,7 +152,7 @@ function MyProfile() {
 
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
-  }, [filters, currentTab, user, createdListings, collectedListings])
+  }, [filters, currentTab, user, createdListings, collectedListings, favoriteListings, options])
 
   useEffect(function initTab() {
     const { query } = router;
@@ -159,6 +160,19 @@ function MyProfile() {
     if (query.tab)
       setCurrentTab(query.tab)
   }, [router])
+
+  useEffect(function initOptions() {
+    if (!collectedListings || !createdListings) return;
+
+    setOptions({
+      collected: buildFilterOptions(collectedListings.docs),
+      created: buildFilterOptions(createdListings.docs),
+    })
+  }, [collectedListings, createdListings])
+
+  useEffect(function resetFilters() {
+    handleResetFilters()
+  }, [currentTab])
 
   return (
     <main className={styles.root}>
@@ -229,12 +243,13 @@ function MyProfile() {
                   </div>
                 </div>
                 :
-                <TradingHistory />
+                <TradingHistory data={transactions} />
             }
           </div>
         </div>
       </div>
       <SideFilter
+        options={currentTab === 'collected' ? options.collected : options.created}
         opened={filterOpened}
         onClose={toggleFilter}
         filters={filters}
