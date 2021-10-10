@@ -33,7 +33,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
     setLogo(file)
   }
 
-  function handleSubmit(values) {
+  function handleSubmit(values, { setSubmitting }) {
     if (logo !== null) {
 
       const data = {
@@ -43,6 +43,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
 
       createCollection(data).unwrap()
         .then(result => {
+          setSubmitting(false)
           onCreate({ ...result })
           onClose()
           formik.setValues({
@@ -52,8 +53,10 @@ function CreateCollection({ opened, onClose, onCreate }) {
           setLogo(null)
         })
         .catch(() => {
-
+          setSubmitting(false)
         })
+    } else {
+      setSubmitting(false)
     }
   }
 
@@ -110,7 +113,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
           label="Description"
           value={formik.values.description}
           placeholder="Describe your collection"  />
-        <Button className={styles.btnCreate} htmlType="submit">
+        <Button className={styles.btnCreate} htmlType="submit" loading={formik.isSubmitting}>
           Create
         </Button>
       </form>

@@ -103,13 +103,16 @@ const privateRoutes = [
   '/photos/create',
   '/photos/edit',
   '/photos/sell',
-  '/collections',
+  {
+    path: '/collections',
+    exact: true
+  },
   '/settings',
   '/profile',
 ]
 
 export function isPrivateRoute(pathname) {
-  return privateRoutes.some(route => pathname.includes(route))
+  return privateRoutes.some(route => route?.exact ? pathname === route.path : pathname.includes(route))
 }
 
 export function buildFilterOptions(listings) {

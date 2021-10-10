@@ -3,7 +3,7 @@ import styles from './Summary.module.sass'
 import Typography from "../../Typography";
 import Button from "../../button/Button";
 
-function Summary() {
+function Summary({ loading }) {
   return (
     <div className={styles.summary}>
       <Typography fontWeight={600} fontSize={20} lHeight={24}>
@@ -31,7 +31,7 @@ function Summary() {
         <div className={styles.feeLine} />
         <span>2.5%</span>
       </div>
-      <Button className={styles.btnSubmit} htmlType="submit">
+      <Button className={styles.btnSubmit} htmlType="submit" loading={loading}>
         Post your listing
       </Button>
     </div>

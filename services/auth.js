@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {getIdToken, getUser} from "../utils";
+import {buildFormData, getIdToken, getUser} from "../utils";
 
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -21,9 +21,7 @@ export const authApi = createApi({
         }),
       }),
       getCurrentUser: builder.query({
-        query: () => {
-          return `/users/me`
-        },
+        query: () => `/users/me`,
       }),
       updateUser: builder.mutation({
         query: ({ walletAddress, ...data }) => ({
@@ -32,11 +30,19 @@ export const authApi = createApi({
           body: data
         }),
       }),
+      updateUserImages: builder.mutation({
+        query: (data) => ({
+          url: `/users`,
+          method: 'PATCH',
+          body: buildFormData(data)
+        }),
+      }),
   }),
 })
 
 export const {
   useLoginMutation,
   useGetCurrentUserQuery,
-  useUpdateUserMutation
+  useUpdateUserMutation,
+  useUpdateUserImagesMutation
 } = authApi

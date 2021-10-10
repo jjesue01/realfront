@@ -41,7 +41,7 @@ const scheduleOptions = [
 const validationSchema = Yup.object({
   price: Yup.number().required(),
   copies: Yup.number().positive(),
-  royalties: Yup.number().positive().min(0).max(50),
+  royalties: Yup.number().positive(),
   scheduleFrequency: Yup.string(),
   scheduleTime: Yup.string(),
   buyerAddress: Yup.string()
@@ -62,7 +62,7 @@ function SellItem() {
     initialValues: {
       price: 1,
       copies: '',
-      royalties: '',
+      royalties: 0,
       scheduleFrequency: '',
       scheduleTime: '',
       buyerAddress: ''
@@ -91,7 +91,7 @@ function SellItem() {
     setIsDone(true)
   }
 
-  function handleSubmit(values) {
+  function handleSubmit(values, { setSubmitting }) {
     const contractApi = require('/services/contract')
     const user = getUser();
     contractApi.mintAndList(+values.royalties, values.price, user.walletAddress)
@@ -111,10 +111,12 @@ function SellItem() {
           })
           .catch(error => {
             console.log(error)
+            setSubmitting(false)
           })
       })
       .catch(error => {
         console.log(error)
+        setSubmitting(false)
       })
   }
 
@@ -258,7 +260,7 @@ function SellItem() {
                 </div>
               </div>
               <div className={styles.summaryContainer}>
-                <Summary />
+                <Summary loading={formik.isSubmitting} />
               </div>
             </form>
           </div>

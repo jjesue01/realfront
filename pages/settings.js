@@ -14,6 +14,7 @@ function Settings() {
   const { data: user } = useGetCurrentUserQuery()
   const [updateUser] = useUpdateUserMutation()
   const [currentTab, setCurrentTab] = useState(tabs[0])
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [general, setGeneral] = useState({
     walletAddress: '',
     username: '',
@@ -59,12 +60,17 @@ function Settings() {
       notifications
     }
 
+    setIsSubmitting(true)
+
     updateUser(data).unwrap()
       .then(result => {
 
       })
       .catch(result => {
 
+      })
+      .finally(() => {
+        setIsSubmitting(false)
       })
   }
 
@@ -110,7 +116,7 @@ function Settings() {
                     values={notifications}
                     onChange={handleNotificationsChange} />
               }
-              <Button className={styles.btnSubmit} htmlType="submit">
+              <Button className={styles.btnSubmit} htmlType="submit" loading={isSubmitting}>
                 Save
               </Button>
             </form>

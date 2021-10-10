@@ -108,10 +108,12 @@ function Layout({ children }) {
 
   function handleLogout() {
     dispatch(logout())
+    if (isPrivateRoute(router.pathname))
+      router.push('/')
   }
 
   function handleCreate() {
-    router.push('/photos/create')
+    auth.token ? router.push('/photos/create') : togglePopup()
   }
 
   function toggleAddFunds() {
@@ -141,29 +143,36 @@ function Layout({ children }) {
     }
   }, [router])
 
-  //console.log(isPrivateRoute(router.pathname))
-
   useEffect(function checkAuth() {
-    if (localStorage) {
+    //if (localStorage) {
       const auth = JSON.parse(localStorage.getItem('auth'))
 
-      if (window.ethereum) {
-        window.ethereum.request({ method: 'eth_requestAccounts' })
-          .then((accounts) => {
-            window.web3 = new Web3(window.ethereum);
-            const contractApi = require('/services/contract')
-            web3.eth.getBalance(accounts[0])
-              .then(result => {
-                console.log(web3.utils.fromWei(result, 'ether'))
-              })
+      if (auth?.token) {
+        window.ethereum._metamask.isUnlocked()
+          .then(isUnlocked => {
+            if (isUnlocked) {
+              if (!window?.web3?.eth) {
+                window.web3 = new Web3(window.ethereum);
+              }
+              window.web3.eth.getAccounts().then(accounts => {
+                if (accounts.length !== 0) {
+                  dispatch(setCredentials(auth))
+                } else if (isPrivateRoute(router.pathname)) {
+                  router.push('/')
+                }
+              });
 
-          });
+              // web3.eth.getBalance(auth.user.walletAddress)
+              //   .then(result => {
+              //     console.log(web3.utils.fromWei(result, 'ether'))
+              //   })
+            }
+          })
+      } else if (isPrivateRoute(router.pathname)) {
+        router.push('/')
       }
-
-      if (auth?.token)
-        dispatch(setCredentials(auth))
-    }
-  }, [dispatch])
+    //}
+  }, [dispatch, router])
 
   return (
     <div className={styles.wrapper}>

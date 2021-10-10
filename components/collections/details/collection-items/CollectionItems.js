@@ -17,7 +17,7 @@ function CollectionItems({ data, user }) {
     <div className={styles.root}>
       <div className="container">
         <Typography fontSize={16} lHeight={20}>
-          { data.length > 1 ? data.length : 'No' } results
+          { data.length > 0 ? data.length : 'No' } results
         </Typography>
         <div className={styles.items}>
           { itemsList }

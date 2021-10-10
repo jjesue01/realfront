@@ -7,7 +7,7 @@ import PenIcon from '/public/icons/pen.svg'
 import {useRouter} from "next/router";
 import BannerBackground from "../../../banner-background/BannerBackground";
 
-function CollectionInfo({ itemsCount, collection }) {
+function CollectionInfo({ itemsCount, collection, isOwner }) {
   const router = useRouter()
 
   function handleEdit() {
@@ -40,14 +40,17 @@ function CollectionInfo({ itemsCount, collection }) {
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
               { collection?.name }
             </Typography>
-            <ButtonCircle onClick={handleEdit} className={styles.btnEdit}>
-              <PenIcon />
-            </ButtonCircle>
+            {
+              isOwner &&
+              <ButtonCircle onClick={handleEdit} className={styles.btnEdit}>
+                <PenIcon />
+              </ButtonCircle>
+            }
           </div>
           <div className={styles.count}>
             <div className={styles.countItem}>
               <p>{ itemsCount }</p>
-              <span>items</span>
+              <span>item{ (itemsCount > 1 || !itemsCount) && 's'}</span>
             </div>
             {/*<div className={styles.vl} />*/}
             {/*<div className={styles.countItem}>*/}

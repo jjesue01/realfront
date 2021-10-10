@@ -8,7 +8,7 @@ import {sortOptions} from "../../../profile/fixtures";
 import Button from "../../../button/Button";
 import {useRouter} from "next/router";
 
-function CollectionFilters({ filters, onChange }) {
+function CollectionFilters({ filters, onChange, isOwner }) {
   const router = useRouter()
 
   function handleAddItem() {
@@ -34,9 +34,12 @@ function CollectionFilters({ filters, onChange }) {
             onChange={onChange}
             options={sortOptions}
             placeholder={'Sort By'} />
-          <Button onClick={handleAddItem}>
-            Add item
-          </Button>
+          {
+            isOwner &&
+            <Button onClick={handleAddItem}>
+              Add item
+            </Button>
+          }
         </div>
       </div>
     </div>

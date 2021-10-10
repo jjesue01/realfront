@@ -44,6 +44,7 @@ function CollectionForm() {
   const [updateCollection] = useUpdateCollectionMutation()
   const [deleteCollection] = useDeleteCollectionMutation()
   const { data: collection  } = useGetCollectionByIdQuery(id)
+  const [isDeleting, setDeleting] = useState(false)
   const [files, setFiles] = useState({
     logo: null,
     featured: null,
@@ -71,7 +72,7 @@ function CollectionForm() {
     }
   }
 
-  function handleSubmit(values) {
+  function handleSubmit(values, { setSubmitting }) {
     const data = {
       ...values,
       logoImage: files.logo,
@@ -84,17 +85,18 @@ function CollectionForm() {
         router.push('/collections')
       })
       .catch(result => {
-
+        setSubmitting(false)
       })
   }
 
   function handleDelete() {
+    setDeleting(true)
     deleteCollection(id).unwrap()
       .then(() => {
         router.push('/collections')
       })
       .catch(() => {
-
+        setDeleting(false)
       })
   }
 
@@ -255,10 +257,10 @@ function CollectionForm() {
         onChange={formik.handleChange}
         label="Blockchain" />
       <div className={styles.actions}>
-        <Button className={styles.btnSave} htmlType="submit">
+        <Button className={styles.btnSave} htmlType="submit" loading={formik.isSubmitting}>
           Save
         </Button>
-        <Button onClick={handleDelete} className={styles.btnDelete} type="outlined">
+        <Button onClick={handleDelete} className={styles.btnDelete} type="outlined" loading={isDeleting}>
           Delete collection
         </Button>
       </div>

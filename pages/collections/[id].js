@@ -20,6 +20,7 @@ function MyCollections() {
     searchValue: '',
     sortBy: 'price_low'
   })
+  const isOwner = collection?.owner === user?._id
 
   function handleChange({ target: { name, value } }) {
     setFilters(prevFilters => ({
@@ -51,8 +52,8 @@ function MyCollections() {
       <Head>
         <title>HOMEJAB - Collection New York, Manhattan</title>
       </Head>
-      <CollectionInfo collection={collection} itemsCount={sourceData.length} />
-      <CollectionFilters filters={filters} onChange={handleChange} />
+      <CollectionInfo isOwner={isOwner} collection={collection} itemsCount={sourceData.length} />
+      <CollectionFilters isOwner={isOwner} filters={filters} onChange={handleChange} />
       <CollectionItems user={user} data={filteredData} />
     </main>
   )

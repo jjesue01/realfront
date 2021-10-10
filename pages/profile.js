@@ -126,16 +126,16 @@ function MyProfile() {
       if (!filters.price.from) updatedFiltersCount += 1
     }
 
-    // if (filters.resources.length !== 0) {
-    //   items = items.filter(({ resources }) => {
-    //     let result = false
-    //     filters.resources.forEach(resource => {
-    //       if (resources.includes(resource)) result = true
-    //     })
-    //     return result
-    //   })
-    //   updatedFiltersCount += 1
-    // }
+    if (filters.resources.length !== 0) {
+      // items = items.filter(({ resources }) => {
+      //   let result = false
+      //   filters.resources.forEach(resource => {
+      //     if (resources.includes(resource)) result = true
+      //   })
+      //   return result
+      // })
+      updatedFiltersCount += 1
+    }
 
     if (filters.more.types.length !== 0) {
       items = items.filter(({ tags }) => {

@@ -60,6 +60,7 @@ function Form({ mode }) {
   const [updateListing] = useUpdateListingMutation()
   const [deleteListing] = useDeleteListingMutation()
   const { data: collections, refetch: getCollections } = useGetUserCollectionsQuery()
+  const [isDeleting, setDeleting] = useState(false)
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [jpgFile, setJpgFile] = useState(null)
@@ -103,9 +104,8 @@ function Form({ mode }) {
     getCollections()
   }
 
-  function handleSubmit(values) {
+  function handleSubmit(values, { setSubmitting }) {
     if (jpgFile !== null && rawFile !== null){
-
       const data = {
         ...values,
         file: jpgFile,
@@ -123,6 +123,7 @@ function Form({ mode }) {
           })
           .catch(result => {
             console.log(result)
+            setSubmitting(false)
           })
 
       } else {
@@ -132,19 +133,20 @@ function Form({ mode }) {
             router.push(`/photos/${router.query.id}`)
           })
           .catch(error => {
-
+            setSubmitting(false)
           })
       }
     }
   }
 
   function handleDelete() {
+    setDeleting(true)
     deleteListing(router.query.id).unwrap()
       .then(result => {
         router.push('/collections')
       })
       .catch(result => {
-
+        setDeleting(false)
       })
   }
 
@@ -323,17 +325,17 @@ function Form({ mode }) {
         <div className={styles.actions}>
           {
             mode === 'create' ?
-              <Button htmlType="submit">
+              <Button htmlType="submit" loading={formik.isSubmitting}>
                 Create
               </Button>
               :
-              <Button className={styles.btnSave} htmlType="submit">
+              <Button className={styles.btnSave} htmlType="submit" loading={formik.isSubmitting}>
                 Save
               </Button>
           }
           {
             mode === 'edit' &&
-              <Button onClick={handleDelete} className={styles.btnDelete} type="outlined">
+              <Button onClick={handleDelete} className={styles.btnDelete} type="outlined" loading={isDeleting}>
                 Delete item
               </Button>
           }
