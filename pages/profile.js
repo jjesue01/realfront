@@ -18,6 +18,7 @@ import {useRouter} from "next/router";
 import {useGetCurrentUserQuery} from "../services/auth";
 import {useGetListingsQuery} from "../services/listings";
 import {useGetProfileTransactionsQuery} from "../services/transactions";
+import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
 const favoritedIds = [1,3,6]
@@ -31,6 +32,7 @@ function MyProfile() {
   const { data: createdListings } = useGetListingsQuery({ creator: user?._id })
   const { data: favoriteListings } = useGetListingsQuery({ liked: true })
   const { data: transactions } = useGetProfileTransactionsQuery()
+  const isLoading = !user || !collectedListings || !createdListings || !favoriteListings
   const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
   const [options, setOptions] = useState({
@@ -58,6 +60,7 @@ function MyProfile() {
     <PhotoItem
       key={item._id}
       data={item}
+      isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       favorite={currentTab === 'favorited'}
       type="full" />
   ))
@@ -254,6 +257,7 @@ function MyProfile() {
         onClose={toggleFilter}
         filters={filters}
         onChange={handleChange} />
+      <FullscreenLoader opened={isLoading} />
     </main>
   )
 }

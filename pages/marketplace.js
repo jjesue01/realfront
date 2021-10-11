@@ -18,6 +18,7 @@ import {buildFilterOptions, getSortedArray, scrollToTop} from "../utils";
 import {useRouter} from "next/router";
 import { useGetPublishedListingsQuery } from "../services/listings";
 import {useGetCurrentUserQuery} from "../services/auth";
+import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 
 const sortOptions = [
   {
@@ -34,6 +35,7 @@ function Marketplace({ toggleFooter }) {
   const router = useRouter()
   const { data: listings } = useGetPublishedListingsQuery()
   const { data: user } = useGetCurrentUserQuery()
+  const isLoading = !listings || !user
   const [sourceData, setSourceData] = useState([])
   const [viewportData, setViewportData] = useState([])
   const [filteredData, setFilteredData] = useState([])
@@ -294,6 +296,7 @@ function Marketplace({ toggleFooter }) {
                           imageClassName={styles.imageWrapper}
                           key={item.name}
                           favorite={user?.favorites?.includes(item._id)}
+                          isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
                           data={item} />
                       ))
                     }
@@ -315,6 +318,7 @@ function Marketplace({ toggleFooter }) {
           </div>
         </div>
       </div>
+      <FullscreenLoader opened={isLoading} />
     </main>
   )
 }

@@ -1,23 +1,32 @@
-import React, { useEffect } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import styles from './WalletMenu.module.sass'
 import cn from "classnames";
 import Link from "next/link";
 import WalletIcon from '/public/icons/wallet.svg'
-import CopyIcon from '/public/icons/copy.svg'
 import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
-import {useDispatch} from "react-redux";
 import ButtonCopy from "../button-copy/ButtonCopy";
 import {getShortWalletAddress} from "../../utils";
 
 function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   const router = useRouter()
+  const [balance, setBalance] = useState('0.00')
 
   function handleLogout() {
     onLogOut()
     onClose()
   }
+
+  const handleRefreshBalance = useCallback(() => {
+    const contractApi = require('/services/contract')
+
+    contractApi.balanceOf(user.walletAddress)
+      .then(balance => {
+        const formattedBalance = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(+balance)
+        setBalance(formattedBalance)
+      })
+  }, [user])
 
   useEffect(() => {
     const handleRouteChange = (url) => {
@@ -31,6 +40,10 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
       router.events.off('routeChangeStart', handleRouteChange)
     }
   }, [router, onClose, opened])
+
+  useEffect(function initBalance() {
+    handleRefreshBalance()
+  }, [handleRefreshBalance])
 
   return (
     <div className={cn(styles.walletWrapper, { [styles.opened]: opened })}>
@@ -57,7 +70,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
             <Typography fontSize={17} lHeight={21} color={'rgba(0, 0, 0, 0.5)'}>
               Total Balance
             </Typography>
-            <button className={styles.btnRefresh}>
+            <button onClick={handleRefreshBalance} className={styles.btnRefresh}>
               Refresh
             </button>
           </div>
@@ -67,7 +80,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
             lHeight={34}
             color={'#111'}
             margin={'17px 0 0'}>
-            $0.00 USD
+            ${balance} USD
           </Typography>
           <Button onClick={onAddFunds} className={styles.btnAddFunds}>
             Add Funds

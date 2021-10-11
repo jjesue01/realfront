@@ -11,6 +11,7 @@ function MoreFromCollection({ data = [], onViewCollection, user }) {
       className={styles.item}
       key={item._id}
       data={item}
+      isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       type="full" />
   ))
 

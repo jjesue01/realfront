@@ -161,11 +161,8 @@ function Layout({ children }) {
                   router.push('/')
                 }
               });
-
-              // web3.eth.getBalance(auth.user.walletAddress)
-              //   .then(result => {
-              //     console.log(web3.utils.fromWei(result, 'ether'))
-              //   })
+            } else if (isPrivateRoute(router.pathname)) {
+              router.push('/')
             }
           })
       } else if (isPrivateRoute(router.pathname)) {

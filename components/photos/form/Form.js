@@ -25,6 +25,7 @@ import {
 import {decodeTags, encodeTags, getImageUrl} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 import {useDispatch} from "react-redux";
+import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 
 const selectOptions = [
   {
@@ -59,7 +60,7 @@ function Form({ mode }) {
   const [createListing, { isLoading }] = useCreateListingMutation()
   const [updateListing] = useUpdateListingMutation()
   const [deleteListing] = useDeleteListingMutation()
-  const { data: collections, refetch: getCollections } = useGetUserCollectionsQuery()
+  const { data: collections, refetch: getCollections, isFetching } = useGetUserCollectionsQuery()
   const [isDeleting, setDeleting] = useState(false)
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
@@ -350,6 +351,7 @@ function Form({ mode }) {
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         onClose={handleCloseCongratulations} />
+      <FullscreenLoader opened={isFetching || (mode === 'edit' && !listingName)} />
     </div>
   )
 }

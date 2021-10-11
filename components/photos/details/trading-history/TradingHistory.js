@@ -3,6 +3,7 @@ import styles from './TradingHistory.module.sass'
 import Typography from "../../../Typography";
 import ArrowShort from '/public/icons/arrow-short.svg'
 import cn from "classnames";
+import {timeAgo} from "../../../../utils";
 
 const tableData = [
   {
@@ -51,7 +52,6 @@ const tableData = [
 
 function TradingHistory({ data = [] }) {
   const [opened, setOpened] = useState(false);
-
   const rowsList = data.map((item, index) => (
     <div key={index} className={styles.tableItem}>
       <div className={cn(styles.col, styles.colEvent)}>
@@ -67,7 +67,7 @@ function TradingHistory({ data = [] }) {
         <p>{ item.to }</p>
       </div>
       <div className={cn(styles.col, styles.colDate)}>
-        <p>{ item.date }</p>
+        <p>{ timeAgo(item.date) }</p>
       </div>
     </div>
   ))

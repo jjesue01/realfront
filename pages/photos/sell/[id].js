@@ -18,6 +18,7 @@ import {useGetListingByIdQuery, usePublishListingMutation} from "../../../servic
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {getUser} from "../../../utils";
 import {error} from "next/dist/build/output/log";
+import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 
 const scheduleOptions = [
   {
@@ -50,7 +51,7 @@ const validationSchema = Yup.object({
 function SellItem() {
   const router = useRouter()
   const { id } = router.query
-  const { data: listing } = useGetListingByIdQuery(id)
+  const { data: listing, isFetching } = useGetListingByIdQuery(id)
   const [publishListing] = usePublishListingMutation()
   const [isDone, setIsDone] = useState(false)
   const [lowBalance, setLowBalance] = useState(false)
@@ -275,6 +276,7 @@ function SellItem() {
         message={`Great! You just set on sale - ${listing?.name}`}
         opened={isDone}
         onClose={handleCloseCongratulations} />
+      <FullscreenLoader opened={isFetching} />
     </main>
   )
 }

@@ -8,6 +8,7 @@ import Link from "next/link";
 import ContextMenu from "../../components/context-menu/ContextMenu";
 import CreateCollection from "../../components/dialogs/create-collection/CreateCollection";
 import {useGetUserCollectionsQuery} from "../../services/collections";
+import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
 
 const data = [
   {
@@ -53,13 +54,13 @@ function Collection({ data }) {
           </div>
         </a>
       </Link>
-      <ContextMenu href={`/collections/edit/${data._id}`} className={styles.btnMenu} />
+      <ContextMenu href={`/collections/edit/${data._id}`} className={styles.btnMenu} hasEdit />
     </div>
   )
 }
 
 function MyCollections() {
-  const { data: sourceCollections = [], refetch  } = useGetUserCollectionsQuery()
+  const { data: sourceCollections = [], refetch, isLoading, isFetching } = useGetUserCollectionsQuery()
   const [createOpened, setCreateOpened] = useState(false)
 
   const collectionsList = sourceCollections.map((collection, index) => (
@@ -114,6 +115,7 @@ function MyCollections() {
         opened={createOpened}
         onClose={toggleCreate}
         onCreate={handleCreate} />
+      <FullscreenLoader opened={isLoading || isFetching} />
     </main>
   )
 }

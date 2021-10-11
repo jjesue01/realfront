@@ -8,12 +8,14 @@ import {useGetCollectionByIdQuery} from "../../services/collections";
 import {useRouter} from "next/router";
 import {useGetListingsQuery} from "../../services/listings";
 import {useGetCurrentUserQuery} from "../../services/auth";
+import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
 
 function MyCollections() {
   const { query: { id } } = useRouter()
   const { data: collection  } = useGetCollectionByIdQuery(id)
   const { data: user } = useGetCurrentUserQuery()
   const { data: listings } = useGetListingsQuery({ collection: id })
+  const isLoading = !collection || !user || !listings
   const [sourceData, setSourceData] = useState([])
   const [filteredData, setFilteredData] = useState([])
   const [filters, setFilters] = useState({
@@ -55,6 +57,7 @@ function MyCollections() {
       <CollectionInfo isOwner={isOwner} collection={collection} itemsCount={sourceData.length} />
       <CollectionFilters isOwner={isOwner} filters={filters} onChange={handleChange} />
       <CollectionItems user={user} data={filteredData} />
+      <FullscreenLoader opened={isLoading} />
     </main>
   )
 }

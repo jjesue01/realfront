@@ -7,6 +7,7 @@ import General from "../components/settings/general/General";
 import Button from "../components/button/Button";
 import Notifications from "../components/settings/notifications/Notifications";
 import {useGetCurrentUserQuery, useUpdateUserMutation} from "../services/auth";
+import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 
 const tabs = ['general', 'notification settings']
 
@@ -123,6 +124,7 @@ function Settings() {
           </div>
         </div>
       </div>
+      <FullscreenLoader opened={!user} />
     </main>
   )
 }

@@ -10,6 +10,7 @@ function CollectionItems({ data, user }) {
       favorite={user?.favorites?.includes(item._id)}
       key={item._id}
       data={item}
+      isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       type="full" />
   ))
 

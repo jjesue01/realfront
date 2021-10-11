@@ -10,7 +10,7 @@ import ContextMenu from "../context-menu/ContextMenu";
 import {useLikeListingMutation} from "../../services/listings";
 import {useGetCurrentUserQuery} from "../../services/auth";
 
-function PhotoItem({ className, imageClassName, data, type, favorite = false }) {
+function PhotoItem({ className, imageClassName, data, type, favorite = false, isOwn = false }) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [likeListing] = useLikeListingMutation()
@@ -39,7 +39,7 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false }) 
 
   return (
     <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
-      <ContextMenu href={`/photos/edit/${data._id}`} className={styles.btnMenu} />
+      <ContextMenu href={`/photos/edit/${data._id}`}  className={styles.btnMenu} hasEdit={isOwn} />
       <Link href={`/photos/${data._id}`} passHref>
         <a onClick={handleClick}>
           <div className={styles.root}>

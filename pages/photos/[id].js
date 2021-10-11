@@ -15,6 +15,7 @@ import {useGetTransactionsByListingIdQuery} from "../../services/transactions";
 import {useGetCurrentUserQuery} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
+import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
 
 function PhotoDetails() {
   const { query: { id }, ...router } = useRouter()
@@ -23,6 +24,7 @@ function PhotoDetails() {
   const { data: user } = useGetCurrentUserQuery()
   const { data: transactions } = useGetTransactionsByListingIdQuery(id)
   const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, limit: 3 })
+  const isLoading = !listing || !user || !transactions || !listings
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
@@ -91,6 +93,7 @@ function PhotoDetails() {
             onClose={handleCloseCongratulations} />
         </>
       }
+      <FullscreenLoader opened={isLoading} />
     </main>
   )
 }

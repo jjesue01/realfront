@@ -4,7 +4,7 @@ import MenuIcon from "../../public/icons/menu-ellipsis.svg";
 import cn from "classnames";
 import Link from "next/link";
 
-function ContextMenu({ className, href }) {
+function ContextMenu({ className, href, hasEdit = false }) {
   const [opened, setOpened] = useState(false)
 
   function toggleMenu() {
@@ -22,10 +22,15 @@ function ContextMenu({ className, href }) {
           <MenuIcon />
         </button>
         <div className={styles.menu}>
-          <Link href={href} passHref>
-            Edit
-          </Link>
-          <div className={styles.hr} />
+          {
+            hasEdit &&
+              <>
+                <Link href={href} passHref>
+                  Edit
+                </Link>
+                <div className={styles.hr} />
+              </>
+          }
           <button>
             Copy link
           </button>

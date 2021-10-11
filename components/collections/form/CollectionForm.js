@@ -17,6 +17,7 @@ import {
   useGetCollectionByIdQuery,
   useUpdateCollectionMutation
 } from "../../../services/collections";
+import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 
 const selectOptions = [
   {
@@ -43,7 +44,7 @@ function CollectionForm() {
   const { id } = router.query
   const [updateCollection] = useUpdateCollectionMutation()
   const [deleteCollection] = useDeleteCollectionMutation()
-  const { data: collection  } = useGetCollectionByIdQuery(id)
+  const { data: collection, isFetching } = useGetCollectionByIdQuery(id)
   const [isDeleting, setDeleting] = useState(false)
   const [files, setFiles] = useState({
     logo: null,
@@ -264,6 +265,7 @@ function CollectionForm() {
           Delete collection
         </Button>
       </div>
+      <FullscreenLoader opened={isFetching} />
     </form>
   )
 }

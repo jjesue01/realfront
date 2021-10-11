@@ -3,6 +3,7 @@ import styles from './TradingHistory.module.sass'
 import Typography from "../../Typography";
 import cn from "classnames";
 import Image from "next/image";
+import {timeAgo} from "../../../utils";
 
 function TradingHistory({ data = [] }) {
 
@@ -35,7 +36,7 @@ function TradingHistory({ data = [] }) {
         <p>{ item.to }</p>
       </div>
       <div className={cn(styles.col, styles.colDate)}>
-        <p>{ item.date }</p>
+        <p>{ timeAgo(item.date) }</p>
       </div>
     </div>
   ))
