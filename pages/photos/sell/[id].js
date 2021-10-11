@@ -126,7 +126,7 @@ function SellItem() {
         ...prevState,
         price: listing.price,
         copies: listing.copies,
-        royalties: listing.royalties
+        royalties: listing.royalties || 0
       }))
     }
   }, [listing, setValues])

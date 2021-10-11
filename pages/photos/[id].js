@@ -5,7 +5,12 @@ import TradingHistory from "../../components/photos/details/trading-history/Trad
 import MoreFromCollection from "../../components/photos/details/more/MoreFromCollection";
 import Head from "next/head";
 import {useRouter} from "next/router";
-import {useGetListingByIdQuery, useGetListingsQuery, useGetPublishedListingsQuery} from "../../services/listings";
+import {
+  useGetListingByIdQuery,
+  useGetListingsQuery,
+  useGetPublishedListingsQuery,
+  usePurchaseListingMutation
+} from "../../services/listings";
 import {useGetTransactionsByListingIdQuery} from "../../services/transactions";
 import {useGetCurrentUserQuery} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
@@ -18,10 +23,12 @@ function PhotoDetails() {
   const { data: user } = useGetCurrentUserQuery()
   const { data: transactions } = useGetTransactionsByListingIdQuery(id)
   const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, limit: 3 })
+  const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
 
-  const ownItem = listing?.creator?.ID === user?._id
+  const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
+
 
   function handleViewCollection() {
     router.push(`/collections/${collectionId}`)
@@ -32,25 +39,27 @@ function PhotoDetails() {
   }
 
   function handleBuy() {
-    const contractApi = require('/services/contract')
-    toggleConfirmDialog()
-    setIsDone(true)
-    // contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
-    //   .then(() => {
-    //     console.log('bought')
-    //     toggleConfirmDialog()
-    //     setIsDone(true)
-    // purchaseListing(listing._id)
-    //   .then(result => {
-    //     console.log(result)
-    //   })
-    //   .catch(error => {
-    //     console.log(error)
-    //   })
-    // })
-    // .catch(error => {
-    //   console.log(error)
-    // })
+    return new Promise((resolve, reject) => {
+      const contractApi = require('/services/contract')
+
+      contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
+        .then(() => {
+          purchaseListing(listing._id)
+            .then(result => {
+              resolve()
+              toggleConfirmDialog()
+              setIsDone(true)
+            })
+            .catch(error => {
+              console.log(error)
+              reject()
+            })
+        })
+        .catch(error => {
+          console.log(error)
+          reject()
+        })
+    })
   }
 
   function handleCloseCongratulations() {
@@ -63,7 +72,7 @@ function PhotoDetails() {
         <title>HOMEJAB - {listing?.name}</title>
       </Head>
       <div className={styles.content}>
-        <PhotoInfo user={user} listing={listing} onBuy={toggleConfirmDialog} />
+        <PhotoInfo ownItem={ownItem} user={user} listing={listing} onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
         <MoreFromCollection user={user} data={listings?.docs} onViewCollection={handleViewCollection} />
       </div>

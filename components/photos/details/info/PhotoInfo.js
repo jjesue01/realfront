@@ -14,15 +14,13 @@ import {useSelector} from "react-redux";
 import {useLikeListingMutation, usePurchaseListingMutation} from "../../../../services/listings";
 import {error} from "next/dist/build/output/log";
 
-function PhotoInfo({ listing, user, onBuy }) {
+function PhotoInfo({ listing, user, onBuy, ownItem }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
-  const [purchaseListing] = usePurchaseListingMutation()
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
-  const ownItem = listing?.creator?.ID === user?._id
 
   function toggleFavorite() {
     likeListing(listing._id)

@@ -9,13 +9,18 @@ import Button from "../../button/Button";
 
 function ConfirmCheckout({ opened, listing, onClose, onCheckout }) {
   const [checked, setChecked] = useState(false)
+  const [isLoading, setLoading] = useState(false)
 
   function toggleCheckbox() {
     setChecked(prevState => !prevState)
   }
 
   function handleCheckout() {
+    setLoading(true)
     onCheckout()
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -86,7 +91,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout }) {
           label={<>By checking this box, I agree to Home Jab&apos;s <span>Terms of Service</span></>}
           onChange={toggleCheckbox} />
           <div className={styles.actions}>
-            <Button onClick={handleCheckout} disabled={!checked}>
+            <Button onClick={handleCheckout} disabled={!checked} loading={isLoading}>
               Checkout
             </Button>
           </div>
