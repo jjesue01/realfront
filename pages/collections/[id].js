@@ -12,9 +12,9 @@ import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoade
 
 function MyCollections() {
   const { query: { id } } = useRouter()
-  const { data: collection  } = useGetCollectionByIdQuery(id)
+  const { data: collection  } = useGetCollectionByIdQuery(id, { skip: !id })
   const { data: user } = useGetCurrentUserQuery()
-  const { data: listings } = useGetListingsQuery({ collection: id })
+  const { data: listings } = useGetListingsQuery({ collection: id }, { skip: !id })
   const isLoading = !collection || !user || !listings
   const [sourceData, setSourceData] = useState([])
   const [filteredData, setFilteredData] = useState([])

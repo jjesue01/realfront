@@ -31,6 +31,20 @@ const sortOptions = [
   },
 ]
 
+const initialFilters = {
+  searchValue: '',
+  collections: [],
+  price: {
+    from: '',
+    to: ''
+  },
+  resources: [],
+  more: {
+    types: [],
+    keywords: ''
+  },
+}
+
 function Marketplace({ toggleFooter }) {
   const router = useRouter()
   const { data: listings } = useGetPublishedListingsQuery()
@@ -41,18 +55,9 @@ function Marketplace({ toggleFooter }) {
   const [filteredData, setFilteredData] = useState([])
   const [options, setOptions] = useState({ collections: [], tags: [] })
   const [isMapHidden, setIsMapHidden] = useState(false)
+  const [showReset, setShowReset] = useState(false)
   const [filters, setFilters] = useState({
-    searchValue: '',
-    collections: [],
-    price: {
-      from: '',
-      to: ''
-    },
-    resources: [],
-    more: {
-      types: [],
-      keywords: ''
-    },
+    ...initialFilters,
     sortBy: 'price_low'
   })
   const [currentPage, setCurrentPage] = useState(1)
@@ -94,17 +99,7 @@ function Marketplace({ toggleFooter }) {
   function handleResetFilters() {
     setFilters(prevState => ({
       ...prevState,
-      searchValue: '',
-      collections: [],
-      price: {
-        from: '',
-        to: ''
-      },
-      resources: [],
-      more: {
-        types: [],
-        keywords: ''
-      }
+      ...initialFilters
     }))
   }
 
@@ -121,21 +116,26 @@ function Marketplace({ toggleFooter }) {
 
   useEffect(function filterData() {
     let items = isMapHidden ? sourceData : viewportData
+    let hasFilters = false
 
     if (filters.searchValue !== '') {
       items = items.filter(({ name, address }) =>
         `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
+      hasFilters = true
     }
 
-    if (filters.collections.length !== 0 && filters.collections.length !== options.collections.length) {
+    if (filters.collections.length !== 0) {
       items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
+      hasFilters = true
     }
 
     if (!!+filters.price.from) {
       items = items.filter(({ price }) => price >= +filters.price.from)
+      hasFilters = true
     }
     if (!!+filters.price.to) {
       items = items.filter(({ price }) => price <= +filters.price.to)
+      hasFilters = true
     }
 
     // if (filters.resources.length !== 0) {
@@ -156,10 +156,12 @@ function Marketplace({ toggleFooter }) {
         })
         return result
       })
+      hasFilters = true
     }
 
     items = getSortedArray(items, filters.sortBy)
 
+    setShowReset(hasFilters)
     setFilteredData([...items])
   }, [filters, viewportData, sourceData, isMapHidden, options])
 
@@ -221,7 +223,7 @@ function Marketplace({ toggleFooter }) {
               options={options.tags}
               onChange={handleChange} />
           </div>
-          <div className={styles.resetFilters}>
+          <div className={cn(styles.resetFilters, { [styles.resetFiltersShown]: showReset })}>
             <button onClick={handleResetFilters} className={styles.btnReset} />
             <Typography fontSize={14} color={'#111'}>
               Reset all filters

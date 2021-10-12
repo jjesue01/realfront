@@ -66,6 +66,7 @@ function Form({ mode }) {
   const [isCreated, setIsCreated] = useState(false)
   const [jpgFile, setJpgFile] = useState(null)
   const [rawFile, setRawFile] = useState(null)
+  const [jpgFilePreview, setJpgFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
   const [ listingName, setListingName] = useState('')
@@ -87,6 +88,7 @@ function Form({ mode }) {
 
   function handleFileJPGChange(file) {
     setJpgFile(file)
+    setJpgFilePreview(getImageUrl(file))
   }
 
   function handleFileRAWChange(file) {
@@ -137,6 +139,8 @@ function Form({ mode }) {
             setSubmitting(false)
           })
       }
+    } else {
+      setSubmitting(false)
     }
   }
 
@@ -237,7 +241,11 @@ function Form({ mode }) {
                     </div>
                     :
                     <div className={styles.imageContainer}>
-                      <Image src={getImageUrl(jpgFile)} layout="fill" objectFit={'cover'} alt="nft item" />
+                      <Image
+                        src={jpgFilePreview !== null ? jpgFilePreview : jpgFile}
+                        layout="fill"
+                        objectFit={'cover'}
+                        alt="nft item" />
                       <ButtonCircle className={styles.btnEdit}>
                         <PenIcon />
                       </ButtonCircle>
@@ -347,7 +355,7 @@ function Form({ mode }) {
         onClose={toggleCreateCollection}
         onCreate={handleCreateCollection} />
       <DoneCongratulation
-        imageUrl={jpgFile !== null && getImageUrl(jpgFile)}
+        imageUrl={jpgFile !== null && jpgFilePreview}
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         onClose={handleCloseCongratulations} />

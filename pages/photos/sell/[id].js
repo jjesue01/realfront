@@ -42,7 +42,7 @@ const scheduleOptions = [
 const validationSchema = Yup.object({
   price: Yup.number().required(),
   copies: Yup.number().positive(),
-  royalties: Yup.number().positive(),
+  royalties: Yup.number().min(0).max(10),
   scheduleFrequency: Yup.string(),
   scheduleTime: Yup.string(),
   buyerAddress: Yup.string()
@@ -51,7 +51,7 @@ const validationSchema = Yup.object({
 function SellItem() {
   const router = useRouter()
   const { id } = router.query
-  const { data: listing, isFetching } = useGetListingByIdQuery(id)
+  const { data: listing, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const [publishListing] = usePublishListingMutation()
   const [isDone, setIsDone] = useState(false)
   const [lowBalance, setLowBalance] = useState(false)
@@ -209,7 +209,7 @@ function SellItem() {
                   onChange={formik.handleChange}
                   placeholder="e.g. 10"
                   iconRight={<span className={styles.percentIcon}>%</span>}
-                  subLabel="Suggested: 0%, 10%, 20%, 30%. Maximum is 50%"
+                  subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"
                   label="Royalties" />
                 <div className={styles.additionalFields}>
                   <div className={styles.addField}>

@@ -19,12 +19,12 @@ import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoade
 
 function PhotoDetails() {
   const { query: { id }, ...router } = useRouter()
-  const { data: listing } = useGetListingByIdQuery(id)
+  const { data: listing } = useGetListingByIdQuery(id, { skip: !id })
   const collectionId = listing?.collections?.ID;
-  const { data: user } = useGetCurrentUserQuery()
-  const { data: transactions } = useGetTransactionsByListingIdQuery(id)
+  const { data: user, isError } = useGetCurrentUserQuery()
+  const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
   const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, limit: 3 })
-  const isLoading = !listing || !user || !transactions || !listings
+  const isLoading = !listing || (!user && !isError) || !transactions || !listings
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)

@@ -94,6 +94,7 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
       mode={mode}
       className={cn(className, { [styles.flat]: mode === 'flat' })}
       title="Collection"
+      active={value.length !== 0}
       onApply={handleApply}
       onClose={handleReset}>
       <div className={styles.header}>

@@ -98,6 +98,7 @@ function MoreFilter({ className, name, onChange, value, mode, options = [] }) {
       mode={mode}
       className={className}
       title="More"
+      active={value.types.length !== 0 || !!value.keywords}
       onApply={handleApply}
       onClose={handleReset}>
       <div className={cn(styles.root, { [styles.flat]: mode === 'flat' })}>

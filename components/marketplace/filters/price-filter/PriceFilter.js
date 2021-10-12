@@ -39,6 +39,7 @@ function PriceFilter({ className, name, onChange, value, mode }) {
       mode={mode}
       className={className}
       title="Price"
+      active={!!value.from || !!value.to}
       onApply={handleApply}
       onClose={handleClose}>
       <div className={cn(styles.root, { [styles.flat]: mode === 'flat' })}>

@@ -28,8 +28,8 @@ const userId = 1
 function MyProfile() {
   const router = useRouter()
   const { data: user } = useGetCurrentUserQuery()
-  const { data: collectedListings } = useGetListingsQuery({ owner: user?._id })
-  const { data: createdListings } = useGetListingsQuery({ creator: user?._id })
+  const { data: collectedListings } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
+  const { data: createdListings } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
   const { data: favoriteListings } = useGetListingsQuery({ liked: true })
   const { data: transactions } = useGetProfileTransactionsQuery()
   const isLoading = !user || !collectedListings || !createdListings || !favoriteListings

@@ -78,6 +78,7 @@ function ResourcesFilter({ className, name, onChange, value, mode }) {
       mode={mode}
       className={className}
       title="Resources"
+      active={value.length !== 0}
       onApply={handleApply}
       onClose={handleReset}>
       <div className={cn(styles.root, { [styles.flat]: mode === 'flat' })}>

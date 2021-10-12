@@ -44,7 +44,7 @@ function CollectionForm() {
   const { id } = router.query
   const [updateCollection] = useUpdateCollectionMutation()
   const [deleteCollection] = useDeleteCollectionMutation()
-  const { data: collection, isFetching } = useGetCollectionByIdQuery(id)
+  const { data: collection, isFetching } = useGetCollectionByIdQuery(id, { skip: !id })
   const [isDeleting, setDeleting] = useState(false)
   const [files, setFiles] = useState({
     logo: null,
