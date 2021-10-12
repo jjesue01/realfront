@@ -34,8 +34,8 @@ const sortOptions = [
 function Marketplace({ toggleFooter }) {
   const router = useRouter()
   const { data: listings } = useGetPublishedListingsQuery()
-  const { data: user } = useGetCurrentUserQuery()
-  const isLoading = !listings || !user
+  const { data: user, isError } = useGetCurrentUserQuery()
+  const isLoading = !listings || (!user && !isError)
   const [sourceData, setSourceData] = useState([])
   const [viewportData, setViewportData] = useState([])
   const [filteredData, setFilteredData] = useState([])
@@ -131,10 +131,11 @@ function Marketplace({ toggleFooter }) {
       items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
     }
 
-    if (!!filters.price.from) {
-      items = items.filter(({ price }) => price >= filters.price.from)
-    } else if (!!filters.price.to) {
-      items = items.filter(({ price }) => price <= filters.price.to)
+    if (!!+filters.price.from) {
+      items = items.filter(({ price }) => price >= +filters.price.from)
+    }
+    if (!!+filters.price.to) {
+      items = items.filter(({ price }) => price <= +filters.price.to)
     }
 
     // if (filters.resources.length !== 0) {

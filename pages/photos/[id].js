@@ -28,6 +28,7 @@ function PhotoDetails() {
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
+  const [transactionHash, setTransactionHash] = useState('')
 
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
@@ -45,7 +46,9 @@ function PhotoDetails() {
       const contractApi = require('/services/contract')
 
       contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
-        .then(() => {
+        .then(({ transactionHash: hash }) => {
+          console.log(hash)
+          setTransactionHash(hash)
           purchaseListing(listing._id)
             .then(result => {
               resolve()
@@ -90,6 +93,8 @@ function PhotoDetails() {
             imageUrl={listing?.filePath}
             message={`You just purchased ${listing?.name}. It should be confirmed on the blockhain shortly.`}
             opened={isDone}
+            title={'Complete checkout'}
+            transactionHash={transactionHash}
             onClose={handleCloseCongratulations} />
         </>
       }

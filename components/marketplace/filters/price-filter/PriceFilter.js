@@ -14,11 +14,11 @@ function PriceFilter({ className, name, onChange, value, mode }) {
   function handleChange({ target: { name, value } }) {
     setValues(prevState => ({
       ...prevState,
-      [name]: +value || ''
+      [name]: value
     }))
 
     if (mode === 'flat') {
-      onChange({ target: { name: 'price', value: { ...values, [name]: +value } } })
+      onChange({ target: { name: 'price', value: { ...values, [name]: value } } })
     }
   }
 

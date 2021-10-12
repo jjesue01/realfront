@@ -121,12 +121,13 @@ function MyProfile() {
       updatedFiltersCount += 1
     }
 
-    if (!!filters.price.from) {
-      items = items.filter(({ price }) => price >= filters.price.from)
+    if (!!+filters.price.from) {
+      items = items.filter(({ price }) => price >= +filters.price.from)
       updatedFiltersCount += 1
-    } else if (!!filters.price.to) {
-      items = items.filter(({ price }) => price <= filters.price.to)
-      if (!filters.price.from) updatedFiltersCount += 1
+    }
+    if (!!+filters.price.to) {
+      items = items.filter(({ price }) => price <= +filters.price.to)
+      if (!+filters.price.from) updatedFiltersCount += 1
     }
 
     if (filters.resources.length !== 0) {

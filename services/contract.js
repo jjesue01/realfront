@@ -26,7 +26,7 @@ if (typeof window !== "undefined" && window.web3.eth) {
         })
     })
   }
-//test buy http://localhost:3000/photos/6161795de854b7346b6f4917
+
   contractApi.buy = (tokenID, price, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3.utils.toWei(price.toString())
