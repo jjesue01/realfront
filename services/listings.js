@@ -39,7 +39,6 @@ export const listingsApi = createApi({
     }),
     updateListing: builder.mutation({
       query: ({ id, ...data }) => {
-        //delete data.collection
         const formData = buildFormData(data)
 
         return {
@@ -96,7 +95,7 @@ export const listingsApi = createApi({
       }),
     }),
     getListingById: builder.query({
-      query: id => `/listings/${id}`
+      query: id => `/listings/${id}`,
     })
   }),
 })

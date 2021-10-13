@@ -34,7 +34,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
   async function handleLoginMetaMask() {
     if (window.ethereum) {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      window.web3 = new Web3(window.ethereum);
+      window.web3App = new Web3(window.ethereum);
 
       onLogin({
         walletId: accounts[0]

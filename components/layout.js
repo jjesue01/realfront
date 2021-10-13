@@ -151,10 +151,10 @@ function Layout({ children }) {
         window.ethereum._metamask.isUnlocked()
           .then(isUnlocked => {
             if (isUnlocked) {
-              if (!window?.web3?.eth) {
-                window.web3 = new Web3(window.ethereum);
+              if (!window?.web3App) {
+                window.web3App = new Web3(window.ethereum);
               }
-              window.web3.eth.getAccounts().then(accounts => {
+              window.web3App.eth.getAccounts().then(accounts => {
                 if (accounts.length !== 0) {
                   dispatch(setCredentials(auth))
                 } else if (isPrivateRoute(router.pathname)) {

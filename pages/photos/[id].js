@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styles from '../../styles/PhotoDetails.module.sass'
 import PhotoInfo from "../../components/photos/details/info/PhotoInfo";
 import TradingHistory from "../../components/photos/details/trading-history/TradingHistory";
@@ -19,7 +19,7 @@ import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoade
 
 function PhotoDetails() {
   const { query: { id }, ...router } = useRouter()
-  const { data: listing } = useGetListingByIdQuery(id, { skip: !id })
+  const { data: listing, refetch } = useGetListingByIdQuery(id, { skip: !id })
   const collectionId = listing?.collections?.ID;
   const { data: user, isError } = useGetCurrentUserQuery()
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
@@ -70,6 +70,10 @@ function PhotoDetails() {
   function handleCloseCongratulations() {
     router.push('/profile')
   }
+
+  useEffect(function () {
+    refetch()
+  }, [refetch])
 
   return (
     <main className={styles.root}>

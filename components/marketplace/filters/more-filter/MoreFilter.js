@@ -20,8 +20,11 @@ function MoreFilter({ className, name, onChange, value, mode, options = [] }) {
       onChange={handleCheckboxChange(value)} />
   ))
 
-  function handleInputChange({ target: { value } }) {
-    setKeywords(value)
+  function handleInputChange({ target: { value: inputValue } }) {
+    setKeywords(inputValue)
+    if (mode === 'flat') {
+      onChange({ target: { name, value: { ...value, keywords: inputValue } } })
+    }
   }
 
   function handleCheckboxChange(value) {
@@ -85,7 +88,7 @@ function MoreFilter({ className, name, onChange, value, mode, options = [] }) {
 
   useEffect(function () {
     handleReset()
-  }, [value, handleReset])
+  }, [value.types, value.keywords, handleReset])
 
   useEffect(function initOptions() {
     if (options.length !== 0) {

@@ -11,7 +11,7 @@ import Input from "../components/input/Input";
 import Select from "../components/select/Select";
 import Button from "../components/button/Button";
 import SideFilter from "../components/profile/filter/SideFilter";
-import {sortOptions, data} from "../components/profile/fixtures";
+import {sortOptions} from "../components/profile/fixtures";
 import {buildFilterOptions, getSortedArray} from "../utils";
 import Tabs from "../components/tabs/Tabs";
 import {useRouter} from "next/router";
@@ -21,17 +21,28 @@ import {useGetProfileTransactionsQuery} from "../services/transactions";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 
 const tabs = ['collected', 'created', 'favorited', 'activity']
-const favoritedIds = [1,3,6]
-const boughtItems = [2,9,7]
-const userId = 1
+
+const initialFilters = {
+  searchValue: '',
+  collections: [],
+  price: {
+    from: '',
+    to: ''
+  },
+  resources: [],
+  more: {
+    types: [],
+    keywords: ''
+  },
+}
 
 function MyProfile() {
   const router = useRouter()
-  const { data: user } = useGetCurrentUserQuery()
-  const { data: collectedListings } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
-  const { data: createdListings } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
-  const { data: favoriteListings } = useGetListingsQuery({ liked: true })
-  const { data: transactions } = useGetProfileTransactionsQuery()
+  const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
+  const { data: collectedListings, refetch: refetchCollected } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
+  const { data: createdListings, refetch: refetchCreated } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
+  const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
+  const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
   const isLoading = !user || !collectedListings || !createdListings || !favoriteListings
   const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
@@ -42,19 +53,10 @@ function MyProfile() {
   const [filterOpened, setFilterOpened] = useState(false)
   const [filtersCount, setFiltersCount] = useState(0)
   const [filters, setFilters] = useState({
-    searchValue: '',
-    collections: [],
-    price: {
-      from: '',
-      to: ''
-    },
-    resources: [],
-    more: {
-      types: [],
-      keywords: ''
-    },
+    ...initialFilters,
     sortBy: 'price_low'
   })
+  const [filterValues, setFilterValues] = useState([])
 
   const itemsList = filteredData.map((item) => (
     <PhotoItem
@@ -71,17 +73,7 @@ function MyProfile() {
   function handleResetFilters() {
     setFilters(prevState => ({
       ...prevState,
-      searchValue: '',
-      collections: [],
-      price: {
-        from: '',
-        to: ''
-      },
-      resources: [],
-      more: {
-        types: [],
-        keywords: ''
-      }
+      ...initialFilters,
     }))
   }
 
@@ -93,8 +85,32 @@ function MyProfile() {
     setFilterOpened(prevState => !prevState)
   }
 
+  function handleDeleteValue(item) {
+    return function () {
+      const updatedFilters = { ...filters }
+      if (item.sub) {
+        const subValue = updatedFilters[item.name][item.sub]
+        if (Array.isArray(subValue)) {
+          updatedFilters[item.name][item.sub] = subValue.filter(value => value !== item.value)
+        } else {
+          updatedFilters[item.name][item.sub] = ''
+        }
+      } else if (Array.isArray(updatedFilters[item.name])) {
+        updatedFilters[item.name] = updatedFilters[item.name].filter(value => value !== item.value)
+      } else {
+        updatedFilters[item.name] = ''
+      }
+
+      setFilters(prevState => ({
+        ...prevState,
+        ...updatedFilters
+      }))
+    }
+  }
+
   useEffect(function filterData() {
     let items = []
+    let updatedFilterValues = []
     let updatedFiltersCount = 0
 
     if (currentTab === 'activity' || !user || !collectedListings || !createdListings || !favoriteListings) return;
@@ -119,14 +135,37 @@ function MyProfile() {
     if (filters.collections.length !== 0) {
       items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
       updatedFiltersCount += 1
+      updatedFilterValues = [
+        ...options[currentTab].collections
+          .filter(({ value }) => filters.collections.some(id => id === value))
+          .map(item => ({ ...item, name: 'collections' }))
+      ]
     }
 
     if (!!+filters.price.from) {
       items = items.filter(({ price }) => price >= +filters.price.from)
       updatedFiltersCount += 1
+      updatedFilterValues = [
+        ...updatedFilterValues,
+        {
+          name: 'price',
+          sub: 'from',
+          label: `From: ${+filters.price.from}`,
+          value: +filters.price.from
+        }
+      ]
     }
     if (!!+filters.price.to) {
       items = items.filter(({ price }) => price <= +filters.price.to)
+      updatedFilterValues = [
+        ...updatedFilterValues,
+        {
+          name: 'price',
+          sub: 'to',
+          label: `To: ${+filters.price.to}`,
+          value: +filters.price.to
+        }
+      ]
       if (!+filters.price.from) updatedFiltersCount += 1
     }
 
@@ -150,12 +189,35 @@ function MyProfile() {
         return result
       })
       updatedFiltersCount += 1
+      updatedFilterValues = [
+        ...updatedFilterValues,
+        ...filters.more.types.map(tag => ({
+          name: 'more',
+          sub: 'types',
+          label: tag,
+          value: tag
+        }))
+      ]
+    }
+
+    if (!!filters.more.keywords) {
+      updatedFiltersCount += 1
+      updatedFilterValues = [
+        ...updatedFilterValues,
+        {
+          name: 'more',
+          sub: 'keywords',
+          label: filters.more.keywords,
+          value: 'keywordsField'
+        }
+      ]
     }
 
     items = getSortedArray(items, filters.sortBy)
 
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
+    setFilterValues(updatedFilterValues)
   }, [filters, currentTab, user, createdListings, collectedListings, favoriteListings, options])
 
   useEffect(function initTab() {
@@ -177,6 +239,14 @@ function MyProfile() {
   useEffect(function resetFilters() {
     handleResetFilters()
   }, [currentTab])
+
+  useEffect(function () {
+    refetchUser()
+    refetchCollected()
+    refetchCreated()
+    refetchFavorite()
+    refetchTransactions()
+  }, [refetchUser, refetchCollected, refetchCreated, refetchFavorite, refetchTransactions])
 
   return (
     <main className={styles.root}>
@@ -219,23 +289,30 @@ function MyProfile() {
                     }
                   </Button>
               </div>
-              <div className={styles.row}>
+              <div className={cn(styles.row, styles.tagsContainer)}>
                 <div className={styles.tags}>
-                  <div className={styles.tag}>
-                    <p>New York</p>
-                    <button className={styles.btnDelete} />
+                  {
+                    filterValues.map((item) => (
+                      <div key={item.value} className={styles.tag}>
+                        <p>{item.label}</p>
+                        <button onClick={handleDeleteValue(item)} className={styles.btnDelete} />
+                      </div>
+                    ))
+                  }
+                </div>
+                {
+                  filterValues.length !== 0 &&
+                  <div className={styles.resetFilters}>
+                    <button onClick={handleResetFilters} className={styles.btnReset} />
+                    <Typography fontSize={14} color={'#111'}>
+                      Reset all filters
+                    </Typography>
                   </div>
-                </div>
-                <div className={styles.resetFilters}>
-                  <button onClick={handleResetFilters} className={styles.btnReset} />
-                  <Typography fontSize={14} color={'#111'}>
-                    Reset all filters
-                  </Typography>
-                </div>
+                }
               </div>
             </div>
           }
-          <div className={styles.tabContent}>
+          <div className={cn(styles.tabContent, { [styles.contentMargin]: ['collected', 'created'].includes(currentTab) })}>
             {
               currentTab !== 'activity' ?
                 <div className={styles.itemsContainer}>

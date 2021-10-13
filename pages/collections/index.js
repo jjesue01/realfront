@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from '../../styles/Collections.module.sass'
 import Head from "next/head";
 import Typography from "../../components/Typography";
@@ -78,6 +78,10 @@ function MyCollections() {
     // ]))
     refetch()
   }
+
+  useEffect(function () {
+    refetch()
+  }, [refetch])
 
   return (
     <main className={styles.root}>

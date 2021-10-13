@@ -32,7 +32,7 @@ function PriceFilter({ className, name, onChange, value, mode }) {
 
   useEffect(function () {
     setValues({ ...value })
-  }, [value])
+  }, [value, value.from, value.to])
 
   return (
     <FilterWrapper

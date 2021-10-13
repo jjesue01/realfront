@@ -47,7 +47,7 @@ const initialFilters = {
 
 function Marketplace({ toggleFooter }) {
   const router = useRouter()
-  const { data: listings } = useGetPublishedListingsQuery()
+  const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery()
   const { data: user, isError } = useGetCurrentUserQuery()
   const isLoading = !listings || (!user && !isError)
   const [sourceData, setSourceData] = useState([])
@@ -182,6 +182,10 @@ function Marketplace({ toggleFooter }) {
       setViewportData([...listings.docs])
     }
   }, [listings])
+
+  useEffect(function () {
+    refetchListings()
+  }, [refetchListings])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
