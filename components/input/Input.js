@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React from "react";
 import styles from './Input.module.sass'
 import cn from "classnames";
 
@@ -16,6 +16,8 @@ function Input({
   subLabel,
   urlPrefix,
   usdRate = 3166.41,
+  error,
+  errorText,
   ...otherProps
 }, ref) {
 
@@ -25,7 +27,8 @@ function Input({
       [styles.small]: size === 'small',
       [styles.iconRight]: !!iconRight,
       [styles.withUrlPrefix]: urlPrefix,
-      [styles.price]: type === 'price'
+      [styles.price]: type === 'price',
+      [styles.error]: error
     }
   )
 
@@ -66,6 +69,10 @@ function Input({
         {
           type === 'price' &&
             <p className={styles.usd}>{`($${new Intl.NumberFormat('ru-RU').format(+value * usdRate || 0)})`}</p>
+        }
+        {
+          error && errorText &&
+          <p className={styles.errorText}>{ errorText }</p>
         }
       </div>
     </div>

@@ -22,7 +22,7 @@ import {
   useDeleteListingMutation,
   useUpdateListingMutation
 } from "../../../services/listings";
-import {decodeTags, encodeTags, getImageUrl} from "../../../utils";
+import {decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 import {useDispatch} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
@@ -37,15 +37,6 @@ const selectOptions = [
     value: 'bitcoin'
   },
 ]
-
-const validationSchema = Yup.object({
-  name: Yup.string().required(),
-  location: Yup.string().required(),
-  address: Yup.string().required(),
-  description: Yup.string(),
-  tags: Yup.string(),
-  blockchain: Yup.string().required()
-})
 
 const libraries = ['places']
 
@@ -70,7 +61,7 @@ function Form({ mode }) {
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
   const [ listingName, setListingName] = useState('')
-  const { setValues, ...formik } = useFormik({
+  const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
       location: '',
@@ -80,7 +71,7 @@ function Form({ mode }) {
       blockchain: 'ethereum',
       collection: ''
     },
-    validationSchema,
+    validate: handleValidate,
     onSubmit: handleSubmit
   });
   const inputRef = useRef()
@@ -105,6 +96,19 @@ function Form({ mode }) {
 
   function handleCreateCollection() {
     getCollections()
+  }
+
+  function handleValidate(values) {
+    const errors = {}
+
+    if (!values.name) errors.name = 'Name is required'
+    if (!values.location) errors.location = 'Location is required'
+    if (!values.address) errors.address = 'Address is required'
+
+    if (mode === 'create' && !location.latitude && !!values.address)
+      errors.address = 'Please, select your address from list'
+
+    return errors
   }
 
   function handleSubmit(values, { setSubmitting }) {
@@ -140,6 +144,7 @@ function Form({ mode }) {
           })
       }
     } else {
+      scrollToTop()
       setSubmitting(false)
     }
   }
@@ -227,7 +232,7 @@ function Form({ mode }) {
           </Typography>
           <div className={styles.uploaders}>
             <div className={styles.uploader}>
-              <FileUploader onChange={handleFileJPGChange} accept=".jpg">
+              <FileUploader onChange={handleFileJPGChange} accept=".jpg" error={jpgFile === null && touched.name}>
                 { 
                   jpgFile === null ?
                     <div className={styles.uploaderContainer}>
@@ -254,7 +259,7 @@ function Form({ mode }) {
               </FileUploader>
             </div>
             <div className={styles.uploader}>
-              <FileUploader onChange={handleFileRAWChange} accept=".raw">
+              <FileUploader onChange={handleFileRAWChange} accept=".raw" error={rawFile === null && touched.name}>
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
                   <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
@@ -284,6 +289,8 @@ function Form({ mode }) {
           onChange={formik.handleChange}
           placeholder="Item name"
           required
+          error={errors.name}
+          errorText={errors.name && touched.name}
           label="Name*" />
         <Input
           className={styles.input}
@@ -292,6 +299,8 @@ function Form({ mode }) {
           onChange={formik.handleChange}
           placeholder="Enter location"
           required
+          error={errors.location && touched.location}
+          errorText={errors.location}
           label="Location*" />
         <Input
           ref={inputRef}
@@ -301,6 +310,8 @@ function Form({ mode }) {
           onChange={formik.handleChange}
           placeholder="Enter address"
           required
+          error={errors.address && touched.address}
+          errorText={errors.address}
           label="Address*" />
         <Textarea
           className={styles.input}
