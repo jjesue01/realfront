@@ -57,6 +57,7 @@ function Input({
           type={type === 'price' || type === 'url' ? 'text' : type}
           name={name}
           value={value}
+          onWheel={(e) => e.target.blur()}
           required={required}
           onChange={onChange}
           placeholder={placeholder}

@@ -20,6 +20,7 @@
     "react-redux": "^7.2.5",
     "react-slick": "^0.28.1",
     "sass": "^1.39.0",
+    "socket.io-client": "^4.2.0",
     "web3": "^1.5.2",
     "yup": "^0.32.9"
   },
