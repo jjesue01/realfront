@@ -25,6 +25,31 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
+  contractApi.listForSell = (tokenID, price, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      const weiPrice = window.web3App.utils.toWei(price.toString())
+      homejab.methods.listForSell(tokenID, weiPrice).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          resolve()
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+  contractApi.editPrice = (tokenID, price, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      const weiPrice = window.web3App.utils.toWei(price.toString())
+      homejab.methods.editPrice(tokenID, weiPrice).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          resolve()
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
   contractApi.buy = (tokenID, price, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())

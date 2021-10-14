@@ -40,7 +40,7 @@ const scheduleOptions = [
 ]
 
 const validationSchema = Yup.object({
-  price: Yup.number().required(),
+  price: Yup.number().required().positive(),
   copies: Yup.number().positive(),
   royalties: Yup.number().min(0).max(10),
   scheduleFrequency: Yup.string(),
@@ -95,16 +95,33 @@ function SellItem() {
   function handleSubmit(values, { setSubmitting }) {
     const contractApi = require('/services/contract')
     const user = getUser();
-    contractApi.mintAndList(+values.royalties, values.price, user.walletAddress)
+    const data = {
+      price: values.price,
+      copies: values.copies || 1,
+      royalties: values.royalties || 0,
+      tokenID: listing?.tokenID,
+      id
+    }
+
+    let promise;
+
+    if (listing?.tokenID === undefined) {
+      promise = contractApi.mintAndList(+values.royalties, values.price, user.walletAddress)
+      console.log('mint')
+    } else if (listing.isPublished) {
+      promise = contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
+      console.log('update price')
+    } else {
+      console.log('set on sell')
+      promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
+    }
+
+    promise
       .then((tokenID) => {
-        const data = {
-          price: values.price,
-          copies: values.copies || 1,
-          royalties: values.royalties || 0,
-          tokenID,
-          id
+        if (data.tokenID === undefined) {
+          data.tokenID = tokenID
         }
-        console.log(tokenID)
+
         publishListing(data).unwrap()
           .then(result => {
             console.log(result)
@@ -122,7 +139,7 @@ function SellItem() {
   }
 
   useEffect(function initListing() {
-    if (listing !== undefined && listing.isPublished) {
+    if (listing !== undefined && listing.tokenID !== undefined) {
       setValues(prevState => ({
         ...prevState,
         price: listing.price,
@@ -203,7 +220,7 @@ function SellItem() {
                   label="Number of copies" />
                 <Input
                   type="number"
-                  className={styles.field}
+                  className={cn(styles.field, styles.input, { [styles.disabledInput]: listing?.tokenID !== undefined})}
                   name="royalties"
                   value={formik.values.royalties}
                   onChange={formik.handleChange}
