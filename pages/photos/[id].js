@@ -16,14 +16,15 @@ import {useGetCurrentUserQuery} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
+import {getUser} from "../../utils";
 
-function PhotoDetails() {
+function PhotoDetails({ openLogin }) {
   const { query: { id }, ...router } = useRouter()
   const { data: listing, refetch } = useGetListingByIdQuery(id, { skip: !id })
   const collectionId = listing?.collections?.ID;
   const { data: user, isError } = useGetCurrentUserQuery()
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
-  const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, limit: 3 })
+  const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, exclude: id, limit: 3 })
   const isLoading = !listing || (!user && !isError) || !transactions || !listings
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
@@ -32,13 +33,17 @@ function PhotoDetails() {
 
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
-
   function handleViewCollection() {
     router.push(`/collections/${collectionId}`)
   }
 
   function toggleConfirmDialog() {
-    setConfirmOpened(prevState => !prevState)
+    const user = getUser()
+
+    user ?
+      setConfirmOpened(prevState => !prevState)
+      :
+      openLogin()
   }
 
   function handleBuy() {
@@ -81,9 +86,16 @@ function PhotoDetails() {
         <title>HOMEJAB - {listing?.name}</title>
       </Head>
       <div className={styles.content}>
-        <PhotoInfo ownItem={ownItem} user={user} listing={listing} onBuy={toggleConfirmDialog} />
+        <PhotoInfo
+          ownItem={ownItem}
+          user={user}
+          listing={listing}
+          onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
-        <MoreFromCollection user={user} data={listings?.docs} onViewCollection={handleViewCollection} />
+        <MoreFromCollection
+          user={user}
+          data={listings?.docs}
+          onViewCollection={handleViewCollection} />
       </div>
       {
         !ownItem &&

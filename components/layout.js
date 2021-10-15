@@ -17,7 +17,9 @@ import AddFunds from "./dialogs/add-funds/AddFunds";
 import DepositFromExchange from "./dialogs/deposit-from-exchange/DepositFromExchnage";
 import BuyWithCard from "./dialogs/buy-with-card/BuyWithCard";
 import Web3 from "web3";
-import {isPrivateRoute} from "../utils";
+import {isPrivateRoute, isTokenExpired} from "../utils";
+import {io} from "socket.io-client";
+//import '/services/socket'
 
 const marketplaceLinks = [
   {
@@ -148,6 +150,12 @@ function Layout({ children }) {
       const auth = JSON.parse(localStorage.getItem('auth'))
 
       if (auth?.token) {
+        if (isTokenExpired(auth.token)) {
+          dispatch(logout())
+          isPrivateRoute(router.pathname) && router.push('/')
+          return;
+        }
+
         window.ethereum._metamask.isUnlocked()
           .then(isUnlocked => {
             if (isUnlocked) {
@@ -159,10 +167,12 @@ function Layout({ children }) {
                   dispatch(setCredentials(auth))
                 } else if (isPrivateRoute(router.pathname)) {
                   router.push('/')
+                  dispatch(logout())
                 }
               });
             } else if (isPrivateRoute(router.pathname)) {
               router.push('/')
+              dispatch(logout())
             }
           })
       } else if (isPrivateRoute(router.pathname)) {
@@ -170,6 +180,24 @@ function Layout({ children }) {
       }
     //}
   }, [dispatch, router])
+
+  useEffect(function checkNotifications() {
+    if (auth.token) {
+      // const socket = io(process.env.NEXT_PUBLIC_API_URL, {
+      //   transports: ["websocket"],
+      //   extraHeaders: {
+      //     authorization: auth.token,
+      //   },
+      // })
+      // socket.on('connect', (result => {
+      //   console.log(socket.connected);
+      // }))
+      // socket.on('close', (result => {
+      //   console.log(socket.connected);
+      // }))
+      // console.log(socket.connected);
+    }
+  }, [auth])
 
   return (
     <div className={styles.wrapper}>
@@ -237,7 +265,7 @@ function Layout({ children }) {
         </>
       }
       {
-        React.cloneElement(children, { toggleFooter })
+        React.cloneElement(children, { toggleFooter, openLogin: togglePopup })
       }
       <ConnectWallet
         opened={connectOpened}

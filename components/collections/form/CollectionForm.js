@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import Image from "next/image";
 import PenIcon from "../../../public/icons/pen.svg";
 import FileUploader from "../../photos/form/file-uploader/FileUploader";
-import {getImageUrl} from "../../../utils";
+import {escapeValue, getImageUrl} from "../../../utils";
 import Input from "../../input/Input";
 import Textarea from "../../textarea/Textarea";
 import Select from "../../select/Select";
@@ -31,10 +31,9 @@ const selectOptions = [
 ]
 
 const validationSchema = Yup.object({
-  name: Yup.string().required(),
-  url: Yup.string(),
+  name: Yup.string().required('Name is required'),
+  url: Yup.string().required(`URL name can't be empty`),
   description: Yup.string(),
-  royalties: Yup.number().positive().min(0).max(100),
   payoutAddress: Yup.string(),
   blockchain: Yup.string().required()
 })
@@ -51,12 +50,11 @@ function CollectionForm() {
     featured: null,
     banner: null
   })
-  const {setValues, ...formik} = useFormik({
+  const {setValues, errors, touched, ...formik} = useFormik({
     initialValues: {
       name: 'New York, Manhattan',
       url: '',
       description: '',
-      royalties: '',
       payoutAddress: '',
       blockchain: 'ethereum'
     },
@@ -71,6 +69,13 @@ function CollectionForm() {
         [name]: file
       }))
     }
+  }
+
+  function handleUrlChange({ target: { value } }) {
+    setValues(prevState => ({
+      ...prevState,
+      url: escapeValue(value)
+    }))
   }
 
   function handleSubmit(values, { setSubmitting }) {
@@ -107,7 +112,6 @@ function CollectionForm() {
         name: collection.name,
         url: collection.url,
         description: collection.description || '',
-        royalties: collection.royalties || '',
         payoutAddress: collection.payoutAddress || '',
         blockchain: collection.blockchain || 'ethereum'
       })
@@ -215,6 +219,7 @@ function CollectionForm() {
         onChange={formik.handleChange}
         placeholder="Collection name"
         required
+        error={errors.name && touched.name}
         label="Name*" />
       <Input
         type="url"
@@ -222,9 +227,11 @@ function CollectionForm() {
         className={styles.formField}
         name="url"
         value={formik.values.url}
-        onChange={formik.handleChange}
+        onChange={handleUrlChange}
         placeholder="your-url"
         subLabel="Customize your URL on HomeJab. Must only contain lowercase letters, numbers, and hyphens."
+        error={errors.url}
+        errorText={errors.url}
         label="URL" />
       <Textarea
         className={styles.formField}
@@ -233,16 +240,6 @@ function CollectionForm() {
         onChange={formik.handleChange}
         placeholder="Describe your collection"
         label="Description" />
-      <Input
-        type="number"
-        className={styles.formField}
-        name="royalties"
-        value={formik.values.royalties}
-        onChange={formik.handleChange}
-        placeholder="Percentage fee"
-        iconRight={<span className={styles.percentIcon}>%</span>}
-        subLabel="Collect a fee when a user re-sells an item you originally created. This is deducted from the final sale price and paid monthly to a payout address of your choosing."
-        label="Royalties" />
       <Input
         className={styles.formField}
         name="payoutAddress"

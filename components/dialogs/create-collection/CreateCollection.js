@@ -13,14 +13,14 @@ import PenIcon from "../../../public/icons/pen.svg";
 import {useCreateCollectionMutation} from "../../../services/collections";
 
 const validationSchema = Yup.object({
-  name: Yup.string().required(),
+  name: Yup.string().required('Name is required'),
   description: Yup.string()
 })
 
 function CreateCollection({ opened, onClose, onCreate }) {
   const [createCollection, { isLoading }] = useCreateCollectionMutation()
   const [logo, setLogo] = useState(null)
-  const formik = useFormik({
+  const { errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
       description: '',
@@ -84,6 +84,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
           <FileUploader
             className={styles.uploader}
             onChange={handleLogoChange}
+            error={logo === null && touched.name}
             accept=".jpg,.jpeg,.png">
             {
               logo === null ?
@@ -105,6 +106,8 @@ function CreateCollection({ opened, onClose, onCreate }) {
           label="Name*"
           value={formik.values.name}
           required
+          error={errors.name && touched.name}
+          errorText={errors.name}
           placeholder="e.g. New York, Manhattan"  />
         <Textarea
           className={styles.textarea}

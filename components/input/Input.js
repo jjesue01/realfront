@@ -32,6 +32,15 @@ function Input({
     }
   )
 
+  function getType() {
+    let result = type
+
+    if (type === 'price') result = 'number'
+    if (type === 'url') result = 'text'
+
+    return result
+  }
+
   return (
     <div className={cn(className, styles.inputContainer, { [styles.label]: label })}>
       {
@@ -57,7 +66,7 @@ function Input({
           ref={ref}
           id={name}
           className={inputClassNames}
-          type={type === 'price' || type === 'url' ? 'text' : type}
+          type={getType()}
           name={name}
           value={value}
           onWheel={(e) => e.target.blur()}

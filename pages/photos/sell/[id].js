@@ -16,7 +16,7 @@ import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
 import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
-import {getUser} from "../../../utils";
+import {clamp, getUser} from "../../../utils";
 import {error} from "next/dist/build/output/log";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 
@@ -40,9 +40,9 @@ const scheduleOptions = [
 ]
 
 const validationSchema = Yup.object({
-  price: Yup.number().required().positive(),
-  copies: Yup.number().positive(),
-  royalties: Yup.number().min(0).max(10),
+  price: Yup.number().required('Price is required').positive('Price should be more than zero'),
+  copies: Yup.number().positive().integer(),
+  royalties: Yup.number().min(0).max(10).integer(),
   scheduleFrequency: Yup.string(),
   scheduleTime: Yup.string(),
   buyerAddress: Yup.string()
@@ -59,10 +59,10 @@ function SellItem() {
     schedule: false,
     private: false
   })
-  const { setValues, ...formik } = useFormik({
+  const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
       price: 1,
-      copies: '',
+      copies: 1,
       royalties: 0,
       scheduleFrequency: '',
       scheduleTime: '',
@@ -76,6 +76,39 @@ function SellItem() {
     setSwitchers(prevSwitchers => ({
       ...prevSwitchers,
       [name]: value
+    }))
+  }
+
+  function handlePriceChange({ target: { value } }) {
+    let result = Math.abs(value)
+    if (parseFloat(value) === 0) result = 0
+    if (value === '') result = ''
+
+    setValues(prevState => ({
+      ...prevState,
+      price: result
+    }))
+  }
+
+  function handleCopiesChange({ target: { value } }) {
+    let result = clamp(parseInt(value), 1, 100) || 1
+    if (parseInt(value) === 0) result = 1
+    if (value === '') result = ''
+
+    setValues(prevState => ({
+      ...prevState,
+      copies: result
+    }))
+  }
+
+  function handleRoyaltiesChange({ target: { value } }) {
+    let result = clamp(parseInt(value), 0, 10) || 0
+    if (parseInt(value) === 0) result = 0
+    if (value === '') result = ''
+
+    setValues(prevState => ({
+      ...prevState,
+      royalties: result
     }))
   }
 
@@ -204,18 +237,20 @@ function SellItem() {
                   type="price"
                   name="price"
                   value={formik.values.price}
-                  onChange={formik.handleChange}
+                  onChange={handlePriceChange}
                   placeholder="e.g. 1"
                   required
                   usdRate={3166.41}
                   subLabel="Will be on sale until you transfer this item or cancel it."
+                  error={errors.price &&  touched.price}
+                  errorText={errors.price}
                   label="Price*" />
                 <Input
                   type="number"
                   className={styles.field}
                   name="copies"
                   value={formik.values.copies}
-                  onChange={formik.handleChange}
+                  onChange={handleCopiesChange}
                   placeholder="e.g. 5"
                   label="Number of copies" />
                 <Input
@@ -223,7 +258,7 @@ function SellItem() {
                   className={cn(styles.field, styles.input, { [styles.disabledInput]: listing?.tokenID !== undefined})}
                   name="royalties"
                   value={formik.values.royalties}
-                  onChange={formik.handleChange}
+                  onChange={handleRoyaltiesChange}
                   placeholder="e.g. 10"
                   iconRight={<span className={styles.percentIcon}>%</span>}
                   subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"

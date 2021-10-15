@@ -162,3 +162,11 @@ export const timeAgo = (date) => {
   const suffix = interval === 1 ? '' : 's';
   return `${interval} ${epoch}${suffix} ago`;
 };
+
+export function escapeValue(str) {
+  return str.replace(/\s/g, '-').replace(/[^ \w-]/g, '').toLowerCase()
+}
+
+export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+export const isTokenExpired = token => Date.now() >= (JSON.parse(atob(token.split('.')[1]))).exp * 1000
