@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.sass'
@@ -18,8 +18,7 @@ import DepositFromExchange from "./dialogs/deposit-from-exchange/DepositFromExch
 import BuyWithCard from "./dialogs/buy-with-card/BuyWithCard";
 import Web3 from "web3";
 import {isPrivateRoute, isTokenExpired} from "../utils";
-import {io} from "socket.io-client";
-//import '/services/socket'
+import {initSocket} from "../services/socket";
 
 const marketplaceLinks = [
   {
@@ -132,6 +131,19 @@ function Layout({ children }) {
     setBuyOpened(prevState => !prevState)
   }
 
+  function handleNotifications(evenName, data) {
+    switch (evenName) {
+      case 'connect': {
+        break;
+      }
+      case 'disconnect': {
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
   useEffect(() => {
     const handleRouteChange = (url) => {
       if (router.pathname !== url && router.pathname === '/marketplace')
@@ -182,20 +194,12 @@ function Layout({ children }) {
   }, [dispatch, router])
 
   useEffect(function checkNotifications() {
-    if (auth.token) {
-      // const socket = io(process.env.NEXT_PUBLIC_API_URL, {
-      //   transports: ["websocket"],
-      //   extraHeaders: {
-      //     authorization: auth.token,
-      //   },
-      // })
-      // socket.on('connect', (result => {
-      //   console.log(socket.connected);
-      // }))
-      // socket.on('close', (result => {
-      //   console.log(socket.connected);
-      // }))
-      // console.log(socket.connected);
+    if (auth.token && !window.socket) {
+      window.socket = initSocket({
+        token: auth.token,
+        onEvent: handleNotifications
+      })
+      console.log('mount')
     }
   }, [auth])
 

@@ -9,10 +9,8 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import {getMoneyView, getShortWalletAddress, getUser} from "../../../../utils";
-import {useSelector} from "react-redux";
-import {useLikeListingMutation, usePurchaseListingMutation} from "../../../../services/listings";
-import {error} from "next/dist/build/output/log";
+import {getMoneyView, getShortWalletAddress} from "../../../../utils";
+import {useLikeListingMutation} from "../../../../services/listings";
 
 function PhotoInfo({ listing, user, onBuy, ownItem }) {
   const router = useRouter()

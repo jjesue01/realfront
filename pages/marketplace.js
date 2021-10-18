@@ -125,7 +125,7 @@ function Marketplace({ toggleFooter }) {
     }
 
     if (filters.collections.length !== 0) {
-      items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
+      items = items.filter(({ collections }) => filters.collections.includes(collections?.ID))
       hasFilters = true
     }
 

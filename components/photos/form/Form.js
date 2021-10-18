@@ -78,8 +78,10 @@ function Form({ mode }) {
   const autocompleteRef = useRef()
 
   function handleFileJPGChange(file) {
-    setJpgFile(file)
-    setJpgFilePreview(getImageUrl(file))
+    if (file !== null) {
+      setJpgFile(file)
+      setJpgFilePreview(getImageUrl(file))
+    }
   }
 
   function handleFileRAWChange(file) {
@@ -232,7 +234,7 @@ function Form({ mode }) {
           </Typography>
           <div className={styles.uploaders}>
             <div className={styles.uploader}>
-              <FileUploader onChange={handleFileJPGChange} accept=".jpg" error={jpgFile === null && touched.name}>
+              <FileUploader onChange={handleFileJPGChange} accept=".jpg,.jpeg" error={jpgFile === null && touched.name}>
                 { 
                   jpgFile === null ?
                     <div className={styles.uploaderContainer}>
