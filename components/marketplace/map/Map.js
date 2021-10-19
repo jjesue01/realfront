@@ -95,6 +95,8 @@ function Map({ items, onBoundsChange }) {
   const handleBoundsChange = debounce(function () {
     if (items.length !== 0) {
       let bounds = map.getBounds()
+      // console.log(bounds.toJSON())
+      // console.log(bounds.getNorthEast(), bounds.getSouthWest())
       let viewportItems = []
 
       items.forEach(item => {

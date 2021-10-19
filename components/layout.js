@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.sass'
@@ -19,6 +19,8 @@ import BuyWithCard from "./dialogs/buy-with-card/BuyWithCard";
 import Web3 from "web3";
 import {isPrivateRoute, isTokenExpired} from "../utils";
 import {initSocket} from "../services/socket";
+import Notifications from "./notifications/Notifications";
+import {pushNotification} from "../features/notifications/notificationsSlice";
 
 const marketplaceLinks = [
   {
@@ -131,18 +133,22 @@ function Layout({ children }) {
     setBuyOpened(prevState => !prevState)
   }
 
-  function handleNotifications(evenName, data) {
+  const handleNotifications = useCallback((evenName, data) => {
     switch (evenName) {
-      case 'connect': {
-        break;
-      }
-      case 'disconnect': {
+      case 'priceChange':
+      case 'successfulPurchase':
+      case 'itemSold': {
+        dispatch(pushNotification({
+          id: Date.now(),
+          event: evenName,
+          ...data
+        }))
         break;
       }
       default:
         break;
     }
-  }
+  }, [dispatch])
 
   useEffect(() => {
     const handleRouteChange = (url) => {
@@ -200,8 +206,39 @@ function Layout({ children }) {
         onEvent: handleNotifications
       })
       console.log('mount')
+      // setTimeout(() => {
+      //   dispatch(pushNotification({
+      //     id: Date.now(),
+      //     event: 'priceChange',
+      //     listing: Date.now(),
+      //     image: '/hero-aparts-big.jpg',
+      //     name: 'Best burgers',
+      //     newPrice: 10,
+      //     oldPrice: 7,
+      //   }))
+      // }, 2000)
+      // setTimeout(() => {
+      //   dispatch(pushNotification({
+      //     id: Date.now(),
+      //     event: 'successfulPurchase',
+      //     listing: Date.now(),
+      //     image: '/collection-logo.jpg',
+      //     name: 'LA Beach',
+      //     price: 666
+      //   }))
+      // }, 4000)
+      // setTimeout(() => {
+      //   dispatch(pushNotification({
+      //     id: Date.now(),
+      //     event: 'itemSold',
+      //     listing: Date.now(),
+      //     image: '/collection-logo.jpg',
+      //     name: 'LA Gods',
+      //     price: 7.1
+      //   }))
+      // }, 6000)
     }
-  }, [auth])
+  }, [auth, dispatch, handleNotifications])
 
   return (
     <div className={styles.wrapper}>
@@ -266,6 +303,7 @@ function Layout({ children }) {
             opened={depositOpened}
             onClose={toggleDeposit} />
           <BuyWithCard opened={buyOpened} onClose={toggleBuy} />
+          <Notifications />
         </>
       }
       {

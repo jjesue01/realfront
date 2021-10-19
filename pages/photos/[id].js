@@ -92,10 +92,13 @@ function PhotoDetails({ openLogin }) {
           listing={listing}
           onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
-        <MoreFromCollection
-          user={user}
-          data={listings?.docs}
-          onViewCollection={handleViewCollection} />
+        {
+          listing?.collections?.ID && !!listings?.docs?.length &&
+          <MoreFromCollection
+            user={user}
+            data={listings?.docs}
+            onViewCollection={handleViewCollection} />
+        }
       </div>
       {
         !ownItem &&

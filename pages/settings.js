@@ -29,9 +29,9 @@ function Settings() {
     auctionExpiration: false,
     outbid: false,
     referralSuccessful: false,
-    ownedUpdates: false,
+    ownedUpdate: false,
     successfulPurchase: false,
-    newsletter: false,
+    newsLetter: false,
   })
 
   function handleTabChange({ target: { value } }) {

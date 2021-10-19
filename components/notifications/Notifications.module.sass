@@ -1,0 +1,46 @@
+.root
+  position: fixed
+  bottom: 30px
+  right: 30px
+  width: 300px
+  height: 100px
+  background: #fff
+  z-index: 22
+  padding: 20px 16px
+  border: 1px solid rgba(211, 217, 225, 0.5)
+  border-radius: 4px
+  box-shadow: 0 20px 32px rgb(17 17 17 / 10%)
+  display: flex
+  align-items: flex-start
+  justify-content: flex-start
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: transform, opacity
+  opacity: 0
+  transform: translateY(110%)
+.imageWrapper
+  position: relative
+  width: 60px
+  min-width: 60px
+  height: 60px
+  background: #9BA0A8
+  border-radius: 50%
+  overflow: hidden
+.content
+  margin-left: 16px
+  width: 100%
+  overflow: hidden
+  h6
+    white-space: nowrap
+    overflow: hidden
+    width: 100%
+    text-overflow: ellipsis
+  p
+    font-family: 'Lato', sans-serif
+    font-size: 12px
+    font-weight: 400
+    color: rgba(55, 65, 81, 0.8)
+    margin: 4px 0 0
+    line-height: 1.5
+    span
+      font-weight: 600
+

@@ -62,13 +62,16 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
             <div className={styles.mainInfo}>
               <div className={styles.header}>
                 <div className={styles.collection}>
-                  <Typography
-                    fontWeight={600}
-                    fontSize={12}
-                    lHeight={15}
-                    color={'#878D97'}>
-                    Collection
-                  </Typography>
+                  {
+                    listing?.collections?.ID &&
+                    <Typography
+                      fontWeight={600}
+                      fontSize={12}
+                      lHeight={15}
+                      color={'#878D97'}>
+                      Collection
+                    </Typography>
+                  }
                   <Typography
                     fontWeight={600}
                     fontSize={14}

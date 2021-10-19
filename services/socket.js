@@ -24,10 +24,10 @@ export function initSocket({ token, onEvent }) {
     onEvent('priceChange', data)
   });
 
-  socket.on("itemPurchased", (data) => {
-    console.log('itemPurchased')
+  socket.on("successfulPurchase", (data) => {
+    console.log('successfulPurchase')
     console.log(data)
-    onEvent('itemPurchased', data);
+    onEvent('successfulPurchase', data);
   });
 
   socket.on("itemSold", (data) => {

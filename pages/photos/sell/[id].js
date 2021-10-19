@@ -80,7 +80,7 @@ function SellItem() {
   }
 
   function handlePriceChange({ target: { value } }) {
-    let result = Math.abs(value)
+    let result = Math.abs(+parseFloat(+value || 0).toFixed(2))
     if (parseFloat(value) === 0) result = 0
     if (value === '') result = ''
 
@@ -241,6 +241,7 @@ function SellItem() {
                   placeholder="e.g. 1"
                   required
                   usdRate={3166.41}
+                  step={0.01}
                   subLabel="Will be on sale until you transfer this item or cancel it."
                   error={errors.price &&  touched.price}
                   errorText={errors.price}

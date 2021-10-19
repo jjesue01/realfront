@@ -1,6 +1,7 @@
 import React from "react";
 import styles from './Input.module.sass'
 import cn from "classnames";
+import {getMoneyView} from "../../utils";
 
 function Input({
   className,
@@ -77,7 +78,7 @@ function Input({
         { iconRight }
         {
           type === 'price' &&
-            <p className={styles.usd}>{`($${new Intl.NumberFormat('ru-RU').format(+value * usdRate || 0)})`}</p>
+            <p className={styles.usd}>{`(${getMoneyView(+value * usdRate)})`}</p>
         }
         {
           error && errorText &&

@@ -32,7 +32,7 @@ export const notificationItems = [
   {
     title: 'Owned Asset Updates',
     description: 'When a significant update occurs for one of the items you have purchased on opensea',
-    name: 'ownedUpdates'
+    name: 'ownedUpdate'
   },
   {
     title: 'Successful Purchase',
@@ -42,6 +42,6 @@ export const notificationItems = [
   {
     title: 'HomeJab Newsletter',
     description: 'Occasional updates from the HomeJab team',
-    name: 'newsletter'
+    name: 'newsLetter'
   },
 ]

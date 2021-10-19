@@ -95,7 +95,10 @@ export function buildFormData(data) {
 }
 
 export function getMoneyView(value) {
-  return `$${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 })
+  return `$${new Intl.NumberFormat('ru-RU', { 
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2
+  })
     .format(+value || 0)}`
 }
 
@@ -170,3 +173,10 @@ export function escapeValue(str) {
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 export const isTokenExpired = token => Date.now() >= (JSON.parse(atob(token.split('.')[1]))).exp * 1000
+
+export function getFormattedBalance(balance) {
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2
+  }).format(+balance || 0)
+}

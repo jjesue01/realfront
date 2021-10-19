@@ -4,13 +4,16 @@ const slice = createSlice({
   name: 'notifications',
   initialState: [],
   reducers: {
-    setCredentials: (state, { payload: {  } }) => {
-
+    pushNotification: (state, { payload }) => {
+      state.push(payload)
+    },
+    removeNotification: (state) => {
+      state.shift()
     }
   },
 })
 
-export const { pushNotification } = slice.actions
+export const { pushNotification, removeNotification } = slice.actions
 
 export default slice.reducer
 
