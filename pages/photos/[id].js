@@ -7,25 +7,27 @@ import Head from "next/head";
 import {useRouter} from "next/router";
 import {
   useGetListingByIdQuery,
-  useGetListingsQuery,
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
 } from "../../services/listings";
 import {useGetTransactionsByListingIdQuery} from "../../services/transactions";
-import {useGetCurrentUserQuery} from "../../services/auth";
+import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {getUser} from "../../utils";
+import {getIdToken} from "../../utils";
+import {useDispatch, useSelector} from "react-redux";
+import Error from "../../components/error/Error";
 
 function PhotoDetails({ openLogin }) {
+  const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
-  const { data: listing, refetch } = useGetListingByIdQuery(id, { skip: !id })
+  const user = useSelector(state => state.auth.user)
+  const { data: listing, error, refetch } = useGetListingByIdQuery(id, { skip: !id })
   const collectionId = listing?.collections?.ID;
-  const { data: user, isError } = useGetCurrentUserQuery()
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
   const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, exclude: id, limit: 3 })
-  const isLoading = !listing || (!user && !isError) || !transactions || !listings
+  const isLoading = (!listing || !transactions || !listings) && !error
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
@@ -38,8 +40,6 @@ function PhotoDetails({ openLogin }) {
   }
 
   function toggleConfirmDialog() {
-    const user = getUser()
-
     user ?
       setConfirmOpened(prevState => !prevState)
       :
@@ -77,8 +77,15 @@ function PhotoDetails({ openLogin }) {
   }
 
   useEffect(function () {
+    if (getIdToken()) {
+      //needs force
+      dispatch(authApi.endpoints.getCurrentUser.initiate({ forceRefetch: true }))
+    }
     refetch()
-  }, [refetch])
+  }, [dispatch, refetch])
+
+  if (error?.data?.message)
+    return <Error errorCode="ListingNotFound" />
 
   return (
     <main className={styles.root}>

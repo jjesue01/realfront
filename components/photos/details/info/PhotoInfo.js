@@ -42,10 +42,8 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
   }
 
   useEffect(function initLikes() {
-    if (listing !== undefined && user !== undefined) {
-      setLikes(listing.likes)
-      setIsFavorite(user.favorites.includes(listing._id))
-    }
+    !!listing && setLikes(listing.likes)
+    !!listing && !!user && setIsFavorite(user.favorites.includes(listing._id))
   }, [listing, user])
 
   return (

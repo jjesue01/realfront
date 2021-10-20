@@ -14,11 +14,12 @@ import PhotoItem from "../components/photo-item/PhotoItem";
 import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
-import {buildFilterOptions, getSortedArray, scrollToTop} from "../utils";
+import {buildFilterOptions, getIdToken, getSortedArray, scrollToTop} from "../utils";
 import {useRouter} from "next/router";
 import { useGetPublishedListingsQuery } from "../services/listings";
-import {useGetCurrentUserQuery} from "../services/auth";
+import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
+import {useDispatch, useSelector} from "react-redux";
 
 const sortOptions = [
   {
@@ -47,9 +48,10 @@ const initialFilters = {
 
 function Marketplace({ toggleFooter }) {
   const router = useRouter()
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.auth.user)
   const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery()
-  const { data: user, isError } = useGetCurrentUserQuery()
-  const isLoading = !listings || (!user && !isError)
+  const isLoading = !listings
   const [sourceData, setSourceData] = useState([])
   const [viewportData, setViewportData] = useState([])
   const [filteredData, setFilteredData] = useState([])
@@ -184,8 +186,11 @@ function Marketplace({ toggleFooter }) {
   }, [listings])
 
   useEffect(function () {
+    if (getIdToken()) {
+      dispatch(authApi.endpoints.getCurrentUser.initiate())
+    }
     refetchListings()
-  }, [refetchListings])
+  }, [dispatch, refetchListings])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
@@ -301,7 +306,7 @@ function Marketplace({ toggleFooter }) {
                       pageItems.map(item => (
                         <PhotoItem
                           imageClassName={styles.imageWrapper}
-                          key={item.name}
+                          key={item._id}
                           favorite={user?.favorites?.includes(item._id)}
                           isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
                           data={item} />

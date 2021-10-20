@@ -80,7 +80,7 @@ function SellItem() {
   }
 
   function handlePriceChange({ target: { value } }) {
-    let result = Math.abs(+parseFloat(+value || 0).toFixed(2))
+    let result = Math.abs(+parseFloat(+value || 0).toFixed(5))
     if (parseFloat(value) === 0) result = 0
     if (value === '') result = ''
 

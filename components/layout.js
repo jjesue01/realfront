@@ -171,30 +171,31 @@ function Layout({ children }) {
         if (isTokenExpired(auth.token)) {
           dispatch(logout())
           isPrivateRoute(router.pathname) && router.push('/')
+          console.log('expired token')
           return;
         }
-
-        window.ethereum._metamask.isUnlocked()
-          .then(isUnlocked => {
-            if (isUnlocked) {
-              if (!window?.web3App) {
-                window.web3App = new Web3(window.ethereum);
-              }
-              window.web3App.eth.getAccounts().then(accounts => {
-                if (accounts.length !== 0) {
-                  dispatch(setCredentials(auth))
-                } else if (isPrivateRoute(router.pathname)) {
-                  router.push('/')
-                  dispatch(logout())
-                }
-              });
-            } else if (isPrivateRoute(router.pathname)) {
-              router.push('/')
-              dispatch(logout())
+          if (window.ethereum) {
+            if (!window?.web3App) {
+              window.web3App = new Web3(window.ethereum);
             }
-          })
+            window.web3App.eth.getAccounts().then(accounts => {
+              if (accounts.length !== 0) {
+                dispatch(setCredentials(auth))
+              } else {
+                isPrivateRoute(router.pathname) && router.push('/')
+                dispatch(logout())
+                console.log('no linked metamask account')
+              }
+            });
+          } else {
+            isPrivateRoute(router.pathname) && router.push('/')
+            dispatch(logout())
+            console.log('no metamask installed')
+          }
+
       } else if (isPrivateRoute(router.pathname)) {
         router.push('/')
+        console.log('no localStorage token')
       }
     //}
   }, [dispatch, router])

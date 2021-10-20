@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import {authApi} from "../../services/auth";
 
 const slice = createSlice({
   name: 'auth',
@@ -14,6 +15,15 @@ const slice = createSlice({
       state.token = null
       localStorage.removeItem('auth')
     }
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      authApi.endpoints.getCurrentUser.matchFulfilled,
+      (state, { payload }) => {
+        state.user = payload
+        localStorage.setItem('auth', JSON.stringify({ user: payload, token: state.token }))
+      }
+    )
   },
 })
 

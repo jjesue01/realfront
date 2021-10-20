@@ -62,15 +62,15 @@ export function getUser() {
   const auth = JSON.parse(localStorage.getItem('auth'))
   return auth?.user
 }
-
+// tagStr = '#tag1, #tag2, #tag3'
 export function decodeTags(tagsStr) {
   if (!tagsStr) return ''
-  return tagsStr.split(', ').map(tag => tag.replace(/#/g, '')).join(',')
+  return tagsStr.split(', ').map(tag => tag.replace(/#/g, '')).join(',') // 'tag1,tag2,tag3'
 }
-
+//tagsArr = ['tag1', 'tag2', 'tag3']
 export function encodeTags(tagsArr) {
   if (tagsArr.length === 0) return ''
-  return tagsArr.map(tag => '#' + tag).join(', ')
+  return tagsArr.map(tag => '#' + tag).join(', ') // '#tag1, #tag2, #tag3'
 }
 
 export function getShortWalletAddress(walletAddress) {

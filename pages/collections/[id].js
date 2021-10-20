@@ -3,19 +3,21 @@ import Head from "next/head";
 import CollectionInfo from "../../components/collections/details/collection-info/CollectionInfo";
 import CollectionFilters from "../../components/collections/details/filters/CollectionFilters";
 import CollectionItems from "../../components/collections/details/collection-items/CollectionItems";
-import {getSortedArray} from "../../utils";
+import {getIdToken, getSortedArray} from "../../utils";
 import {useGetCollectionByIdQuery} from "../../services/collections";
 import {useRouter} from "next/router";
 import {useGetListingsQuery} from "../../services/listings";
-import {useGetCurrentUserQuery} from "../../services/auth";
+import {authApi} from "../../services/auth";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
+import {useDispatch, useSelector} from "react-redux";
 
 function MyCollections() {
+  const dispatch = useDispatch()
   const { query: { id } } = useRouter()
   const { data: collection, refetch: refetchCollection  } = useGetCollectionByIdQuery(id, { skip: !id })
-  const { data: user } = useGetCurrentUserQuery()
+  const user = useSelector(state => state.auth.user)
   const { data: listings } = useGetListingsQuery({ collection: id }, { skip: !id })
-  const isLoading = !collection || !user || !listings
+  const isLoading = !collection || !listings
   const [sourceData, setSourceData] = useState([])
   const [filteredData, setFilteredData] = useState([])
   const [filters, setFilters] = useState({
@@ -50,8 +52,11 @@ function MyCollections() {
   }, [listings])
 
   useEffect(function () {
+    if (getIdToken()) {
+      dispatch(authApi.endpoints.getCurrentUser.initiate())
+    }
     refetchCollection()
-  }, [refetchCollection])
+  }, [dispatch, refetchCollection])
 
   return (
     <main className="page-container">

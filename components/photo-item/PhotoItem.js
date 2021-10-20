@@ -8,7 +8,6 @@ import HeartIcon from '/public/icons/heart.svg'
 import HeartFilledIcon from '/public/icons/heart-filled.svg'
 import ContextMenu from "../context-menu/ContextMenu";
 import {useLikeListingMutation} from "../../services/listings";
-import {useGetCurrentUserQuery} from "../../services/auth";
 
 function PhotoItem({ className, imageClassName, data, type, favorite = false, isOwn = false }) {
   const [isFavorite, setIsFavorite] = useState(false)
