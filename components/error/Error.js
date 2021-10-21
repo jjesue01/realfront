@@ -6,8 +6,8 @@ import Button from "../button/Button";
 
 const errors = {
   'PageNotFound': 'This page could not be found',
-  ListingDeleted: 'This listing is no longer available',
-  ListingNotFound: 'This listing could not be found'
+  'ListingDeleted': 'This listing is no longer available',
+  'ListingNotFound': 'This listing could not be found'
 }
 
 function Error({ errorCode = 'PageNotFound' }) {

@@ -21,6 +21,7 @@ export const collectionsApi = createApi({
         formData.append("logoImage", data.logo, data.logo.name);
         formData.append("name", data.name);
         formData.append("description", data.description);
+        formData.append("city", data.city);
 
         return {
           url: `/collections`,
@@ -58,6 +59,15 @@ export const collectionsApi = createApi({
     getCollectionById: builder.query({
       query: (id) => `/collections/${id}`,
     }),
+    getAutocompleteCollections: builder.query({
+      query: (params = {}) => ({
+        url: '/autocomplete/collections',
+        params: {
+          limit: 20,
+          ...params
+        }
+      }),
+    }),
   }),
 })
 
@@ -66,5 +76,6 @@ export const {
   useUpdateCollectionMutation,
   useDeleteCollectionMutation,
   useGetUserCollectionsQuery,
-  useGetCollectionByIdQuery
+  useGetCollectionByIdQuery,
+  useGetAutocompleteCollectionsQuery
 } = collectionsApi

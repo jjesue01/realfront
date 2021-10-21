@@ -19,6 +19,7 @@ function Input({
   usdRate = 3166.41,
   error,
   errorText,
+  disabled,
   ...otherProps
 }, ref) {
 
@@ -43,7 +44,7 @@ function Input({
   }
 
   return (
-    <div className={cn(className, styles.inputContainer, { [styles.label]: label })}>
+    <div className={cn(className, styles.inputContainer, { [styles.label]: label, [styles.disabled]: disabled })}>
       {
         label &&
         <label htmlFor={name}>

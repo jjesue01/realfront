@@ -1,14 +1,24 @@
-import React, { useState } from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import styles from './Hero.module.sass'
 import Image from "next/image";
 import Input from "../../input/Input";
 import Button from "../../button/Button";
 import SearchIcon from "../../../icons/search-icon.svg";
 import {useRouter} from "next/router";
+import {useLoadScript} from "@react-google-maps/api";
+
+const libraries = ['places']
 
 function Hero() {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
+    libraries,
+    language: 'en'
+  })
   const router = useRouter()
   const [searchValue, setSearchValue] = useState('')
+  const inputRef = useRef()
+  const autocompleteRef = useRef()
 
   function handleChange({ target: { value } }) {
     setSearchValue(value)
@@ -20,6 +30,18 @@ function Hero() {
 
     router.push(`/marketplace?search=${searchValue}`)
   }
+
+  useEffect(function initAutocomplete() {
+    if (isLoaded) {
+      const handlePlaceChange = () => {
+        const { geometry, formatted_address } = autocompleteRef.current.getPlace()
+        setSearchValue(formatted_address)
+      }
+
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {})
+      autocompleteRef.current.addListener("place_changed", handlePlaceChange)
+    }
+  }, [isLoaded])
 
   return (
     <section className={styles.hero}>
@@ -35,12 +57,13 @@ function Hero() {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
             <form onSubmit={handleSubmit} className={styles.form}>
               <Input
+                ref={inputRef}
                 className={styles.searchInput}
                 type="search"
                 name="search"
                 value={searchValue}
                 onChange={handleChange}
-                placeholder="Enter an address, neighborhood, city or ZIP code" />
+                placeholder="Enter an address, city or zip code" />
               <Button className={styles.btnSubmit} type="accent" htmlType="submit">
                 <SearchIcon />
                 <span>Search</span>

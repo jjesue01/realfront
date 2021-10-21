@@ -63,7 +63,7 @@ function MyCollections() {
   const { data: sourceCollections = [], refetch, isLoading, isFetching } = useGetUserCollectionsQuery()
   const [createOpened, setCreateOpened] = useState(false)
 
-  const collectionsList = sourceCollections.map((collection, index) => (
+  const collectionsList = sourceCollections.filter(({ parent }) => !parent).map((collection, index) => (
     <Collection key={index} data={collection} />
   ))
 

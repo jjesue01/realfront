@@ -26,6 +26,7 @@ import {decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 import {useDispatch} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
+import Error from "../../error/Error";
 
 const selectOptions = [
   {
@@ -60,7 +61,8 @@ function Form({ mode }) {
   const [jpgFilePreview, setJpgFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
-  const [ listingName, setListingName] = useState('')
+  const [listingName, setListingName] = useState('')
+  const [listingError, setListingError] = useState({})
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
@@ -165,19 +167,23 @@ function Form({ mode }) {
   useEffect(function initListing() {
     if (mode === 'edit' && router.query.id) {
       dispatch(listingsApi.endpoints.getListingById.initiate(router.query.id))
-        .then(({ data }) => {
-          setListingName(data.name)
-          setValues({
-            name: data.name,
-            location: data.location,
-            address: data.address,
-            description: data.description,
-            tags: encodeTags(data.tags),
-            blockchain: data.blockchain,
-            collection: data?.collections?.ID || ''
-          })
-          setJpgFile(data.filePath)
-          setRawFile(data.rawFileName)
+        .then(({ data, error }) => {
+          if (data) {
+            setListingName(data.name)
+            setValues({
+              name: data.name,
+              location: data.location,
+              address: data.address,
+              description: data.description,
+              tags: encodeTags(data.tags),
+              blockchain: data.blockchain,
+              collection: data?.collections?.ID || ''
+            })
+            setJpgFile(data.filePath)
+            setRawFile(data.rawFileName)
+          } else {
+            setListingError(error.data)
+          }
       })
     }
   }, [mode, router.query.id, dispatch, setValues])
@@ -201,6 +207,9 @@ function Form({ mode }) {
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
   }, [isLoaded, setValues])
+
+  if (listingError.message)
+    return <Error errorCode={'Listing' + listingError.message} />
 
   return (
     <div className={styles.root}>

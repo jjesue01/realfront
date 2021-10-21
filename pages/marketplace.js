@@ -187,7 +187,7 @@ function Marketplace({ toggleFooter }) {
 
   useEffect(function () {
     if (getIdToken()) {
-      dispatch(authApi.endpoints.getCurrentUser.initiate())
+      dispatch(authApi.endpoints.getCurrentUser.initiate({}, { forceRefetch: true }))
     }
     refetchListings()
   }, [dispatch, refetchListings])

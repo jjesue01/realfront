@@ -79,13 +79,17 @@ function PhotoDetails({ openLogin }) {
   useEffect(function () {
     if (getIdToken()) {
       //needs force
-      dispatch(authApi.endpoints.getCurrentUser.initiate({ forceRefetch: true }))
+      dispatch(authApi.endpoints.getCurrentUser.initiate({}, { forceRefetch: true }))
     }
     refetch()
   }, [dispatch, refetch])
 
-  if (error?.data?.message)
-    return <Error errorCode="ListingNotFound" />
+  if (error?.data?.message) {
+    const message = error?.data?.message === 'Deleted' ? 'ListingDeleted' : 'ListingNotFound'
+
+    return <Error errorCode={message} />
+  }
+
 
   return (
     <main className={styles.root}>

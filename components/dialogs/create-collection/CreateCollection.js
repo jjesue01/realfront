@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import styles from './CreateCollection.module.sass'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
@@ -10,19 +10,35 @@ import Textarea from "../../textarea/Textarea";
 import Button from "../../button/Button";
 import Image from "next/image";
 import PenIcon from "../../../public/icons/pen.svg";
-import {useCreateCollectionMutation} from "../../../services/collections";
+import {
+  collectionsApi,
+  useCreateCollectionMutation,
+  useGetAutocompleteCollectionsQuery
+} from "../../../services/collections";
+import Autocomplete from "../../autocomplete/Autocomplete";
+import {useDispatch} from "react-redux";
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
+  city: Yup.object().shape({
+    label: Yup.string().required(),
+    value: Yup.string().required('City is required')
+  }),
   description: Yup.string()
 })
 
 function CreateCollection({ opened, onClose, onCreate }) {
+  const dispatch = useDispatch()
   const [createCollection, { isLoading }] = useCreateCollectionMutation()
+  const [cities, setCities] = useState([])
   const [logo, setLogo] = useState(null)
   const { errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
+      city: {
+        label: '',
+        value: ''
+      },
       description: '',
     },
     validationSchema,
@@ -33,23 +49,30 @@ function CreateCollection({ opened, onClose, onCreate }) {
     setLogo(file)
   }
 
-  function handleSubmit(values, { setSubmitting }) {
+  const getCities = useCallback((value) => {
+    dispatch(collectionsApi.endpoints.getAutocompleteCollections.initiate({ search: value }))
+      .then(({data}) => {
+        setCities(data)
+      })
+  }, [dispatch])
+
+  function handleSubmit(values, { setSubmitting, resetForm }) {
     if (logo !== null) {
 
       const data = {
         logo,
-        ...values
+        ...values,
+        city: values.city.value
       }
+
+      console.log(data)
 
       createCollection(data).unwrap()
         .then(result => {
           setSubmitting(false)
-          onCreate({ ...result })
+          onCreate()
           onClose()
-          formik.setValues({
-            name: '',
-            description: '',
-          })
+          resetForm()
           setLogo(null)
         })
         .catch(() => {
@@ -59,6 +82,10 @@ function CreateCollection({ opened, onClose, onCreate }) {
       setSubmitting(false)
     }
   }
+
+  useEffect(function initCities() {
+    getCities('a')
+  }, [getCities])
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
@@ -99,6 +126,18 @@ function CreateCollection({ opened, onClose, onCreate }) {
             </div>
           </FileUploader>
         </div>
+        <Autocomplete
+          className={styles.input}
+          name="city"
+          onChange={formik.handleChange}
+          label="City*"
+          value={formik.values.city}
+          required
+          options={cities}
+          error={errors.city && touched.city}
+          errorText={errors.city}
+          fetchOptions={getCities}
+          placeholder="Enter city"  />
         <Input
           className={styles.input}
           name="name"

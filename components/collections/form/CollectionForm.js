@@ -50,6 +50,7 @@ function CollectionForm() {
     featured: null,
     banner: null
   })
+  const [city, setCity] = useState('')
   const {setValues, errors, touched, ...formik} = useFormik({
     initialValues: {
       name: 'New York, Manhattan',
@@ -115,6 +116,7 @@ function CollectionForm() {
         payoutAddress: collection.payoutAddress || '',
         blockchain: collection.blockchain || 'ethereum'
       })
+      setCity(collection?.city?.name || '')
       setFiles({
         logo: collection.logoImage,
         featured: collection.featureImage || null,
@@ -212,6 +214,12 @@ function CollectionForm() {
           </div>
         </FileUploader>
       </div>
+      <Input
+        className={styles.formField}
+        disabled
+        readOnly
+        value={city}
+        label="City*" />
       <Input
         className={styles.formField}
         name="name"
