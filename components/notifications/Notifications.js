@@ -4,7 +4,7 @@ import Image from "next/image";
 import Typography from "../Typography";
 import {useDispatch, useSelector} from "react-redux";
 import {removeNotification} from "../../features/notifications/notificationsSlice";
-import {getFormattedBalance} from "../../utils";
+import {getMoneyView} from "../../utils";
 
 function Notifications() {
   const dispatch = useDispatch()
@@ -21,17 +21,17 @@ function Notifications() {
     switch (data.event) {
       case 'priceChange': {
         result.title = 'Price Changed!'
-        result.content = <p><span>{data.name}</span>&apos;s price changed from <span>${getFormattedBalance(data.oldPrice)}</span> to <span>${getFormattedBalance(data.newPrice)}</span></p>
+        result.content = <p><span>{data.name}</span>&apos;s price changed from <span>{getMoneyView(data.oldPrice)}</span> to <span>{getMoneyView(data.newPrice)}</span></p>
         break;
       }
       case 'successfulPurchase': {
         result.title = 'Successful Purchase!'
-        result.content = <p>Congratulations! You just bought <span>{data.name}</span> for <span>${getFormattedBalance(data.price)}</span></p>
+        result.content = <p>Congratulations! You just bought <span>{data.name}</span> for <span>{getMoneyView(data.price)}</span></p>
         break;
       }
       case 'itemSold': {
         result.title = 'Item has been sold!'
-        result.content = <p><span>{data.name}</span> has been sold for <span>${getFormattedBalance(data.price)}</span></p>
+        result.content = <p><span>{data.name}</span> has been sold for <span>{getMoneyView(data.price)}</span></p>
         break;
       }
       default:
