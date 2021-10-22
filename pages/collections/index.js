@@ -9,17 +9,7 @@ import ContextMenu from "../../components/context-menu/ContextMenu";
 import CreateCollection from "../../components/dialogs/create-collection/CreateCollection";
 import {useGetUserCollectionsQuery} from "../../services/collections";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-
-const data = [
-  {
-    id: 1,
-    name: 'New York, Manhattan'
-  },
-  {
-    id: 2,
-    name: 'Collection name'
-  },
-]
+import {useSelector} from "react-redux";
 
 function Collection({ data }) {
   return (
@@ -60,10 +50,11 @@ function Collection({ data }) {
 }
 
 function MyCollections() {
-  const { data: sourceCollections = [], refetch, isLoading, isFetching } = useGetUserCollectionsQuery()
+  const user = useSelector(state => state.auth.user)
+  const { data: sourceCollections = [], refetch, isLoading, isFetching } = useGetUserCollectionsQuery({ owner: user?._id })
   const [createOpened, setCreateOpened] = useState(false)
 
-  const collectionsList = sourceCollections.filter(({ parent }) => !parent).map((collection, index) => (
+  const collectionsList = sourceCollections.map((collection, index) => (
     <Collection key={index} data={collection} />
   ))
 
@@ -71,11 +62,7 @@ function MyCollections() {
     setCreateOpened(prevState => !prevState)
   }
 
-  function handleCreate(collection) {
-    // setCollections(prevCollections => ([
-    //   ...prevCollections,
-    //   collection
-    // ]))
+  function handleCreate() {
     refetch()
   }
 

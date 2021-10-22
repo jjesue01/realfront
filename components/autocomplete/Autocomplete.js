@@ -41,6 +41,8 @@ function Autocomplete({ className, name, value, onChange, options = [], fetchOpt
         onChange={handleChange}
         name={name}
         value={displayValue}
+        list="none"
+        autocomplete="chrome-off"
         {...otherProps} />
       <div className={styles.dropdown}>
         <div className={styles.content}>

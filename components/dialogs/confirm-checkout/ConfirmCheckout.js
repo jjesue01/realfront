@@ -58,13 +58,9 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout }) {
               <div className={styles.priceContainer}>
                 <div className={styles.price}>
                   <Typography fontWeight={600} fontSize={16} lHeight={20} margin={'0 8px 0 0'}>
-                    { listing?.price }
+                    { getMoneyView(listing?.price) }
                   </Typography>
-                  <Image src="/icons/ethereum.svg" width={18} height={19} alt="ethereum" />
                 </div>
-                <Typography fontSize={14} color={'#878D97'} lHeight={16} margin={'8px 0 0'}>
-                  ({listing?.price ? getMoneyView(listing.price * 3466.41) : ''})
-                </Typography>
               </div>
             </div>
           </div>
@@ -75,13 +71,9 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout }) {
             <div className={styles.priceContainer}>
               <div className={styles.price}>
                 <Typography fontWeight={600} fontSize={16} lHeight={20} margin={'0 8px 0 0'}>
-                  { listing?.price }
+                  { getMoneyView(listing?.price) }
                 </Typography>
-                <Image src="/icons/ethereum.svg" width={18} height={19} alt="ethereum" />
               </div>
-              <Typography fontSize={14} color={'#878D97'} lHeight={16} margin={'8px 0 0'}>
-                ({listing?.price ? getMoneyView(listing.price * 3466.41) : ''})
-              </Typography>
             </div>
           </div>
         </div>

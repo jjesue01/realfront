@@ -207,37 +207,6 @@ function Layout({ children }) {
         onEvent: handleNotifications
       })
       console.log('mount')
-      // setTimeout(() => {
-      //   dispatch(pushNotification({
-      //     id: Date.now(),
-      //     event: 'priceChange',
-      //     listing: Date.now(),
-      //     image: '/hero-aparts-big.jpg',
-      //     name: 'Best burgers',
-      //     newPrice: 10,
-      //     oldPrice: 7,
-      //   }))
-      // }, 2000)
-      // setTimeout(() => {
-      //   dispatch(pushNotification({
-      //     id: Date.now(),
-      //     event: 'successfulPurchase',
-      //     listing: Date.now(),
-      //     image: '/collection-logo.jpg',
-      //     name: 'LA Beach',
-      //     price: 666
-      //   }))
-      // }, 4000)
-      // setTimeout(() => {
-      //   dispatch(pushNotification({
-      //     id: Date.now(),
-      //     event: 'itemSold',
-      //     listing: Date.now(),
-      //     image: '/collection-logo.jpg',
-      //     name: 'LA Gods',
-      //     price: 7.1
-      //   }))
-      // }, 6000)
     }
   }, [auth, dispatch, handleNotifications])
 

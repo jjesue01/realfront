@@ -28,7 +28,7 @@ export function getSortedArray(arr, field) {
   const itemField = splitField[0];
   const direction = splitField[1]
 
-  const result = arr.sort((a, b) => {
+  const result = [...arr].sort((a, b) => {
     if (a[itemField] < b[itemField])
       return -1
     if (a[itemField] > b[itemField])
@@ -67,10 +67,10 @@ export function decodeTags(tagsStr) {
   if (!tagsStr) return ''
   return tagsStr.split(', ').map(tag => tag.replace(/#/g, '')).join(',') // 'tag1,tag2,tag3'
 }
-//tagsArr = ['tag1', 'tag2', 'tag3']
-export function encodeTags(tagsArr) {
-  if (tagsArr.length === 0) return ''
-  return tagsArr.map(tag => '#' + tag).join(', ') // '#tag1, #tag2, #tag3'
+//tagsStr = 'tag1,tag2,tag3'
+export function encodeTags(tagsStr) {
+  if (!tagsStr) return ''
+  return tagsStr.split(',').map(tag => '#' + tag).join(', ') // '#tag1, #tag2, #tag3'
 }
 
 export function getShortWalletAddress(walletAddress) {
@@ -95,7 +95,7 @@ export function buildFormData(data) {
 }
 
 export function getMoneyView(value) {
-  return `$${new Intl.NumberFormat('ru-RU', { 
+  return `$${new Intl.NumberFormat('en-US', { 
     maximumFractionDigits: 2,
     minimumFractionDigits: 2
   })
@@ -173,10 +173,3 @@ export function escapeValue(str) {
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 export const isTokenExpired = token => Date.now() >= (JSON.parse(atob(token.split('.')[1]))).exp * 1000
-
-export function getFormattedBalance(balance) {
-  return new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2
-  }).format(+balance || 0)
-}

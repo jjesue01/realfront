@@ -144,16 +144,11 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
                         Current price
                       </Typography>
                       <div className={styles.priceDetails}>
-                        <Image src="/icons/ethereum.svg" width={24} height={24} alt="ethereum" />
                         <Typography
                           fontSize={28}
                           fontWeight={600}
-                          lHeight={34}
-                          margin={'0 0 0 12px'}>
-                          { listing?.price }
-                        </Typography>
-                        <Typography fontSize={14} color={'#878D97'} margin={'0 0 0 16px'}>
-                          ({listing?.price ? getMoneyView(listing.price * 3466.41) : ''})
+                          lHeight={34}>
+                          { getMoneyView(listing?.price) }
                         </Typography>
                       </div>
                     </div>
@@ -191,8 +186,8 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
               </div>
               <div className={styles.tags}>
                 {
-                  listing?.tags?.length !== 0 &&
-                    listing?.tags?.map((tag, i) => (
+                  !!listing?.tags &&
+                    listing?.tags?.split(',').map((tag, i) => (
                       <span key={tag + i} className={styles.tag}>
                         {tag}
                       </span>

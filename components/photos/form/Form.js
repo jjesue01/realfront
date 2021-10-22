@@ -24,7 +24,7 @@ import {
 } from "../../../services/listings";
 import {decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 import Error from "../../error/Error";
 
@@ -49,10 +49,11 @@ function Form({ mode }) {
     libraries,
     language: 'en'
   })
+  const user = useSelector(state => state.auth.user)
   const [createListing, { isLoading }] = useCreateListingMutation()
   const [updateListing] = useUpdateListingMutation()
   const [deleteListing] = useDeleteListingMutation()
-  const { data: collections, refetch: getCollections, isFetching } = useGetUserCollectionsQuery()
+  const { data: collections, refetch: getCollections, isFetching } = useGetUserCollectionsQuery({ owner: user?._id })
   const [isDeleting, setDeleting] = useState(false)
   const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)

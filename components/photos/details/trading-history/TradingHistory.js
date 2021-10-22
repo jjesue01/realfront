@@ -3,62 +3,17 @@ import styles from './TradingHistory.module.sass'
 import Typography from "../../../Typography";
 import ArrowShort from '/public/icons/arrow-short.svg'
 import cn from "classnames";
-import {timeAgo} from "../../../../utils";
-
-const tableData = [
-  {
-    event: 'List',
-    price: 0.79,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'Sale',
-    price: 0.79,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'Transfer',
-    price: 0.79,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'List',
-    price: 0.79,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'List',
-    price: 0.79,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-  {
-    event: 'List',
-    price: 0.79,
-    from: 'xetic456',
-    to: 'sdf47',
-    date: '2 days ago'
-  },
-]
+import {getMoneyView, getSortedArray, timeAgo} from "../../../../utils";
 
 function TradingHistory({ data = [] }) {
   const [opened, setOpened] = useState(false);
-  const rowsList = data.map((item, index) => (
+  const rowsList = getSortedArray(data, 'date_high').map((item, index) => (
     <div key={index} className={styles.tableItem}>
       <div className={cn(styles.col, styles.colEvent)}>
         <p>{ item.event }</p>
       </div>
       <div className={cn(styles.col, styles.colPrice)}>
-        <p>{ item.price }</p>
+        <p>{ getMoneyView(item.price) }</p>
       </div>
       <div className={cn(styles.col, styles.colFrom)}>
         <p>{ item.from }</p>

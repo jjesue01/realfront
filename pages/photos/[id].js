@@ -6,6 +6,7 @@ import MoreFromCollection from "../../components/photos/details/more/MoreFromCol
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {
+  listingsApi,
   useGetListingByIdQuery,
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
@@ -23,11 +24,11 @@ function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
-  const { data: listing, error, refetch } = useGetListingByIdQuery(id, { skip: !id })
+  const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const collectionId = listing?.collections?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
   const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, exclude: id, limit: 3 })
-  const isLoading = (!listing || !transactions || !listings) && !error
+  const isLoading = (!listing || !transactions || !listings) && !error || isFetching
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
@@ -41,12 +42,23 @@ function PhotoDetails({ openLogin }) {
 
   function toggleConfirmDialog() {
     user ?
-      setConfirmOpened(prevState => !prevState)
+      dispatch(listingsApi.endpoints.getListingById.initiate(id, { forceRefetch: true }))
+        .then(({ data }) => {
+          if (data?.isPublished) {
+            setConfirmOpened(prevState => !prevState)
+          }
+        })
       :
       openLogin()
   }
 
+  function handleCloseConfirm() {
+    setConfirmOpened(prevState => !prevState)
+  }
+
   function handleBuy() {
+    if (!confirmOpened) return;
+
     return new Promise((resolve, reject) => {
       const contractApi = require('/services/contract')
 
@@ -78,18 +90,18 @@ function PhotoDetails({ openLogin }) {
 
   useEffect(function () {
     if (getIdToken()) {
-      //needs force
       dispatch(authApi.endpoints.getCurrentUser.initiate({}, { forceRefetch: true }))
     }
     refetch()
   }, [dispatch, refetch])
 
+  if (listing && !listing?.isPublished && !ownItem)
+    return <Error errorCode="ListingDeleted" />
+
   if (error?.data?.message) {
     const message = error?.data?.message === 'Deleted' ? 'ListingDeleted' : 'ListingNotFound'
-
     return <Error errorCode={message} />
   }
-
 
   return (
     <main className={styles.root}>
@@ -117,7 +129,7 @@ function PhotoDetails({ openLogin }) {
           <ConfirmCheckout
             opened={confirmOpened}
             listing={listing}
-            onClose={toggleConfirmDialog}
+            onClose={handleCloseConfirm}
             onCheckout={handleBuy} />
           <DoneCongratulation
             imageUrl={listing?.filePath}

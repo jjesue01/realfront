@@ -8,6 +8,7 @@ import HeartIcon from '/public/icons/heart.svg'
 import HeartFilledIcon from '/public/icons/heart-filled.svg'
 import ContextMenu from "../context-menu/ContextMenu";
 import {useLikeListingMutation} from "../../services/listings";
+import {getMoneyView} from "../../utils";
 
 function PhotoItem({ className, imageClassName, data, type, favorite = false, isOwn = false }) {
   const [isFavorite, setIsFavorite] = useState(false)
@@ -84,9 +85,8 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false, is
                       Price
                     </Typography>
                     <div className={styles.ethereum}>
-                      <Image src="/icons/ethereum.svg" width={18} height={18} alt="ethereum.svg" />
-                      <Typography fontWeight={600} fontSize={16} margin={'0 0 0 8px'}>
-                        { data.price }
+                      <Typography fontWeight={600} fontSize={16}>
+                        { getMoneyView(data.price) }
                       </Typography>
                     </div>
                   </div>

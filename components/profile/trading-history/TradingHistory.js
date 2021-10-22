@@ -3,11 +3,11 @@ import styles from './TradingHistory.module.sass'
 import Typography from "../../Typography";
 import cn from "classnames";
 import Image from "next/image";
-import {timeAgo} from "../../../utils";
+import {getMoneyView, getSortedArray, timeAgo} from "../../../utils";
 
 function TradingHistory({ data = [] }) {
 
-  const rowsList = data.map((item, index) => (
+  const rowsList = getSortedArray(data, 'date_high').map((item, index) => (
     <div key={index} className={styles.tableItem}>
       <div className={cn(styles.col, styles.colEvent)}>
         <p>{ item.event }</p>
@@ -24,7 +24,7 @@ function TradingHistory({ data = [] }) {
         <p>{ item?.listingID?.name }</p>
       </div>
       <div className={cn(styles.col, styles.colPrice)}>
-        <p>{ item.price }</p>
+        <p>{ getMoneyView(item.price) }</p>
       </div>
       <div className={cn(styles.col, styles.colQuantity)}>
         <p>{ item.quantity }</p>

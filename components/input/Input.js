@@ -16,7 +16,6 @@ function Input({
   required,
   subLabel,
   urlPrefix,
-  usdRate = 3166.41,
   error,
   errorText,
   disabled,
@@ -62,7 +61,7 @@ function Input({
         }
         {
           type === 'price' &&
-          <p className={styles.currency}>eth</p>
+          <p className={styles.currency}>usd</p>
         }
         <input
           ref={ref}
@@ -77,10 +76,6 @@ function Input({
           placeholder={placeholder}
           { ...otherProps } />
         { iconRight }
-        {
-          type === 'price' &&
-            <p className={styles.usd}>{`(${getMoneyView(+value * usdRate)})`}</p>
-        }
         {
           error && errorText &&
           <p className={styles.errorText}>{ errorText }</p>

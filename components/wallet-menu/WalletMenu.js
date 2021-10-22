@@ -7,11 +7,11 @@ import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
 import ButtonCopy from "../button-copy/ButtonCopy";
-import {getShortWalletAddress} from "../../utils";
+import {getMoneyView, getShortWalletAddress} from "../../utils";
 
 function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   const router = useRouter()
-  const [balance, setBalance] = useState('0.00')
+  const [balance, setBalance] = useState(0)
 
   function handleLogout() {
     onLogOut()
@@ -23,8 +23,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
 
     contractApi.balanceOf(user.walletAddress)
       .then(balance => {
-        const formattedBalance = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(+balance)
-        setBalance(formattedBalance)
+        setBalance(balance)
       })
   }, [user])
 
@@ -80,7 +79,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
             lHeight={34}
             color={'#111'}
             margin={'17px 0 0'}>
-            ${balance} USD
+            {getMoneyView(balance)} USD
           </Typography>
           <Button onClick={onAddFunds} className={styles.btnAddFunds}>
             Add Funds

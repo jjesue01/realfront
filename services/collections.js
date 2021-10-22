@@ -51,7 +51,13 @@ export const collectionsApi = createApi({
       },
     }),
     getUserCollections: builder.query({
-      query: () => '/collections',
+      query: (params) => ({
+        url: '/collections',
+        params: {
+          limit: 50,
+          ...params
+        }
+      }),
       transformResponse(baseQueryReturnValue, meta) {
         return baseQueryReturnValue.docs
       }

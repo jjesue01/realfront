@@ -18,15 +18,6 @@ import {
 import Autocomplete from "../../autocomplete/Autocomplete";
 import {useDispatch} from "react-redux";
 
-const validationSchema = Yup.object({
-  name: Yup.string().required('Name is required'),
-  city: Yup.object().shape({
-    label: Yup.string().required(),
-    value: Yup.string().required('City is required')
-  }),
-  description: Yup.string()
-})
-
 function CreateCollection({ opened, onClose, onCreate }) {
   const dispatch = useDispatch()
   const [createCollection, { isLoading }] = useCreateCollectionMutation()
@@ -41,12 +32,21 @@ function CreateCollection({ opened, onClose, onCreate }) {
       },
       description: '',
     },
-    validationSchema,
+    validate: handleValidate,
     onSubmit: handleSubmit,
   });
 
   function handleLogoChange(file) {
     setLogo(file)
+  }
+
+  function handleValidate(values) {
+    const errors = {}
+
+    if (!values.name) errors.name = 'Name is required'
+    if (!values.city.value) errors.city = 'City is required'
+
+    return errors
   }
 
   const getCities = useCallback((value) => {
@@ -64,8 +64,6 @@ function CreateCollection({ opened, onClose, onCreate }) {
         ...values,
         city: values.city.value
       }
-
-      console.log(data)
 
       createCollection(data).unwrap()
         .then(result => {
