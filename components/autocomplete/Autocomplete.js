@@ -7,6 +7,7 @@ import Typography from "../Typography";
 function Autocomplete({ className, name, value, onChange, options = [], fetchOptions, ...otherProps}) {
   const [isOpened, setOpened] = useState(false)
   const [displayValue, setDisplayValue] = useState('')
+  const [inputName, setInputName] = useState(name)
 
   const optionsList = options.map((option) => (
     <div key={option.value} onMouseDown={ handleClick(option) } className={styles.option}>
@@ -27,10 +28,13 @@ function Autocomplete({ className, name, value, onChange, options = [], fetchOpt
   function handleChange({ target: { value } }) {
     setDisplayValue(value)
     fetchOptions(value)
+
+    if (!value) onChange({ target: { name, value: { label: '', value: '' } } })
   }
 
   useEffect(function initValue() {
     setDisplayValue(value.label)
+    setInputName(Date.now())
   }, [value.label])
 
   return (
@@ -39,10 +43,9 @@ function Autocomplete({ className, name, value, onChange, options = [], fetchOpt
         onFocus={toggleDropdown}
         onBlur={toggleDropdown}
         onChange={handleChange}
-        name={name}
+        name={inputName}
         value={displayValue}
-        list="none"
-        autocomplete="chrome-off"
+        autoComplete="chrome-off"
         {...otherProps} />
       <div className={styles.dropdown}>
         <div className={styles.content}>

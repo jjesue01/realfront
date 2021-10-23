@@ -93,7 +93,7 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
                   <div className={styles.actions}>
                     <button
                       onClick={toggleFavorite}
-                      className={cn(styles.btnOutlined, styles.btnFavorite, { [styles.btnFavoriteActive]: isFavorite })}>
+                      className={cn(styles.btnOutlined, styles.btnFavorite, { [styles.btnFavoriteActive]: isFavorite && user })}>
                       <span className={styles.iconWrapper}>
                         <HeartIcon />
                         <HeartFilledIcon className={styles.iconHeart} />

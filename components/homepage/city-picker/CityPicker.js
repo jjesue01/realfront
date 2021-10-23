@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from './CityPicker.module.sass'
 import cn from "classnames";
 import ArrowShort from "../../../public/icons/arrow-short.svg";
@@ -6,37 +6,42 @@ import SearchIcon from '/public/icons/search-icon.svg'
 import Typography from "../../Typography";
 import Input from "../../input/Input";
 
-function CityPicker({ className, onChange, value, options }) {
+function CityPicker({ className, onChange, value, options, fetchOptions }) {
   const [searchValue, setSearchValue] = useState('')
+  const [inputName, setInputName] = useState('city')
   const [opened, setOpened] = useState(false)
 
-  const label = options.find(option => option.value === value)?.label
-
-  const optionsList = options
-    .filter(option => option.label.toLowerCase().includes(searchValue.toLowerCase()))
-    .map(({ label, value }) => (
-    <div key={value} onClick={handleClick(value)} className={styles.option}>
+  const optionsList = options.map((option) => (
+    <div key={option.value} onClick={handleClick(option)} className={styles.option}>
       <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'}>
-        { label }
+        { option.label }
       </Typography>
     </div>
   ))
 
   function handleInputChange({ target: { value } }) {
+    fetchOptions(value)
     setSearchValue(value)
   }
 
-  function handleClick(value) {
+  function handleClick(option) {
     return function () {
-      onChange(value)
+      onChange(option)
       togglePicker()
     }
   }
 
   function togglePicker() {
-    if (!opened) setSearchValue('')
+    if (!opened) {
+      setSearchValue('')
+      fetchOptions('a')
+    }
     setOpened(prevState => !prevState)
   }
+
+  useEffect(function initName() {
+    if (opened) setInputName(Date.now() + 'city')
+  }, [opened])
 
   return (
     <>
@@ -46,7 +51,7 @@ function CityPicker({ className, onChange, value, options }) {
       }
       <div className={cn(className, styles.root, { [styles.opened]: opened })}>
         <button onClick={togglePicker}>
-          <span>{label}</span>
+          <span>{value.label}</span>
           <ArrowShort />
         </button>
         <div className={styles.picker}>
@@ -62,9 +67,10 @@ function CityPicker({ className, onChange, value, options }) {
               <Input
                 size="small"
                 iconRight={<SearchIcon />}
-                name="city"
+                name={inputName}
                 value={searchValue}
                 placeholder="Search"
+                autoComplete="chrome-off"
                 onChange={handleInputChange} />
             </div>
           </div>

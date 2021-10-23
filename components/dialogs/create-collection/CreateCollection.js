@@ -68,7 +68,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
       createCollection(data).unwrap()
         .then(result => {
           setSubmitting(false)
-          onCreate()
+          onCreate(result)
           onClose()
           resetForm()
           setLogo(null)
@@ -87,7 +87,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
-      <form onSubmit={formik.handleSubmit} className={styles.dialog}>
+      <form onSubmit={formik.handleSubmit} className={styles.dialog} autoComplete="chrome-off">
         <Typography fontWeight={600} fontSize={24} lHeight={29} align="center">
           Create collection
         </Typography>

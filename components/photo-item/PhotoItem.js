@@ -73,7 +73,12 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false, is
                 <Typography fontWeight={600} fontSize={16} lHeight={20}>
                   { data.name }
                 </Typography>
-                <Typography fontSize={12} lHeight={15} color={'#878D97'} margin="8px 0 0">
+                <Typography
+                  className={styles.collection}
+                  fontSize={12}
+                  lHeight={15}
+                  color={'#878D97'}
+                  margin="8px 0 0">
                   { data?.collections?.name }
                 </Typography>
               </div>

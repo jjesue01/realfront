@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import styles from './TrendingIn.module.sass'
 import SectionTitle from "../../section-title/SectionTitle";
 import Link from "next/link";
@@ -8,6 +8,8 @@ import Image from "next/image";
 import Typography from "../../Typography";
 import cn from "classnames";
 import CityPicker from "../city-picker/CityPicker";
+import {collectionsApi} from "../../../services/collections";
+import {useDispatch} from "react-redux";
 
 const items = [
   {
@@ -83,7 +85,12 @@ function PrevArrow({ onClick }) {
 }
 
 function TrendingIn() {
-  const [city, setCity] = useState('New York')
+  const dispatch = useDispatch()
+  const [city, setCity] = useState({
+    label: 'New York',
+    value: ''
+  })
+  const [cities, setCities] = useState([])
 
   const sliderSettings = {
     dots: true,
@@ -114,8 +121,19 @@ function TrendingIn() {
   }
 
   function handleChange(value) {
-    setCity(value)
+    setCity({ ...value, label: value.label.split(', ')[0] })
   }
+
+  const getCities = useCallback((value) => {
+    dispatch(collectionsApi.endpoints.getAutocompleteCollections.initiate({ search: value }))
+      .then(({data}) => {
+        setCities(data)
+      })
+  }, [dispatch])
+
+  useEffect(function initCities() {
+    getCities('')
+  }, [getCities])
 
   return (
     <section className={styles.root}>
@@ -125,7 +143,11 @@ function TrendingIn() {
             <SectionTitle>
               Trending in
             </SectionTitle>
-            <CityPicker value={city} onChange={handleChange} options={options} />
+            <CityPicker
+              value={city}
+              onChange={handleChange}
+              options={cities}
+              fetchOptions={getCities} />
           </div>
           <Link href="/marketplace">
             See all

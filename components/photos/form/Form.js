@@ -99,7 +99,11 @@ function Form({ mode }) {
     router.push(`/photos/${id}`)
   }
 
-  function handleCreateCollection() {
+  function handleCreateCollection(collection) {
+    setValues(prevState => ({
+      ...prevState,
+      collection: collection._id
+    }))
     getCollections()
   }
 
