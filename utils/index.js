@@ -128,8 +128,11 @@ export function buildFilterOptions(listings) {
         label: collections.name,
         value: collections.ID
       }))
-    if (tags.length !== 0 && tags[0] !== '')
+    
+    if (Array.isArray(tags))
       tagOptions = [...tagOptions, ...tags]
+    else if (typeof tags === 'string')
+      tagOptions = [...tagOptions, ...tags.split(',')]
   })
 
   return {

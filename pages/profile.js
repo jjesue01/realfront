@@ -184,7 +184,7 @@ function MyProfile() {
       items = items.filter(({ tags }) => {
         let result = false
         filters.more.types.forEach(type => {
-          if (tags.includes(type)) result = true
+          if (tags?.includes(type)) result = true
         })
         return result
       })
