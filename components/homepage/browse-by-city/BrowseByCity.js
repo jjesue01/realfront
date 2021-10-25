@@ -4,6 +4,8 @@ import Image from "next/image";
 import SectionTitle from "../../section-title/SectionTitle";
 import Typography from "../../Typography";
 import Button from "../../button/Button";
+import {useGetUserCollectionsQuery} from "../../../services/collections";
+import Link from "next/link";
 
 const cities = [
   {
@@ -32,7 +34,10 @@ const cities = [
   },
 ]
 
+
 function BrowseByCity() {
+  const { data = [] } = useGetUserCollectionsQuery({ parent: true, limit: 6 })
+
   return (
     <section className={styles.root}>
       <div className="container">
@@ -41,24 +46,28 @@ function BrowseByCity() {
         </SectionTitle>
         <div className={styles.cities}>
           {
-            cities.map(({ img, name }) => (
-              <div key={name} className={styles.city}>
-                <div className={styles.cityImage}>
-                  <Image
-                    src={img}
-                    layout="fill"
-                    alt={name}
-                    objectFit="cover" />
-                </div>
-                <Typography
-                  fontSize={20}
-                  fontWeight={600}
-                  lHeight={24}
-                  margin={'24px 0 0'}
-                  color={'#111111'}>
-                  { name }
-                </Typography>
-              </div>
+            data.map(({ name, _id }) => (
+              <Link key={_id} href={`/marketplace?city=${_id}`}>
+                <a>
+                  <div className={styles.city}>
+                    <div className={styles.cityImage}>
+                      <Image
+                        src={'/images/bc-ny.jpg'}
+                        layout="fill"
+                        alt={name}
+                        objectFit="cover" />
+                    </div>
+                    <Typography
+                      fontSize={20}
+                      fontWeight={600}
+                      lHeight={24}
+                      margin={'24px 0 0'}
+                      color={'#111111'}>
+                      { name }
+                    </Typography>
+                  </div>
+                </a>
+              </Link>
             ))
           }
         </div>

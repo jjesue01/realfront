@@ -82,7 +82,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
   }
 
   useEffect(function initCities() {
-    getCities('a')
+    getCities('')
   }, [getCities])
 
   return (

@@ -34,7 +34,7 @@ function CityPicker({ className, onChange, value, options, fetchOptions }) {
   function togglePicker() {
     if (!opened) {
       setSearchValue('')
-      fetchOptions('a')
+      fetchOptions('')
     }
     setOpened(prevState => !prevState)
   }

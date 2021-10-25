@@ -7,22 +7,24 @@ import Input from "../../../input/Input";
 import Checkbox from "../../../checkbox/Checkbox";
 import cn from "classnames";
 
-function CollectionFilter({ className, name, onChange, value, mode, options = [] }) {
+function CollectionFilter({ className, name, onChange, value, mode, options = [], refetchOptions }) {
   const [data, setData] = useState([])
   const [searchValue, setSearchValue] = useState('')
   const [checkedAll, setCheckedAll] = useState(false)
+  const [inputName, setInputName] = useState('city')
 
-  const checkboxesList = getFilteredData().map(({ value, label, checked }) => (
+  const checkboxesList = options.map(({ value, label, checked }) => (
     <Checkbox
       key={value}
       className={styles.checkbox}
-      checked={checked}
+      checked={isChecked(value)}
       label={label}
       onChange={handleCheckboxChange(value)} />
   ))
 
   function handleInputChange({ target: { value } }) {
     setSearchValue(value)
+    refetchOptions(value)
   }
 
   function handleCheckboxChange(value) {
@@ -31,26 +33,22 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
       let updatedData = [...data]
 
       if (value === 'all') {
-        updatedData = data.map(item => ({ ...item, checked }))
+        setCheckedAll(checked)
+        updatedData = []
+      } else if (updatedData.includes(value)) {
+        updatedData = updatedData.filter(id => id !== value)
       } else {
-        const index = data.findIndex(item => item.value === value)
-        updatedData[index].checked = checked
+        updatedData = [...updatedData, value]
       }
 
-      updatedData.forEach(item => {
-        if (!item.checked) updatedCheckedAll = false
-      })
-
-      setCheckedAll(updatedCheckedAll)
       setData(updatedData)
-
       if (mode === 'flat')
         handleApply(updatedData)
     }
   }
 
-  function getFilteredData() {
-    return data.filter(({ value }) => value.toLowerCase().includes(searchValue.toLowerCase()))
+  function isChecked(id) {
+    return data.includes(id) || checkedAll
   }
 
   function handleApply(arr = []) {
@@ -58,56 +56,41 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
     onChange({
       target: {
         name,
-        value: result.filter(({ checked }) => checked).map(({ value }) => value)
+        value: result
       }
     })
   }
 
   const handleReset = useCallback(() => {
-    let updatedCheckedAll = true
-    const updatedData = options.map(item => ({
-      ...item,
-      checked: value.includes(item.value)
-    }))
-
-    updatedData.forEach(item => {
-      if (!item.checked) updatedCheckedAll = false
-    })
-
-    setCheckedAll(updatedCheckedAll)
-    setData(updatedData)
+    setData([...value])
     setSearchValue('')
-  }, [value, options])
+  }, [value])
 
   useEffect(function () {
-    handleReset()
-  }, [value, handleReset])
-
-  useEffect(function initOptions() {
-    if (options.length !== 0) {
-      setData(options.map(option => ({ ...option, checked: false })))
-    }
-  }, [options])
+    setInputName(Date.now() + 'city')
+    setData(value)
+  }, [value])
 
   return (
     <FilterWrapper
       mode={mode}
       className={cn(className, { [styles.flat]: mode === 'flat' })}
-      title="Collection"
+      title="City"
       active={value.length !== 0}
       onApply={handleApply}
       onClose={handleReset}>
       <div className={styles.header}>
         <Typography fontWeight={600} fontSize={14} lHeight={20} color={'#111'}>
-          Collection
+          City
         </Typography>
         <Input
           className={styles.inputSearch}
           size="small"
           iconRight={<SearchIcon />}
-          name="city"
+          name={inputName}
           value={searchValue}
           placeholder="Search"
+          autoComplete="chrome-off"
           onChange={handleInputChange} />
       </div>
       <div className={styles.scrollWrapper}>

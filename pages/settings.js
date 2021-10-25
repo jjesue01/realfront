@@ -8,6 +8,7 @@ import Button from "../components/button/Button";
 import Notifications from "../components/settings/notifications/Notifications";
 import {useGetCurrentUserQuery, useUpdateUserMutation} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
+import {escapeValue} from "../utils";
 
 const tabs = ['general', 'notification settings']
 
@@ -39,9 +40,13 @@ function Settings() {
   }
 
   function handleGeneralChange({ target: { name, value } }) {
+    let result = value;
+
+    if (name === 'username') result = escapeValue(value)
+
     setGeneral(prevGeneral => ({
       ...prevGeneral,
-      [name]: value
+      [name]: result
     }))
   }
 

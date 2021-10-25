@@ -21,6 +21,7 @@ import {isPrivateRoute, isTokenExpired} from "../utils";
 import {initSocket} from "../services/socket";
 import Notifications from "./notifications/Notifications";
 import {pushNotification} from "../features/notifications/notificationsSlice";
+import {useGetUserCollectionsQuery} from "../services/collections";
 
 const marketplaceLinks = [
   {
@@ -79,6 +80,7 @@ function Layout({ children }) {
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const [login, { isLoading }] = useLoginMutation()
+  const { data: marketplaceLinks = [] } = useGetUserCollectionsQuery({ parent: true, limit: 6 })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)
@@ -315,9 +317,9 @@ function Layout({ children }) {
                     </Typography>
                     <ul className={styles.list}>
                       {
-                        marketplaceLinks.map(({ name, link }) => (
+                        marketplaceLinks.map(({ name, _id }) => (
                           <li key={name}>
-                            <Link href={link}>
+                            <Link href={`/marketplace?city=${_id}`}>
                               { name }
                             </Link>
                           </li>

@@ -55,7 +55,7 @@ function PriceFilter({ className, name, onChange, value, mode }) {
           margin={'16px 0 0'}
           lHeight={20}
           color={'rgba(55, 65, 81, 0.5)'}>
-          ETH
+          USD
         </Typography>
         <div className={styles.row}>
           <Input

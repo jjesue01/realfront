@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, {useState, useEffect, useRef, useCallback} from 'react'
 import styles from '../styles/Marketplace.module.sass'
 import Head from "next/head";
 import Input from "../components/input/Input";
@@ -20,6 +20,7 @@ import { useGetPublishedListingsQuery } from "../services/listings";
 import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
+import {collectionsApi, useGetAutocompleteCollectionsQuery} from "../services/collections";
 
 const sortOptions = [
   {
@@ -51,6 +52,7 @@ function Marketplace({ toggleFooter }) {
   const dispatch = useDispatch()
   const user = useSelector(state => state.auth.user)
   const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery()
+  const [citiesOptions, setCitiesOptions] = useState([])
   const isLoading = !listings
   const [sourceData, setSourceData] = useState([])
   const [viewportData, setViewportData] = useState([])
@@ -108,6 +110,13 @@ function Marketplace({ toggleFooter }) {
   function handleMapChange(items) {
     setViewportData([...items])
   }
+
+  const getCities = useCallback((value) => {
+    dispatch(collectionsApi.endpoints.getAutocompleteCollections.initiate({ search: value }))
+      .then(({ data }) => {
+        setCitiesOptions(data)
+      })
+  }, [dispatch])
 
   useEffect(function hideFooter() {
     if (!mounted.current) {
@@ -168,11 +177,13 @@ function Marketplace({ toggleFooter }) {
   }, [filters, viewportData, sourceData, isMapHidden, options])
 
   useEffect(function initSearch() {
-    const { search } = router.query;
+    const { search, city } = router.query;
 
     if (search)
       setFilters(prevFilters => ({ ...prevFilters, searchValue: search }))
-  }, [router])
+    if (city)
+      setFilters(prevFilters => ({ ...prevFilters, collections: [city] }))
+  }, [router.query])
 
   useEffect(function initListings() {
     if (listings !== undefined) {
@@ -190,7 +201,8 @@ function Marketplace({ toggleFooter }) {
       dispatch(authApi.endpoints.getCurrentUser.initiate({}, { forceRefetch: true }))
     }
     refetchListings()
-  }, [dispatch, refetchListings])
+    getCities('')
+  }, [dispatch, refetchListings, getCities])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
@@ -213,7 +225,8 @@ function Marketplace({ toggleFooter }) {
               className={styles.filter}
               name="collections"
               value={filters.collections}
-              options={options.collections}
+              options={citiesOptions}
+              refetchOptions={getCities}
               onChange={handleChange} />
             <PriceFilter
               className={styles.filter}

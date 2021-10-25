@@ -8,61 +8,19 @@ import Image from "next/image";
 import Typography from "../../Typography";
 import cn from "classnames";
 import CityPicker from "../city-picker/CityPicker";
-import {collectionsApi} from "../../../services/collections";
+import {collectionsApi, useGetUserCollectionsQuery} from "../../../services/collections";
 import {useDispatch} from "react-redux";
+import {useGetListingsQuery, useGetPublishedListingsQuery} from "../../../services/listings";
+import PhotoItem from "../../photo-item/PhotoItem";
 
 const items = [
   {
     img: '/trending-1.jpg',
   },
-  {
-    img: '/trending-2.jpg',
-  },
-  {
-    img: '/trending-1.jpg',
-  },
-  {
-    img: '/trending-2.jpg',
-  },
-  {
-    img: '/trending-2.jpg',
-  },
+
 ]
 
-const options = [
-  {
-    label: 'New York',
-    value: 'New York'
-  },
-  {
-    label: 'Los Angeles',
-    value: 'Los Angeles'
-  },
-  {
-    label: 'Chicago',
-    value: 'Chicago'
-  },
-  {
-    label: 'Houston',
-    value: 'Houston'
-  },
-  {
-    label: 'Philadelphia',
-    value: 'Philadelphia'
-  },
-  {
-    label: 'Phoenix',
-    value: 'Phoenix'
-  },
-  {
-    label: 'Washington',
-    value: 'Washington'
-  },
-  {
-    label: 'Miami',
-    value: 'Miami'
-  },
-]
+const NEW_YORK_ID = '61718d8ecf5a3badf5b3703c'
 
 function NextArrow({ onClick }) {
   return (
@@ -88,8 +46,9 @@ function TrendingIn() {
   const dispatch = useDispatch()
   const [city, setCity] = useState({
     label: 'New York',
-    value: ''
+    value: NEW_YORK_ID
   })
+  const { data } = useGetPublishedListingsQuery();
   const [cities, setCities] = useState([])
 
   const sliderSettings = {
@@ -97,20 +56,36 @@ function TrendingIn() {
     arrows: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 2,
+    slidesToShow: 3,
     slidesToScroll: 1,
     adaptiveHeight: true,
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
     responsive: [
       {
+        breakpoint: 1200,
+        settings: {
+          arrows: false,
+          slidesToShow: 2,
+        }
+      },
+      {
         breakpoint: 1100,
         settings: {
-          arrows: false
+          arrows: false,
+          slidesToShow: 2,
         }
       },
       {
         breakpoint: 900,
+        settings: {
+          arrows: false,
+          infinite: false,
+          slidesToShow: 2
+        }
+      },
+      {
+        breakpoint: 640,
         settings: {
           arrows: false,
           infinite: false,
@@ -119,6 +94,54 @@ function TrendingIn() {
       }
     ]
   }
+
+  // const collectionsList = data?.docs?.map(({ name, _id, logoImage, description }, index) => (
+  //   <div key={_id} className={styles.collectionWrapper}>
+  //     <div className={styles.collection}>
+  //       <div className={styles.mainImageWrapper}>
+  //         <Image src={logoImage} layout="fill" objectFit="cover" alt="apartments" />
+  //       </div>
+  //       <div className={styles.collectionContent}>
+  //         <div className={styles.collectionInfo}>
+  //           <div className={styles.collectionInfoImage}>
+  //             <Image src={logoImage} width={50} height={50} alt="logo apartments" />
+  //           </div>
+  //           <div className={styles.infoContent}>
+  //             <Typography
+  //               fontSize={16}
+  //               fontWeight={600}
+  //               lHeight={20}
+  //               color={'#111'}>
+  //               { name }
+  //             </Typography>
+  //             <Typography
+  //               fontSize={12}
+  //               fontWeight={600}
+  //               lHeight={12}
+  //               margin="8px 0 0"
+  //               color={'rgba(55, 65, 81, 0.5)'}>
+  //               by <span>John Doe</span>
+  //             </Typography>
+  //           </div>
+  //         </div>
+  //         <Typography
+  //           fontFamily={'Lato'}
+  //           fontSize={14}
+  //           lHeight={22}
+  //           margin={'14px 0 0'}
+  //           color={'rgba(55, 65, 81, 0.8)'}>
+  //           { description }
+  //         </Typography>
+  //       </div>
+  //     </div>
+  //   </div>
+  // ))
+
+  const listingsList = data?.docs?.map(listing => (
+    <div key={listing._id} className={styles.listingWrapper}>
+      <PhotoItem data={listing} type="full" />
+    </div>
+  ))
 
   function handleChange(value) {
     setCity({ ...value, label: value.label.split(', ')[0] })
@@ -149,57 +172,24 @@ function TrendingIn() {
               options={cities}
               fetchOptions={getCities} />
           </div>
-          <Link href="/marketplace">
+          <Link href={`/marketplace?city=${city.value}`}>
             See all
           </Link>
         </div>
       </div>
         <div className={styles.sliderContainer}>
-          <Slider {...sliderSettings}>
-            {
-              items.map(({ img }, index) => (
-                <div key={index+img} className={styles.collectionWrapper}>
-                  <div className={styles.collection}>
-                    <div className={styles.mainImageWrapper}>
-                      <Image src={img} layout="fill" objectFit="cover" alt="apartments" />
-                    </div>
-                    <div className={styles.collectionContent}>
-                      <div className={styles.collectionInfo}>
-                        <div className={styles.collectionInfoImage}>
-                          <Image src="/hero-aparts-small.jpg" width={50} height={50} alt="logo apartments" />
-                        </div>
-                        <div className={styles.infoContent}>
-                          <Typography
-                            fontSize={16}
-                            fontWeight={600}
-                            lHeight={20}
-                            color={'#111'}>
-                            Collection name
-                          </Typography>
-                          <Typography
-                            fontSize={12}
-                            fontWeight={600}
-                            lHeight={12}
-                            margin="8px 0 0"
-                            color={'rgba(55, 65, 81, 0.5)'}>
-                            by <span>John Doe</span>
-                          </Typography>
-                        </div>
-                      </div>
-                      <Typography
-                        fontFamily={'Lato'}
-                        fontSize={14}
-                        lHeight={22}
-                        margin={'14px 0 0'}
-                        color={'rgba(55, 65, 81, 0.8)'}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras. Sollicitudin nulla orci vitae ut turpis vitae neque.
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
-              ))
-            }
-          </Slider>
+          {
+            listingsList?.length ?
+              <Slider {...sliderSettings}>
+                { listingsList }
+              </Slider>
+              :
+              <div className={styles.noCollections}>
+                <Typography fontWeight={600} fontSize={24} align="center">
+                  Seems no collections here...
+                </Typography>
+              </div>
+          }
         </div>
     </section>
   )
