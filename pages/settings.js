@@ -9,14 +9,17 @@ import Notifications from "../components/settings/notifications/Notifications";
 import {useGetCurrentUserQuery, useUpdateUserMutation} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {escapeValue} from "../utils";
+import {useRouter} from "next/router";
 
 const tabs = ['general', 'notification settings']
 
 function Settings() {
+  const router = useRouter()
   const { data: user } = useGetCurrentUserQuery()
   const [updateUser] = useUpdateUserMutation()
   const [currentTab, setCurrentTab] = useState(tabs[0])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState({})
   const [general, setGeneral] = useState({
     walletAddress: '',
     username: '',
@@ -50,6 +53,18 @@ function Settings() {
     }))
   }
 
+  function validate() {
+    const errors = {}
+
+    if (general.username.length < 5 || general.username.length > 30) {
+      errors.username = `It can’t be less than 5 more than 30 characters`
+    }
+
+    setErrors(errors)
+
+    return Object.keys(errors).length === 0
+  }
+
   function handleNotificationsChange({ target: { name, checked } }) {
     setNotifications(prevGeneral => ({
       ...prevGeneral,
@@ -61,6 +76,8 @@ function Settings() {
     e.preventDefault()
     e.stopPropagation()
 
+    if (!validate()) return;
+
     const data = {
       ...general,
       notifications
@@ -70,13 +87,18 @@ function Settings() {
 
     updateUser(data).unwrap()
       .then(result => {
-
+        router.push('/profile')
       })
-      .catch(result => {
-
-      })
-      .finally(() => {
+      .catch(({ data: { message } }) => {
         setIsSubmitting(false)
+        if (message) {
+          const errors = {}
+
+          if (message.includes('username')) errors.username = 'Username already exists'
+          if (message.includes('email'))errors.email = 'Email already exists'
+
+          setErrors(errors)
+        }
       })
   }
 
@@ -116,6 +138,7 @@ function Settings() {
                 currentTab === 'general' ?
                   <General
                     values={general}
+                    errors={errors}
                     onChange={handleGeneralChange} />
                     :
                   <Notifications

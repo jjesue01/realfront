@@ -148,7 +148,7 @@ function TrendingIn() {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCollections.initiate({ search: value }))
+    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({data}) => {
         setCities(data)
       })

@@ -154,8 +154,10 @@ function Layout({ children }) {
 
   useEffect(() => {
     const handleRouteChange = (url) => {
-      if (router.pathname !== url && router.pathname === '/marketplace')
+      if (router.pathname !== url && router.pathname === '/marketplace') {
         setShowFooter(true)
+        document.body.style.position = 'static'
+      }
     }
 
     router.events.on('routeChangeStart', handleRouteChange)

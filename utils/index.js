@@ -170,9 +170,50 @@ export const timeAgo = (date) => {
 };
 
 export function escapeValue(str) {
-  return str.replace(/\s/g, '-').replace(/[^ \w-]/g, '').toLowerCase()
+  return str.replace(/\s/g, '-').replace(/[^ \w-.]/g, '').toLowerCase()
 }
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 export const isTokenExpired = token => Date.now() >= (JSON.parse(atob(token.split('.')[1]))).exp * 1000
+
+export function buildPlace(address_components) {
+  const place = { address: '', postcode: '' }
+
+  for (const component of address_components) {
+    const componentType = component.types[0];
+
+    switch (componentType) {
+      case "street_number": {
+        place.address = `${component.long_name} ${place.address}`;
+        break;
+      }
+
+      case "route": {
+        place.address += component.short_name;
+        break;
+      }
+
+      case "postal_code": {
+        place.postcode = `${component.long_name}${place.postcode}`;
+        break;
+      }
+
+      case "postal_code_suffix": {
+        place.postcode = `${place.postcode}-${component.long_name}`;
+        break;
+      }
+      case "locality":
+        place.city = component.long_name;
+        break;
+      case "administrative_area_level_1": {
+        place.state = component.short_name;
+        break;
+      }
+      case "country":
+        place.country = component.long_name;
+        break;
+    }
+  }
+  return place
+}

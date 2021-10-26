@@ -69,7 +69,6 @@ function PhotoDetails({ openLogin }) {
           purchaseListing(listing._id)
             .then(result => {
               resolve()
-              toggleConfirmDialog()
               setIsDone(true)
             })
             .catch(error => {

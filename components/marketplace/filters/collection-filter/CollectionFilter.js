@@ -41,9 +41,10 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
         updatedData = [...updatedData, value]
       }
 
-      setData(updatedData)
       if (mode === 'flat')
         handleApply(updatedData)
+      else
+        setData(updatedData)
     }
   }
 
@@ -53,6 +54,7 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
 
   function handleApply(arr = []) {
     const result = arr.length !== 0 ? arr : data
+    console.log(result)
     onChange({
       target: {
         name,

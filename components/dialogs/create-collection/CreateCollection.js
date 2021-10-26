@@ -13,7 +13,7 @@ import PenIcon from "../../../public/icons/pen.svg";
 import {
   collectionsApi,
   useCreateCollectionMutation,
-  useGetAutocompleteCollectionsQuery
+  getAutocompleteCities
 } from "../../../services/collections";
 import Autocomplete from "../../autocomplete/Autocomplete";
 import {useDispatch} from "react-redux";
@@ -50,7 +50,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCollections.initiate({ search: value }))
+    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({data}) => {
         setCities(data)
       })

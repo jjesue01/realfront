@@ -20,7 +20,7 @@ import { useGetPublishedListingsQuery } from "../services/listings";
 import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
-import {collectionsApi, useGetAutocompleteCollectionsQuery} from "../services/collections";
+import {collectionsApi, getAutocompleteCities} from "../services/collections";
 
 const sortOptions = [
   {
@@ -95,6 +95,8 @@ function Marketplace({ toggleFooter }) {
   }
 
   function toggleMap() {
+    document.body.style.position = !isMapHidden ? 'static' : 'fixed'
+
     setIsMapHidden(prevState => !prevState)
     toggleFooter()
     setViewportData([...sourceData])
@@ -112,7 +114,7 @@ function Marketplace({ toggleFooter }) {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCollections.initiate({ search: value }))
+    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({ data }) => {
         setCitiesOptions(data)
       })
@@ -122,6 +124,7 @@ function Marketplace({ toggleFooter }) {
     if (!mounted.current) {
       toggleFooter()
       mounted.current = true
+      document.body.style.position = 'fixed'
     }
   }, [toggleFooter])
 

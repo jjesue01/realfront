@@ -5,7 +5,7 @@ import Textarea from "../../textarea/Textarea";
 import CopyIcon from "../../../public/icons/copy.svg";
 import ButtonCopy from "../../button-copy/ButtonCopy";
 
-function General({ onChange, values }) {
+function General({ onChange, values, errors }) {
   return (
     <div className={styles.root}>
       <Input
@@ -22,6 +22,8 @@ function General({ onChange, values }) {
         name="username"
         value={values.username}
         onChange={onChange}
+        error={errors.username}
+        errorText={errors.username}
         label="Username" />
       <Input
         className={styles.field}
@@ -29,6 +31,8 @@ function General({ onChange, values }) {
         name="email"
         value={values.email}
         onChange={onChange}
+        error={errors.email}
+        errorText={errors.email}
         label="Email" />
       <Textarea
         className={styles.field}

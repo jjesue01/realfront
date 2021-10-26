@@ -65,9 +65,9 @@ export const collectionsApi = createApi({
     getCollectionById: builder.query({
       query: (id) => `/collections/${id}`,
     }),
-    getAutocompleteCollections: builder.query({
+    getAutocompleteCities: builder.query({
       query: (params = {}) => ({
-        url: '/autocomplete/collections',
+        url: '/autocomplete/cities',
         params: {
           limit: 20,
           ...params
@@ -83,5 +83,5 @@ export const {
   useDeleteCollectionMutation,
   useGetUserCollectionsQuery,
   useGetCollectionByIdQuery,
-  useGetAutocompleteCollectionsQuery
+  getAutocompleteCities
 } = collectionsApi

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import styles from './Form.module.sass'
 import { useFormik } from "formik";
 import * as Yup from 'yup'
@@ -15,14 +15,14 @@ import PenIcon from '/public/icons/pen.svg'
 import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
-import {useGetUserCollectionsQuery} from "../../../services/collections";
+import {collectionsApi, useGetUserCollectionsQuery} from "../../../services/collections";
 import {
   listingsApi,
   useCreateListingMutation,
   useDeleteListingMutation,
   useUpdateListingMutation
 } from "../../../services/listings";
-import {decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
+import {buildPlace, decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
 import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
@@ -53,32 +53,33 @@ function Form({ mode }) {
   const [createListing, { isLoading }] = useCreateListingMutation()
   const [updateListing] = useUpdateListingMutation()
   const [deleteListing] = useDeleteListingMutation()
-  const { data: collections, refetch: getCollections, isFetching } = useGetUserCollectionsQuery({ owner: user?._id })
   const [isDeleting, setDeleting] = useState(false)
-  const [createOpened, setCreateOpened] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [jpgFile, setJpgFile] = useState(null)
   const [rawFile, setRawFile] = useState(null)
   const [jpgFilePreview, setJpgFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
-  const [listingName, setListingName] = useState('')
+  const [listing, setListing] = useState('')
   const [listingError, setListingError] = useState({})
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
-      location: '',
       address: '',
       description: '',
       tags: '',
       blockchain: 'ethereum',
-      collection: ''
+      city: {
+        label: '',
+        value: ''
+      }
     },
     validate: handleValidate,
     onSubmit: handleSubmit
   });
   const inputRef = useRef()
   const autocompleteRef = useRef()
+  const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
   function handleFileJPGChange(file) {
     if (file !== null) {
@@ -91,20 +92,8 @@ function Form({ mode }) {
     setRawFile(file)
   }
 
-  function toggleCreateCollection() {
-    setCreateOpened(prevState => !prevState)
-  }
-
   function handleCloseCongratulations() {
     router.push(`/photos/${id}`)
-  }
-
-  function handleCreateCollection(collection) {
-    setValues(prevState => ({
-      ...prevState,
-      collection: collection._id
-    }))
-    getCollections()
   }
 
   function handleValidate(values) {
@@ -113,6 +102,7 @@ function Form({ mode }) {
     if (!values.name) errors.name = 'Name is required'
     if (!values.location) errors.location = 'Location is required'
     if (!values.address) errors.address = 'Address is required'
+    if (!values.city.value) errors.city = 'City is required'
 
     if (mode === 'create' && !location.latitude && !!values.address)
       errors.address = 'Please, select your address from list'
@@ -120,13 +110,19 @@ function Form({ mode }) {
     return errors
   }
 
+  const getCities = useCallback(async (value) => {
+    return dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+  }, [dispatch])
+
   function handleSubmit(values, { setSubmitting }) {
+    /* TODO: from don't want to submit  */
     if (jpgFile !== null && rawFile !== null){
       const data = {
         ...values,
         file: jpgFile,
         raw: rawFile,
         tags: decodeTags(values.tags),
+        city: values.city.value,
         ...location
       }
 
@@ -174,15 +170,17 @@ function Form({ mode }) {
       dispatch(listingsApi.endpoints.getListingById.initiate(router.query.id))
         .then(({ data, error }) => {
           if (data) {
-            setListingName(data.name)
+            setListing(data)
             setValues({
               name: data.name,
-              location: data.location,
               address: data.address,
               description: data.description,
               tags: encodeTags(data.tags),
               blockchain: data.blockchain,
-              collection: data?.collections?.ID || ''
+              city: {
+                label: data?.city?.name || '',
+                value: data?.city?.ID || ''
+              }
             })
             setJpgFile(data.filePath)
             setRawFile(data.rawFileName)
@@ -191,16 +189,27 @@ function Form({ mode }) {
           }
       })
     }
-  }, [mode, router.query.id, dispatch, setValues])
+  }, [mode, router.query.id, dispatch, setValues, getCities])
 
   useEffect(function initAutocomplete() {
     if (isLoaded) {
-      const handlePlaceChange = () => {
-        const { geometry, formatted_address } = autocompleteRef.current.getPlace()
+      const handlePlaceChange = async () => {
+        const { geometry, formatted_address, address_components } = autocompleteRef.current.getPlace()
+        let city = { label: '', value: '' }
+        const parsedPlace = buildPlace(address_components)
+        const searchCity = `${parsedPlace.city}, ${parsedPlace.state}`
+
+        const { data: cities } = await getCities(searchCity)
+
+        if (cities?.length) {
+          city = cities.find(({ label }) => searchCity === label)
+          if (!city) city = cities[0]
+        }
 
         setValues(prevValues => ({
           ...prevValues,
-          address: formatted_address
+          address: formatted_address,
+          city
         }))
         setLocation({
           latitude: geometry.location.lat(),
@@ -211,10 +220,13 @@ function Form({ mode }) {
       autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {})
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
-  }, [isLoaded, setValues])
+  }, [getCities, isLoaded, setValues])
 
   if (listingError.message)
     return <Error errorCode={'Listing' + listingError.message} />
+
+  if (mode === 'edit' && listing.name && !ownItem)
+    return <Error errorCode={'ListingNoAccess' } />
 
   return (
     <div className={styles.root}>
@@ -226,7 +238,7 @@ function Form({ mode }) {
           lHeight={44}>
           {
             mode === 'edit' ?
-              `Edit ${listingName}`
+              `Edit ${listing.name}`
               :
               'Create new item'
           }
@@ -309,16 +321,6 @@ function Form({ mode }) {
           errorText={errors.name && touched.name}
           label="Name*" />
         <Input
-          className={styles.input}
-          name="location"
-          value={formik.values.location}
-          onChange={formik.handleChange}
-          placeholder="Enter location"
-          required
-          error={errors.location && touched.location}
-          errorText={errors.location}
-          label="Location*" />
-        <Input
           ref={inputRef}
           className={styles.input}
           name="address"
@@ -329,6 +331,15 @@ function Form({ mode }) {
           error={errors.address && touched.address}
           errorText={errors.address}
           label="Address*" />
+        <Input
+          className={styles.input}
+          name="location"
+          value={formik.values.city.label}
+          required
+          readOnly
+          error={errors.city && touched.city}
+          errorText={errors.city}
+          label="City*" />
         <Textarea
           className={styles.input}
           name="description"
@@ -344,13 +355,6 @@ function Form({ mode }) {
           onChange={formik.handleChange}
           placeholder="e.g. #Aerial, #Ground, #Residential etc."
           label="Add tags" />
-        <CollectionPicker
-          className={styles.input}
-          collections={collections}
-          name="collection"
-          value={formik.values.collection}
-          onChange={formik.handleChange}
-          onCreate={toggleCreateCollection} />
         <Select
           className={styles.input}
           name="blockchain"
@@ -377,16 +381,12 @@ function Form({ mode }) {
           }
         </div>
       </form>
-      <CreateCollection
-        opened={createOpened}
-        onClose={toggleCreateCollection}
-        onCreate={handleCreateCollection} />
       <DoneCongratulation
         imageUrl={jpgFile !== null && jpgFilePreview}
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         onClose={handleCloseCongratulations} />
-      <FullscreenLoader opened={isFetching || (mode === 'edit' && !listingName)} />
+      <FullscreenLoader opened={(mode === 'edit' && !listing.name)} />
     </div>
   )
 }
