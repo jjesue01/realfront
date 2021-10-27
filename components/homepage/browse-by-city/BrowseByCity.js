@@ -4,7 +4,7 @@ import Image from "next/image";
 import SectionTitle from "../../section-title/SectionTitle";
 import Typography from "../../Typography";
 import Button from "../../button/Button";
-import {useGetUserCollectionsQuery} from "../../../services/cities";
+import {useGetCitiesQuery, useGetUserCollectionsQuery} from "../../../services/cities";
 import Link from "next/link";
 
 const cities = [
@@ -36,7 +36,7 @@ const cities = [
 
 
 function BrowseByCity() {
-  const { data = [] } = useGetUserCollectionsQuery({ parent: true, limit: 6 })
+  const { data = [] } = useGetCitiesQuery({ limit: 6 })
 
   return (
     <section className={styles.root}>
