@@ -4,7 +4,7 @@ import Image from "next/image";
 import SectionTitle from "../../section-title/SectionTitle";
 import Typography from "../../Typography";
 import Button from "../../button/Button";
-import {useGetUserCollectionsQuery} from "../../../services/collections";
+import {useGetUserCollectionsQuery} from "../../../services/cities";
 import Link from "next/link";
 
 const cities = [

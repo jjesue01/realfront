@@ -91,11 +91,6 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
               </Link>
             </li>
             <li>
-              <Link href="/collections">
-                My Collections
-              </Link>
-            </li>
-            <li>
               <Link href="/profile?tab=favorited">
                 My Favorites
               </Link>

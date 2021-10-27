@@ -16,7 +16,7 @@ import {
   useDeleteCollectionMutation,
   useGetCollectionByIdQuery,
   useUpdateCollectionMutation
-} from "../../../services/collections";
+} from "../../../services/cities";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 
 const selectOptions = [

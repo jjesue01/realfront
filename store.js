@@ -2,14 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import { authApi } from './services/auth'
 import authReducer from '/features/auth/authSlice'
 import notificationsReducer from '/features/notifications/notificationsSlice'
-import {collectionsApi} from "./services/collections";
+import {citiesApi} from "./services/cities";
 import {listingsApi} from "./services/listings";
 import {transactionsApi} from "./services/transactions";
 
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
-    [collectionsApi.reducerPath]: collectionsApi.reducer,
+    [citiesApi.reducerPath]: citiesApi.reducer,
     [listingsApi.reducerPath]: listingsApi.reducer,
     [transactionsApi.reducerPath]: transactionsApi.reducer,
     auth: authReducer,
@@ -18,7 +18,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       authApi.middleware,
-      collectionsApi.middleware,
+      citiesApi.middleware,
       listingsApi.middleware,
       transactionsApi.middleware,
     ),

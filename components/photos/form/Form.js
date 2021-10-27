@@ -15,7 +15,7 @@ import PenIcon from '/public/icons/pen.svg'
 import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
-import {collectionsApi, useGetUserCollectionsQuery} from "../../../services/collections";
+import {citiesApi, useGetUserCollectionsQuery} from "../../../services/cities";
 import {
   listingsApi,
   useCreateListingMutation,
@@ -100,7 +100,6 @@ function Form({ mode }) {
     const errors = {}
 
     if (!values.name) errors.name = 'Name is required'
-    if (!values.location) errors.location = 'Location is required'
     if (!values.address) errors.address = 'Address is required'
     if (!values.city.value) errors.city = 'City is required'
 
@@ -111,11 +110,10 @@ function Form({ mode }) {
   }
 
   const getCities = useCallback(async (value) => {
-    return dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    return dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
   }, [dispatch])
 
   function handleSubmit(values, { setSubmitting }) {
-    /* TODO: from don't want to submit  */
     if (jpgFile !== null && rawFile !== null){
       const data = {
         ...values,
@@ -158,7 +156,7 @@ function Form({ mode }) {
     setDeleting(true)
     deleteListing(router.query.id).unwrap()
       .then(result => {
-        router.push('/collections')
+        router.push('/profile')
       })
       .catch(result => {
         setDeleting(false)

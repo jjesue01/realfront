@@ -4,27 +4,27 @@ import CollectionInfo from "../../components/collections/details/collection-info
 import CollectionFilters from "../../components/collections/details/filters/CollectionFilters";
 import CollectionItems from "../../components/collections/details/collection-items/CollectionItems";
 import {getIdToken, getSortedArray} from "../../utils";
-import {useGetCollectionByIdQuery} from "../../services/collections";
 import {useRouter} from "next/router";
-import {useGetListingsQuery} from "../../services/listings";
+import {useGetListingsQuery, useGetPublishedListingsQuery} from "../../services/listings";
 import {authApi} from "../../services/auth";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
+import {useGetCitiesQuery} from "../../services/cities";
 
 function MyCollections() {
   const dispatch = useDispatch()
   const { query: { id } } = useRouter()
-  const { data: collection, refetch: refetchCollection  } = useGetCollectionByIdQuery(id, { skip: !id })
+  const { data, refetch: refetchCollection  } = useGetCitiesQuery({ url: id }, { skip: !id })
+  const city = data && data[0]
   const user = useSelector(state => state.auth.user)
-  const { data: listings } = useGetListingsQuery({ collection: id }, { skip: !id })
-  const isLoading = !collection || !listings
+  const { data: listings } = useGetPublishedListingsQuery({ cityUrl: id }, { skip: !id })
+  const isLoading = !city
   const [sourceData, setSourceData] = useState([])
   const [filteredData, setFilteredData] = useState([])
   const [filters, setFilters] = useState({
     searchValue: '',
     sortBy: 'price_low'
   })
-  const isOwner = collection?.owner === user?._id
 
   function handleChange({ target: { name, value } }) {
     setFilters(prevFilters => ({
@@ -63,8 +63,8 @@ function MyCollections() {
       <Head>
         <title>HOMEJAB - Collection New York, Manhattan</title>
       </Head>
-      <CollectionInfo isOwner={isOwner} collection={collection} itemsCount={sourceData.length} />
-      <CollectionFilters isOwner={isOwner} filters={filters} onChange={handleChange} />
+      <CollectionInfo city={city} itemsCount={sourceData.length} />
+      <CollectionFilters filters={filters} onChange={handleChange} />
       <CollectionItems user={user} data={filteredData} />
       <FullscreenLoader opened={isLoading} />
     </main>

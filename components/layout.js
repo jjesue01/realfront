@@ -21,43 +21,12 @@ import {isPrivateRoute, isTokenExpired} from "../utils";
 import {initSocket} from "../services/socket";
 import Notifications from "./notifications/Notifications";
 import {pushNotification} from "../features/notifications/notificationsSlice";
-import {useGetUserCollectionsQuery} from "../services/collections";
-
-const marketplaceLinks = [
-  {
-    name: 'New York, NY',
-    link: '/'
-  },
-  {
-    name: 'Los Angeles, CA',
-    link: '/'
-  },
-  {
-    name: 'Chicago, IL',
-    link: '/'
-  },
-  {
-    name: 'Houston, TX',
-    link: '/'
-  },
-  {
-    name: 'Phoenix, AZ',
-    link: '/'
-  },
-  {
-    name: 'Philadelphia, PA',
-    link: '/'
-  },
-]
+import {useGetCitiesQuery, useGetUserCollectionsQuery} from "../services/cities";
 
 const accountLinks = [
   {
     name: 'My Profile',
     link: '/profile'
-  },
-  {
-    name: 'My Collections',
-    link: '/collections'
   },
   {
     name: 'My Favorites',
@@ -80,7 +49,7 @@ function Layout({ children }) {
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const [login, { isLoading }] = useLoginMutation()
-  const { data: marketplaceLinks = [] } = useGetUserCollectionsQuery({ parent: true, limit: 6 })
+  const { data: marketplaceLinks = [] } = useGetCitiesQuery({ limit: 6 })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)

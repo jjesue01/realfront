@@ -8,19 +8,12 @@ import Image from "next/image";
 import Typography from "../../Typography";
 import cn from "classnames";
 import CityPicker from "../city-picker/CityPicker";
-import {collectionsApi, useGetUserCollectionsQuery} from "../../../services/collections";
+import {citiesApi, useGetUserCollectionsQuery} from "../../../services/cities";
 import {useDispatch} from "react-redux";
 import {useGetListingsQuery, useGetPublishedListingsQuery} from "../../../services/listings";
 import PhotoItem from "../../photo-item/PhotoItem";
 
-const items = [
-  {
-    img: '/trending-1.jpg',
-  },
-
-]
-
-const NEW_YORK_ID = '61718d8ecf5a3badf5b3703c'
+const NEW_YORK_ID = '6177f24899faa9e1a38cbae3'
 
 function NextArrow({ onClick }) {
   return (
@@ -95,48 +88,6 @@ function TrendingIn() {
     ]
   }
 
-  // const collectionsList = data?.docs?.map(({ name, _id, logoImage, description }, index) => (
-  //   <div key={_id} className={styles.collectionWrapper}>
-  //     <div className={styles.collection}>
-  //       <div className={styles.mainImageWrapper}>
-  //         <Image src={logoImage} layout="fill" objectFit="cover" alt="apartments" />
-  //       </div>
-  //       <div className={styles.collectionContent}>
-  //         <div className={styles.collectionInfo}>
-  //           <div className={styles.collectionInfoImage}>
-  //             <Image src={logoImage} width={50} height={50} alt="logo apartments" />
-  //           </div>
-  //           <div className={styles.infoContent}>
-  //             <Typography
-  //               fontSize={16}
-  //               fontWeight={600}
-  //               lHeight={20}
-  //               color={'#111'}>
-  //               { name }
-  //             </Typography>
-  //             <Typography
-  //               fontSize={12}
-  //               fontWeight={600}
-  //               lHeight={12}
-  //               margin="8px 0 0"
-  //               color={'rgba(55, 65, 81, 0.5)'}>
-  //               by <span>John Doe</span>
-  //             </Typography>
-  //           </div>
-  //         </div>
-  //         <Typography
-  //           fontFamily={'Lato'}
-  //           fontSize={14}
-  //           lHeight={22}
-  //           margin={'14px 0 0'}
-  //           color={'rgba(55, 65, 81, 0.8)'}>
-  //           { description }
-  //         </Typography>
-  //       </div>
-  //     </div>
-  //   </div>
-  // ))
-
   const listingsList = data?.docs?.map(listing => (
     <div key={listing._id} className={styles.listingWrapper}>
       <PhotoItem data={listing} type="full" />
@@ -148,7 +99,7 @@ function TrendingIn() {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({data}) => {
         setCities(data)
       })

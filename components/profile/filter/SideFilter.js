@@ -7,7 +7,7 @@ import CollectionFilter from "../../marketplace/filters/collection-filter/Collec
 import PriceFilter from "../../marketplace/filters/price-filter/PriceFilter";
 import ResourcesFilter from "../../marketplace/filters/resources-filter/ResourcesFilter";
 import MoreFilter from "../../marketplace/filters/more-filter/MoreFilter";
-import {collectionsApi} from "../../../services/collections";
+import {citiesApi} from "../../../services/cities";
 import {useDispatch} from "react-redux";
 
 function SideFilter({ opened, onClose, filters, onChange, options }) {
@@ -17,7 +17,7 @@ function SideFilter({ opened, onClose, filters, onChange, options }) {
   const filterRef = useRef()
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({ data }) => {
         setCitiesOptions(data)
       })
@@ -53,10 +53,9 @@ function SideFilter({ opened, onClose, filters, onChange, options }) {
           <CollectionFilter
             mode="flat"
             className={styles.filterItem}
-            name="collections"
-            value={filters.collections}
-            options={citiesOptions}
-            refetchOptions={getCities}
+            name="cities"
+            value={filters.cities}
+            options={options?.cities || []}
             onChange={onChange} />
           <PriceFilter
             mode="flat"

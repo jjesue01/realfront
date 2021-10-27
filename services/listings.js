@@ -22,9 +22,8 @@ export const listingsApi = createApi({
         formData.append("raw", data.raw, data.raw.name);
         formData.append("name", data.name);
         formData.append("description", data.description);
-        formData.append("location", data.location);
+        formData.append("city", data.city);
         formData.append("address", data.address);
-        formData.append("collection", data.collection);
         formData.append("tags", data.tags);
         formData.append("blockchain", data.blockchain);
         formData.append("longitude", data.longitude);

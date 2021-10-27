@@ -79,7 +79,7 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false, is
                   lHeight={15}
                   color={'#878D97'}
                   margin="8px 0 0">
-                  { data?.collections?.name }
+                  { data?.city?.name }
                 </Typography>
               </div>
               <div className={styles.priceContainer}>

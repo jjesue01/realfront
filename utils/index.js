@@ -106,10 +106,6 @@ const privateRoutes = [
   '/photos/create',
   '/photos/edit',
   '/photos/sell',
-  {
-    path: '/collections',
-    exact: true
-  },
   '/settings',
   '/profile',
 ]
@@ -119,14 +115,14 @@ export function isPrivateRoute(pathname) {
 }
 
 export function buildFilterOptions(listings) {
-  const collectionOptions = new Set()
+  const cityOptions = new Set()
   let tagOptions = []
 
-  listings.forEach(({ collections, tags }) => {
-    if (collections?.name)
-      collectionOptions.add(JSON.stringify({
-        label: collections.name,
-        value: collections.ID
+  listings.forEach(({ city, tags }) => {
+    if (city?.name)
+      cityOptions.add(JSON.stringify({
+        label: city.name,
+        value: city.ID
       }))
     
     if (Array.isArray(tags))
@@ -136,7 +132,7 @@ export function buildFilterOptions(listings) {
   })
 
   return {
-    collections: [...collectionOptions].map(collection => JSON.parse(collection)),
+    cities: [...cityOptions].map(city => JSON.parse(city)),
     tags: [...new Set(tagOptions)]
   }
 }
@@ -216,4 +212,20 @@ export function buildPlace(address_components) {
     }
   }
   return place
+}
+
+export function download(url, filename) {
+  fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    })
+    .catch(console.error);
+}
+
+export function downloadNFT(id, filename) {
+  download(process.env.NEXT_PUBLIC_PINATA_URL + id, filename)
 }

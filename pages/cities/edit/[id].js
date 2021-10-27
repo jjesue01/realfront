@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from "react";
 import Head from "next/head";
 import CollectionForm from "../../../components/collections/form/CollectionForm";
+import Error from "next/error";
 
 function MyCollections() {
+
+  return <Error statusCode={404} />
 
   return (
     <main className="page-container">

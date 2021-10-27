@@ -24,7 +24,7 @@ const tabs = ['collected', 'created', 'favorited', 'activity']
 
 const initialFilters = {
   searchValue: '',
-  collections: [],
+  cities: [],
   price: {
     from: '',
     to: ''
@@ -47,8 +47,8 @@ function MyProfile() {
   const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
   const [options, setOptions] = useState({
-    collected: { collections: [], tags: [] },
-    created: { collections: [], tags: [] },
+    collected: { cities: [], tags: [] },
+    created: { cities: [], tags: [] },
   })
   const [filterOpened, setFilterOpened] = useState(false)
   const [filtersCount, setFiltersCount] = useState(0)
@@ -96,7 +96,7 @@ function MyProfile() {
           updatedFilters[item.name][item.sub] = ''
         }
       } else if (Array.isArray(updatedFilters[item.name])) {
-        updatedFilters[item.name] = updatedFilters[item.name].filter(value => value !== item.value)
+        updatedFilters[item.name] = updatedFilters[item.name].filter(({ value }) => value !== item.value)
       } else {
         updatedFilters[item.name] = ''
       }
@@ -132,13 +132,11 @@ function MyProfile() {
         `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
     }
 
-    if (filters.collections.length !== 0) {
-      items = items.filter(({ collections }) => filters.collections.includes(collections.ID))
+    if (filters.cities.length !== 0) {
+      items = items.filter(({ city }) => filters.cities.some(({ value }) => value === city?.ID))
       updatedFiltersCount += 1
       updatedFilterValues = [
-        ...options[currentTab].collections
-          .filter(({ value }) => filters.collections.some(id => id === value))
-          .map(item => ({ ...item, name: 'collections' }))
+        ...filters.cities.map(item => ({ ...item, name: 'cities' }))
       ]
     }
 

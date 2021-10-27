@@ -16,7 +16,7 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {getIdToken} from "../../utils";
+import {downloadNFT, getIdToken} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 
@@ -25,9 +25,9 @@ function PhotoDetails({ openLogin }) {
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
-  const collectionId = listing?.collections?.ID;
+  const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
-  const { data: listings } = useGetPublishedListingsQuery({ collection: collectionId, exclude: id, limit: 3 })
+  const { data: listings } = useGetPublishedListingsQuery({ city: cityId, exclude: id, limit: 3 })
   const isLoading = (!listing || !transactions || !listings) && !error || isFetching
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
@@ -37,7 +37,7 @@ function PhotoDetails({ openLogin }) {
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
   function handleViewCollection() {
-    router.push(`/collections/${collectionId}`)
+    router.push(`/cities/${listing?.city?.url}`)
   }
 
   function toggleConfirmDialog() {
@@ -70,6 +70,7 @@ function PhotoDetails({ openLogin }) {
             .then(result => {
               resolve()
               setIsDone(true)
+              downloadNFT(listing.ipfs.cid, listing.rawFileName)
             })
             .catch(error => {
               console.log(error)
@@ -115,7 +116,7 @@ function PhotoDetails({ openLogin }) {
           onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
         {
-          listing?.collections?.ID && !!listings?.docs?.length &&
+          !!listings?.docs?.length &&
           <MoreFromCollection
             user={user}
             data={listings?.docs}

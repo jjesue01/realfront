@@ -60,22 +60,19 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
             <div className={styles.mainInfo}>
               <div className={styles.header}>
                 <div className={styles.collection}>
-                  {
-                    listing?.collections?.ID &&
-                    <Typography
-                      fontWeight={600}
-                      fontSize={12}
-                      lHeight={15}
-                      color={'#878D97'}>
-                      Collection
-                    </Typography>
-                  }
+                  <Typography
+                    fontWeight={600}
+                    fontSize={12}
+                    lHeight={15}
+                    color={'#878D97'}>
+                    City
+                  </Typography>
                   <Typography
                     fontWeight={600}
                     fontSize={14}
                     lHeight={17}
                     margin={'8px 0 0'}>
-                    { listing?.collections?.name }
+                    { listing?.city?.name }
                   </Typography>
                 </div>
                 <div className={styles.stats}>
@@ -205,14 +202,6 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
                 Details
               </Typography>
               <div className={styles.detailsContent}>
-                <div className={styles.field}>
-                  <div className={cn(styles.detailsCol, styles.colName)}>
-                    <p>Location</p>
-                  </div>
-                  <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>{ listing?.location }</p>
-                  </div>
-                </div>
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
                     <p>Address</p>

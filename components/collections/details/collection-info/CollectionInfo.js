@@ -7,19 +7,13 @@ import PenIcon from '/public/icons/pen.svg'
 import {useRouter} from "next/router";
 import BannerBackground from "../../../banner-background/BannerBackground";
 
-function CollectionInfo({ itemsCount, collection, isOwner }) {
-  const router = useRouter()
-
-  function handleEdit() {
-    router.push(`/collections/edit/${collection._id}`)
-  }
-
+function CollectionInfo({ itemsCount, city }) {
   return (
     <div className={styles.root}>
       <div className={styles.bg}>
         {
-          !!collection?.bannerImage ?
-            <Image src={collection?.bannerImage} layout="fill" objectFit="cover" alt={collection.name} />
+          !!city?.bannerImage ?
+            <Image src={city?.bannerImage} layout="fill" objectFit="cover" alt={collection.name} />
             :
             <BannerBackground />
         }
@@ -28,24 +22,24 @@ function CollectionInfo({ itemsCount, collection, isOwner }) {
         <div className={styles.content}>
           <div className={styles.logoWrapper}>
             {
-              collection?.logoImage &&
+              city?.logoImage &&
               <Image
-                src={collection.logoImage}
+                src={city.logoImage}
                 layout="fill"
                 objectFit="cover"
-                alt={collection?.name} />
+                alt={city?.name} />
             }
           </div>
           <div className={styles.collectionName}>
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
-              { collection?.name }
+              { city?.name }
             </Typography>
-            {
-              isOwner &&
-              <ButtonCircle onClick={handleEdit} className={styles.btnEdit}>
-                <PenIcon />
-              </ButtonCircle>
-            }
+            {/*{*/}
+            {/*  isOwner &&*/}
+            {/*  <ButtonCircle onClick={handleEdit} className={styles.btnEdit}>*/}
+            {/*    <PenIcon />*/}
+            {/*  </ButtonCircle>*/}
+            {/*}*/}
           </div>
           <div className={styles.count}>
             <div className={styles.countItem}>

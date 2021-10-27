@@ -11,10 +11,9 @@ import Button from "../../button/Button";
 import Image from "next/image";
 import PenIcon from "../../../public/icons/pen.svg";
 import {
-  collectionsApi,
+  citiesApi,
   useCreateCollectionMutation,
-  getAutocompleteCities
-} from "../../../services/collections";
+} from "../../../services/cities";
 import Autocomplete from "../../autocomplete/Autocomplete";
 import {useDispatch} from "react-redux";
 
@@ -50,7 +49,7 @@ function CreateCollection({ opened, onClose, onCreate }) {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({data}) => {
         setCities(data)
       })

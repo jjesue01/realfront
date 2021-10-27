@@ -13,32 +13,37 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
   const [checkedAll, setCheckedAll] = useState(false)
   const [inputName, setInputName] = useState('city')
 
-  const checkboxesList = options.map(({ value, label, checked }) => (
+  const checkboxesList = (refetchOptions ? options : getFilteredData()).map(({ value, label }) => (
     <Checkbox
       key={value}
       className={styles.checkbox}
       checked={isChecked(value)}
       label={label}
-      onChange={handleCheckboxChange(value)} />
+      onChange={handleCheckboxChange({ label, value })} />
   ))
 
   function handleInputChange({ target: { value } }) {
     setSearchValue(value)
-    refetchOptions(value)
+    refetchOptions && refetchOptions(value)
   }
 
-  function handleCheckboxChange(value) {
+  function getFilteredData() {
+    return options.filter(({ label }) => label.toLowerCase().includes(searchValue.toLowerCase()))
+  }
+
+  function handleCheckboxChange(option) {
     return function ({ target: { checked } }) {
-      let updatedCheckedAll = true
       let updatedData = [...data]
 
-      if (value === 'all') {
+      if (option.value !== 'all' && checkedAll) return;
+
+      if (option.value === 'all') {
         setCheckedAll(checked)
-        updatedData = []
-      } else if (updatedData.includes(value)) {
-        updatedData = updatedData.filter(id => id !== value)
+        updatedData = refetchOptions ? [] : checked ? [...options] : []
+      } else if (updatedData.some(({ value }) => option.value === value)) {
+        updatedData = updatedData.filter(({ value }) => value !== option.value)
       } else {
-        updatedData = [...updatedData, value]
+        updatedData = [...updatedData, option]
       }
 
       if (mode === 'flat')
@@ -49,12 +54,11 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
   }
 
   function isChecked(id) {
-    return data.includes(id) || checkedAll
+    return data.some(({ value }) => value === id) || checkedAll
   }
 
-  function handleApply(arr = []) {
-    const result = arr.length !== 0 ? arr : data
-    console.log(result)
+  function handleApply(arr) {
+    const result = arr ? arr : data
     onChange({
       target: {
         name,
@@ -103,7 +107,7 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
                 checked={checkedAll}
                 label={'All'}
                 type="circle"
-                onChange={handleCheckboxChange('all')} />
+                onChange={handleCheckboxChange({ value: 'all' })} />
             </div>
             <div className={styles.checkboxes}>
               {
@@ -112,7 +116,7 @@ function CollectionFilter({ className, name, onChange, value, mode, options = []
                     fontSize={14}
                     color={'#111'}
                     margin={'0px 0 0 40px'}>
-                    No collections
+                    No cities
                   </Typography>
                   :
                   checkboxesList

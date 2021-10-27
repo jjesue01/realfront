@@ -19,14 +19,14 @@ function MoreFromCollection({ data = [], onViewCollection, user }) {
     <section className={styles.root}>
       <div className="container">
         <Typography fontSize={18} fontWeight={600} lHeight={22} color={'#000000'}>
-          More from this collection
+          More from this city
         </Typography>
         <div className={styles.items}>
           { itemsList }
         </div>
         <div className={styles.actions}>
           <Button onClick={onViewCollection} className={styles.btnCollection} type="outlined">
-            View Collection
+            View City
           </Button>
         </div>
       </div>

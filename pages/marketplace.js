@@ -20,7 +20,7 @@ import { useGetPublishedListingsQuery } from "../services/listings";
 import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
-import {collectionsApi, getAutocompleteCities} from "../services/collections";
+import {citiesApi} from "../services/cities";
 
 const sortOptions = [
   {
@@ -35,7 +35,7 @@ const sortOptions = [
 
 const initialFilters = {
   searchValue: '',
-  collections: [],
+  cities: [],
   price: {
     from: '',
     to: ''
@@ -114,7 +114,7 @@ function Marketplace({ toggleFooter }) {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(collectionsApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({ data }) => {
         setCitiesOptions(data)
       })
@@ -138,8 +138,8 @@ function Marketplace({ toggleFooter }) {
       hasFilters = true
     }
 
-    if (filters.collections.length !== 0) {
-      items = items.filter(({ collections }) => filters.collections.includes(collections?.ID))
+    if (filters.cities.length !== 0) {
+      items = items.filter(({ city }) => filters.cities.some(({ value }) => value === city?.ID))
       hasFilters = true
     }
 
@@ -185,7 +185,7 @@ function Marketplace({ toggleFooter }) {
     if (search)
       setFilters(prevFilters => ({ ...prevFilters, searchValue: search }))
     if (city)
-      setFilters(prevFilters => ({ ...prevFilters, collections: [city] }))
+      setFilters(prevFilters => ({ ...prevFilters, cities: [{ value: city }] }))
   }, [router.query])
 
   useEffect(function initListings() {
@@ -226,8 +226,8 @@ function Marketplace({ toggleFooter }) {
               placeholder="Enter an address" />
             <CollectionFilter
               className={styles.filter}
-              name="collections"
-              value={filters.collections}
+              name="cities"
+              value={filters.cities}
               options={citiesOptions}
               refetchOptions={getCities}
               onChange={handleChange} />
