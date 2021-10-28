@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {buildFormData, getIdToken} from "../utils";
+import {getIdToken} from "../utils";
 
 export const citiesApi = createApi({
   reducerPath: 'collectionsApi',
@@ -39,11 +39,6 @@ export const citiesApi = createApi({
 })
 
 export const {
-  useCreateCollectionMutation,
-  useUpdateCollectionMutation,
-  useDeleteCollectionMutation,
-  useGetUserCollectionsQuery,
-  useGetCollectionByIdQuery,
-  useGetAutocompleteCities,
+  useGetAutocompleteCitiesQuery,
   useGetCitiesQuery
 } = citiesApi

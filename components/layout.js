@@ -21,7 +21,10 @@ import {isPrivateRoute, isTokenExpired} from "../utils";
 import {initSocket} from "../services/socket";
 import Notifications from "./notifications/Notifications";
 import {pushNotification} from "../features/notifications/notificationsSlice";
-import {useGetCitiesQuery, useGetUserCollectionsQuery} from "../services/cities";
+import {
+  useGetAutocompleteCitiesQuery,
+  useGetCitiesQuery
+} from "../services/cities";
 
 const accountLinks = [
   {
@@ -49,7 +52,7 @@ function Layout({ children }) {
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const [login, { isLoading }] = useLoginMutation()
-  const { data: marketplaceLinks = [] } = useGetCitiesQuery({ limit: 6 })
+  const { data: marketplaceLinks = [] } = useGetAutocompleteCitiesQuery({ limit: 6, search: '' })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)
@@ -288,10 +291,10 @@ function Layout({ children }) {
                     </Typography>
                     <ul className={styles.list}>
                       {
-                        marketplaceLinks.map(({ name, _id }) => (
-                          <li key={name}>
-                            <Link href={`/marketplace?city=${_id}`}>
-                              { name }
+                        marketplaceLinks.map(({ label, value }) => (
+                          <li key={value}>
+                            <Link href={`/marketplace?city=${value}`}>
+                              { label }
                             </Link>
                           </li>
                         ))

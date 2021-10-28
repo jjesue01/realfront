@@ -6,8 +6,6 @@ import Button from "../../components/button/Button";
 import Image from "next/image";
 import Link from "next/link";
 import ContextMenu from "../../components/context-menu/ContextMenu";
-import CreateCollection from "../../components/dialogs/create-collection/CreateCollection";
-import {useGetUserCollectionsQuery} from "../../services/cities";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
 import {useSelector} from "react-redux";
 import Error from "next/error";

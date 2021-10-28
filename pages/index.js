@@ -6,7 +6,7 @@ import HowItWorks from "../components/how-it works/HowItWorks";
 import BrowseByCity from "../components/homepage/browse-by-city/BrowseByCity";
 import FAQ from "../components/homepage/faq/FAQ";
 
-export default function Home() {
+export default function Home({ openLogin }) {
 
   return (
     <main>
@@ -22,7 +22,7 @@ export default function Home() {
       </Head>
       <Hero />
       <TrendingIn />
-      <HowItWorks />
+      <HowItWorks onConnect={openLogin} />
       <BrowseByCity />
       <FAQ />
     </main>

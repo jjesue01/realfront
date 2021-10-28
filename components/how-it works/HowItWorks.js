@@ -4,8 +4,12 @@ import SectionTitle from "../section-title/SectionTitle";
 import Image from "next/image";
 import Typography from "../Typography";
 import Button from "../button/Button";
+import Link from "next/link";
+import {useSelector} from "react-redux";
 
-function HowItWorks({ center = false }) {
+function HowItWorks({ center = false, onConnect }) {
+  const user = useSelector(state => state.auth.user)
+
   return (
     <section className={styles.root}>
       <div className="container">
@@ -135,12 +139,19 @@ function HowItWorks({ center = false }) {
           </div>
         </div>
         <div className={styles.actions}>
-          <Button type="accent">
-            Explore
-          </Button>
-          <Button type="outlined">
-            Connect Wallet
-          </Button>
+          <Link href="/marketplace">
+            <a>
+              <Button type="accent">
+                Explore
+              </Button>
+            </a>
+          </Link>
+          {
+            !user &&
+            <Button onClick={onConnect} type="outlined">
+              Connect Wallet
+            </Button>
+          }
         </div>
       </div>
     </section>

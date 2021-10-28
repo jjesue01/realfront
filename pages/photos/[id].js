@@ -16,7 +16,7 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {downloadNFT, getIdToken} from "../../utils";
+import {download, downloadNFT, getIdToken} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 
@@ -27,7 +27,7 @@ function PhotoDetails({ openLogin }) {
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
-  const { data: listings } = useGetPublishedListingsQuery({ city: cityId, exclude: id, limit: 3 })
+  const { data: listings } = useGetPublishedListingsQuery({ city: cityId, exclude: id, limit: 3 }, { skip: !cityId })
   const isLoading = (!listing || !transactions || !listings) && !error || isFetching
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
@@ -70,7 +70,8 @@ function PhotoDetails({ openLogin }) {
             .then(result => {
               resolve()
               setIsDone(true)
-              downloadNFT(listing.ipfs.cid, listing.rawFileName)
+              //downloadNFT(listing.ipfs.cid, listing.rawFileName)
+              download(listing.filePath, listing.fileOriginalName)
             })
             .catch(error => {
               console.log(error)

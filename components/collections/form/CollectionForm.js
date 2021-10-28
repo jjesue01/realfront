@@ -12,11 +12,6 @@ import Textarea from "../../textarea/Textarea";
 import Select from "../../select/Select";
 import Button from "../../button/Button";
 import {useRouter} from "next/router";
-import {
-  useDeleteCollectionMutation,
-  useGetCollectionByIdQuery,
-  useUpdateCollectionMutation
-} from "../../../services/cities";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 
 const selectOptions = [
@@ -41,9 +36,7 @@ const validationSchema = Yup.object({
 function CollectionForm() {
   const router = useRouter()
   const { id } = router.query
-  const [updateCollection] = useUpdateCollectionMutation()
-  const [deleteCollection] = useDeleteCollectionMutation()
-  const { data: collection, isFetching } = useGetCollectionByIdQuery(id, { skip: !id })
+  const [collection] = useState({})
   const [isDeleting, setDeleting] = useState(false)
   const [files, setFiles] = useState({
     logo: null,
@@ -87,24 +80,24 @@ function CollectionForm() {
       bannerImage: files.banner,
       id
     }
-    updateCollection(data).unwrap()
-      .then(result => {
-        router.push('/collections')
-      })
-      .catch(result => {
-        setSubmitting(false)
-      })
+    // updateCollection(data).unwrap()
+    //   .then(result => {
+    //     router.push('/collections')
+    //   })
+    //   .catch(result => {
+    //     setSubmitting(false)
+    //   })
   }
 
   function handleDelete() {
     setDeleting(true)
-    deleteCollection(id).unwrap()
-      .then(() => {
-        router.push('/collections')
-      })
-      .catch(() => {
-        setDeleting(false)
-      })
+    // deleteCollection(id).unwrap()
+    //   .then(() => {
+    //     router.push('/collections')
+    //   })
+    //   .catch(() => {
+    //     setDeleting(false)
+    //   })
   }
 
   useEffect(function initCollection() {
@@ -270,7 +263,7 @@ function CollectionForm() {
           Delete collection
         </Button>
       </div>
-      <FullscreenLoader opened={isFetching} />
+      <FullscreenLoader opened={false} />
     </form>
   )
 }

@@ -15,7 +15,7 @@ import PenIcon from '/public/icons/pen.svg'
 import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
-import {citiesApi, useGetUserCollectionsQuery} from "../../../services/cities";
+import {citiesApi} from "../../../services/cities";
 import {
   listingsApi,
   useCreateListingMutation,
@@ -152,15 +152,25 @@ function Form({ mode }) {
     }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
+    const contractApi = require('/services/contract')
+
     setDeleting(true)
-    deleteListing(router.query.id).unwrap()
-      .then(result => {
-        router.push('/profile')
-      })
-      .catch(result => {
-        setDeleting(false)
-      })
+
+    try {
+      if (listing?.isPublished)
+        await contractApi.revokeSell(listing.tokenID, user.walletAddress)
+
+      deleteListing(router.query.id).unwrap()
+        .then(result => {
+          router.push('/profile')
+        })
+        .catch(result => {
+          setDeleting(false)
+        })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(function initListing() {
@@ -215,7 +225,12 @@ function Form({ mode }) {
         })
       }
 
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {})
+      const options = {
+        componentRestrictions: { country: "us" },
+        fields: ["address_components", "formatted_address", "geometry"],
+      };
+
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
   }, [getCities, isLoaded, setValues])

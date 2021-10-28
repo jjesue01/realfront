@@ -38,7 +38,12 @@ function Hero() {
         setSearchValue(formatted_address)
       }
 
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {})
+      const options = {
+        componentRestrictions: { country: "us" },
+        fields: ["address_components", "formatted_address", "geometry"],
+      };
+
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
   }, [isLoaded])

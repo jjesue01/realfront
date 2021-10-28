@@ -4,7 +4,10 @@ import Image from "next/image";
 import SectionTitle from "../../section-title/SectionTitle";
 import Typography from "../../Typography";
 import Button from "../../button/Button";
-import {useGetCitiesQuery, useGetUserCollectionsQuery} from "../../../services/cities";
+import {
+  useGetAutocompleteCitiesQuery,
+  useGetCitiesQuery,
+} from "../../../services/cities";
 import Link from "next/link";
 
 const cities = [
@@ -46,8 +49,8 @@ function BrowseByCity() {
         </SectionTitle>
         <div className={styles.cities}>
           {
-            data.map(({ name, _id }) => (
-              <Link key={_id} href={`/marketplace?city=${_id}`}>
+            data.map(({ name, _id, url}) => (
+              <Link key={_id} href={`/cities/${url}`}>
                 <a>
                   <div className={styles.city}>
                     <div className={styles.cityImage}>
@@ -72,9 +75,13 @@ function BrowseByCity() {
           }
         </div>
         <div className={styles.actions}>
-          <Button>
-            Explore More
-          </Button>
+          <Link href="/marketplace">
+            <a href="">
+              <Button>
+                Explore More
+              </Button>
+            </a>
+          </Link>
         </div>
       </div>
     </section>

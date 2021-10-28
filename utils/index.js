@@ -174,7 +174,11 @@ export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 export const isTokenExpired = token => Date.now() >= (JSON.parse(atob(token.split('.')[1]))).exp * 1000
 
 export function buildPlace(address_components) {
-  const place = { address: '', postcode: '' }
+  const place = {
+    address: '',
+    postcode: '',
+    city: ''
+  }
 
   for (const component of address_components) {
     const componentType = component.types[0];

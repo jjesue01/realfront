@@ -12,14 +12,14 @@ import Image from "next/image";
 import PenIcon from "../../../public/icons/pen.svg";
 import {
   citiesApi,
-  useCreateCollectionMutation,
+  //useCreateCollectionMutation,
 } from "../../../services/cities";
 import Autocomplete from "../../autocomplete/Autocomplete";
 import {useDispatch} from "react-redux";
 
 function CreateCollection({ opened, onClose, onCreate }) {
   const dispatch = useDispatch()
-  const [createCollection, { isLoading }] = useCreateCollectionMutation()
+  //const [createCollection, { isLoading }] = useCreateCollectionMutation()
   const [cities, setCities] = useState([])
   const [logo, setLogo] = useState(null)
   const { errors, touched, ...formik } = useFormik({
@@ -64,17 +64,17 @@ function CreateCollection({ opened, onClose, onCreate }) {
         city: values.city.value
       }
 
-      createCollection(data).unwrap()
-        .then(result => {
-          setSubmitting(false)
-          onCreate(result)
-          onClose()
-          resetForm()
-          setLogo(null)
-        })
-        .catch(() => {
-          setSubmitting(false)
-        })
+      // createCollection(data).unwrap()
+      //   .then(result => {
+      //     setSubmitting(false)
+      //     onCreate(result)
+      //     onClose()
+      //     resetForm()
+      //     setLogo(null)
+      //   })
+      //   .catch(() => {
+      //     setSubmitting(false)
+      //   })
     } else {
       setSubmitting(false)
     }
