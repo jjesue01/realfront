@@ -47,7 +47,7 @@ const initialFilters = {
   },
 }
 
-function Marketplace({ toggleFooter }) {
+function Marketplace({ toggleFooter, openLogin }) {
   const router = useRouter()
   const dispatch = useDispatch()
   const user = useSelector(state => state.auth.user)
@@ -325,6 +325,7 @@ function Marketplace({ toggleFooter }) {
                           key={item._id}
                           favorite={user?.favorites?.includes(item._id)}
                           isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
+                          onLogin={openLogin}
                           data={item} />
                       ))
                     }

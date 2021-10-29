@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Head from "next/head";
-import CollectionForm from "../../../components/collections/form/CollectionForm";
+import CollectionForm from "../../../components/cities/form/CollectionForm";
 import Error from "next/error";
 
 function MyCollections() {

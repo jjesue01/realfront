@@ -5,7 +5,7 @@ import CopyIcon from '/public/icons/copy.svg'
 
 const TOOLTIP_DURATION = 2000
 
-function ButtonCopy({ className, value }) {
+function ButtonCopy({ className, value, children }) {
   const [opened, setOpened] = useState(false)
 
   function handleCopy() {
@@ -33,7 +33,12 @@ function ButtonCopy({ className, value }) {
       opened={opened}
       content={<p><span>Copied!</span></p>}>
       <button onClick={handleCopy} className={styles.root}>
-        <CopyIcon />
+        {
+          children ?
+            children
+            :
+            <CopyIcon />
+        }
       </button>
     </Tooltip>
   )

@@ -4,13 +4,14 @@ import Typography from "../../../Typography";
 import PhotoItem from "../../../photo-item/PhotoItem";
 import Button from "../../../button/Button";
 
-function MoreFromCollection({ data = [], onViewCollection, user }) {
+function MoreFromCollection({ data = [], onViewCollection, user, onLogin }) {
   const itemsList = data.map((item) => (
     <PhotoItem
       favorite={user?.favorites?.includes(item._id)}
       className={styles.item}
       key={item._id}
       data={item}
+      onLogin={onLogin}
       isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       type="full" />
   ))

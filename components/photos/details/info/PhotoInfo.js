@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from './PhotoInfo.module.sass'
 import Image from "next/image";
 import Typography from "../../../Typography";
@@ -9,26 +9,35 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import {getMoneyView, getShortWalletAddress} from "../../../../utils";
+import {copyValue, getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
 import {useLikeListingMutation} from "../../../../services/listings";
+import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 
-function PhotoInfo({ listing, user, onBuy, ownItem }) {
+const HOST_NAME = 'https://nft-homejab.netlify.app'
+
+function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
+  const fbRef = useRef()
+  const twitterRef = useRef()
 
   function toggleFavorite() {
-    likeListing(listing._id)
-    setLikes(prevState => {
-      if (!isFavorite)
-        return prevState + 1
-      else
-        return prevState - 1
-    })
-    setIsFavorite(prevState => !prevState)
+    if (user) {
+      likeListing(listing._id)
+      setLikes(prevState => {
+        if (!isFavorite)
+          return prevState + 1
+        else
+          return prevState - 1
+      })
+      setIsFavorite(prevState => !prevState)
+    } else {
+      onLogin()
+    }
   }
 
   function toggleMenu() {
@@ -39,6 +48,33 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
     return function () {
       router.push(path)
     }
+  }
+
+  function getShareMessage() {
+    return `Check NFT ${listing?.name} on HomeJab!`
+  }
+
+  function getShareLink() {
+    return HOST_NAME + '/photos/' + listing?._id
+  }
+
+  function handleShareFb() {
+    fbRef.current.click()
+    toggleMenu()
+  }
+
+  function handleShareTwitter() {
+    twitterRef.current.click()
+    toggleMenu()
+  }
+
+  function handleCopy() {
+    const regex = new RegExp(HOST_NAME, 'g')
+    const link = getShareLink().replace(regex, getHost())
+    copyValue(link)
+      .then(() => {
+        toggleMenu()
+      })
   }
 
   useEffect(function initLikes() {
@@ -109,13 +145,24 @@ function PhotoInfo({ listing, user, onBuy, ownItem }) {
                         </button>
                       }
                       onClose={toggleMenu}>
-                      <button className={styles.btnMenuItem}>
+                      <FacebookShareButton
+                        ref={fbRef}
+                        url={getShareLink()}
+                        quote={getShareMessage()}
+                        hashtag={'#NFT'} />
+                      <TwitterShareButton
+                        ref={twitterRef}
+                        url={getShareLink()}
+                        title={getShareMessage()}
+                        via={'HomeJab'}
+                        hashtags={['NFT', 'HomeJab']} />
+                      <button onClick={handleCopy} className={styles.btnMenuItem}>
                         Copy
                       </button>
-                      <button className={styles.btnMenuItem}>
+                      <button onClick={handleShareFb} className={styles.btnMenuItem}>
                         Share on Facebook
                       </button>
-                      <button className={styles.btnMenuItem}>
+                      <button onClick={handleShareTwitter} className={styles.btnMenuItem}>
                         Share to Twitter
                       </button>
                     </ContextMenuWrapper>

@@ -127,7 +127,7 @@ function Form({ mode }) {
       if (mode === 'create') {
         createListing(data).unwrap()
           .then(result => {
-            console.log(result)
+            setListing(result)
             setId(result._id)
             setIsCreated(true)
           })
@@ -398,6 +398,7 @@ function Form({ mode }) {
         imageUrl={jpgFile !== null && jpgFilePreview}
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
+        listing={listing}
         onClose={handleCloseCongratulations} />
       <FullscreenLoader opened={(mode === 'edit' && !listing.name)} />
     </div>

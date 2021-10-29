@@ -107,10 +107,11 @@ function PhotoDetails({ openLogin }) {
   return (
     <main className={styles.root}>
       <Head>
-        <title>HOMEJAB - {listing?.name}</title>
+        <title>HOMEJAB - {listing?.name || 'NFT Marketplace'}</title>
       </Head>
       <div className={styles.content}>
         <PhotoInfo
+          onLogin={openLogin}
           ownItem={ownItem}
           user={user}
           listing={listing}
@@ -119,6 +120,7 @@ function PhotoDetails({ openLogin }) {
         {
           !!listings?.docs?.length &&
           <MoreFromCollection
+            onLogin={openLogin}
             user={user}
             data={listings?.docs}
             onViewCollection={handleViewCollection} />
@@ -138,6 +140,7 @@ function PhotoDetails({ openLogin }) {
             opened={isDone}
             title={'Complete checkout'}
             transactionHash={transactionHash}
+            listing={listing}
             onClose={handleCloseCongratulations} />
         </>
       }

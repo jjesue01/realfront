@@ -1,15 +1,16 @@
 import React from "react";
-import styles from './CollectionItems.module.sass'
+import styles from './CityItems.module.sass'
 import Typography from "../../../Typography";
 import PhotoItem from "../../../photo-item/PhotoItem";
 
-function CollectionItems({ data, user }) {
+function CityItems({ data, user, onLogin }) {
 
   const itemsList = data.map((item) => (
     <PhotoItem
       favorite={user?.favorites?.includes(item._id)}
       key={item._id}
       data={item}
+      onLogin={onLogin}
       isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       type="full" />
   ))
@@ -28,4 +29,4 @@ function CollectionItems({ data, user }) {
   )
 }
 
-export default CollectionItems
+export default CityItems

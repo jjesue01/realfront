@@ -82,7 +82,7 @@ function CollectionForm() {
     }
     // updateCollection(data).unwrap()
     //   .then(result => {
-    //     router.push('/collections')
+    //     router.push('/cities')
     //   })
     //   .catch(result => {
     //     setSubmitting(false)
@@ -93,7 +93,7 @@ function CollectionForm() {
     setDeleting(true)
     // deleteCollection(id).unwrap()
     //   .then(() => {
-    //     router.push('/collections')
+    //     router.push('/cities')
     //   })
     //   .catch(() => {
     //     setDeleting(false)

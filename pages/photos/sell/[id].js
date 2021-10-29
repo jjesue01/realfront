@@ -327,6 +327,7 @@ function SellItem() {
         imageUrl={listing?.filePath}
         message={`Great! You just set on sale - ${listing?.name}`}
         opened={isDone}
+        listing={listing}
         onClose={handleCloseCongratulations} />
       <FullscreenLoader opened={isFetching} />
     </main>

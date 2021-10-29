@@ -5,10 +5,41 @@ import Typography from "../../Typography";
 import Image from "next/image";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 import Loader from "../../loader/Loader";
-import {getShortWalletAddress} from "../../../utils";
+import {getHost, getShortWalletAddress} from "../../../utils";
 import cn from "classnames";
+import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
+import {useRouter} from "next/router";
+import ButtonCopy from "../../button-copy/ButtonCopy";
 
-function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash }) {
+const HOST_NAME = 'https://nft-homejab.netlify.app'
+
+function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash, listing }) {
+  const router = useRouter()
+
+  function getShareMessage() {
+    if (router.pathname.includes('/photos/create'))
+      return `I've just created new NFT ${listing?.name} on HomeJab!`
+
+    if (router.pathname.includes('/photos/[id]'))
+      return `I've just bought NFT ${listing?.name} on HomeJab!`
+
+    if (router.pathname.includes('/photos/sell'))
+      return `I've started selling NFT ${listing?.name} on HomeJab!`
+  }
+
+  function getShareLink() {
+    if (router.pathname.includes('/photos/[id]'))
+      return HOST_NAME + '/marketplace'
+
+    return HOST_NAME + '/photos/' + listing?._id
+  }
+
+  function getCopyLink() {
+    const regex = new RegExp(HOST_NAME, 'g')
+
+    return getShareLink().replace(regex, getHost())
+  }
+
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
       <div className={styles.dialog}>
@@ -75,18 +106,24 @@ function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message
             Share
           </Typography>
           <div className={styles.buttons}>
-            <ButtonCircle>
-              <Image src="/icons/fb.svg" width={9} height={18} alt="facebook" />
-            </ButtonCircle>
-            <ButtonCircle>
-              <Image src="/icons/twitter.svg" width={20} height={20} alt="twitter" />
-            </ButtonCircle>
-            <ButtonCircle>
-              <Image src="/icons/tg.svg" width={22} height={22} alt="telegram" />
-            </ButtonCircle>
-            <ButtonCircle>
+            <FacebookShareButton url={getShareLink()} quote={getShareMessage()} hashtag={'#NFT'}>
+              <ButtonCircle tag="span">
+                <Image src="/icons/fb.svg" width={9} height={18} alt="facebook" />
+              </ButtonCircle>
+            </FacebookShareButton>
+            <TwitterShareButton url={getShareLink()} title={getShareMessage()} via={'HomeJab'} hashtags={['NFT', 'HomeJab']}>
+              <ButtonCircle tag="span">
+                <Image src="/icons/twitter.svg" width={20} height={20} alt="twitter" />
+              </ButtonCircle>
+            </TwitterShareButton>
+            <TelegramShareButton url={getShareLink()} title={getShareMessage()}>
+              <ButtonCircle tag="span">
+                <Image src="/icons/tg.svg" width={22} height={22} alt="telegram" />
+              </ButtonCircle>
+            </TelegramShareButton>
+            <ButtonCopy className={styles.btnCircle} value={getCopyLink()}>
               <Image src="/icons/link.svg" width={22} height={22} alt="link" />
-            </ButtonCircle>
+            </ButtonCopy>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './CollectionInfo.module.sass'
+import styles from './CityInfo.module.sass'
 import Image from "next/image";
 import Typography from "../../../Typography";
 import ButtonCircle from "../../../button-circle/ButtonCircle";
@@ -7,7 +7,7 @@ import PenIcon from '/public/icons/pen.svg'
 import {useRouter} from "next/router";
 import BannerBackground from "../../../banner-background/BannerBackground";
 
-function CollectionInfo({ itemsCount, city }) {
+function CityInfo({ itemsCount, city }) {
   return (
     <div className={styles.root}>
       <div className={styles.bg}>
@@ -58,4 +58,4 @@ function CollectionInfo({ itemsCount, city }) {
   )
 }
 
-export default CollectionInfo
+export default CityInfo

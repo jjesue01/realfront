@@ -9,8 +9,10 @@ import HeartFilledIcon from '/public/icons/heart-filled.svg'
 import ContextMenu from "../context-menu/ContextMenu";
 import {useLikeListingMutation} from "../../services/listings";
 import {getMoneyView} from "../../utils";
+import {useSelector} from "react-redux";
 
-function PhotoItem({ className, imageClassName, data, type, favorite = false, isOwn = false }) {
+function PhotoItem({ className, imageClassName, data, type, favorite = false, isOwn = false, onLogin }) {
+  const user = useSelector(state => state.auth.user)
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [likeListing] = useLikeListingMutation()
@@ -22,14 +24,18 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false, is
   }
 
   function toggleFavorite() {
-    likeListing(data._id)
-    setLikes(prevState => {
-      if (!isFavorite)
-        return prevState + 1
-      else
-        return prevState - 1
-    })
-    setIsFavorite(prevState => !prevState)
+    if (user) {
+      likeListing(data._id)
+      setLikes(prevState => {
+        if (!isFavorite)
+          return prevState + 1
+        else
+          return prevState - 1
+      })
+      setIsFavorite(prevState => !prevState)
+    } else {
+      onLogin && onLogin()
+    }
   }
 
   useEffect(function () {

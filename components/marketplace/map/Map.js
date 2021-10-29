@@ -10,7 +10,7 @@ const containerStyle = {
   height: '100%'
 };
 
-const center = { lat: 34.1880148, lng: -118.4653348 }
+const center = { lat: 39.099724, lng: -94.578331 }
 const libraries = ['places']
 
 function Map({ items, onBoundsChange }) {
@@ -147,7 +147,7 @@ function Map({ items, onBoundsChange }) {
           mapContainerStyle={containerStyle}
           center={center}
           options={{ disableDefaultUI: true }}
-          zoom={3}
+          zoom={4}
           onLoad={onLoad}
           onBoundsChanged={handleBoundsChange}
           onUnmount={onUnmount}>

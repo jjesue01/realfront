@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import Head from "next/head";
-import CollectionInfo from "../../components/collections/details/collection-info/CollectionInfo";
-import CollectionFilters from "../../components/collections/details/filters/CollectionFilters";
-import CollectionItems from "../../components/collections/details/collection-items/CollectionItems";
+import CityInfo from "../../components/cities/details/city-info/CityInfo";
+import CollectionFilters from "../../components/cities/details/filters/CollectionFilters";
+import CityItems from "../../components/cities/details/city-items/CityItems";
 import {getIdToken, getSortedArray} from "../../utils";
 import {useRouter} from "next/router";
 import {useGetListingsQuery, useGetPublishedListingsQuery} from "../../services/listings";
@@ -11,7 +11,7 @@ import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoade
 import {useDispatch, useSelector} from "react-redux";
 import {useGetCitiesQuery} from "../../services/cities";
 
-function MyCollections() {
+function City({ openLogin }) {
   const dispatch = useDispatch()
   const { query: { id } } = useRouter()
   const { data, refetch: refetchCollection  } = useGetCitiesQuery({ url: id }, { skip: !id })
@@ -63,12 +63,12 @@ function MyCollections() {
       <Head>
         <title>HOMEJAB - Collection New York, Manhattan</title>
       </Head>
-      <CollectionInfo city={city} itemsCount={sourceData.length} />
+      <CityInfo city={city} itemsCount={sourceData.length} />
       <CollectionFilters filters={filters} onChange={handleChange} />
-      <CollectionItems user={user} data={filteredData} />
+      <CityItems onLogin={openLogin} user={user} data={filteredData} />
       <FullscreenLoader opened={isLoading} />
     </main>
   )
 }
 
-export default MyCollections
+export default City
