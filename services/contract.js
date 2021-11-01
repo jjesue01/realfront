@@ -53,6 +53,10 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
+  contractApi.getSellData = (tokenID, walletAddress) => {
+    return homejab.methods.sellData(tokenID).call({ from: walletAddress })
+  }
+
   contractApi.editPrice = (tokenID, price, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())

@@ -12,6 +12,7 @@ import {useRouter} from "next/router";
 import {copyValue, getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
 import {useLikeListingMutation} from "../../../../services/listings";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
+import ButtonCopy from "../../../button-copy/ButtonCopy";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
@@ -68,13 +69,10 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
     toggleMenu()
   }
 
-  function handleCopy() {
+  function getCopyValue() {
     const regex = new RegExp(HOST_NAME, 'g')
-    const link = getShareLink().replace(regex, getHost())
-    copyValue(link)
-      .then(() => {
-        toggleMenu()
-      })
+
+    return getShareLink().replace(regex, getHost())
   }
 
   useEffect(function initLikes() {
@@ -156,9 +154,11 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
                         title={getShareMessage()}
                         via={'HomeJab'}
                         hashtags={['NFT', 'HomeJab']} />
-                      <button onClick={handleCopy} className={styles.btnMenuItem}>
-                        Copy
-                      </button>
+                      <div className={styles.btnMenuItem}>
+                        <ButtonCopy value={getCopyValue()} onCopied={toggleMenu}>
+                          Copy
+                        </ButtonCopy>
+                      </div>
                       <button onClick={handleShareFb} className={styles.btnMenuItem}>
                         Share on Facebook
                       </button>

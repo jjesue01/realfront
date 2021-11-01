@@ -5,7 +5,7 @@ import CopyIcon from '/public/icons/copy.svg'
 
 const TOOLTIP_DURATION = 2000
 
-function ButtonCopy({ className, value, children }) {
+function ButtonCopy({ className, value, children, onCopied }) {
   const [opened, setOpened] = useState(false)
 
   function handleCopy() {
@@ -19,13 +19,14 @@ function ButtonCopy({ className, value, children }) {
     if (opened) {
       const timeout = setTimeout(function () {
         setOpened(false)
+        onCopied && onCopied()
       }, TOOLTIP_DURATION)
 
       return () => {
         clearTimeout(timeout)
       }
     }
-  }, [opened])
+  }, [onCopied, opened])
 
   return (
     <Tooltip

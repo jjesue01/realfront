@@ -16,7 +16,7 @@ const libraries = ['places']
 function Map({ items, onBoundsChange }) {
   const [map, setMap] = useState(null)
   const [infoBox, setInfoBox] = useState(null)
-  const [activeMarkerIndex, setActiveMarkerIndex] = useState(-1)
+  const [activeMarker, setActiveMarker] = useState(-1)
   const [markers, setMarkers] = useState([])
 
   const { isLoaded } = useLoadScript({
@@ -93,25 +93,12 @@ function Map({ items, onBoundsChange }) {
   ]
 
   const handleBoundsChange = debounce(function () {
-    if (items.length !== 0) {
-      let bounds = map.getBounds()
+    let bounds = map.getBounds()
 
       // console.log(bounds.toUrlValue())
-      // console.log(bounds.toJSON())
-      // console.log(bounds.getNorthEast().lat(), bounds.getNorthEast().lng())
-      let viewportItems = []
-
-      items.forEach(item => {
-        const location = {
-          lat: item.geoLocation.coordinates[1],
-          lng: item.geoLocation.coordinates[0],
-        }
-        if (bounds.contains(location)) {
-          viewportItems.push(item)
-        }
-      })
-      onBoundsChange(viewportItems)
-    }
+    onBoundsChange(bounds.toUrlValue())
+    // infoBox.close()
+    // setActiveMarker(-1)
   }, 500)
 
 
@@ -124,7 +111,7 @@ function Map({ items, onBoundsChange }) {
 
   function handleMarkerClick(index) {
     return function () {
-      setActiveMarkerIndex(index)
+      setActiveMarker(index)
       infoBox.open(map, markers[index])
     }
   }
@@ -161,7 +148,7 @@ function Map({ items, onBoundsChange }) {
                     key={item._id}
                     position={{ lat: item.geoLocation.coordinates[1], lng: item.geoLocation.coordinates[0] }}
                     onClick={handleMarkerClick(index)}
-                    icon={activeMarkerIndex === index ? activeIcon : defaultIcon}
+                    icon={activeMarker === index ? activeIcon : defaultIcon}
                     clusterer={clusterer}
                   />
                 ))
@@ -178,7 +165,7 @@ function Map({ items, onBoundsChange }) {
             position={center}>
             <div className={styles.infoBox}>
               <Typography fontWeight={600} fontSize={12} color={'#111'} align="center">
-                { items[activeMarkerIndex]?.address }
+                { items[activeMarker]?.address }
               </Typography>
             </div>
           </InfoBox>

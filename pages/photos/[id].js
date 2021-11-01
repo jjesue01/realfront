@@ -27,7 +27,11 @@ function PhotoDetails({ openLogin }) {
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
-  const { data: listings } = useGetPublishedListingsQuery({ city: cityId, exclude: id, limit: 3 }, { skip: !cityId })
+  const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery({
+    city: cityId,
+    exclude: id,
+    limit: 3
+  }, { skip: !cityId })
   const isLoading = (!listing || !transactions || !listings) && !error || isFetching
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
@@ -62,25 +66,30 @@ function PhotoDetails({ openLogin }) {
     return new Promise((resolve, reject) => {
       const contractApi = require('/services/contract')
 
-      contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
-        .then(({ transactionHash: hash }) => {
-          console.log(hash)
-          setTransactionHash(hash)
-          purchaseListing(listing._id)
-            .then(result => {
-              resolve()
-              setIsDone(true)
-              //downloadNFT(listing.ipfs.cid, listing.rawFileName)
-              download(listing.filePath, listing.fileOriginalName)
-            })
-            .catch(error => {
-              console.log(error)
-              reject()
-            })
-        })
-        .catch(error => {
-          console.log(error)
-          reject()
+      contractApi.getSellData(listing.tokenID, user.walletAddress)
+        .then(({ forSell }) => {
+          if (forSell) {
+            contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
+              .then(({ transactionHash: hash }) => {
+                console.log(hash)
+                setTransactionHash(hash)
+                purchaseListing(listing._id)
+                  .then(result => {
+                    resolve()
+                    setIsDone(true)
+                    //downloadNFT(listing.ipfs.cid, listing.rawFileName)
+                    download(listing.filePath, listing.fileOriginalName)
+                  })
+                  .catch(error => {
+                    console.log(error)
+                    reject()
+                  })
+              })
+              .catch(error => {
+                console.log(error)
+                reject()
+              })
+          }
         })
     })
   }
@@ -91,10 +100,11 @@ function PhotoDetails({ openLogin }) {
 
   useEffect(function () {
     if (getIdToken()) {
-      dispatch(authApi.endpoints.getCurrentUser.initiate({}, { forceRefetch: true }))
+      dispatch(authApi.endpoints.getCurrentUser.initiate({}, { subscribe: false, forceRefetch: true }))
     }
     refetch()
-  }, [dispatch, refetch])
+    refetchListings()
+  }, [dispatch, refetch, id, refetchListings])
 
   if (listing && !listing?.isPublished && !ownItem)
     return <Error errorCode="ListingDeleted" />
