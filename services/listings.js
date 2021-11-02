@@ -93,6 +93,9 @@ export const listingsApi = createApi({
         }
       }),
     }),
+    getTags: builder.query({
+      query: () => `/tags`,
+    }),
     getListingById: builder.query({
       query: id => `/listings/${id}`,
     })
@@ -108,5 +111,6 @@ export const {
   usePurchaseListingMutation,
   useGetListingsQuery,
   useGetPublishedListingsQuery,
-  useGetListingByIdQuery
+  useGetListingByIdQuery,
+  useGetTagsQuery
 } = listingsApi

@@ -5,7 +5,7 @@ import CopyIcon from '/public/icons/copy.svg'
 
 const TOOLTIP_DURATION = 2000
 
-function ButtonCopy({ className, value, children, onCopied }) {
+function ButtonCopy({ className, value, children, onCopied }, ref) {
   const [opened, setOpened] = useState(false)
 
   function handleCopy() {
@@ -33,7 +33,7 @@ function ButtonCopy({ className, value, children, onCopied }) {
       className={className}
       opened={opened}
       content={<p><span>Copied!</span></p>}>
-      <button onClick={handleCopy} className={styles.root}>
+      <button ref={ref} onClick={handleCopy} className={styles.root}>
         {
           children ?
             children
@@ -45,4 +45,4 @@ function ButtonCopy({ className, value, children, onCopied }) {
   )
 }
 
-export default ButtonCopy
+export default React.forwardRef(ButtonCopy)

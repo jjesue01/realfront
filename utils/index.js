@@ -242,3 +242,10 @@ export function getHost() {
 export function copyValue(value) {
   return navigator.clipboard.writeText(value)
 }
+
+export function getLatLng(listing) {
+  return {
+    lat: listing?.geoLocation?.coordinates[1],
+    lng: listing?.geoLocation?.coordinates[0]
+  }
+}

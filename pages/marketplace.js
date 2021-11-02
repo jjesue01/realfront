@@ -16,7 +16,7 @@ import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
 import {buildFilterOptions, getIdToken, getSortedArray, scrollToTop} from "../utils";
 import {useRouter} from "next/router";
-import {listingsApi, useGetPublishedListingsQuery} from "../services/listings";
+import {listingsApi, useGetPublishedListingsQuery, useGetTagsQuery} from "../services/listings";
 import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
@@ -25,16 +25,17 @@ import {citiesApi} from "../services/cities";
 const sortOptions = [
   {
     label: 'Price: Low to High',
-    value: 'price_low'
+    value: 'price:desc'
   },
   {
     label: 'Price: High to Low',
-    value: 'price_high'
+    value: 'price:asc'
   },
 ]
 
 const initialFilters = {
   bounds: '',
+  page: 1,
   searchValue: '',
   cities: [],
   price: {
@@ -53,37 +54,38 @@ function Marketplace({ toggleFooter, openLogin }) {
   const dispatch = useDispatch()
   const user = useSelector(state => state.auth.user)
   const [citiesOptions, setCitiesOptions] = useState([])
-  const isLoading = false
+  const { data: tagsOptions = [] } = useGetTagsQuery();
+  const [isLoading, setLoading] = useState(true)
   const [listings, setListings] = useState([])
-  const [options, setOptions] = useState({ collections: [], tags: [] })
   const [isMapHidden, setIsMapHidden] = useState(false)
   const [showReset, setShowReset] = useState(false)
   const [filters, setFilters] = useState({
     ...initialFilters,
-    sortBy: 'price_low'
+    sortBy: 'price:desc'
   })
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pagination, setPagination] = useState({})
 
-  const itemsPerPage = 15
-  const pageCount = Math.ceil(listings.length / itemsPerPage)
-  const pageItems = isMapHidden ?
-    listings.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    :
-    listings
+  const itemsPerPage = 3
 
   const mounted = useRef(false)
+  const mapMounted = useRef(false)
 
   function handleNextPage() {
-
-    if (currentPage < pageCount) {
-      setCurrentPage(prevState => prevState + 1)
+    if (pagination.nextPage) {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        page: pagination.nextPage
+      }))
       scrollToTop()
     }
   }
 
   function handlePrevPage() {
-    if (currentPage > 1) {
-      setCurrentPage(prevState => prevState - 1)
+    if (pagination.prevPage) {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        page: pagination.prevPage
+      }))
       scrollToTop()
     }
   }
@@ -94,12 +96,7 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   function toggleMap() {
     document.body.style.position = !isMapHidden ? 'static' : 'fixed'
-
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      bounds: ''
-    }))
-
+    mapMounted.current = false
     setIsMapHidden(prevState => !prevState)
     toggleFooter()
   }
@@ -112,6 +109,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   function handleMapChange(bounds) {
+    mapMounted.current = true
     setFilters(prevFilters => ({
       ...prevFilters,
       bounds
@@ -134,22 +132,40 @@ function Marketplace({ toggleFooter, openLogin }) {
   }, [toggleFooter])
 
   useEffect(function filterData() {
-    const { sortBy, ...currentFilters } = filters
-    /* TODO: pagination, fix info box bugs  */
-    setShowReset(JSON.stringify({ ...currentFilters, bounds: '' }) !== JSON.stringify(initialFilters))
+    if (mapMounted.current) {
+      const { sortBy, ...currentFilters } = filters
 
-    dispatch(listingsApi.endpoints.getPublishedListings.initiate({
-      bounds: filters.bounds,
-      search: filters.searchValue,
-      city: filters.cities.map(({ value }) => value).join(),
-      price: [+filters.price.from || '', +filters.price.to || ''].join(),
-      tags: filters.more.types.join()
-    }))
-      .then(({ data }) => {
-        const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
-        setListings(sortedListings)
-      })
-  }, [dispatch, filters])
+      setShowReset(JSON.stringify({ ...currentFilters, bounds: '', page: 1 }) !== JSON.stringify(initialFilters))
+
+      const params =  {
+        bounds: filters.bounds,
+        search: filters.searchValue,
+        city: filters.cities.map(({ value }) => value).join(),
+        price: [+filters.price.from || '', +filters.price.to || ''].join(),
+        tags: filters.more.types.join(),
+        sort: filters.sortBy
+      }
+
+      if (isMapHidden) {
+        params.bounds = ''
+        params.limit = itemsPerPage
+        params.page = filters.page
+      }
+
+      setLoading(true)
+
+      dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
+        .then(({ data, isLoading }) => {
+          if (!isLoading) {
+            const { docs, ...paginationInfo } = data
+            // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
+            setListings(data?.docs || [])
+            setPagination(paginationInfo)
+            setLoading(false)
+          }
+        })
+    }
+  }, [dispatch, filters, isMapHidden])
 
   useEffect(function initSearch() {
     const { search, city } = router.query;
@@ -159,14 +175,6 @@ function Marketplace({ toggleFooter, openLogin }) {
     if (city)
       setFilters(prevFilters => ({ ...prevFilters, cities: [{ value: city }] }))
   }, [router.query])
-
-  useEffect(function initListings() {
-    if (listings !== undefined) {
-      setOptions({
-        ...buildFilterOptions(listings)
-      })
-    }
-  }, [listings])
 
   useEffect(function () {
     if (getIdToken()) {
@@ -213,7 +221,7 @@ function Marketplace({ toggleFooter, openLogin }) {
               className={styles.filter}
               name="more"
               value={filters.more}
-              options={options.tags}
+              options={tagsOptions}
               onChange={handleChange} />
           </div>
           <div className={cn(styles.resetFilters, { [styles.resetFiltersShown]: showReset })}>
@@ -253,7 +261,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                 isMapHidden &&
                 <div className={styles.itemsHeader}>
                   <Typography fontSize={16}>
-                    {listings.length || 'No'} results
+                    {pagination.totalDocs || 'No'} results
                   </Typography>
                   <Select
                     className={styles.selectSort}
@@ -287,7 +295,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                   }
                   <div className={styles.itemsGrid}>
                     {
-                      pageItems.map(item => (
+                      listings.map(item => (
                         <PhotoItem
                           imageClassName={styles.imageWrapper}
                           key={item._id}
@@ -303,8 +311,8 @@ function Marketplace({ toggleFooter, openLogin }) {
                       <div className={styles.paginationContainer}>
                         <Pagination
                           className={styles.pagination}
-                          currentPage={currentPage}
-                          count={pageCount}
+                          currentPage={pagination?.page}
+                          count={pagination?.totalPages}
                           onNext={handleNextPage}
                           onPrev={handlePrevPage} />
                       </div>

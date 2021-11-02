@@ -1,22 +1,25 @@
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import styles from './ContextMenu.module.sass'
 import MenuIcon from "../../public/icons/menu-ellipsis.svg";
 import cn from "classnames";
 import Link from "next/link";
-import {copyValue, getHost} from "../../utils";
+import {getHost} from "../../utils";
+import ButtonCopy from "../button-copy/ButtonCopy";
 
 function ContextMenu({ className, href, hasEdit = false }) {
   const [opened, setOpened] = useState(false)
+  const copyRef = useRef()
 
   function toggleMenu() {
     setOpened(prevState => !prevState)
   }
 
   function handleCopy() {
-    copyValue(getHost() + href.replace(/\/edit/g, ''))
-      .then(() => {
-        toggleMenu()
-      })
+    copyRef.current.click();
+  }
+
+  function getCopyValue() {
+    return getHost() + href.replace(/\/edit/g, '')
   }
 
   return (
@@ -39,9 +42,11 @@ function ContextMenu({ className, href, hasEdit = false }) {
                 <div className={styles.hr} />
               </>
           }
-          <button onClick={handleCopy}>
-            Copy link
-          </button>
+          <div onClick={handleCopy}  className={styles.copyWrapper}>
+            <ButtonCopy ref={copyRef} className={styles.btnCopy} value={getCopyValue()} onCopied={toggleMenu}>
+              Copy link
+            </ButtonCopy>
+          </div>
         </div>
       </div>
     </>

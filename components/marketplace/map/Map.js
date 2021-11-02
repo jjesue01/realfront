@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import styles from './Map.module.sass'
 import {GoogleMap, MarkerClusterer, InfoWindow, Marker, InfoBox, useLoadScript} from '@react-google-maps/api';
 import cn from "classnames";
-import {debounce} from "../../../utils";
+import {debounce, getLatLng} from "../../../utils";
 import Typography from "../../Typography";
+import {logout} from "../../../features/auth/authSlice";
 
 const containerStyle = {
   width: '100%',
@@ -16,8 +17,10 @@ const libraries = ['places']
 function Map({ items, onBoundsChange }) {
   const [map, setMap] = useState(null)
   const [infoBox, setInfoBox] = useState(null)
-  const [activeMarker, setActiveMarker] = useState(-1)
-  const [markers, setMarkers] = useState([])
+  const [activeMarker, setActiveMarker] = useState('')
+  const [address, setAddress] = useState('')
+
+  const markers = useRef({})
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
@@ -99,7 +102,7 @@ function Map({ items, onBoundsChange }) {
     onBoundsChange(bounds.toUrlValue())
     // infoBox.close()
     // setActiveMarker(-1)
-  }, 500)
+  }, 1000)
 
 
   function handleZoom(value) {
@@ -109,20 +112,25 @@ function Map({ items, onBoundsChange }) {
     }
   }
 
-  function handleMarkerClick(index) {
+  function handleMarkerClick(item) {
     return function () {
-      setActiveMarker(index)
-      infoBox.open(map, markers[index])
+      setActiveMarker(item._id)
+      infoBox.close()
+      infoBox.open(map, markers.current[item._id])
+      setAddress(item.address)
     }
   }
 
-  function handleMarkerLoad(index) {
+  function handleMarkerLoad(item) {
     return function (marker) {
-      setMarkers(prevMarkers => {
-        const updatedMarkers = [...prevMarkers]
-        updatedMarkers[index] = marker
-        return updatedMarkers
-      })
+      markers.current[item._id] = marker
+    }
+  }
+
+  function handleMarkerUnmount(item) {
+    return function (marker) {
+      if (activeMarker === item._id)
+        setActiveMarker('')
     }
   }
 
@@ -143,12 +151,13 @@ function Map({ items, onBoundsChange }) {
               clusterer =>
                 items.map((item, index) => (
                   <Marker
-                    onLoad={handleMarkerLoad(index)}
+                    onUnmount={handleMarkerUnmount(item)}
+                    onLoad={handleMarkerLoad(item)}
                     title={item.name}
                     key={item._id}
-                    position={{ lat: item.geoLocation.coordinates[1], lng: item.geoLocation.coordinates[0] }}
-                    onClick={handleMarkerClick(index)}
-                    icon={activeMarker === index ? activeIcon : defaultIcon}
+                    position={getLatLng(item)}
+                    onClick={handleMarkerClick(item)}
+                    icon={activeMarker === item._id ? activeIcon : defaultIcon}
                     clusterer={clusterer}
                   />
                 ))
@@ -165,7 +174,7 @@ function Map({ items, onBoundsChange }) {
             position={center}>
             <div className={styles.infoBox}>
               <Typography fontWeight={600} fontSize={12} color={'#111'} align="center">
-                { items[activeMarker]?.address }
+                { address }
               </Typography>
             </div>
           </InfoBox>
