@@ -37,6 +37,7 @@ function PhotoDetails({ openLogin }) {
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const [transactionHash, setTransactionHash] = useState('')
+  const [listingError, setListingError] = useState(false)
 
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
@@ -89,7 +90,12 @@ function PhotoDetails({ openLogin }) {
                 console.log(error)
                 reject()
               })
+          } else {
+            setListingError(true)
           }
+        })
+        .catch(() => {
+          setListingError(true)
         })
     })
   }
@@ -106,7 +112,7 @@ function PhotoDetails({ openLogin }) {
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
 
-  if (listing && !listing?.isPublished && !ownItem)
+  if (listing && !listing?.isPublished && !ownItem || listingError)
     return <Error errorCode="ListingDeleted" />
 
   if (error?.data?.message) {

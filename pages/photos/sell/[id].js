@@ -19,6 +19,8 @@ import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {clamp, getUser} from "../../../utils";
 import {error} from "next/dist/build/output/log";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
+import {useSelector} from "react-redux";
+import Error from "../../../components/error/Error";
 
 const scheduleOptions = [
   {
@@ -51,7 +53,8 @@ const validationSchema = Yup.object({
 function SellItem() {
   const router = useRouter()
   const { id } = router.query
-  const { data: listing, isFetching } = useGetListingByIdQuery(id, { skip: !id })
+  const user = useSelector(state => state.auth.user)
+  const { data: listing, isFetching, error } = useGetListingByIdQuery(id, { skip: !id })
   const [publishListing] = usePublishListingMutation()
   const [isDone, setIsDone] = useState(false)
   const [lowBalance, setLowBalance] = useState(false)
@@ -71,6 +74,8 @@ function SellItem() {
     validationSchema,
     onSubmit: handleSubmit
   });
+
+  const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
   function handleSwitcherChange({ target: { name, value } }) {
     setSwitchers(prevSwitchers => ({
@@ -182,6 +187,11 @@ function SellItem() {
     }
   }, [listing, setValues])
 
+  if (error)
+    return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />
+  if (!ownItem)
+    return <Error errorCode={'ListingNoAccess' } />
+
   return (
     <main className="page-container">
       <Head>
@@ -253,16 +263,19 @@ function SellItem() {
                   onChange={handleCopiesChange}
                   placeholder="e.g. 5"
                   label="Number of copies" />
-                <Input
-                  type="number"
-                  className={cn(styles.field, styles.input, { [styles.disabledInput]: listing?.tokenID !== undefined})}
-                  name="royalties"
-                  value={formik.values.royalties}
-                  onChange={handleRoyaltiesChange}
-                  placeholder="e.g. 10"
-                  iconRight={<span className={styles.percentIcon}>%</span>}
-                  subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"
-                  label="Royalties" />
+                {
+                  !listing?.tokenID &&
+                  <Input
+                    type="number"
+                    className={cn(styles.field)}
+                    name="royalties"
+                    value={formik.values.royalties}
+                    onChange={handleRoyaltiesChange}
+                    placeholder="e.g. 10"
+                    iconRight={<span className={styles.percentIcon}>%</span>}
+                    subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"
+                    label="Royalties" />
+                }
                 <div className={styles.additionalFields}>
                   <div className={styles.addField}>
                     <Switcher
@@ -313,7 +326,7 @@ function SellItem() {
                 </div>
               </div>
               <div className={styles.summaryContainer}>
-                <Summary loading={formik.isSubmitting} />
+                <Summary loading={formik.isSubmitting} royalty={listing?.tokenID ? formik.values.royalties : 0} />
               </div>
             </form>
           </div>

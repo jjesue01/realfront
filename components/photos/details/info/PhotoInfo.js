@@ -23,6 +23,8 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
+
+  const copyRef = useRef()
   const fbRef = useRef()
   const twitterRef = useRef()
 
@@ -57,6 +59,10 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
 
   function getShareLink() {
     return HOST_NAME + '/photos/' + listing?._id
+  }
+
+  function handleCopy() {
+    copyRef.current.click()
   }
 
   function handleShareFb() {
@@ -154,17 +160,22 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
                         title={getShareMessage()}
                         via={'HomeJab'}
                         hashtags={['NFT', 'HomeJab']} />
-                      <div className={styles.btnMenuItem}>
-                        <ButtonCopy value={getCopyValue()} onCopied={toggleMenu}>
+                      <div onClick={handleCopy} className={styles.btnMenuItem}>
+                        <ButtonCopy ref={copyRef} value={getCopyValue()} onCopied={toggleMenu}>
                           Copy
                         </ButtonCopy>
                       </div>
-                      <button onClick={handleShareFb} className={styles.btnMenuItem}>
-                        Share on Facebook
-                      </button>
-                      <button onClick={handleShareTwitter} className={styles.btnMenuItem}>
-                        Share to Twitter
-                      </button>
+                      {
+                        listing?.isPublished &&
+                          <>
+                            <button onClick={handleShareFb} className={styles.btnMenuItem}>
+                              Share on Facebook
+                            </button>
+                            <button onClick={handleShareTwitter} className={styles.btnMenuItem}>
+                              Share to Twitter
+                            </button>
+                          </>
+                      }
                     </ContextMenuWrapper>
                   </div>
                 </div>

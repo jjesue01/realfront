@@ -69,8 +69,15 @@ button.btnMenuItem, .btnMenuItem
   align-items: center
   text-align: left
   border-bottom: 1px solid #ECEFF4 !important
+  cursor: pointer
+  &:hover
+    button
+      color: #111
   &:last-child
     border-bottom: none !important
+.btnMenuItem
+  button
+    pointer-events: none
 .btnMenuActive
   circle
     fill: #1DC3A6

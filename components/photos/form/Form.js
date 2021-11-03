@@ -60,7 +60,7 @@ function Form({ mode }) {
   const [jpgFilePreview, setJpgFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
-  const [listing, setListing] = useState('')
+  const [listing, setListing] = useState({})
   const [listingError, setListingError] = useState({})
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
@@ -80,6 +80,7 @@ function Form({ mode }) {
   const inputRef = useRef()
   const autocompleteRef = useRef()
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
+  const imgDisabled = mode === 'edit' && listing?.creator?.ID !== user?._id
 
   function handleFileJPGChange(file) {
     if (file !== null) {
@@ -273,7 +274,11 @@ function Form({ mode }) {
           </Typography>
           <div className={styles.uploaders}>
             <div className={styles.uploader}>
-              <FileUploader onChange={handleFileJPGChange} accept=".jpg,.jpeg" error={jpgFile === null && touched.name}>
+              <FileUploader
+                onChange={handleFileJPGChange}
+                accept=".jpg,.jpeg"
+                disabled={imgDisabled}
+                error={jpgFile === null && touched.name}>
                 { 
                   jpgFile === null ?
                     <div className={styles.uploaderContainer}>
@@ -292,15 +297,22 @@ function Form({ mode }) {
                         layout="fill"
                         objectFit={'cover'}
                         alt="nft item" />
-                      <ButtonCircle className={styles.btnEdit}>
-                        <PenIcon />
-                      </ButtonCircle>
+                      {
+                        !imgDisabled &&
+                        <ButtonCircle className={styles.btnEdit}>
+                          <PenIcon />
+                        </ButtonCircle>
+                      }
                     </div>
                 }
               </FileUploader>
             </div>
             <div className={styles.uploader}>
-              <FileUploader onChange={handleFileRAWChange} accept=".raw" error={rawFile === null && touched.name}>
+              <FileUploader
+                onChange={handleFileRAWChange}
+                accept=".raw"
+                disabled={imgDisabled}
+                error={rawFile === null && touched.name}>
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
                   <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
@@ -313,7 +325,7 @@ function Form({ mode }) {
                     </p>
                   }
                   {
-                    rawFile !== null &&
+                    rawFile !== null && !imgDisabled &&
                     <ButtonCircle className={styles.btnEdit}>
                       <PenIcon />
                     </ButtonCircle>
@@ -399,6 +411,7 @@ function Form({ mode }) {
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         listing={listing}
+        hasShare={false}
         onClose={handleCloseCongratulations} />
       <FullscreenLoader opened={(mode === 'edit' && !listing.name)} />
     </div>

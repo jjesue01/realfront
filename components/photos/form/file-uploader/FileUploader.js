@@ -5,12 +5,13 @@ import Typography from "../../../Typography";
 
 const MAX_KB_SIZE = 40000
 
-function FileUploader({ className, children, onChange, accept = '*', error }) {
+function FileUploader({ className, children, onChange, accept = '*', error, disabled }) {
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef()
   const dropRef = useRef()
 
   function handleClick() {
+    if (disabled) return;
     inputRef.current.click();
   }
 
@@ -72,7 +73,7 @@ function FileUploader({ className, children, onChange, accept = '*', error }) {
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className={cn(className, styles.root, { [styles.active]: isDragging, [styles.error]: error })}>
+      className={cn(className, styles.root, { [styles.active]: isDragging, [styles.error]: error, [styles.disabled]: disabled })}>
       { children }
       <input
         className={styles.input}

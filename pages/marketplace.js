@@ -21,6 +21,7 @@ import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
 import {citiesApi} from "../services/cities";
+import {usePrevious} from "../hooks/usePrevious";
 
 const sortOptions = [
   {
@@ -69,6 +70,7 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   const mounted = useRef(false)
   const mapMounted = useRef(false)
+  const boundsChanged = useRef(false)
 
   function handleNextPage() {
     if (pagination.nextPage) {
@@ -110,6 +112,8 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   function handleMapChange(bounds) {
     mapMounted.current = true
+    boundsChanged.current = true
+
     setFilters(prevFilters => ({
       ...prevFilters,
       bounds
@@ -152,7 +156,11 @@ function Marketplace({ toggleFooter, openLogin }) {
         params.page = filters.page
       }
 
-      setLoading(true)
+      if (boundsChanged.current) {
+        boundsChanged.current = false
+      } else {
+        setLoading(true)
+      }
 
       dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
         .then(({ data, isLoading }) => {
