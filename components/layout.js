@@ -52,7 +52,7 @@ function Layout({ children }) {
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const [login, { isLoading }] = useLoginMutation()
-  const { data: marketplaceLinks = [] } = useGetAutocompleteCitiesQuery({ limit: 6, search: '' })
+  const { data: marketplaceLinks = [] } = useGetAutocompleteCitiesQuery({ search: '' })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)
@@ -291,7 +291,7 @@ function Layout({ children }) {
                     </Typography>
                     <ul className={styles.list}>
                       {
-                        marketplaceLinks.map(({ label, value }) => (
+                        marketplaceLinks.slice(0, 6).map(({ label, value }) => (
                           <li key={value}>
                             <Link href={`/marketplace?city=${value}`}>
                               { label }

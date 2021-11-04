@@ -136,7 +136,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   }, [toggleFooter])
 
   useEffect(function filterData() {
-    if (mapMounted.current) {
+    if (mapMounted.current || isMapHidden) {
       const { sortBy, ...currentFilters } = filters
 
       setShowReset(JSON.stringify({ ...currentFilters, bounds: '', page: 1 }) !== JSON.stringify(initialFilters))

@@ -27,6 +27,7 @@ import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
 import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 import Error from "../../error/Error";
+import cn from "classnames";
 
 const selectOptions = [
   {
@@ -80,7 +81,7 @@ function Form({ mode }) {
   const inputRef = useRef()
   const autocompleteRef = useRef()
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
-  const imgDisabled = mode === 'edit' && listing?.creator?.ID !== user?._id
+  const isReseller = mode === 'edit' && listing?.creator?.ID !== user?._id
 
   function handleFileJPGChange(file) {
     if (file !== null) {
@@ -136,7 +137,6 @@ function Form({ mode }) {
             console.log(result)
             setSubmitting(false)
           })
-
       } else {
         data.id = router.query.id
         updateListing(data).unwrap()
@@ -203,6 +203,8 @@ function Form({ mode }) {
   useEffect(function initAutocomplete() {
     if (isLoaded) {
       const handlePlaceChange = async () => {
+        if (isReseller) return;
+
         const { geometry, formatted_address, address_components } = autocompleteRef.current.getPlace()
         let city = { label: '', value: '' }
         const parsedPlace = buildPlace(address_components)
@@ -277,7 +279,7 @@ function Form({ mode }) {
               <FileUploader
                 onChange={handleFileJPGChange}
                 accept=".jpg,.jpeg"
-                disabled={imgDisabled}
+                disabled={isReseller}
                 error={jpgFile === null && touched.name}>
                 { 
                   jpgFile === null ?
@@ -298,7 +300,7 @@ function Form({ mode }) {
                         objectFit={'cover'}
                         alt="nft item" />
                       {
-                        !imgDisabled &&
+                        !isReseller &&
                         <ButtonCircle className={styles.btnEdit}>
                           <PenIcon />
                         </ButtonCircle>
@@ -311,7 +313,7 @@ function Form({ mode }) {
               <FileUploader
                 onChange={handleFileRAWChange}
                 accept=".raw"
-                disabled={imgDisabled}
+                disabled={isReseller}
                 error={rawFile === null && touched.name}>
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
@@ -325,7 +327,7 @@ function Form({ mode }) {
                     </p>
                   }
                   {
-                    rawFile !== null && !imgDisabled &&
+                    rawFile !== null && !isReseller &&
                     <ButtonCircle className={styles.btnEdit}>
                       <PenIcon />
                     </ButtonCircle>
@@ -347,7 +349,7 @@ function Form({ mode }) {
           label="Name*" />
         <Input
           ref={inputRef}
-          className={styles.input}
+          className={cn(styles.input, { [styles.readOnly]: isReseller })}
           name="address"
           value={formik.values.address}
           onChange={formik.handleChange}
@@ -355,6 +357,7 @@ function Form({ mode }) {
           required
           error={errors.address && touched.address}
           errorText={errors.address}
+          readOnly={isReseller}
           label="Address*" />
         <Input
           className={styles.input}

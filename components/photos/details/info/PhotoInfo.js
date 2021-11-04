@@ -207,9 +207,14 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
                         </Typography>
                       </div>
                     </div>
-                    <Button onClick={onBuy}>
-                      Buy now
-                    </Button>
+                    <div className={styles.itemActions}>
+                      <Button onClick={onBuy}>
+                        Buy now
+                      </Button>
+                      <Button onClick={() => {}} type="outlined">
+                        Make offer
+                      </Button>
+                    </div>
                   </div>
                   :
                   <div className={styles.itemActions}>
