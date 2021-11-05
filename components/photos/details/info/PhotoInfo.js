@@ -13,10 +13,11 @@ import {copyValue, getHost, getMoneyView, getShortWalletAddress} from "../../../
 import {useLikeListingMutation} from "../../../../services/listings";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 import ButtonCopy from "../../../button-copy/ButtonCopy";
+import Offers from "../offers/Offers";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
-function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
+function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -90,11 +91,14 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
     <section className={styles.root}>
       <div className="container">
         <div className={styles.row}>
-          <div className={styles.imageWrapper}>
-            {
-              listing &&
-              <Image src={listing.filePath} layout="fill" objectFit="cover" alt={listing.filePath} />
-            }
+          <div className={styles.column}>
+            <div className={styles.imageWrapper}>
+              {
+                listing &&
+                <Image src={listing.filePath} layout="fill" objectFit="cover" alt={listing.filePath} />
+              }
+            </div>
+            <Offers className={styles.offers} />
           </div>
           <div className={styles.content}>
             <div className={styles.mainInfo}>
@@ -211,7 +215,7 @@ function PhotoInfo({ listing, user, onBuy, ownItem, onLogin }) {
                       <Button onClick={onBuy}>
                         Buy now
                       </Button>
-                      <Button onClick={() => {}} type="outlined">
+                      <Button onClick={onOffer} type="outlined">
                         Make offer
                       </Button>
                     </div>

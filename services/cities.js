@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {getIdToken} from "../utils";
 
 export const citiesApi = createApi({
-  reducerPath: 'collectionsApi',
+  reducerPath: 'citiesApi',
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
     prepareHeaders: (headers, { getState }) => {

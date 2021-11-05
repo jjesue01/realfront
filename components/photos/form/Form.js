@@ -81,7 +81,7 @@ function Form({ mode }) {
   const inputRef = useRef()
   const autocompleteRef = useRef()
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
-  const isReseller = mode === 'edit' && listing?.creator?.ID !== user?._id
+  const isReseller = mode === 'edit' && listing?.tokenID
 
   function handleFileJPGChange(file) {
     if (file !== null) {
@@ -201,10 +201,8 @@ function Form({ mode }) {
   }, [mode, router.query.id, dispatch, setValues, getCities])
 
   useEffect(function initAutocomplete() {
-    if (isLoaded) {
+    if (isLoaded && mode === 'create') {
       const handlePlaceChange = async () => {
-        if (isReseller) return;
-
         const { geometry, formatted_address, address_components } = autocompleteRef.current.getPlace()
         let city = { label: '', value: '' }
         const parsedPlace = buildPlace(address_components)
@@ -236,7 +234,7 @@ function Form({ mode }) {
       autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
-  }, [getCities, isLoaded, setValues])
+  }, [getCities, isLoaded, mode, setValues])
 
   if (listingError.message)
     return <Error errorCode={'Listing' + listingError.message} />

@@ -2,13 +2,16 @@ const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
 
+const HOMEJAB_ADDRESS = '0x35702cC56EBBbd0023F25d3560E1BCBB4A60cA2d'
+const DBUSD_ADDRESS = '0xDf1AE3eCFF4E32431e9010B04c36E901f7ED388b'
+
 if (typeof window !== "undefined" && window?.web3App) {
   const homejab = new window.web3App.eth.Contract(
     abi,
-    '0x35702cC56EBBbd0023F25d3560E1BCBB4A60cA2d');
+    HOMEJAB_ADDRESS);
   const dummyBUSD = new window.web3App.eth.Contract(
     busd,
-    '0xDf1AE3eCFF4E32431e9010B04c36E901f7ED388b');
+    DBUSD_ADDRESS);
 
   contractApi.mintAndList = (royalties, price, walletAddress) => {
     return new Promise((resolve, reject) => {
@@ -70,11 +73,23 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
-  contractApi.buy = (tokenID, price, walletAddress) => {
+  contractApi.approve = (price, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())
-      dummyBUSD.methods.approve('0x35702cC56EBBbd0023F25d3560E1BCBB4A60cA2d', weiPrice).send({from: walletAddress})
-        .once('confirmation', () => {
+      dummyBUSD.methods.approve(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
+        .once('confirmation', (confirmation, receipt) => {
+          resolve()
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
+  contractApi.buy = (tokenID, price, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      contractApi.approve(price, walletAddress)
+        .then(() => {
           homejab.methods.buy(tokenID).send({ from: walletAddress })
             .once('confirmation', (confirmation, receipt) => {
               if (receipt.events['Bought'] !== undefined) {
@@ -85,13 +100,9 @@ if (typeof window !== "undefined" && window?.web3App) {
                 console.log('error')
               }
             })
-            .on('error', (error) => {
-              reject(error)
-            })
+            .on('error', reject)
         })
-        .on('error', (error) => {
-          reject(error)
-        })
+        .catch(reject)
     })
   }
 

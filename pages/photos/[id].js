@@ -11,7 +11,7 @@ import {
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
 } from "../../services/listings";
-import {useGetTransactionsByListingIdQuery} from "../../services/transactions";
+import {useGetBidsQuery, useGetTransactionsByListingIdQuery, usePostBidMutation} from "../../services/transactions";
 import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
@@ -19,12 +19,15 @@ import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoade
 import {download, downloadNFT, getIdToken} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
+import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 
 function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
+  const [postBid] = usePostBidMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
+  const { data: bids, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
   const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
   const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery({
@@ -32,10 +35,11 @@ function PhotoDetails({ openLogin }) {
     exclude: id,
     limit: 3
   }, { skip: !cityId })
-  const isLoading = (!listing || !transactions || !listings) && !error || isFetching
+  const isLoading = (!listing || !transactions || !listings) && !error || isFetching || bidsFetching
   const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
+  const [makeOfferOpened, setMakeOfferOpened] = useState(false)
   const [transactionHash, setTransactionHash] = useState('')
   const [listingError, setListingError] = useState(false)
 
@@ -59,6 +63,32 @@ function PhotoDetails({ openLogin }) {
 
   function handleCloseConfirm() {
     setConfirmOpened(prevState => !prevState)
+  }
+
+  function toggleMakeOffer() {
+    setMakeOfferOpened(prevState => !prevState)
+  }
+
+  function handleMakeOffer(price) {
+    const contractApi = require('/services/contract')
+
+    return new Promise((resolve, reject) => {
+      contractApi.approve(price, user.walletAddress)
+        .then(() => {
+          postBid({ id, price }).unwrap()
+            .then((result) => {
+              toggleMakeOffer()
+              refetchBids()
+              resolve()
+            })
+            .catch(() => {
+              reject()
+            })
+        })
+        .catch(() => {
+          reject()
+        })
+    })
   }
 
   function handleBuy() {
@@ -131,6 +161,7 @@ function PhotoDetails({ openLogin }) {
           ownItem={ownItem}
           user={user}
           listing={listing}
+          onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
         {
@@ -158,6 +189,11 @@ function PhotoDetails({ openLogin }) {
             transactionHash={transactionHash}
             listing={listing}
             onClose={handleCloseCongratulations} />
+          <MakeOffer
+            listing={listing}
+            opened={makeOfferOpened}
+            onOffer={handleMakeOffer}
+            onClose={toggleMakeOffer} />
         </>
       }
       <FullscreenLoader opened={isLoading} />

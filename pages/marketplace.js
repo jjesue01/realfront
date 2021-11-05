@@ -66,7 +66,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   })
   const [pagination, setPagination] = useState({})
 
-  const itemsPerPage = 3
+  const itemsPerPage = 15
 
   const mounted = useRef(false)
   const mapMounted = useRef(false)
