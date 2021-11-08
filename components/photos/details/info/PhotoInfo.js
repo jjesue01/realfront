@@ -17,7 +17,7 @@ import Offers from "../offers/Offers";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
-function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin }) {
+function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -98,7 +98,10 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin }) {
                 <Image src={listing.filePath} layout="fill" objectFit="cover" alt={listing.filePath} />
               }
             </div>
-            <Offers className={styles.offers} />
+            {
+              !!bids?.length &&
+              <Offers className={styles.offers} data={bids} isOwner={ownItem} onFinish={onFinishAuction} />
+            }
           </div>
           <div className={styles.content}>
             <div className={styles.mainInfo}>
@@ -200,7 +203,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin }) {
                         fontSize={12}
                         lHeight={15}
                         color={'#878D97'}>
-                        Current price
+                        { bids?.length ? 'Top bid': 'Current price' }
                       </Typography>
                       <div className={styles.priceDetails}>
                         <Typography
@@ -211,12 +214,15 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin }) {
                         </Typography>
                       </div>
                     </div>
-                    <div className={styles.itemActions}>
-                      <Button onClick={onBuy}>
-                        Buy now
-                      </Button>
-                      <Button onClick={onOffer} type="outlined">
-                        Make offer
+                    <div className={cn(styles.itemActions, styles.noMargin)}>
+                      {
+                        !bids?.length &&
+                        <Button onClick={onBuy}>
+                          Buy now
+                        </Button>
+                      }
+                      <Button onClick={onOffer} type={ bids?.length ? 'accent': 'outlined' }>
+                        { bids?.length ? 'Place bid': 'Make offer' }
                       </Button>
                     </div>
                   </div>

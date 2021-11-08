@@ -16,10 +16,27 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, downloadNFT, getIdToken} from "../../utils";
+import {download, getIdToken} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
+
+const SAMPLE_BIDS = [
+  // {
+  //   _id: '0',
+  //   price: 50,
+  //   bidder: { id: '615b21390289776fb92781f6' },
+  //   from: '0xb2357933a57bec88a1E4aaC469eF9483306F4413',
+  //   createdAt: Date.now() - 20000
+  // },
+  // {
+  //   _id: '1',
+  //   price: 40,
+  //   bidder: { id: '615b21390289776fb92781f6' },
+  //   from: '0xb2357933a57bec88a1E4aaC469eF9483306F4413',
+  //   createdAt: Date.now() - 40000
+  // },
+]
 
 function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
@@ -27,7 +44,7 @@ function PhotoDetails({ openLogin }) {
   const user = useSelector(state => state.auth.user)
   const [postBid] = usePostBidMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
-  const { data: bids, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
+  const { data: bids = SAMPLE_BIDS, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
   const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
   const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery({
@@ -42,6 +59,7 @@ function PhotoDetails({ openLogin }) {
   const [makeOfferOpened, setMakeOfferOpened] = useState(false)
   const [transactionHash, setTransactionHash] = useState('')
   const [listingError, setListingError] = useState(false)
+  const [finishAuction, setFinishAuction] = useState(false)
 
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
@@ -89,6 +107,16 @@ function PhotoDetails({ openLogin }) {
           reject()
         })
     })
+  }
+
+  function handleCancelBid() {
+
+  }
+
+  function handleFinishAuction() {
+    console.log('yo')
+    setFinishAuction(true)
+    setConfirmOpened(true)
   }
 
   function handleBuy() {
@@ -160,7 +188,9 @@ function PhotoDetails({ openLogin }) {
           onLogin={openLogin}
           ownItem={ownItem}
           user={user}
+          bids={bids}
           listing={listing}
+          onFinishAuction={handleFinishAuction}
           onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
@@ -176,11 +206,6 @@ function PhotoDetails({ openLogin }) {
       {
         !ownItem &&
         <>
-          <ConfirmCheckout
-            opened={confirmOpened}
-            listing={listing}
-            onClose={handleCloseConfirm}
-            onCheckout={handleBuy} />
           <DoneCongratulation
             imageUrl={listing?.filePath}
             message={`You just purchased ${listing?.name}. It should be confirmed on the blockhain shortly.`}
@@ -190,12 +215,20 @@ function PhotoDetails({ openLogin }) {
             listing={listing}
             onClose={handleCloseCongratulations} />
           <MakeOffer
+            title={ bids?.length ? 'Place a bid' : 'Make an offer' }
+            btnTitle={ bids?.length ? 'Place bid' : 'Make offer' }
             listing={listing}
             opened={makeOfferOpened}
             onOffer={handleMakeOffer}
             onClose={toggleMakeOffer} />
         </>
       }
+      <ConfirmCheckout
+        opened={confirmOpened}
+        isBid={finishAuction}
+        listing={listing}
+        onClose={handleCloseConfirm}
+        onCheckout={handleBuy} />
       <FullscreenLoader opened={isLoading} />
     </main>
   )

@@ -22,7 +22,8 @@ module.exports = {
   images: {
     domains: [
       'nft-market-dev.s3.us-east-2.amazonaws.com',
-      'nft-market-dev.s3.amazonaws.com'
+      'nft-market-dev.s3.amazonaws.com',
+      'homejab-dev.mypinata.cloud'
     ],
   },
 }

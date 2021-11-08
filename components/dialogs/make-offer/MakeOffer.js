@@ -6,7 +6,7 @@ import Input from "../../input/Input";
 import Button from "../../button/Button";
 import {useFormik} from "formik";
 
-function MakeOffer({ opened, onClose, onOffer, listing }) {
+function MakeOffer({ opened, onClose, onOffer, listing, title, btnTitle }) {
   const { errors, touched, setValues, ...formik } = useFormik({
     initialValues: {
       price: 0
@@ -45,7 +45,7 @@ function MakeOffer({ opened, onClose, onOffer, listing }) {
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
       <form className={styles.dialog} onSubmit={formik.handleSubmit}>
         <Typography fontWeight={600} fontSize={24} lHeight={29} align="center">
-          Make an offer
+          { title }
         </Typography>
         <Input
           className={styles.input}
@@ -59,7 +59,7 @@ function MakeOffer({ opened, onClose, onOffer, listing }) {
           errorText={errors.price}
           placeholder="Enter a price" />
         <Button className={styles.btnMakeOffer} htmlType="submit" loading={formik.isSubmitting}>
-          Make offer
+          { btnTitle }
         </Button>
       </form>
     </PopupWrapper>
