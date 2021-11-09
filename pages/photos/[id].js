@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import styles from '../../styles/PhotoDetails.module.sass'
 import PhotoInfo from "../../components/photos/details/info/PhotoInfo";
 import TradingHistory from "../../components/photos/details/trading-history/TradingHistory";
@@ -11,7 +11,12 @@ import {
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
 } from "../../services/listings";
-import {useGetBidsQuery, useGetTransactionsByListingIdQuery, usePostBidMutation} from "../../services/transactions";
+import {
+  useDeleteBidMutation,
+  useGetBidsQuery,
+  useGetTransactionsByListingIdQuery,
+  usePostBidMutation
+} from "../../services/transactions";
 import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
@@ -21,30 +26,15 @@ import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 
-const SAMPLE_BIDS = [
-  // {
-  //   _id: '0',
-  //   price: 50,
-  //   bidder: { id: '615b21390289776fb92781f6' },
-  //   from: '0xb2357933a57bec88a1E4aaC469eF9483306F4413',
-  //   createdAt: Date.now() - 20000
-  // },
-  // {
-  //   _id: '1',
-  //   price: 40,
-  //   bidder: { id: '615b21390289776fb92781f6' },
-  //   from: '0xb2357933a57bec88a1E4aaC469eF9483306F4413',
-  //   createdAt: Date.now() - 40000
-  // },
-]
-
 function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
   const [postBid] = usePostBidMutation()
+  const [deleteBid] = useDeleteBidMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
-  const { data: bids = SAMPLE_BIDS, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
+  const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
+  const bids = bidsData?.docs || []
   const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
   const { data: listings, refetch: refetchListings } = useGetPublishedListingsQuery({
@@ -61,6 +51,12 @@ function PhotoDetails({ openLogin }) {
   const [listingError, setListingError] = useState(false)
   const [finishAuction, setFinishAuction] = useState(false)
 
+  const maxBid = useMemo(() => {
+    if (bidsData?.docs?.length) {
+      return Math.max.apply(null, bidsData?.docs.map(({ price }) => price))
+    }
+    return 0
+  }, [bidsData])
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
   function handleViewCollection() {
@@ -110,11 +106,17 @@ function PhotoDetails({ openLogin }) {
   }
 
   function handleCancelBid() {
+    const bid = bids.find(({ bidder: { id } }) => id === user._id)
 
+    if (bid) {
+      deleteBid({ id: bid._id }).unwrap()
+        .then(() => {
+          refetchBids()
+        })
+    }
   }
 
   function handleFinishAuction() {
-    console.log('yo')
     setFinishAuction(true)
     setConfirmOpened(true)
   }
@@ -189,7 +191,9 @@ function PhotoDetails({ openLogin }) {
           ownItem={ownItem}
           user={user}
           bids={bids}
+          maxBid={maxBid}
           listing={listing}
+          onCancelBid={handleCancelBid}
           onFinishAuction={handleFinishAuction}
           onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
@@ -218,6 +222,7 @@ function PhotoDetails({ openLogin }) {
             title={ bids?.length ? 'Place a bid' : 'Make an offer' }
             btnTitle={ bids?.length ? 'Place bid' : 'Make offer' }
             listing={listing}
+            maxBidPrice={maxBid}
             opened={makeOfferOpened}
             onOffer={handleMakeOffer}
             onClose={toggleMakeOffer} />

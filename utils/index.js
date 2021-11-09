@@ -160,9 +160,12 @@ const getDuration = (timeAgoInSeconds) => {
 
 export const timeAgo = (date) => {
   const timeAgoInSeconds = Math.floor((new Date() - new Date(date)) / 1000);
-  const {interval, epoch} = getDuration(timeAgoInSeconds);
-  const suffix = interval === 1 ? '' : 's';
-  return `${interval} ${epoch}${suffix} ago`;
+  const duration = getDuration(timeAgoInSeconds);
+
+  if (!duration) return 'just now'
+
+  const suffix = duration.interval === 1 ? '' : 's';
+  return `${duration.interval} ${duration.epoch}${suffix} ago`;
 };
 
 export function escapeValue(str) {

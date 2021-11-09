@@ -17,7 +17,7 @@ import Offers from "../offers/Offers";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
-function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction }) {
+function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxBid, onFinishAuction, onCancelBid }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -100,7 +100,12 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
             </div>
             {
               !!bids?.length &&
-              <Offers className={styles.offers} data={bids} isOwner={ownItem} onFinish={onFinishAuction} />
+              <Offers
+                className={styles.offers}
+                data={bids}
+                isOwner={ownItem}
+                onCancel={onCancelBid}
+                onFinish={onFinishAuction} />
             }
           </div>
           <div className={styles.content}>
@@ -210,7 +215,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                           fontSize={28}
                           fontWeight={600}
                           lHeight={34}>
-                          { getMoneyView(listing?.price) }
+                          { getMoneyView(bids?.length ? maxBid : listing?.price) }
                         </Typography>
                       </div>
                     </div>

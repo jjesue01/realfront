@@ -15,7 +15,7 @@ function Offers({ className, data, isOwner, onFinish, onCancel }) {
         <p>{getMoneyView(item.price)}</p>
       </div>
       <div className={cn(styles.col, styles.colFrom)}>
-        <p>{ item.from }</p>
+        <p>{ item.bidder.address }</p>
       </div>
       <div className={cn(styles.col, styles.colDate)}>
         <p>{timeAgo(item.createdAt)}</p>
@@ -49,7 +49,7 @@ function Offers({ className, data, isOwner, onFinish, onCancel }) {
         }
         {
           hasBid && user && !isOwner &&
-          <button onClick={() => {}} className={cn(styles.btnFlat, styles.danger)}>
+          <button onClick={onCancel} className={cn(styles.btnFlat, styles.danger)}>
             Cancel
           </button>
         }

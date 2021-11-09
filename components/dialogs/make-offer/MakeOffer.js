@@ -6,7 +6,7 @@ import Input from "../../input/Input";
 import Button from "../../button/Button";
 import {useFormik} from "formik";
 
-function MakeOffer({ opened, onClose, onOffer, listing, title, btnTitle }) {
+function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnTitle }) {
   const { errors, touched, setValues, ...formik } = useFormik({
     initialValues: {
       price: 0
@@ -14,7 +14,7 @@ function MakeOffer({ opened, onClose, onOffer, listing, title, btnTitle }) {
     validate: handleValidate,
     onSubmit: handleSubmit
   })
-  const listingPrice = listing?.price
+  const listingPrice = !!maxBidPrice ? maxBidPrice : listing?.price;
 
   function handleValidate(values) {
     const errors = {}

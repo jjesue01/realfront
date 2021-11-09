@@ -20,6 +20,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, isBid = false }
   }
 
   function handleCheckout() {
+    if (isBid) return;
     setLoading(true)
     onCheckout()
       .finally(() => {

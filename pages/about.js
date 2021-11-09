@@ -19,7 +19,7 @@ function About() {
       <AboutUs />
       <HowItWorks center />
       <WhoIsItFor />
-      <FAQ />
+      {/*<FAQ />*/}
     </main>
   )
 }

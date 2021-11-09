@@ -32,7 +32,7 @@ export const transactionsApi = createApi({
       query: (listingId) => ({
         url: '/bids',
         params: {
-          //limit: 20,
+          limit: 20,
           listingID: listingId
         }
       })
@@ -47,6 +47,12 @@ export const transactionsApi = createApi({
         }
       })
     }),
+    deleteBid: builder.mutation({
+      query: ({ id }) => ({
+        url: `/bids/${id}`,
+        method: 'DELETE'
+      })
+    }),
   }),
 })
 
@@ -54,5 +60,6 @@ export const {
   useGetTransactionsByListingIdQuery,
   useGetProfileTransactionsQuery,
   useGetBidsQuery,
-  usePostBidMutation
+  usePostBidMutation,
+  useDeleteBidMutation,
 } = transactionsApi
