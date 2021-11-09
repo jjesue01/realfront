@@ -57,9 +57,9 @@ function Hero() {
         <div className={styles.content}>
           <div className={styles.heroContent}>
             <h1>
-              Lorem ipsum dolor sit amet, consectetur
+              Support real artists. Own the real world.
             </h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <p>Collect and trade real world images from real estate photographers nationwide, help support the artists that give us the world.</p>
             <form onSubmit={handleSubmit} className={styles.form}>
               <Input
                 ref={inputRef}

@@ -14,7 +14,7 @@ function HowItWorks({ center = false, onConnect }) {
     <section className={styles.root}>
       <div className="container">
         <SectionTitle center={center}>
-          How it works?
+          How it works
         </SectionTitle>
         {
           center &&
@@ -27,7 +27,7 @@ function HowItWorks({ center = false, onConnect }) {
               align={'center'}
               maxWidth={615}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Feugiat nulla scelerisque orci, enim morbi tellus mauris. Nam sit tincidunt at sagittis sem enim ut nunc maecenas.
+              Creating an NFT in HomeJab Real should be quick and easy (we want you happy). Just follow the steps below. Of course, if there are any issues, you can always email us at real@homejab.com.
             </Typography>
         }
       </div>
@@ -56,7 +56,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras.
+              Once you’ve set up your MetaMask wallet, connect it to HomeJab Real by clicking Connect Wallet in the top right corner.
             </Typography>
           </div>
           <div className={styles.step}>
@@ -73,7 +73,7 @@ function HowItWorks({ center = false, onConnect }) {
               lHeight={24}
               margin={'32px 0 18px'}
               color={'#111111'}>
-              Create your collection
+              Create your NFTs
             </Typography>
             <Typography
               fontFamily={'Lato'}
@@ -82,7 +82,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras.
+              Click Create to set up your NFTs.  Add social links, a description, profile & banner images, and set a secondary sales fee.
             </Typography>
           </div>
           <div className={styles.step}>
@@ -108,7 +108,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras.
+              Upload your work, add a title and description, and customize your NFTs with properties, stats, and unlockable content.
             </Typography>
           </div>
           <div className={styles.step}>
@@ -134,7 +134,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras.
+              Choose between auctions, fixed price listings, and declining price listings. You choose how you want to sell your NFTs, and we help you sell them!
             </Typography>
           </div>
         </div>

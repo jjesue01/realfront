@@ -1,5 +1,4 @@
 import React from "react";
-import Layout from "../components/layout";
 import Head from "next/head";
 import CommonHero from "../components/common-hero/CommonHero";
 import AboutUs from "../components/about/about-us/AboutUs";
@@ -15,7 +14,7 @@ function About() {
       </Head>
       <CommonHero
         title={'About'}
-        description={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque amet vel facilisis imperdiet mi pellentesque tincidunt turpis.'}
+        description={'HomeJab Real is a marketplace where real estate photographers can showcase and promote their work, without fear of losing ownership of their efforts.'}
         imgUrl={'/about-hero.jpg'} />
       <AboutUs />
       <HowItWorks center />
