@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import styles from '../../../styles/Sell.module.sass'
 import Head from "next/head";
 import Link from "next/link";
@@ -17,10 +17,11 @@ import DoneCongratulation from "../../../components/dialogs/done-congratulation/
 import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {clamp, getUser} from "../../../utils";
-import {error} from "next/dist/build/output/log";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useSelector} from "react-redux";
 import Error from "../../../components/error/Error";
+import DollarIcon from '/public/icons/dollar.svg'
+import HistoryIcon from '/public/icons/history.svg'
 
 const scheduleOptions = [
   {
@@ -58,6 +59,8 @@ function SellItem() {
   const [publishListing] = usePublishListingMutation()
   const [isDone, setIsDone] = useState(false)
   const [lowBalance, setLowBalance] = useState(false)
+  const [sellType, setSellType] = useState('fixed')
+  const [marketplaceFee, setMarketplaceFee] = useState(2.5)
   const [switchers, setSwitchers] = useState({
     schedule: false,
     private: false
@@ -115,6 +118,13 @@ function SellItem() {
       ...prevState,
       royalties: result
     }))
+  }
+
+  function handleTypeChange(type) {
+    return function () {
+      setSellType(type)
+    }
+
   }
 
   function handleCloseCongratulations() {
@@ -176,6 +186,17 @@ function SellItem() {
       })
   }
 
+  const handleInitFee = useCallback(() => {
+    if (user !== null) {
+      const contractApi = require('/services/contract')
+      console.log(contractApi)
+      contractApi.getMarketplaceFee()
+        .then(fee => {
+          setMarketplaceFee(+fee)
+        })
+    }
+  }, [user])
+
   useEffect(function initListing() {
     if (listing !== undefined && listing.tokenID !== undefined) {
       setValues(prevState => ({
@@ -186,6 +207,10 @@ function SellItem() {
       }))
     }
   }, [listing, setValues])
+
+  useEffect(function initFee() {
+    handleInitFee()
+  }, [handleInitFee])
 
   if (error)
     return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />
@@ -243,7 +268,28 @@ function SellItem() {
             </Typography>
             <form className={styles.form} onSubmit={formik.handleSubmit}>
               <div className={styles.fieldsContainer}>
+                <div className={styles.sellTypes}>
+                  <button
+                    type="button"
+                    onClick={handleTypeChange('fixed')}
+                    className={cn(styles.sellType, { [styles.sellTypeActive]: sellType === 'fixed' })}>
+                    <DollarIcon />
+                    <Typography tag="span" fontSize={16} fontWeight={600} lHeight={20} margin={'13px 0 0'}>
+                      Fixed Price
+                    </Typography>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTypeChange('auction')}
+                    className={cn(styles.sellType, { [styles.sellTypeActive]: sellType === 'auction' })}>
+                    <HistoryIcon />
+                    <Typography tag="span" fontSize={16} fontWeight={600} lHeight={20} margin={'13px 0 0'}>
+                      Timed Auction
+                    </Typography>
+                  </button>
+                </div>
                 <Input
+                  className={styles.field}
                   type="price"
                   name="price"
                   value={formik.values.price}
@@ -326,7 +372,10 @@ function SellItem() {
                 </div>
               </div>
               <div className={styles.summaryContainer}>
-                <Summary loading={formik.isSubmitting} royalty={listing?.tokenID ? formik.values.royalties : 0} />
+                <Summary
+                  loading={formik.isSubmitting}
+                  marketplaceFee={marketplaceFee}
+                  royalty={listing?.tokenID ? formik.values.royalties : 0} />
               </div>
             </form>
           </div>

@@ -64,15 +64,24 @@ function PhotoDetails({ openLogin }) {
   }
 
   function toggleConfirmDialog() {
-    user ?
-      dispatch(listingsApi.endpoints.getListingById.initiate(id, { forceRefetch: true }))
-        .then(({ data }) => {
-          if (data?.isPublished) {
-            setConfirmOpened(prevState => !prevState)
-          }
-        })
-      :
-      openLogin()
+    validatePublish()
+      .then(() => {
+        setConfirmOpened(prevState => !prevState)
+      })
+  }
+
+  function validatePublish() {
+    return new Promise(resolve => {
+      user ?
+        dispatch(listingsApi.endpoints.getListingById.initiate(id, { forceRefetch: true }))
+          .then(({ data }) => {
+            if (data?.isPublished) {
+              resolve()
+            }
+          })
+        :
+        openLogin()
+    })
   }
 
   function handleCloseConfirm() {
@@ -80,7 +89,10 @@ function PhotoDetails({ openLogin }) {
   }
 
   function toggleMakeOffer() {
-    setMakeOfferOpened(prevState => !prevState)
+    validatePublish()
+      .then(() => {
+        setMakeOfferOpened(prevState => !prevState)
+      })
   }
 
   function handleMakeOffer(price) {
@@ -116,9 +128,37 @@ function PhotoDetails({ openLogin }) {
     }
   }
 
+  function validateSell() {
+    const contract = require('/services/contract')
+
+    return new Promise((resolve, reject) => {
+      contract.getSellData(listing.tokenID, user.walletAddress)
+        .then(({ forSell }) => {
+          if (forSell) {
+            resolve()
+          }
+        })
+    })
+  }
+
   function handleFinishAuction() {
-    setFinishAuction(true)
-    setConfirmOpened(true)
+    const contract = require('/services/contract')
+    const bidderWalletAddress = bids[0].bidder.address
+    validateSell()
+      .then(() => {
+        contract.editPrice(listing.tokenID, maxBid, user.walletAddress)
+          .then(() => {
+            // contract.pureBuy(listing?.tokenID, bidderWalletAddress)
+            //   .then((result) => {
+            //     console.log(result)
+            //   })
+            //   .catch(console.log)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      })
+
   }
 
   function handleBuy() {
@@ -194,7 +234,7 @@ function PhotoDetails({ openLogin }) {
           maxBid={maxBid}
           listing={listing}
           onCancelBid={handleCancelBid}
-          onFinishAuction={handleFinishAuction}
+          onFinishAuction={toggleConfirmDialog}
           onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
         <TradingHistory data={transactions?.docs} />
@@ -230,9 +270,10 @@ function PhotoDetails({ openLogin }) {
       }
       <ConfirmCheckout
         opened={confirmOpened}
-        isBid={finishAuction}
+        maxBid={maxBid}
         listing={listing}
         onClose={handleCloseConfirm}
+        onFinishAuction={handleFinishAuction}
         onCheckout={handleBuy} />
       <FullscreenLoader opened={isLoading} />
     </main>

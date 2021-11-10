@@ -9,30 +9,35 @@ import Button from "../../button/Button";
 
 const MARKETPLACE_FEE = 2.5
 
-function ConfirmCheckout({ opened, listing, onClose, onCheckout, isBid = false }) {
+function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinishAuction }) {
   const [checked, setChecked] = useState(false)
   const [isLoading, setLoading] = useState(false)
 
-  const total = !isBid ? listing?.price : listing?.price * (1 - MARKETPLACE_FEE / 100)
+  const total = !maxBid ? listing?.price : maxBid * (1 - MARKETPLACE_FEE / 100)
 
   function toggleCheckbox() {
     setChecked(prevState => !prevState)
   }
 
   function handleCheckout() {
-    if (isBid) return;
     setLoading(true)
-    onCheckout()
-      .finally(() => {
-        setLoading(false)
-      })
+
+    if (!!maxBid) {
+      onFinishAuction()
+    } else {
+      console.log('buy')
+      onCheckout()
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
       <div className={styles.dialog}>
         <Typography fontWeight={600} fontSize={24} lHeight={29} align="center">
-          { isBid ? 'Finish auction': 'Complete checkout' }
+          { !!maxBid ? 'Finish auction': 'Complete checkout' }
         </Typography>
         <div className={styles.table}>
           <div className={styles.tableHeader}>
@@ -63,13 +68,13 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, isBid = false }
               <div className={styles.priceContainer}>
                 <div className={styles.price}>
                   <Typography fontWeight={600} fontSize={16} lHeight={20} margin={'0 8px 0 0'}>
-                    { getMoneyView(listing?.price) }
+                    { getMoneyView(!maxBid ? listing?.price : maxBid) }
                   </Typography>
                 </div>
               </div>
             </div>
             {
-              isBid &&
+              !!maxBid &&
               <div className={styles.feeItem}>
                 <Typography fontWeight={600} fontSize={16} lHeight={20}>
                   Fees
@@ -96,7 +101,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, isBid = false }
           </div>
         </div>
         {
-          !isBid &&
+          !maxBid &&
           <Checkbox
             className={styles.checkbox}
             checked={checked}
@@ -104,8 +109,8 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, isBid = false }
             onChange={toggleCheckbox} />
         }
         <div className={styles.actions}>
-          <Button onClick={handleCheckout} disabled={!checked && !isBid} loading={isLoading}>
-            { isBid ? 'Finish': 'Checkout' }
+          <Button onClick={handleCheckout} disabled={!checked && !maxBid} loading={isLoading}>
+            { !!maxBid ? 'Finish': 'Checkout' }
           </Button>
         </div>
       </div>

@@ -3,9 +3,8 @@ import styles from './Summary.module.sass'
 import Typography from "../../Typography";
 import Button from "../../button/Button";
 
-const MARKETPLACE_FEE = 2.5
 
-function Summary({ loading, royalty }) {
+function Summary({ loading, royalty, marketplaceFee }) {
   return (
     <div className={styles.summary}>
       <Typography fontWeight={600} fontSize={20} lHeight={24}>
@@ -26,7 +25,7 @@ function Summary({ loading, royalty }) {
       <div className={styles.fee}>
         <p>To Home Jab</p>
         <div className={styles.feeLine} />
-        <span>{MARKETPLACE_FEE}%</span>
+        <span>{marketplaceFee}%</span>
       </div>
       {
         !!royalty &&
@@ -39,7 +38,7 @@ function Summary({ loading, royalty }) {
       <div className={styles.fee}>
         <p>Total</p>
         <div className={styles.feeLine} />
-        <span>{MARKETPLACE_FEE + royalty}%</span>
+        <span>{marketplaceFee + royalty}%</span>
       </div>
       <Button className={styles.btnSubmit} htmlType="submit" loading={loading}>
         Post your listing

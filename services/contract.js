@@ -90,20 +90,32 @@ if (typeof window !== "undefined" && window?.web3App) {
     return new Promise((resolve, reject) => {
       contractApi.approve(price, walletAddress)
         .then(() => {
-          homejab.methods.buy(tokenID).send({ from: walletAddress })
-            .once('confirmation', (confirmation, receipt) => {
-              if (receipt.events['Bought'] !== undefined) {
-                resolve(receipt)
-                console.log('bought')
-              } else {
-                reject()
-                console.log('error')
-              }
-            })
-            .on('error', reject)
+          return contractApi.pureBuy(tokenID, walletAddress)
+            .then(resolve)
+            .catch(reject)
         })
         .catch(reject)
     })
+  }
+
+  contractApi.pureBuy = (tokenID, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      homejab.methods.buy(tokenID).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          if (receipt.events['Bought'] !== undefined) {
+            resolve(receipt)
+            console.log('bought')
+          } else {
+            reject()
+            console.log('error')
+          }
+        })
+        .on('error', reject)
+    })
+  }
+
+  contractApi.getMarketplaceFee = async () => {
+    return homejab.methods.marketplaceFee().call()
   }
 
   contractApi.balanceOf = async (address) => {
