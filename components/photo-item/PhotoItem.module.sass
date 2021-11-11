@@ -8,7 +8,8 @@ div.btnMenu
   width: 100%
   border: 1px solid #D3D9E1
   background: #fff
-  transition: box-shadow 300ms cubic-bezier(0, 0, 0, 1)
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: box-shadow, border-color
   cursor: pointer
   &:hover
     box-shadow: 0 34px 40px rgba(78, 96, 91, 0.11)
@@ -101,3 +102,6 @@ div.btnMenu
     fill: #FF6868
 .collection
   min-height: 15px
+.active
+  border-color: #1DC3A6
+  box-shadow: 0 34px 40px rgba(29, 195, 166, 0.3)

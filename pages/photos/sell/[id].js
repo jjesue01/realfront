@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import styles from '../../../styles/Sell.module.sass'
 import Head from "next/head";
 import Link from "next/link";
@@ -78,6 +78,7 @@ function SellItem() {
     onSubmit: handleSubmit
   });
 
+  const mounted = useRef(false)
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
 
   function handleSwitcherChange({ target: { name, value } }) {
@@ -187,15 +188,14 @@ function SellItem() {
   }
 
   const handleInitFee = useCallback(() => {
-    if (user !== null) {
-      const contractApi = require('/services/contract')
-      console.log(contractApi)
-      contractApi.getMarketplaceFee()
-        .then(fee => {
-          setMarketplaceFee(+fee)
-        })
-    }
-  }, [user])
+    const contractApi = require('/services/contract')
+    console.log('init fee')
+    contractApi.getMarketplaceFee()
+      .then(fee => {
+        setMarketplaceFee(+fee)
+      })
+
+  }, [])
 
   useEffect(function initListing() {
     if (listing !== undefined && listing.tokenID !== undefined) {
@@ -209,12 +209,15 @@ function SellItem() {
   }, [listing, setValues])
 
   useEffect(function initFee() {
-    handleInitFee()
-  }, [handleInitFee])
+    if (!mounted.current && user) {
+      handleInitFee()
+      mounted.current = true
+    }
+  }, [handleInitFee, user])
 
   if (error)
     return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />
-  if (!ownItem)
+  if (!ownItem && !isFetching)
     return <Error errorCode={'ListingNoAccess' } />
 
   return (
@@ -234,7 +237,7 @@ function SellItem() {
                   {
                     listing &&
                     <Image
-                      src={listing.filePath}
+                      src={listing.thumbnail}
                       layout="fill"
                       objectFit="cover"
                       alt={listing.name} />
@@ -386,7 +389,7 @@ function SellItem() {
         onClose={toggleSellSteps}
         onDone={handleDone} />
       <DoneCongratulation
-        imageUrl={listing?.filePath}
+        imageUrl={listing?.thumbnail}
         message={`Great! You just set on sale - ${listing?.name}`}
         opened={isDone}
         listing={listing}

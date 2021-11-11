@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.sass'
@@ -23,7 +23,6 @@ import Notifications from "./notifications/Notifications";
 import {pushNotification} from "../features/notifications/notificationsSlice";
 import {
   useGetAutocompleteCitiesQuery,
-  useGetCitiesQuery
 } from "../services/cities";
 
 const accountLinks = [

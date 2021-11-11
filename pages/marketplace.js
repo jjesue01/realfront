@@ -14,14 +14,13 @@ import PhotoItem from "../components/photo-item/PhotoItem";
 import Select from "../components/select/Select";
 import Map from "../components/marketplace/map/Map";
 import Pagination from "../components/pagination/Pagination";
-import {buildFilterOptions, getIdToken, getSortedArray, scrollToTop} from "../utils";
+import { getIdToken, scrollToTop} from "../utils";
 import {useRouter} from "next/router";
-import {listingsApi, useGetPublishedListingsQuery, useGetTagsQuery} from "../services/listings";
+import {listingsApi, useGetTagsQuery} from "../services/listings";
 import {authApi} from "../services/auth";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
 import {citiesApi} from "../services/cities";
-import {usePrevious} from "../hooks/usePrevious";
 
 const sortOptions = [
   {
@@ -60,6 +59,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   const [listings, setListings] = useState([])
   const [isMapHidden, setIsMapHidden] = useState(false)
   const [showReset, setShowReset] = useState(false)
+  const [activeItem, setActiveItem] = useState(null)
   const [filters, setFilters] = useState({
     ...initialFilters,
     sortBy: 'price:desc'
@@ -118,6 +118,18 @@ function Marketplace({ toggleFooter, openLogin }) {
       ...prevFilters,
       bounds
     }))
+  }
+
+  function handleMouseEnter(item) {
+    return function () {
+      setActiveItem(item)
+      console.log('mouse over')
+    }
+  }
+
+  function handleMouseLeave() {
+    setActiveItem(null)
+    console.log('mouse out')
   }
 
   const getCities = useCallback((value) => {
@@ -244,7 +256,11 @@ function Marketplace({ toggleFooter, openLogin }) {
         {
           !isMapHidden &&
           <div className={styles.mapContainer}>
-            <Map items={listings} onBoundsChange={handleMapChange} />
+            <Map
+              items={listings}
+              activeItem={activeItem}
+              onActiveItemChange={setActiveItem}
+              onBoundsChange={handleMapChange} />
             <button onClick={toggleMap} className={styles.btnHideMap}>
               <ArrowLongIcon />
             </button>
@@ -308,8 +324,11 @@ function Marketplace({ toggleFooter, openLogin }) {
                           imageClassName={styles.imageWrapper}
                           key={item._id}
                           favorite={user?.favorites?.includes(item._id)}
+                          active={ activeItem?._id === item._id }
                           isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
                           onLogin={openLogin}
+                          onMouseEnter={handleMouseEnter(item)}
+                          onMouseLeave={handleMouseLeave}
                           data={item} />
                       ))
                     }

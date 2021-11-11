@@ -144,6 +144,8 @@ function PhotoDetails({ openLogin }) {
   function handleFinishAuction() {
     const contract = require('/services/contract')
     const bidderWalletAddress = bids[0].bidder.address
+    return;
+
     validateSell()
       .then(() => {
         contract.editPrice(listing.tokenID, maxBid, user.walletAddress)
@@ -251,7 +253,7 @@ function PhotoDetails({ openLogin }) {
         !ownItem &&
         <>
           <DoneCongratulation
-            imageUrl={listing?.filePath}
+            imageUrl={listing?.thumbnail}
             message={`You just purchased ${listing?.name}. It should be confirmed on the blockhain shortly.`}
             opened={isDone}
             title={'Complete checkout'}

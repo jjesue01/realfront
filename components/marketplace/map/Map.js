@@ -14,10 +14,9 @@ const containerStyle = {
 const center = { lat: 39.099724, lng: -94.578331 }
 const libraries = ['places']
 
-function Map({ items, onBoundsChange }) {
+function Map({ items, onBoundsChange, activeItem, onActiveItemChange }) {
   const [map, setMap] = useState(null)
   const [infoBox, setInfoBox] = useState(null)
-  const [activeMarker, setActiveMarker] = useState('')
   const [address, setAddress] = useState('')
 
   const markers = useRef({})
@@ -114,10 +113,7 @@ function Map({ items, onBoundsChange }) {
 
   function handleMarkerClick(item) {
     return function () {
-      setActiveMarker(item._id)
-      infoBox.close()
-      infoBox.open(map, markers.current[item._id])
-      setAddress(item.address)
+      onActiveItemChange(item)
     }
   }
 
@@ -129,10 +125,20 @@ function Map({ items, onBoundsChange }) {
 
   function handleMarkerUnmount(item) {
     return function (marker) {
-      if (activeMarker === item._id)
-        setActiveMarker('')
+      if (activeItem?._id === item._id)
+        onActiveItemChange(null)
     }
   }
+
+  useEffect(function manageInfoBox() {
+    if (activeItem !== null) {
+      infoBox.close()
+      infoBox.open(map, markers.current[activeItem._id])
+      setAddress(activeItem.address)
+    } else {
+      infoBox?.close()
+    }
+  }, [activeItem, infoBox, map])
 
   return (
     <div className={styles.root}>
@@ -157,7 +163,7 @@ function Map({ items, onBoundsChange }) {
                     key={item._id}
                     position={getLatLng(item)}
                     onClick={handleMarkerClick(item)}
-                    icon={activeMarker === item._id ? activeIcon : defaultIcon}
+                    icon={activeItem?._id === item._id ? activeIcon : defaultIcon}
                     clusterer={clusterer}
                   />
                 ))

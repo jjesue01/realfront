@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import styles from './ConfirmCheckout.module.sass'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
@@ -6,14 +6,17 @@ import Image from "next/image";
 import {getMoneyView} from "../../../utils";
 import Checkbox from "../../checkbox/Checkbox";
 import Button from "../../button/Button";
-
-const MARKETPLACE_FEE = 2.5
+import {useSelector} from "react-redux";
 
 function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinishAuction }) {
+  const user = useSelector(state => state.auth.user)
+  const [marketplaceFee, setMarketplaceFee] = useState(2.5)
   const [checked, setChecked] = useState(false)
   const [isLoading, setLoading] = useState(false)
 
-  const total = !maxBid ? listing?.price : maxBid * (1 - MARKETPLACE_FEE / 100)
+  const mounted = useRef(false)
+
+  const total = !maxBid ? listing?.price : maxBid * (1 - marketplaceFee / 100)
 
   function toggleCheckbox() {
     setChecked(prevState => !prevState)
@@ -32,6 +35,22 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
         })
     }
   }
+
+  const handleInitFee = useCallback(() => {
+    const contractApi = require('/services/contract')
+
+    contractApi.getMarketplaceFee()
+      .then(fee => {
+        setMarketplaceFee(+fee)
+      })
+  }, [])
+
+  useEffect(function initFee() {
+    if (!mounted.current && user) {
+      handleInitFee()
+      mounted.current = true
+    }
+  }, [handleInitFee, user])
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
@@ -55,7 +74,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
                   {
                     listing &&
                       <Image
-                        src={listing.filePath}
+                        src={listing.thumbnail}
                         layout="fill"
                         objectFit="cover"
                         alt={listing.name} />
@@ -82,7 +101,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
                 <div className={styles.fee}>
                   <p>Home Jab Fee</p>
                   <div className={styles.feeLine} />
-                  <span>{MARKETPLACE_FEE}%</span>
+                  <span>{marketplaceFee}%</span>
                 </div>
               </div>
             }

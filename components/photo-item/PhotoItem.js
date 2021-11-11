@@ -11,7 +11,17 @@ import {useLikeListingMutation} from "../../services/listings";
 import {getMoneyView} from "../../utils";
 import {useSelector} from "react-redux";
 
-function PhotoItem({ className, imageClassName, data, type, favorite = false, isOwn = false, onLogin }) {
+function PhotoItem({
+  className,
+  imageClassName,
+  data,
+  type,
+  favorite = false,
+  isOwn = false,
+  active = false,
+  onLogin,
+  ...otherProps
+}) {
   const user = useSelector(state => state.auth.user)
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
@@ -44,11 +54,11 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false, is
   }, [favorite, data])
 
   return (
-    <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })}>
+    <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })} { ...otherProps }>
       <ContextMenu href={`/photos/edit/${data._id}`}  className={styles.btnMenu} hasEdit={isOwn} />
       <Link href={`/photos/${data._id}`} passHref>
         <a onClick={handleClick}>
-          <div className={styles.root}>
+          <div className={cn(styles.root, { [styles.active]: active })}>
             <div className={styles.header}>
               <button
                 onClick={toggleFavorite}
@@ -69,7 +79,7 @@ function PhotoItem({ className, imageClassName, data, type, favorite = false, is
             </div>
             <div className={cn(imageClassName, styles.imageWrapper)}>
               <Image
-                src={data.filePath}
+                src={data.thumbnail}
                 layout="fill"
                 objectFit="cover"
                 alt="apartments" />

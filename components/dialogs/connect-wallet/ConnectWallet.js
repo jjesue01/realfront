@@ -15,11 +15,11 @@ const wallets = [
 ]
 
 const BINANCE_TESTNET = {
-  chainId: '0x61', // A 0x-prefixed hexadecimal string
+  chainId: '0x61',
   chainName: 'Binance Smart Chain - Testnet',
   nativeCurrency: {
     name: 'BNB',
-    symbol: 'tBNB', // 2-6 characters long
+    symbol: 'tBNB',
     decimals: 18,
   },
   rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
@@ -47,25 +47,25 @@ function ConnectWallet({ opened, onClose, onLogin }) {
     if (window.ethereum) {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-      // try {
-      //   await window.ethereum.request({
-      //     method: 'wallet_switchEthereumChain',
-      //     params: [{ chainId: '0xf00' }],
-      //   });
-      // } catch (switchError) {
-      //   // This error code indicates that the chain has not been added to MetaMask.
-      //   if (switchError.code === 4902) {
-      //     try {
-      //       await window.ethereum.request({
-      //         method: 'wallet_addEthereumChain',
-      //         params: [{ chainId: '0xf00', rpcUrl: 'https://...' /* ... */ }],
-      //       });
-      //     } catch (addError) {
-      //       // handle "add" error
-      //     }
-      //   }
-      //   // handle other "switch" errors
-      // }
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: BINANCE_TESTNET.chainId }],
+        });
+      } catch (switchError) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [BINANCE_TESTNET],
+            });
+          } catch (addError) {
+            // handle "add" error
+          }
+        }
+        // handle other "switch" errors
+      }
 
       window.web3App = new Web3(window.ethereum);
       onLogin({

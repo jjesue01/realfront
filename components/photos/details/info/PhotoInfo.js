@@ -95,7 +95,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
             <div className={styles.imageWrapper}>
               {
                 listing &&
-                <Image src={listing.filePath} layout="fill" objectFit="cover" alt={listing.filePath} />
+                <Image src={listing.thumbnail} layout="fill" objectFit="cover" alt={listing.name} />
               }
             </div>
             {

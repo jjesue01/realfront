@@ -191,7 +191,7 @@ function Form({ mode }) {
                 value: data?.city?.ID || ''
               }
             })
-            setJpgFile(data.filePath)
+            setJpgFile(data.thumbnail)
             setRawFile(data.rawFileName)
           } else {
             setListingError(error.data)
