@@ -13,10 +13,9 @@ const wallets = [
     name: 'MetaMask'
   }
 ]
-
 const BINANCE_TESTNET = {
   chainId: '0x61',
-  chainName: 'Binance Smart Chain - Testnet',
+  chainName: 'Binance Smart Chain Testnet',
   nativeCurrency: {
     name: 'BNB',
     symbol: 'tBNB',
@@ -24,6 +23,13 @@ const BINANCE_TESTNET = {
   },
   rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
   blockExplorerUrls: ['https://testnet.bscscan.com'],
+}
+
+const DBUSD_TOKEN = {
+  address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
+  symbol: 'DBUSD',
+  decimals: 18,
+  image: ''
 }
 
 function ConnectWallet({ opened, onClose, onLogin }) {
@@ -46,12 +52,16 @@ function ConnectWallet({ opened, onClose, onLogin }) {
   async function handleLoginMetaMask() {
     if (window.ethereum) {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      window.web3App = new Web3(window.ethereum);
 
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: BINANCE_TESTNET.chainId }],
         });
+        onLogin({
+          walletId: accounts[0]
+        })
       } catch (switchError) {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
@@ -60,17 +70,33 @@ function ConnectWallet({ opened, onClose, onLogin }) {
               method: 'wallet_addEthereumChain',
               params: [BINANCE_TESTNET],
             });
+            try {
+              // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+              const wasAdded = await ethereum.request({
+                method: 'wallet_watchAsset',
+                params: {
+                  type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                  options: DBUSD_TOKEN,
+                },
+              });
+
+              if (wasAdded) {
+                console.log('Thanks for your interest!');
+              } else {
+                console.log('Your loss!');
+              }
+            } catch (error) {
+              console.log(error);
+            }
+            onLogin({
+              walletId: accounts[0]
+            })
           } catch (addError) {
             // handle "add" error
           }
         }
         // handle other "switch" errors
       }
-
-      window.web3App = new Web3(window.ethereum);
-      onLogin({
-        walletId: accounts[0]
-      })
 
       return true;
     }

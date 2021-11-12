@@ -14,6 +14,7 @@ import {useLikeListingMutation} from "../../../../services/listings";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 import ButtonCopy from "../../../button-copy/ButtonCopy";
 import Offers from "../offers/Offers";
+import Timer from "../timer/Timer";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
@@ -98,6 +99,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                 <Image src={listing.thumbnail} layout="fill" objectFit="cover" alt={listing.name} />
               }
             </div>
+            {/*<Timer />*/}
             {
               !!bids?.length &&
               <Offers
