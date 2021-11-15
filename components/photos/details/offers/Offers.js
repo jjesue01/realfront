@@ -1,73 +1,97 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from './Offers.module.sass'
+import ArrowShort from '/public/icons/arrow-short.svg'
 import cn from "classnames";
+import {getMoneyView, getSortedArray, timeAgo} from "../../../../utils";
 import Typography from "../../../Typography";
-import {getMoneyView, timeAgo} from "../../../../utils";
-import {useSelector} from "react-redux";
+import Image from "next/image";
 
-function Offers({ className, data, isOwner, onFinish, onCancel }) {
-  const user = useSelector(state => state.auth.user)
-  const [hasBid, setHasBid] = useState(false)
+function Offers({ className, data = [] }) {
+  const [opened, setOpened] = useState(true);
+  const containerRef = useRef()
+  const contentRef = useRef()
 
-  const tableRows = data.map(item => (
-    <div key={item._id} className={styles.tableItem}>
+  const rowsList = data.map((item, index) => (
+    <div key={index} className={styles.tableItem}>
       <div className={cn(styles.col, styles.colPrice)}>
-        <p>{getMoneyView(item.price)}</p>
+        <p>{ getMoneyView(item.price) }</p>
+      </div>
+      <div className={cn(styles.col, styles.colDiff)}>
+        <p>98,1% below</p>
+      </div>
+      <div className={cn(styles.col, styles.colExpiration)}>
+        <p>in 5 days</p>
       </div>
       <div className={cn(styles.col, styles.colFrom)}>
-        <p>{ item.bidder.address }</p>
-      </div>
-      <div className={cn(styles.col, styles.colDate)}>
-        <p>{timeAgo(item.createdAt)}</p>
+        <p>{ item.bidder.name }</p>
       </div>
     </div>
   ))
 
-  useEffect(function init() {
-    if (user) {
-      const bid = data.find(({ bidder: { id } }) => id === user?._id)
-      if (bid) setHasBid(true)
+  function toggleTable() {
+    setOpened(prevState => !prevState)
+  }
+
+  useEffect(function toggleTable() {
+    if (containerRef.current) {
+      const contentHeight = contentRef.current.clientHeight;
+
+      if (opened) {
+        containerRef.current.style.height = contentHeight + 'px'
+      } else {
+        containerRef.current.style.height = 0
+      }
     }
-  }, [data, user])
+  }, [opened])
+
 
   return (
     <div className={cn(className, styles.root)}>
-      <div className={styles.header}>
-        <Typography
-          tag="h3"
-          fontSize={16}
-          fontWeight={600}
-          lHeight={20}
-          color={'#000'}>
-          Offers
-        </Typography>
-        {
-          isOwner &&
-          <button onClick={onFinish} className={styles.btnFlat}>
-            Finish
-          </button>
-        }
-        {
-          hasBid && user && !isOwner &&
-          <button onClick={onCancel} className={cn(styles.btnFlat, styles.danger)}>
-            Cancel
-          </button>
-        }
-      </div>
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <div className={cn(styles.col, styles.colPrice)}>
-            <p>Price</p>
+      <div className={cn(styles.tableWrapper)}>
+        <button onClick={toggleTable} className={styles.btnShowTable}>
+          <Typography tag="h3" fontSize={20} fontWeight={600}>
+            Offers
+          </Typography>
+          <ArrowShort />
+        </button>
+        <div ref={containerRef} className={styles.tableContainer}>
+          <div ref={contentRef} className={styles.table}>
+            {
+              !!data.length ?
+              <>
+                <div className={styles.tableHeader}>
+                  <div className={cn(styles.col, styles.colPrice)}>
+                    <p>Price</p>
+                  </div>
+                  <div className={cn(styles.col, styles.colDiff)}>
+                    <p>Floor difference</p>
+                  </div>
+                  <div className={cn(styles.col, styles.colExpiration)}>
+                    <p>Expiration</p>
+                  </div>
+                  <div className={cn(styles.col, styles.colFrom)}>
+                    <p>From</p>
+                  </div>
+                </div>
+                <div className={styles.tableBody}>
+                  { rowsList }
+                </div>
+              </>
+              :
+              <div className={styles.noOffers}>
+                <div className={styles.imageWrapper}>
+                  <Image
+                    src="/images/hiw-1.png"
+                    width={48}
+                    height={41}
+                    alt="Wallet" />
+                </div>
+                <Typography fontWeight={600} fontSize={14} lHeight={17} margin={'16px 0 0'}>
+                  No offers yet
+                </Typography>
+              </div>
+            }
           </div>
-          <div className={cn(styles.col, styles.colFrom)}>
-            <p>From</p>
-          </div>
-          <div className={cn(styles.col, styles.colDate)}>
-            <p>Date</p>
-          </div>
-        </div>
-        <div className={styles.tableBody}>
-          { tableRows }
         </div>
       </div>
     </div>

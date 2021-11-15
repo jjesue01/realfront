@@ -121,21 +121,22 @@ function MoreFilter({ className, name, onChange, value, mode, options = [] }) {
             onChange={handleCheckboxChange('all')} />
           { checkboxesList }
         </div>
-        <Typography
-          fontSize={14}
-          fontWeight={600}
-          lHeight={20}
-          margin={'24px 0 0'}
-          color={'#111'}>
-          Keywords
-        </Typography>
-        <Input
-          className={styles.input}
-          name="keywords"
-          value={keywords}
-          onChange={handleInputChange}
-          placeholder="MLS #, yard, etc."
-          size="small" />
+        <div className={styles.keywords}>
+          <Typography
+            fontSize={14}
+            fontWeight={600}
+            lHeight={20}
+            color={'#111'}>
+            Keywords
+          </Typography>
+          <Input
+            className={styles.input}
+            name="keywords"
+            value={keywords}
+            onChange={handleInputChange}
+            placeholder="MLS #, yard, etc."
+            size="small" />
+        </div>
       </div>
     </FilterWrapper>
   )

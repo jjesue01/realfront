@@ -99,16 +99,13 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                 <Image src={listing.thumbnail} layout="fill" objectFit="cover" alt={listing.name} />
               }
             </div>
-            {/*<Timer />*/}
-            {
-              !!bids?.length &&
-              <Offers
-                className={styles.offers}
-                data={bids}
-                isOwner={ownItem}
-                onCancel={onCancelBid}
-                onFinish={onFinishAuction} />
-            }
+            <Timer className={styles.timer} endDate={'2021-11-19 3:33'} />
+            <Offers
+              className={styles.offers}
+              data={bids}
+              isOwner={ownItem}
+              onCancel={onCancelBid}
+              onFinish={onFinishAuction} />
           </div>
           <div className={styles.content}>
             <div className={styles.mainInfo}>

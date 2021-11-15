@@ -123,13 +123,11 @@ function Marketplace({ toggleFooter, openLogin }) {
   function handleMouseEnter(item) {
     return function () {
       setActiveItem(item)
-      console.log('mouse over')
     }
   }
 
   function handleMouseLeave() {
     setActiveItem(null)
-    console.log('mouse out')
   }
 
   const getCities = useCallback((value) => {
@@ -241,7 +239,7 @@ function Marketplace({ toggleFooter, openLogin }) {
               className={styles.filter}
               name="more"
               value={filters.more}
-              options={tagsOptions}
+              options={[...new Set(tagsOptions)]}
               onChange={handleChange} />
           </div>
           <div className={cn(styles.resetFilters, { [styles.resetFiltersShown]: showReset })}>

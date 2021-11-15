@@ -125,11 +125,11 @@ export function buildFilterOptions(listings) {
         value: city.ID
       }))
     
-    if (Array.isArray(tags))
-      tagOptions = [...tagOptions, ...tags]
-    else if (typeof tags === 'string')
+    if (!!tags)
       tagOptions = [...tagOptions, ...tags.split(',')]
   })
+
+  console.log(tagOptions)
 
   return {
     cities: [...cityOptions].map(city => JSON.parse(city)),
@@ -251,4 +251,45 @@ export function getLatLng(listing) {
     lat: listing?.geoLocation?.coordinates[1],
     lng: listing?.geoLocation?.coordinates[0]
   }
+}
+
+export function countDownTime(endDate) {
+  const end = new Date(endDate);
+
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+
+  const now = new Date();
+  const distance = end - now;
+
+  if (distance < 0) {
+    return null
+  }
+
+  const hours = Math.floor(distance / hour);
+  const minutes = Math.floor((distance % hour) / minute);
+  const seconds = Math.floor((distance % minute) / second);
+
+  return {
+    hours,
+    minutes,
+    seconds
+  }
+}
+
+export function getFormattedEndTime(dateStr) {
+  const date = new Date(dateStr)
+  const options = {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    hour12: true,
+    timeZone: 'EST'
+  }
+
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date)
+  const dateArray = formattedDate.split(', ')
+  dateArray.shift()
+
+  return `${dateArray.join(', ')} EST`
 }
