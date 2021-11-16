@@ -15,6 +15,7 @@ import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "reac
 import ButtonCopy from "../../../button-copy/ButtonCopy";
 import Offers from "../offers/Offers";
 import Timer from "../timer/Timer";
+import AspectRatioBox from "../../../aspect-ratio-box/AspectRatioBox";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
@@ -93,12 +94,12 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
       <div className="container">
         <div className={styles.row}>
           <div className={styles.column}>
-            <div className={styles.imageWrapper}>
+            <AspectRatioBox className={styles.imageWrapper}>
               {
-                listing &&
+                listing && listing?.thumbnail &&
                 <Image src={listing.thumbnail} layout="fill" objectFit="cover" alt={listing.name} />
               }
-            </div>
+            </AspectRatioBox>
             <Timer className={styles.timer} endDate={'2021-11-19 3:33'} />
             <Offers
               className={styles.offers}

@@ -36,6 +36,12 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
     }
   }
 
+  function handleClose() {
+    if (isLoading) return;
+    setChecked(false)
+    onClose()
+  }
+
   const handleInitFee = useCallback(() => {
     const contractApi = require('/services/contract')
 
@@ -53,7 +59,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
   }, [handleInitFee, user])
 
   return (
-    <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
+    <PopupWrapper className={styles.root} opened={opened} onClose={handleClose}>
       <div className={styles.dialog}>
         <Typography fontWeight={600} fontSize={24} lHeight={29} align="center">
           { !!maxBid ? 'Finish auction': 'Complete checkout' }
@@ -128,7 +134,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
             onChange={toggleCheckbox} />
         }
         <div className={styles.actions}>
-          <Button onClick={handleCheckout} disabled={!checked && !maxBid} loading={isLoading}>
+          <Button onClick={handleCheckout} disabled={!checked || maxBid} loading={isLoading}>
             { !!maxBid ? 'Finish': 'Checkout' }
           </Button>
         </div>

@@ -189,7 +189,7 @@ function SellItem() {
 
   const handleInitFee = useCallback(() => {
     const contractApi = require('/services/contract')
-    console.log('init fee')
+
     contractApi.getMarketplaceFee()
       .then(fee => {
         setMarketplaceFee(+fee)
@@ -378,7 +378,7 @@ function SellItem() {
                 <Summary
                   loading={formik.isSubmitting}
                   marketplaceFee={marketplaceFee}
-                  royalty={listing?.tokenID ? formik.values.royalties : 0} />
+                  royalty={formik.values.royalties} />
               </div>
             </form>
           </div>

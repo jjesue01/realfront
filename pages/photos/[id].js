@@ -95,6 +95,10 @@ function PhotoDetails({ openLogin }) {
       })
   }
 
+  function handleCloseMakeOffer() {
+    setMakeOfferOpened(prevState => !prevState)
+  }
+
   function handleMakeOffer(price) {
     const contractApi = require('/services/contract')
 
@@ -267,7 +271,7 @@ function PhotoDetails({ openLogin }) {
             maxBidPrice={maxBid}
             opened={makeOfferOpened}
             onOffer={handleMakeOffer}
-            onClose={toggleMakeOffer} />
+            onClose={handleCloseMakeOffer} />
         </>
       }
       <ConfirmCheckout

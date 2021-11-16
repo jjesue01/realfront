@@ -107,7 +107,7 @@ function PhotoItem({
                     </Typography>
                     <div className={styles.ethereum}>
                       <Typography fontWeight={600} fontSize={16}>
-                        { getMoneyView(data.price) }
+                        { getMoneyView(data?.bid?.highest ? data.bid.highest : data.price) }
                       </Typography>
                     </div>
                   </div>
