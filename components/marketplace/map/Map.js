@@ -175,7 +175,8 @@ function Map({ items, onBoundsChange, activeItem, onActiveItemChange }) {
             options={{
               closeBoxURL: '',
               enableEventPropagation: true,
-              alignBottom: true ,
+              alignBottom: true,
+              disableAutoPan: true
             }}
             position={center}>
             <div className={styles.infoBox}>

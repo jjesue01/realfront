@@ -25,11 +25,11 @@ import {citiesApi} from "../services/cities";
 const sortOptions = [
   {
     label: 'Price: Low to High',
-    value: 'price:desc'
+    value: 'bid.highest:desc'
   },
   {
     label: 'Price: High to Low',
-    value: 'price:asc'
+    value: 'bid.highest:asc'
   },
 ]
 
@@ -62,7 +62,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   const [activeItem, setActiveItem] = useState(null)
   const [filters, setFilters] = useState({
     ...initialFilters,
-    sortBy: 'price:desc'
+    sortBy: 'bid.highest:desc'
   })
   const [pagination, setPagination] = useState({})
 
@@ -319,7 +319,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                     {
                       listings.map(item => (
                         <PhotoItem
-                          imageClassName={styles.imageWrapper}
+                          //imageClassName={styles.imageWrapper}
                           key={item._id}
                           favorite={user?.favorites?.includes(item._id)}
                           active={ activeItem?._id === item._id }

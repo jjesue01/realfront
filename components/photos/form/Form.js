@@ -7,15 +7,13 @@ import Input from "../../input/Input";
 import Select from "../../select/Select";
 import Button from "../../button/Button";
 import Textarea from "../../textarea/Textarea";
-import CollectionPicker from "./collection-picker/CollectionPicker";
 import FileUploader from "./file-uploader/FileUploader";
 import Image from "next/image";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 import PenIcon from '/public/icons/pen.svg'
-import CreateCollection from "../../dialogs/create-collection/CreateCollection";
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
-import {citiesApi} from "../../../services/cities";
+import {citiesApi, useCreateCityMutation} from "../../../services/cities";
 import {
   listingsApi,
   useCreateListingMutation,
@@ -23,7 +21,7 @@ import {
   useUpdateListingMutation
 } from "../../../services/listings";
 import {buildPlace, decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
-import {useJsApiLoader, useLoadScript} from "@react-google-maps/api";
+import {useLoadScript} from "@react-google-maps/api";
 import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 import Error from "../../error/Error";
@@ -54,6 +52,7 @@ function Form({ mode }) {
   const [createListing, { isLoading }] = useCreateListingMutation()
   const [updateListing] = useUpdateListingMutation()
   const [deleteListing] = useDeleteListingMutation()
+  const [createCity] = useCreateCityMutation()
   const [isDeleting, setDeleting] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [jpgFile, setJpgFile] = useState(null)
@@ -213,6 +212,21 @@ function Form({ mode }) {
         if (cities?.length) {
           city = cities.find(({ label }) => searchCity === label)
           if (!city) city = cities[0]
+        } else if (!!parsedPlace.city) {
+          const cityData = {
+            name: searchCity,
+            geoLocation: {
+              type: 'Point',
+              coordinates: [geometry.location.lng(), geometry.location.lat()]
+            }
+          }
+
+          const result = await createCity(cityData).unwrap()
+          city = {
+            label: result?.name || '',
+            value: result?._id || ''
+          }
+          console.log('add city')
         }
 
         setValues(prevValues => ({
@@ -234,7 +248,7 @@ function Form({ mode }) {
       autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, options)
       autocompleteRef.current.addListener("place_changed", handlePlaceChange)
     }
-  }, [getCities, isLoaded, mode, setValues])
+  }, [createCity, getCities, isLoaded, mode, setValues])
 
   if (listingError.message)
     return <Error errorCode={'Listing' + listingError.message} />

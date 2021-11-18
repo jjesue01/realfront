@@ -10,6 +10,7 @@ import ContextMenu from "../context-menu/ContextMenu";
 import {useLikeListingMutation} from "../../services/listings";
 import {getMoneyView} from "../../utils";
 import {useSelector} from "react-redux";
+import AspectRatioBox from "../aspect-ratio-box/AspectRatioBox";
 
 function PhotoItem({
   className,
@@ -77,12 +78,17 @@ function PhotoItem({
                 </Typography>
               </button>
             </div>
-            <div className={cn(imageClassName, styles.imageWrapper)}>
-              <Image
-                src={data.thumbnail}
-                layout="fill"
-                objectFit="cover"
-                alt="apartments" />
+            <div className={styles.imageContainer}>
+              <AspectRatioBox className={cn(imageClassName, styles.imageWrapper)}>
+                {
+                  data?.thumbnail &&
+                  <Image
+                    src={data.thumbnail}
+                    layout="fill"
+                    objectFit="cover"
+                    alt="apartments" />
+                }
+              </AspectRatioBox>
             </div>
             <div className={styles.itemData}>
               <div className={styles.content}>

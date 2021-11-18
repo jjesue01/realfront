@@ -32,6 +32,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
       onCheckout()
         .finally(() => {
           setLoading(false)
+          onClose()
         })
     }
   }

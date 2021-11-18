@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {getIdToken} from "../utils";
+import {buildFormData, getIdToken} from "../utils";
 
 export const citiesApi = createApi({
   reducerPath: 'citiesApi',
@@ -26,6 +26,15 @@ export const citiesApi = createApi({
         return baseQueryReturnValue.docs
       }
     }),
+    createCity: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/cities`,
+          method: 'POST',
+          body: data
+        }
+      },
+    }),
     getAutocompleteCities: builder.query({
       query: (params = {}) => ({
         url: '/autocomplete/cities',
@@ -40,5 +49,6 @@ export const citiesApi = createApi({
 
 export const {
   useGetAutocompleteCitiesQuery,
-  useGetCitiesQuery
+  useGetCitiesQuery,
+  useCreateCityMutation
 } = citiesApi
