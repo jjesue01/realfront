@@ -137,13 +137,18 @@ function Marketplace({ toggleFooter, openLogin }) {
       })
   }, [dispatch])
 
+  useEffect(function mount() {
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+
   useEffect(function hideFooter() {
-    if (!mounted.current) {
       toggleFooter()
       mounted.current = true
       document.body.style.position = 'fixed'
-    }
-  }, [toggleFooter])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(function filterData() {
     if (mapMounted.current || isMapHidden) {
@@ -174,7 +179,7 @@ function Marketplace({ toggleFooter, openLogin }) {
 
       dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
         .then(({ data, isLoading }) => {
-          if (!isLoading && data?.docs) {
+          if (!isLoading && data?.docs && mounted.current) {
             const { docs, ...paginationInfo } = data
             // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
             setListings(data?.docs || [])

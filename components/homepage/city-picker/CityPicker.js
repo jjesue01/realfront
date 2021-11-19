@@ -6,7 +6,7 @@ import SearchIcon from '/public/icons/search-icon.svg'
 import Typography from "../../Typography";
 import Input from "../../input/Input";
 
-function CityPicker({ className, onChange, value, options, fetchOptions }) {
+function CityPicker({ className, onChange, value, options = [], fetchOptions }) {
   const [searchValue, setSearchValue] = useState('')
   const [inputName, setInputName] = useState('city')
   const [opened, setOpened] = useState(false)

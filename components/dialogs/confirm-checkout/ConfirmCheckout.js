@@ -79,7 +79,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
               <div className={styles.itemInfo}>
                 <div className={styles.itemImageWrapper}>
                   {
-                    listing &&
+                    listing?.thumbnail &&
                       <Image
                         src={listing.thumbnail}
                         layout="fill"

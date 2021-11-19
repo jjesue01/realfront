@@ -20,12 +20,14 @@ import {
   useDeleteListingMutation,
   useUpdateListingMutation
 } from "../../../services/listings";
-import {buildPlace, decodeTags, encodeTags, getImageUrl, scrollToTop} from "../../../utils";
+import {buildPlace, decodeTags, encodeTags, getFormattedFileFormats, getImageUrl, scrollToTop} from "../../../utils";
 import {useLoadScript} from "@react-google-maps/api";
 import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 import Error from "../../error/Error";
 import cn from "classnames";
+import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
+import MediaFile from "../../media-file/MediaFile";
 
 const selectOptions = [
   {
@@ -39,6 +41,9 @@ const selectOptions = [
 ]
 
 const libraries = ['places']
+
+const FILE_FORMATS = ['.jpg', '.mp4', '.webm']
+const RAW_FORMATS = ['.cr2', '.nef', '.arw', '.mp4', '.webm']
 
 function Form({ mode }) {
   const dispatch = useDispatch()
@@ -62,6 +67,7 @@ function Form({ mode }) {
   const [id, setId] = useState(null)
   const [listing, setListing] = useState({})
   const [listingError, setListingError] = useState({})
+  const [isVideo, setIsVideo] = useState(false)
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
@@ -86,6 +92,7 @@ function Form({ mode }) {
     if (file !== null) {
       setJpgFile(file)
       setJpgFilePreview(getImageUrl(file))
+      setIsVideo(file.type.includes('video'))
     }
   }
 
@@ -284,13 +291,29 @@ function Form({ mode }) {
             lHeight={22}
             margin={'10px 0 0'}
             color={'rgba(55, 65, 81, 0.8)'}>
-            File types supported: JPG, RAW. Max size: 40 Mb
+            Preview file types: { getFormattedFileFormats(FILE_FORMATS) }.
+          </Typography>
+          <Typography
+            fontFamily={'Lato'}
+            fontSize={14}
+            lHeight={22}
+            //margin={'10px 0 0'}
+            color={'rgba(55, 65, 81, 0.8)'}>
+            Raw file types: { getFormattedFileFormats(RAW_FORMATS) }.
+          </Typography>
+          <Typography
+            fontFamily={'Lato'}
+            fontSize={14}
+            lHeight={22}
+            //margin={'10px 0 0'}
+            color={'rgba(55, 65, 81, 0.8)'}>
+            Max size: 40 Mb
           </Typography>
           <div className={styles.uploaders}>
             <div className={styles.uploader}>
               <FileUploader
                 onChange={handleFileJPGChange}
-                accept=".jpg,.jpeg"
+                accept={FILE_FORMATS.join() + ',.jpeg'}
                 disabled={isReseller}
                 error={jpgFile === null && touched.name}>
                 { 
@@ -298,7 +321,7 @@ function Form({ mode }) {
                     <div className={styles.uploaderContainer}>
                       <Image src="/images/form-jpg.svg" width={50} height={50} alt="jpg file" />
                       <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                        Upload JPG file
+                        Upload preview file
                       </Typography>
                       <p className={styles.uploaderText}>
                         Drag & drop file or <span>browse media on your device</span>
@@ -306,10 +329,10 @@ function Form({ mode }) {
                     </div>
                     :
                     <div className={styles.imageContainer}>
-                      <Image
+                      <MediaFile
                         src={jpgFilePreview !== null ? jpgFilePreview : jpgFile}
-                        layout="fill"
-                        objectFit={'cover'}
+                        videoSrc={isVideo && jpgFilePreview}
+                        autoPlay
                         alt="nft item" />
                       {
                         !isReseller &&
@@ -324,13 +347,13 @@ function Form({ mode }) {
             <div className={styles.uploader}>
               <FileUploader
                 onChange={handleFileRAWChange}
-                accept=".raw"
+                accept={RAW_FORMATS.join()}
                 disabled={isReseller}
                 error={rawFile === null && touched.name}>
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
                   <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                    { rawFile === null ? 'Upload RAW file' : (rawFile?.name || rawFile )}
+                    { rawFile === null ? 'Upload raw file' : (rawFile?.name || rawFile )}
                   </Typography>
                   {
                     rawFile === null &&

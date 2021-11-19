@@ -293,3 +293,7 @@ export function getFormattedEndTime(dateStr) {
 
   return `${dateArray.join(', ')} EST`
 }
+
+export function getFormattedFileFormats(formatsArr) {
+  return formatsArr.map(format => format.slice(1).toUpperCase()).join(', ')
+}

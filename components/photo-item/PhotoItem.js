@@ -11,6 +11,7 @@ import {useLikeListingMutation} from "../../services/listings";
 import {getMoneyView} from "../../utils";
 import {useSelector} from "react-redux";
 import AspectRatioBox from "../aspect-ratio-box/AspectRatioBox";
+import MediaFile from "../media-file/MediaFile";
 
 function PhotoItem({
   className,
@@ -79,16 +80,11 @@ function PhotoItem({
               </button>
             </div>
             <div className={styles.imageContainer}>
-              <AspectRatioBox className={cn(imageClassName, styles.imageWrapper)}>
-                {
-                  data?.thumbnail &&
-                  <Image
-                    src={data.thumbnail}
-                    layout="fill"
-                    objectFit="cover"
-                    alt="apartments" />
-                }
-              </AspectRatioBox>
+              <div className={cn(imageClassName, styles.imageWrapper)}>
+                <MediaFile
+                  src={data.thumbnail}
+                  alt="apartments" />
+              </div>
             </div>
             <div className={styles.itemData}>
               <div className={styles.content}>

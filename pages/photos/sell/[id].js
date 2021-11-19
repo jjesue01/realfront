@@ -22,6 +22,7 @@ import {useSelector} from "react-redux";
 import Error from "../../../components/error/Error";
 import DollarIcon from '/public/icons/dollar.svg'
 import HistoryIcon from '/public/icons/history.svg'
+import MediaFile from "../../../components/media-file/MediaFile";
 
 const scheduleOptions = [
   {
@@ -234,14 +235,9 @@ function SellItem() {
                   <ArrowShortIcon />
                 </div>
                 <div className={styles.collectionImageContainer}>
-                  {
-                    listing &&
-                    <Image
-                      src={listing.thumbnail}
-                      layout="fill"
-                      objectFit="cover"
-                      alt={listing.name} />
-                  }
+                  <MediaFile
+                    src={listing?.thumbnail}
+                    alt={listing?.name} />
                 </div>
                 <div className={styles.collectionInfo}>
                   <Typography
@@ -256,7 +252,7 @@ function SellItem() {
                     fontWeight={600}
                     lHeight={17}
                     color={'#111111'}
-                    margin={'8px 0 0'}>
+                    margin={'5px 0 0'}>
                     { listing?.name }
                   </Typography>
                 </div>
@@ -378,7 +374,7 @@ function SellItem() {
                 <Summary
                   loading={formik.isSubmitting}
                   marketplaceFee={marketplaceFee}
-                  royalty={formik.values.royalties} />
+                  royalty={listing?.tokenID && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
               </div>
             </form>
           </div>
