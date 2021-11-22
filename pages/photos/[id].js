@@ -257,7 +257,7 @@ function PhotoDetails({ openLogin }) {
         !ownItem &&
         <>
           <DoneCongratulation
-            imageUrl={listing?.thumbnail}
+            imageUrl={listing?.resource === 'Video' ? listing?.rawFilePath : listing?.thumbnail}
             message={`You just purchased ${listing?.name}. It should be confirmed on the blockhain shortly.`}
             opened={isDone}
             title={'Complete checkout'}

@@ -7,6 +7,7 @@ import {getMoneyView} from "../../../utils";
 import Checkbox from "../../checkbox/Checkbox";
 import Button from "../../button/Button";
 import {useSelector} from "react-redux";
+import MediaFile from "../../media-file/MediaFile";
 
 function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinishAuction }) {
   const user = useSelector(state => state.auth.user)
@@ -78,14 +79,9 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
             <div className={styles.tableItem}>
               <div className={styles.itemInfo}>
                 <div className={styles.itemImageWrapper}>
-                  {
-                    listing?.thumbnail &&
-                      <Image
-                        src={listing.thumbnail}
-                        layout="fill"
-                        objectFit="cover"
-                        alt={listing.name} />
-                  }
+                  <MediaFile
+                    src={listing?.thumbnail}
+                    alt={listing?.name} />
                 </div>
                 <Typography fontWeight={600} fontSize={16} lHeight={20}>
                   { listing?.name }

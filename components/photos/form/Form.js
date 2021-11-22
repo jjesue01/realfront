@@ -43,7 +43,7 @@ const selectOptions = [
 const libraries = ['places']
 
 const FILE_FORMATS = ['.jpg', '.mp4', '.webm']
-const RAW_FORMATS = ['.cr2', '.nef', '.arw', '.mp4', '.webm']
+const RAW_FORMATS = ['.raw', '.cr2', '.nef', '.arw', '.mp4', '.webm']
 
 function Form({ mode }) {
   const dispatch = useDispatch()
@@ -197,7 +197,13 @@ function Form({ mode }) {
                 value: data?.city?.ID || ''
               }
             })
-            setJpgFile(data.thumbnail)
+
+            if (data?.resource === 'Video') {
+              setIsVideo(true)
+              setJpgFile(data?.rawFilePath)
+            } else {
+              setJpgFile(data.thumbnail)
+            }
             setRawFile(data.rawFileName)
           } else {
             setListingError(error.data)
@@ -257,7 +263,7 @@ function Form({ mode }) {
     }
   }, [createCity, getCities, isLoaded, mode, setValues])
 
-  if (listingError.message)
+  if (listingError?.message)
     return <Error errorCode={'Listing' + listingError.message} />
 
   if (mode === 'edit' && listing.name && !ownItem)
@@ -297,7 +303,6 @@ function Form({ mode }) {
             fontFamily={'Lato'}
             fontSize={14}
             lHeight={22}
-            //margin={'10px 0 0'}
             color={'rgba(55, 65, 81, 0.8)'}>
             Raw file types: { getFormattedFileFormats(RAW_FORMATS) }.
           </Typography>
@@ -305,7 +310,6 @@ function Form({ mode }) {
             fontFamily={'Lato'}
             fontSize={14}
             lHeight={22}
-            //margin={'10px 0 0'}
             color={'rgba(55, 65, 81, 0.8)'}>
             Max size: 40 Mb
           </Typography>
@@ -331,7 +335,7 @@ function Form({ mode }) {
                     <div className={styles.imageContainer}>
                       <MediaFile
                         src={jpgFilePreview !== null ? jpgFilePreview : jpgFile}
-                        videoSrc={isVideo && jpgFilePreview}
+                        videoSrc={isVideo && (jpgFilePreview !== null ? jpgFilePreview : jpgFile)}
                         autoPlay
                         alt="nft item" />
                       {

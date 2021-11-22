@@ -20,6 +20,7 @@ function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= f
             src={videoSrc}
             controls={controls}
             controlsList="nodownload"
+            loop
             autoPlay={autoPlay} />
           :
           src ?

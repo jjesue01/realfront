@@ -9,6 +9,7 @@ import cn from "classnames";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 import {useRouter} from "next/router";
 import ButtonCopy from "../../button-copy/ButtonCopy";
+import MediaFile from "../../media-file/MediaFile";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
@@ -41,7 +42,7 @@ function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={onClose}>
-      <div className={styles.dialog}>
+      <div className={cn(styles.dialog, { [styles.createDone]: !hasShare })}>
         <Typography
           fontSize={24}
           fontWeight={600}
@@ -62,7 +63,11 @@ function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message
         <div className={styles.imageWrapper}>
           {
             imageUrl &&
-              <Image src={imageUrl} layout="fill" objectFit="cover" alt="apartments" />
+              <MediaFile
+                src={imageUrl}
+                videoSrc={listing.resource === 'Video' && imageUrl}
+                autoPlay
+                alt="apartments" />
           }
         </div>
         {
