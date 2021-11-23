@@ -165,6 +165,9 @@ function Marketplace({ toggleFooter, openLogin }) {
         sort: filters.sortBy
       }
 
+      if (filters.resources.length === 1)
+        params.resource = filters.resources.join()
+
       if (isMapHidden) {
         params.bounds = ''
         params.limit = itemsPerPage

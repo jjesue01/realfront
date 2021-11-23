@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import styles from './Form.module.sass'
 import { useFormik } from "formik";
-import * as Yup from 'yup'
 import Typography from "../../Typography";
 import Input from "../../input/Input";
 import Select from "../../select/Select";
@@ -26,8 +25,8 @@ import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
 import Error from "../../error/Error";
 import cn from "classnames";
-import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../../media-file/MediaFile";
+import ConfirmationDialog from "../../dialogs/confirmation-dialog/ConfirmationDialog";
 
 const selectOptions = [
   {
@@ -60,9 +59,10 @@ function Form({ mode }) {
   const [createCity] = useCreateCityMutation()
   const [isDeleting, setDeleting] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
-  const [jpgFile, setJpgFile] = useState(null)
+  const [deleteConfirmationOpened, setDeleteConfirmation] = useState(false)
+  const [file, setFile] = useState(null)
   const [rawFile, setRawFile] = useState(null)
-  const [jpgFilePreview, setJpgFilePreview] = useState(null)
+  const [filePreview, setFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
   const [listing, setListing] = useState({})
@@ -90,8 +90,8 @@ function Form({ mode }) {
 
   function handleFileJPGChange(file) {
     if (file !== null) {
-      setJpgFile(file)
-      setJpgFilePreview(getImageUrl(file))
+      setFile(file)
+      setFilePreview(getImageUrl(file))
       setIsVideo(file.type.includes('video'))
     }
   }
@@ -102,6 +102,10 @@ function Form({ mode }) {
 
   function handleCloseCongratulations() {
     router.push(`/photos/${id}`)
+  }
+
+  function toggleDeleteConfirmation() {
+    setDeleteConfirmation(prevState => !prevState)
   }
 
   function handleValidate(values) {
@@ -122,10 +126,10 @@ function Form({ mode }) {
   }, [dispatch])
 
   function handleSubmit(values, { setSubmitting }) {
-    if (jpgFile !== null && rawFile !== null){
+    if (file !== null && rawFile !== null){
       const data = {
         ...values,
-        file: jpgFile,
+        file: file,
         raw: rawFile,
         tags: decodeTags(values.tags),
         city: values.city.value,
@@ -200,9 +204,9 @@ function Form({ mode }) {
 
             if (data?.resource === 'Video') {
               setIsVideo(true)
-              setJpgFile(data?.rawFilePath)
+              setFile(data?.rawFilePath)
             } else {
-              setJpgFile(data.thumbnail)
+              setFile(data.thumbnail)
             }
             setRawFile(data.rawFileName)
           } else {
@@ -319,9 +323,9 @@ function Form({ mode }) {
                 onChange={handleFileJPGChange}
                 accept={FILE_FORMATS.join() + ',.jpeg'}
                 disabled={isReseller}
-                error={jpgFile === null && touched.name}>
+                error={file === null && touched.name}>
                 { 
-                  jpgFile === null ?
+                  file === null ?
                     <div className={styles.uploaderContainer}>
                       <Image src="/images/form-jpg.svg" width={50} height={50} alt="jpg file" />
                       <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
@@ -334,8 +338,8 @@ function Form({ mode }) {
                     :
                     <div className={styles.imageContainer}>
                       <MediaFile
-                        src={jpgFilePreview !== null ? jpgFilePreview : jpgFile}
-                        videoSrc={isVideo && (jpgFilePreview !== null ? jpgFilePreview : jpgFile)}
+                        src={filePreview !== null ? filePreview : file}
+                        videoSrc={isVideo && (filePreview !== null ? filePreview : file)}
                         autoPlay
                         alt="nft item" />
                       {
@@ -442,19 +446,25 @@ function Form({ mode }) {
           }
           {
             mode === 'edit' &&
-              <Button onClick={handleDelete} className={styles.btnDelete} type="outlined" loading={isDeleting}>
+              <Button onClick={toggleDeleteConfirmation} className={styles.btnDelete} type="outlined" loading={isDeleting}>
                 Delete item
               </Button>
           }
         </div>
       </form>
       <DoneCongratulation
-        imageUrl={jpgFile !== null && jpgFilePreview}
+        imageUrl={file !== null && filePreview}
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
         listing={listing}
         hasShare={false}
         onClose={handleCloseCongratulations} />
+      <ConfirmationDialog
+        opened={deleteConfirmationOpened}
+        onClose={toggleDeleteConfirmation}
+        onSubmit={handleDelete}
+        title={'Delete listing'}
+        message={'Do you really what to delete this listing?'} />
       <FullscreenLoader opened={(mode === 'edit' && !listing.name)} />
     </div>
   )

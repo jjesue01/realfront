@@ -5,7 +5,7 @@ import Typography from "../../../Typography";
 import Checkbox from "../../../checkbox/Checkbox";
 import cn from "classnames";
 
-const options = ['Photo', 'Video']
+const options = ['Image', 'Video']
 
 function ResourcesFilter({ className, name, onChange, value, mode }) {
   const [data, setData] = useState(options.map(option => ({ value: option, checked: false })))
