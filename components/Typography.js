@@ -12,12 +12,13 @@ function Typography({
   align = 'left',
   margin = '0',
   lHeight = 1.3,
-  maxWidth = '100%'
+  maxWidth = '100%',
+  noWrap = false
 }) {
   const Tag = tag
 
   return (
-      <Tag className={cn(className, 'typography')}>
+      <Tag className={cn(className, 'typography', { 'noWrap': noWrap })}>
         {children}
         <style jsx>{`
           .typography {
@@ -29,6 +30,12 @@ function Typography({
             line-height: ${lHeight}${ +lHeight < 2 ? '' : 'px' };
             max-width: ${typeof maxWidth === 'number' ? `${maxWidth}px`: maxWidth};
             text-align: ${align};
+          }
+          .noWrap {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         `}</style>
       </Tag>

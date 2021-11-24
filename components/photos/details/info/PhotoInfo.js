@@ -100,7 +100,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
               videoSrc={listing?.resource === 'Video' && listing?.rawFilePath}
               controls
               alt={listing?.name} />
-            <Timer className={styles.timer} endDate={'2021-11-19 3:33'} />
+            <Timer className={styles.timer} endDate={'2021-11-27 3:33'} />
             <Offers
               className={styles.offers}
               data={bids}
@@ -196,6 +196,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                 tag="h1"
                 fontWeight={600}
                 fontSize={28}
+                noWrap
                 lHeight={34}>
                 { listing?.name }
               </Typography>

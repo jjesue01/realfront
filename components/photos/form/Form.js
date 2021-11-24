@@ -27,6 +27,8 @@ import Error from "../../error/Error";
 import cn from "classnames";
 import MediaFile from "../../media-file/MediaFile";
 import ConfirmationDialog from "../../dialogs/confirmation-dialog/ConfirmationDialog";
+import DollarIcon from "../../../public/icons/dollar.svg";
+import HistoryIcon from "../../../public/icons/history.svg";
 
 const selectOptions = [
   {
@@ -43,6 +45,7 @@ const libraries = ['places']
 
 const FILE_FORMATS = ['.jpg', '.mp4', '.webm']
 const RAW_FORMATS = ['.raw', '.cr2', '.nef', '.arw', '.mp4', '.webm']
+const RESOURCE_TYPES = ['Image', 'Video', '360 Tour']
 
 function Form({ mode }) {
   const dispatch = useDispatch()
@@ -57,6 +60,7 @@ function Form({ mode }) {
   const [updateListing] = useUpdateListingMutation()
   const [deleteListing] = useDeleteListingMutation()
   const [createCity] = useCreateCityMutation()
+  const [resourceType, setResourceType] = useState('Image')
   const [isDeleting, setDeleting] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [deleteConfirmationOpened, setDeleteConfirmation] = useState(false)
@@ -73,6 +77,7 @@ function Form({ mode }) {
       name: '',
       address: '',
       description: '',
+      link360: '',
       tags: '',
       blockchain: 'ethereum',
       city: {
@@ -98,6 +103,12 @@ function Form({ mode }) {
 
   function handleFileRAWChange(file) {
     setRawFile(file)
+  }
+
+  function handleResourceChange(resource) {
+    return function () {
+      setResourceType(resource)
+    }
   }
 
   function handleCloseCongratulations() {
@@ -288,6 +299,28 @@ function Form({ mode }) {
               'Create new item'
           }
         </Typography>
+        <Typography
+          fontWeight={600}
+          fontSize={16}
+          margin={'24px 0 0'}
+          lHeight={20}>
+          Resource Type
+        </Typography>
+        <div className={styles.resourceTypes}>
+          {
+            RESOURCE_TYPES.map(resource => (
+              <button
+                key={resource}
+                type="button"
+                onClick={handleResourceChange(resource)}
+                className={cn(styles.resourceType, { [styles.resourceTypeActive]: resourceType === resource })}>
+                <Typography tag="span" fontSize={16} fontWeight={600} lHeight={20}>
+                  { resource }
+                </Typography>
+              </button>
+            ))
+          }
+        </div>
         <div className={styles.uploadSection}>
           <Typography
             fontWeight={600}

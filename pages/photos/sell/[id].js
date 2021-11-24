@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import styles from '../../../styles/Sell.module.sass'
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
 import {useRouter} from "next/router";
 import ArrowShortIcon from '/public/icons/arrow-short.svg'
 import Typography from "../../../components/Typography";

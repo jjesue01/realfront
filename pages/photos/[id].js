@@ -25,6 +25,7 @@ import {download, getIdToken} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
+import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 
 function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
@@ -50,6 +51,7 @@ function PhotoDetails({ openLogin }) {
   const [transactionHash, setTransactionHash] = useState('')
   const [listingError, setListingError] = useState(false)
   const [finishAuction, setFinishAuction] = useState(false)
+  const [cancelConfirmationOpened, setCancelConfirmation] = useState(false)
 
   const maxBid = useMemo(() => {
     if (bidsData?.docs?.length) {
@@ -119,6 +121,10 @@ function PhotoDetails({ openLogin }) {
           reject()
         })
     })
+  }
+
+  function toggleCancelConfirmation() {
+    setCancelConfirmation(prevState => !prevState)
   }
 
   function handleCancelBid() {
@@ -239,7 +245,7 @@ function PhotoDetails({ openLogin }) {
           bids={bids}
           maxBid={maxBid}
           listing={listing}
-          onCancelBid={handleCancelBid}
+          onCancelBid={toggleCancelConfirmation}
           onFinishAuction={toggleConfirmDialog}
           onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
@@ -272,6 +278,13 @@ function PhotoDetails({ openLogin }) {
             opened={makeOfferOpened}
             onOffer={handleMakeOffer}
             onClose={handleCloseMakeOffer} />
+          <ConfirmationDialog
+            opened={cancelConfirmationOpened}
+            onClose={toggleCancelConfirmation}
+            onSubmit={handleCancelBid}
+            btnSubmitTitle={'Cancel'}
+            title={'Cancel offer'}
+            message={'Do you really what to cancel your offer?'} />
         </>
       }
       <ConfirmCheckout

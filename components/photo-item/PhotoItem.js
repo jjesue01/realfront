@@ -88,7 +88,11 @@ function PhotoItem({
             </div>
             <div className={styles.itemData}>
               <div className={styles.content}>
-                <Typography fontWeight={600} fontSize={16} lHeight={20}>
+                <Typography
+                  noWrap
+                  fontWeight={600}
+                  fontSize={16}
+                  lHeight={20}>
                   { data.name }
                 </Typography>
                 <Typography
