@@ -37,7 +37,7 @@ function Input({
     let result = type
 
     if (type === 'price') result = 'number'
-    if (type === 'url') result = 'text'
+    //if (type === 'url') result = 'text'
 
     return result
   }

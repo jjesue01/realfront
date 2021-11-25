@@ -5,7 +5,7 @@ import Typography from "../../../Typography";
 
 const MAX_KB_SIZE = 40000
 
-function FileUploader({ className, children, onChange, accept = '*', error, disabled }) {
+function FileUploader({ className, children, onChange, accept = '*', error, disabled, multiple = false }) {
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef()
   const dropRef = useRef()
@@ -19,18 +19,27 @@ function FileUploader({ className, children, onChange, accept = '*', error, disa
     if (files.length) onChange(validateFiles(files))
   }
 
+  function validateFormat(file) {
+    return accept
+      .split(',')
+      .some((format) =>
+        file.name.toLowerCase().endsWith(format.toLowerCase()))
+  }
+
   function validateFiles(files) {
-    const file = files[0]
-    let result = file
+    const resultFiles = []
 
-    if (Math.round(file.size / 1000) > MAX_KB_SIZE)
-      result = null
+    for (const file of files) {
+      if (Math.round(file.size / 1000) > MAX_KB_SIZE || accept !== '*' && !validateFormat(file))
+        continue;
 
-    if (accept !== '*' && !accept.split(',').some((format) => file.name.toLowerCase().endsWith(format.toLowerCase()))) {
-      result = null
+      resultFiles.push(file)
+
+      if (!multiple && resultFiles.length === 1)
+        break;
     }
 
-    return result
+    return resultFiles
   }
 
   function handleDragEnter(e) {
@@ -80,6 +89,7 @@ function FileUploader({ className, children, onChange, accept = '*', error, disa
         type="file"
         ref={inputRef}
         accept={accept}
+        multiple={multiple}
         onChange={handleChange}
         title=""
       />

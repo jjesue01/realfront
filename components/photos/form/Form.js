@@ -43,9 +43,22 @@ const selectOptions = [
 
 const libraries = ['places']
 
-const FILE_FORMATS = ['.jpg', '.mp4', '.webm']
-const RAW_FORMATS = ['.raw', '.cr2', '.nef', '.arw', '.mp4', '.webm']
 const RESOURCE_TYPES = ['Image', 'Video', '360 Tour']
+
+const FORMATS = {
+  'Image': {
+    preview: ['.jpg'],
+    raw: ['.raw', '.cr2', '.nef', '.arw']
+  },
+  'Video': {
+    preview: ['.mp4', '.webm'],
+    raw: ['.mp4', '.webm']
+  },
+  '360 Tour': {
+    preview: ['.jpg'],
+    raw: ['.jpg']
+  },
+}
 
 function Form({ mode }) {
   const dispatch = useDispatch()
@@ -93,16 +106,17 @@ function Form({ mode }) {
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
   const isReseller = mode === 'edit' && listing?.tokenID
 
-  function handleFileJPGChange(file) {
-    if (file !== null) {
-      setFile(file)
-      setFilePreview(getImageUrl(file))
-      setIsVideo(file.type.includes('video'))
+  function handleFileJPGChange(files) {
+    if (files.length > 0 ) {
+      setFile(files[0])
+      setFilePreview(getImageUrl(files[0]))
+      setIsVideo(files[0].type.includes('video'))
     }
   }
 
-  function handleFileRAWChange(file) {
-    setRawFile(file)
+  function handleFileRAWChange(files) {
+    if (files.length > 0)
+      setRawFile(files[0])
   }
 
   function handleResourceChange(resource) {
@@ -125,6 +139,7 @@ function Form({ mode }) {
     if (!values.name) errors.name = 'Name is required'
     if (!values.address) errors.address = 'Address is required'
     if (!values.city.value) errors.city = 'City is required'
+    if (resourceType.includes('360') && !values.link360) errors.link360 = '360 Tour Link is required'
 
     if (mode === 'create' && !location.latitude && !!values.address)
       errors.address = 'Please, select your address from list'
@@ -334,14 +349,14 @@ function Form({ mode }) {
             lHeight={22}
             margin={'10px 0 0'}
             color={'rgba(55, 65, 81, 0.8)'}>
-            Preview file types: { getFormattedFileFormats(FILE_FORMATS) }.
+            Preview file types: { getFormattedFileFormats(FORMATS[resourceType].preview) }.
           </Typography>
           <Typography
             fontFamily={'Lato'}
             fontSize={14}
             lHeight={22}
             color={'rgba(55, 65, 81, 0.8)'}>
-            Raw file types: { getFormattedFileFormats(RAW_FORMATS) }.
+            Raw file types: { getFormattedFileFormats(FORMATS[resourceType].raw) }.
           </Typography>
           <Typography
             fontFamily={'Lato'}
@@ -354,7 +369,7 @@ function Form({ mode }) {
             <div className={styles.uploader}>
               <FileUploader
                 onChange={handleFileJPGChange}
-                accept={FILE_FORMATS.join() + ',.jpeg'}
+                accept={FORMATS[resourceType].preview.join() + ',.jpeg'}
                 disabled={isReseller}
                 error={file === null && touched.name}>
                 { 
@@ -388,14 +403,22 @@ function Form({ mode }) {
             <div className={styles.uploader}>
               <FileUploader
                 onChange={handleFileRAWChange}
-                accept={RAW_FORMATS.join()}
+                accept={FORMATS[resourceType].raw.join() + (resourceType.includes('360') ? ',.jpeg' : '')}
                 disabled={isReseller}
+                multiple={resourceType.includes('360')}
                 error={rawFile === null && touched.name}>
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
-                  <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                    { rawFile === null ? 'Upload raw file' : (rawFile?.name || rawFile )}
-                  </Typography>
+                  {
+                    resourceType.includes('360') ?
+                    <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
+                      { rawFile === null ? 'Upload 360 images' : (rawFile?.name || rawFile )}
+                    </Typography>
+                      :
+                    <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
+                      { rawFile === null ? 'Upload raw file' : (rawFile?.name || rawFile )}
+                    </Typography>
+                  }
                   {
                     rawFile === null &&
                     <p className={styles.uploaderText}>
@@ -413,6 +436,20 @@ function Form({ mode }) {
             </div>
           </div>
         </div>
+        {
+          resourceType.includes('360') &&
+          <Input
+            type="url"
+            className={styles.input}
+            name="link360"
+            value={formik.values.link360}
+            onChange={formik.handleChange}
+            placeholder="Item 360 Tour Link"
+            required
+            error={errors.link360}
+            errorText={errors.link360 && touched.link360}
+            label="360 Tour URL*" />
+        }
         <Input
           className={styles.input}
           name="name"
