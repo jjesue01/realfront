@@ -19,7 +19,9 @@ export const listingsApi = createApi({
         let formData = new FormData()
         console.log('send listing', data)
         formData.append("file", data.file, data.file.name);
-        formData.append("raw", data.raw, data.raw.name);
+        for (const rawFile of data.raw) {
+          formData.append("raw", rawFile, rawFile.name);
+        }
         formData.append("name", data.name);
         formData.append("description", data.description);
         formData.append("city", data.city);

@@ -78,7 +78,7 @@ function Form({ mode }) {
   const [isCreated, setIsCreated] = useState(false)
   const [deleteConfirmationOpened, setDeleteConfirmation] = useState(false)
   const [file, setFile] = useState(null)
-  const [rawFile, setRawFile] = useState(null)
+  const [rawFile, setRawFile] = useState([])
   const [filePreview, setFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
@@ -116,7 +116,7 @@ function Form({ mode }) {
 
   function handleFileRAWChange(files) {
     if (files.length > 0)
-      setRawFile(files[0])
+      setRawFile(files)
   }
 
   function handleResourceChange(resource) {
@@ -152,7 +152,7 @@ function Form({ mode }) {
   }, [dispatch])
 
   function handleSubmit(values, { setSubmitting }) {
-    if (file !== null && rawFile !== null){
+    if (file !== null && rawFile.length !== 0) {
       const data = {
         ...values,
         file: file,
@@ -406,33 +406,40 @@ function Form({ mode }) {
                 accept={FORMATS[resourceType].raw.join() + (resourceType.includes('360') ? ',.jpeg' : '')}
                 disabled={isReseller}
                 multiple={resourceType.includes('360')}
-                error={rawFile === null && touched.name}>
+                error={rawFile.length === 0 && touched.name}>
                 <div className={styles.uploaderContainer}>
                   <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
                   {
                     resourceType.includes('360') ?
-                    <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                      { rawFile === null ? 'Upload 360 images' : (rawFile?.name || rawFile )}
-                    </Typography>
+                      <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
+                        Upload 360 images
+                      </Typography>
                       :
                     <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                      { rawFile === null ? 'Upload raw file' : (rawFile?.name || rawFile )}
+                      { rawFile.length === 0 ? 'Upload raw file' : (rawFile[0]?.name || rawFile[0] )}
                     </Typography>
                   }
                   {
-                    rawFile === null &&
+                    (rawFile.length === 0 || resourceType.includes('360')) &&
                     <p className={styles.uploaderText}>
                       Drag & drop file or <span>browse media on your device</span>
                     </p>
                   }
                   {
-                    rawFile !== null && !isReseller &&
+                    rawFile.length !== 0 && !isReseller &&
                     <ButtonCircle className={styles.btnEdit}>
                       <PenIcon />
                     </ButtonCircle>
                   }
                 </div>
               </FileUploader>
+              {
+                resourceType.includes('360') && rawFile.map(file => (
+                  <Typography key={file.name} fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
+                    {file.name}
+                  </Typography>
+                ))
+              }
             </div>
           </div>
         </div>
