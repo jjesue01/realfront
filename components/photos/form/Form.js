@@ -29,6 +29,7 @@ import MediaFile from "../../media-file/MediaFile";
 import ConfirmationDialog from "../../dialogs/confirmation-dialog/ConfirmationDialog";
 import DollarIcon from "../../../public/icons/dollar.svg";
 import HistoryIcon from "../../../public/icons/history.svg";
+import Tabs from "../../tabs/Tabs";
 
 const selectOptions = [
   {
@@ -119,10 +120,8 @@ function Form({ mode }) {
       setRawFile(files)
   }
 
-  function handleResourceChange(resource) {
-    return function () {
-      setResourceType(resource)
-    }
+  function handleResourceChange({ target: { value } }) {
+    setResourceType(value)
   }
 
   function handleCloseCongratulations() {
@@ -314,28 +313,12 @@ function Form({ mode }) {
               'Create new item'
           }
         </Typography>
-        <Typography
-          fontWeight={600}
-          fontSize={16}
-          margin={'24px 0 0'}
-          lHeight={20}>
-          Resource Type
-        </Typography>
-        <div className={styles.resourceTypes}>
-          {
-            RESOURCE_TYPES.map(resource => (
-              <button
-                key={resource}
-                type="button"
-                onClick={handleResourceChange(resource)}
-                className={cn(styles.resourceType, { [styles.resourceTypeActive]: resourceType === resource })}>
-                <Typography tag="span" fontSize={16} fontWeight={600} lHeight={20}>
-                  { resource }
-                </Typography>
-              </button>
-            ))
-          }
-        </div>
+        <Tabs
+          className={styles.resourceTypes}
+          name="resourceType"
+          value={resourceType}
+          onChange={handleResourceChange}
+          tabs={RESOURCE_TYPES} />
         <div className={styles.uploadSection}>
           <Typography
             fontWeight={600}
@@ -434,11 +417,14 @@ function Form({ mode }) {
                 </div>
               </FileUploader>
               {
-                resourceType.includes('360') && rawFile.map(file => (
-                  <Typography key={file.name} fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                    {file.name}
-                  </Typography>
-                ))
+                resourceType.includes('360') &&
+                <div className={styles.photoPreviews}>
+                  {
+                    rawFile.map(file => (
+                      <MediaFile key={file.name} src={URL.createObjectURL(file)} alt={file.name} />
+                    ))
+                  }
+                </div>
               }
             </div>
           </div>
