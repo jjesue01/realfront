@@ -191,7 +191,9 @@ function PhotoDetails({ openLogin }) {
                     resolve()
                     setIsDone(true)
                     //downloadNFT(listing.ipfs.cid, listing.rawFileName)
-                    download(listing.filePath, listing.fileOriginalName)
+                    listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
+                      download(path, originalName)
+                    })
                   })
                   .catch(error => {
                     console.log(error)
@@ -263,7 +265,7 @@ function PhotoDetails({ openLogin }) {
         !ownItem &&
         <>
           <DoneCongratulation
-            imageUrl={listing?.resource === 'Video' ? listing?.rawFilePath : listing?.thumbnail}
+            imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
             message={`You just purchased ${listing?.name}. It should be confirmed on the blockhain shortly.`}
             opened={isDone}
             title={'Complete checkout'}

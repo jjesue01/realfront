@@ -384,7 +384,7 @@ function SellItem() {
         onClose={toggleSellSteps}
         onDone={handleDone} />
       <DoneCongratulation
-        imageUrl={listing?.resource === 'Video' ? listing.rawFilePath : listing?.thumbnail}
+        imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
         message={`Great! You just set on sale - ${listing?.name}`}
         opened={isDone}
         listing={listing}

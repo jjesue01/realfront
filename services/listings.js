@@ -18,7 +18,8 @@ export const listingsApi = createApi({
       query: (data) => {
         let formData = new FormData()
         console.log('send listing', data)
-        formData.append("file", data.file, data.file.name);
+        for (const file of data.file)
+          formData.append("file", file, file.name);
         for (const rawFile of data.raw) {
           formData.append("raw", rawFile, rawFile.name);
         }
