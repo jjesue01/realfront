@@ -10,6 +10,7 @@ import FileUploader from "./file-uploader/FileUploader";
 import Image from "next/image";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 import PenIcon from '/public/icons/pen.svg'
+import CrossIcon from '/public/icons/cross.svg'
 import DoneCongratulation from "../../dialogs/done-congratulation/DoneCongratulation";
 import {useRouter} from "next/router";
 import {citiesApi, useCreateCityMutation} from "../../../services/cities";
@@ -27,8 +28,8 @@ import Error from "../../error/Error";
 import cn from "classnames";
 import MediaFile from "../../media-file/MediaFile";
 import ConfirmationDialog from "../../dialogs/confirmation-dialog/ConfirmationDialog";
-import DollarIcon from "../../../public/icons/dollar.svg";
-import HistoryIcon from "../../../public/icons/history.svg";
+import Tabs from "../../tabs/Tabs";
+import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
 
 const selectOptions = [
   {
@@ -77,14 +78,15 @@ function Form({ mode }) {
   const [isDeleting, setDeleting] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [deleteConfirmationOpened, setDeleteConfirmation] = useState(false)
-  const [file, setFile] = useState(null)
-  const [rawFile, setRawFile] = useState(null)
+  const [file, setFile] = useState([])
+  const [rawFile, setRawFile] = useState([])
   const [filePreview, setFilePreview] = useState(null)
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
   const [listing, setListing] = useState({})
   const [listingError, setListingError] = useState({})
   const [isVideo, setIsVideo] = useState(false)
+  const isTour = resourceType.includes('360')
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
       name: '',
@@ -108,7 +110,7 @@ function Form({ mode }) {
 
   function handleFileJPGChange(files) {
     if (files.length > 0 ) {
-      setFile(files[0])
+      setFile(prevState => [...prevState, ...files])
       setFilePreview(getImageUrl(files[0]))
       setIsVideo(files[0].type.includes('video'))
     }
@@ -116,12 +118,16 @@ function Form({ mode }) {
 
   function handleFileRAWChange(files) {
     if (files.length > 0)
-      setRawFile(files[0])
+      setRawFile(files)
   }
 
-  function handleResourceChange(resource) {
+  function handleResourceChange({ target: { value } }) {
+    setResourceType(value)
+  }
+
+  function handleRemoveImage(index) {
     return function () {
-      setResourceType(resource)
+      setFile(prevState => prevState.filter((item, i) => index !== i))
     }
   }
 
@@ -139,7 +145,7 @@ function Form({ mode }) {
     if (!values.name) errors.name = 'Name is required'
     if (!values.address) errors.address = 'Address is required'
     if (!values.city.value) errors.city = 'City is required'
-    if (resourceType.includes('360') && !values.link360) errors.link360 = '360 Tour Link is required'
+    if (isTour && !values.link360) errors.link360 = '360 Tour Link is required'
 
     if (mode === 'create' && !location.latitude && !!values.address)
       errors.address = 'Please, select your address from list'
@@ -152,7 +158,7 @@ function Form({ mode }) {
   }, [dispatch])
 
   function handleSubmit(values, { setSubmitting }) {
-    if (file !== null && rawFile !== null){
+    if (file.length !== 0 && rawFile.length !== 0) {
       const data = {
         ...values,
         file: file,
@@ -230,11 +236,12 @@ function Form({ mode }) {
 
             if (data?.resource === 'Video') {
               setIsVideo(true)
-              setFile(data?.rawFilePath)
+              setFile([data.nfts[0]?.ipfs?.file?.path])
             } else {
-              setFile(data.thumbnail)
+              setFile([data.thumbnail])
             }
-            setRawFile(data.rawFileName)
+            setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+            setResourceType(data?.resource || 'Image')
           } else {
             setListingError(error.data)
           }
@@ -314,28 +321,12 @@ function Form({ mode }) {
               'Create new item'
           }
         </Typography>
-        <Typography
-          fontWeight={600}
-          fontSize={16}
-          margin={'24px 0 0'}
-          lHeight={20}>
-          Resource Type
-        </Typography>
-        <div className={styles.resourceTypes}>
-          {
-            RESOURCE_TYPES.map(resource => (
-              <button
-                key={resource}
-                type="button"
-                onClick={handleResourceChange(resource)}
-                className={cn(styles.resourceType, { [styles.resourceTypeActive]: resourceType === resource })}>
-                <Typography tag="span" fontSize={16} fontWeight={600} lHeight={20}>
-                  { resource }
-                </Typography>
-              </button>
-            ))
-          }
-        </div>
+        <Tabs
+          className={styles.resourceTypes}
+          name="resourceType"
+          value={resourceType}
+          onChange={handleResourceChange}
+          tabs={RESOURCE_TYPES} />
         <div className={styles.uploadSection}>
           <Typography
             fontWeight={600}
@@ -369,25 +360,26 @@ function Form({ mode }) {
             <div className={styles.uploader}>
               <FileUploader
                 onChange={handleFileJPGChange}
-                accept={FORMATS[resourceType].preview.join() + ',.jpeg'}
+                accept={FORMATS[resourceType].preview.join() + (resourceType !== 'Video' && ',.jpeg')}
                 disabled={isReseller}
-                error={file === null && touched.name}>
+                multiple={isTour}
+                error={file.length === 0 && touched.name}>
                 { 
-                  file === null ?
+                  file.length === 0 || isTour ?
                     <div className={styles.uploaderContainer}>
                       <Image src="/images/form-jpg.svg" width={50} height={50} alt="jpg file" />
                       <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                        Upload preview file
+                        { isTour ? 'Upload 360 tour images': 'Upload preview file' }
                       </Typography>
                       <p className={styles.uploaderText}>
-                        Drag & drop file or <span>browse media on your device</span>
+                        Drag & drop file{ isTour && 's' } or <span>browse media on your device</span>
                       </p>
                     </div>
                     :
                     <div className={styles.imageContainer}>
                       <MediaFile
-                        src={filePreview !== null ? filePreview : file}
-                        videoSrc={isVideo && (filePreview !== null ? filePreview : file)}
+                        src={filePreview !== null ? filePreview : file[0]}
+                        videoSrc={isVideo && (filePreview !== null ? filePreview : file[0])}
                         autoPlay
                         alt="nft item" />
                       {
@@ -400,44 +392,59 @@ function Form({ mode }) {
                 }
               </FileUploader>
             </div>
-            <div className={styles.uploader}>
-              <FileUploader
-                onChange={handleFileRAWChange}
-                accept={FORMATS[resourceType].raw.join() + (resourceType.includes('360') ? ',.jpeg' : '')}
-                disabled={isReseller}
-                multiple={resourceType.includes('360')}
-                error={rawFile === null && touched.name}>
-                <div className={styles.uploaderContainer}>
-                  <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
+            {
+              isTour ?
+                <div className={styles.photoPreviews}>
                   {
-                    resourceType.includes('360') ?
-                    <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                      { rawFile === null ? 'Upload 360 images' : (rawFile?.name || rawFile )}
-                    </Typography>
-                      :
-                    <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                      { rawFile === null ? 'Upload raw file' : (rawFile?.name || rawFile )}
-                    </Typography>
-                  }
-                  {
-                    rawFile === null &&
-                    <p className={styles.uploaderText}>
-                      Drag & drop file or <span>browse media on your device</span>
-                    </p>
-                  }
-                  {
-                    rawFile !== null && !isReseller &&
-                    <ButtonCircle className={styles.btnEdit}>
-                      <PenIcon />
-                    </ButtonCircle>
+                    new Array(Math.max(file.length, 6)).fill(null).map((item, index) => (
+                      <div key={`${file[index]?.name}-${index}`} className={cn(styles.photoPreview, { [styles.noBorder]: file[index] })}>
+                        {
+                          file[index] ?
+                            <>
+                              <MediaFile src={getImageUrl(file[index])} alt={file[index].name} />
+                              <ButtonCircle onClick={handleRemoveImage(index)} className={styles.btnRemove}>
+                                <CrossIcon />
+                              </ButtonCircle>
+                            </>
+                            :
+                            <AspectRatioBox />
+                        }
+                      </div>
+                    ))
                   }
                 </div>
-              </FileUploader>
-            </div>
+                :
+                <div className={styles.uploader}>
+                  <FileUploader
+                    onChange={handleFileRAWChange}
+                    accept={FORMATS[resourceType].raw.join()}
+                    disabled={isReseller}
+                    error={rawFile.length === 0 && touched.name}>
+                    <div className={styles.uploaderContainer}>
+                      <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
+                      <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'} align="center">
+                        { rawFile.length === 0 ? 'Upload raw file' : (rawFile[0]?.name || rawFile[0] )}
+                      </Typography>
+                      {
+                        rawFile.length === 0 &&
+                        <p className={styles.uploaderText}>
+                          Drag & drop file or <span>browse media on your device</span>
+                        </p>
+                      }
+                      {
+                        rawFile.length !== 0 && !isReseller &&
+                        <ButtonCircle className={styles.btnEdit}>
+                          <PenIcon />
+                        </ButtonCircle>
+                      }
+                    </div>
+                  </FileUploader>
+                </div>
+            }
           </div>
         </div>
         {
-          resourceType.includes('360') &&
+          isTour &&
           <Input
             type="url"
             className={styles.input}

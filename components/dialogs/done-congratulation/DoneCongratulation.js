@@ -16,6 +16,8 @@ const HOST_NAME = 'https://nft-homejab.netlify.app'
 function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash, listing, hasShare = true }) {
   const router = useRouter()
 
+  console.log(imageUrl)
+
   function getShareMessage() {
     if (router.pathname.includes('/photos/create'))
       return `I've just created new NFT ${listing?.name} on HomeJab!`

@@ -97,7 +97,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
           <div className={styles.column}>
             <MediaFile
               src={listing?.thumbnail}
-              videoSrc={listing?.resource === 'Video' && listing?.rawFilePath}
+              videoSrc={listing?.resource === 'Video' && listing?.nfts[0]?.ipfs?.file?.path}
               controls
               alt={listing?.name} />
             <Timer className={styles.timer} endDate={'2021-11-27 3:33'} />

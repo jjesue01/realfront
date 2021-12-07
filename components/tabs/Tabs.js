@@ -5,6 +5,7 @@ import cn from "classnames";
 function Tabs({ className, name, value, onChange, tabs }) {
   const tabsList = tabs.map(tab => (
     <button
+      type="button"
       key={tab}
       onClick={handleClick(tab)}
       className={cn(styles.tab, { [styles.tabActive]: tab === value })}>
