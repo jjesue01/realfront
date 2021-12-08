@@ -33,12 +33,8 @@ import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
 
 const selectOptions = [
   {
-    label: 'Ethereum',
-    value: 'ethereum'
-  },
-  {
-    label: 'Bitcoin',
-    value: 'bitcoin'
+    label: 'Binance Smart Chain',
+    value: 'binance_smart_chain'
   },
 ]
 
@@ -81,6 +77,7 @@ function Form({ mode }) {
   const [file, setFile] = useState([])
   const [rawFile, setRawFile] = useState([])
   const [filePreview, setFilePreview] = useState(null)
+  const [tourPreviews, setTourPreviews] = useState([])
   const [location, setLocation] = useState({})
   const [id, setId] = useState(null)
   const [listing, setListing] = useState({})
@@ -94,7 +91,7 @@ function Form({ mode }) {
       description: '',
       link360: '',
       tags: '',
-      blockchain: 'ethereum',
+      blockchain: 'binance_smart_chain',
       city: {
         label: '',
         value: ''
@@ -111,6 +108,14 @@ function Form({ mode }) {
   function handleFileJPGChange(files) {
     if (files.length > 0 ) {
       setFile(prevState => [...prevState, ...files])
+      if (isTour)
+        setTourPreviews(prevState => [
+          ...prevState,
+          ...[...files].map((item, index) => ({
+            id: `${Date.now()}-${index}`,
+            content: getImageUrl(item)
+          }))
+        ])
       setFilePreview(getImageUrl(files[0]))
       setIsVideo(files[0].type.includes('video'))
     }
@@ -128,6 +133,7 @@ function Form({ mode }) {
   function handleRemoveImage(index) {
     return function () {
       setFile(prevState => prevState.filter((item, i) => index !== i))
+      setTourPreviews(prevState => prevState.filter((item, i) => index !== i))
     }
   }
 
@@ -158,7 +164,7 @@ function Form({ mode }) {
   }, [dispatch])
 
   function handleSubmit(values, { setSubmitting }) {
-    if (file.length !== 0 && rawFile.length !== 0) {
+    if (file.length !== 0 && (rawFile.length !== 0 || isTour)) {
       const data = {
         ...values,
         file: file,
@@ -397,11 +403,11 @@ function Form({ mode }) {
                 <div className={styles.photoPreviews}>
                   {
                     new Array(Math.max(file.length, 6)).fill(null).map((item, index) => (
-                      <div key={`${file[index]?.name}-${index}`} className={cn(styles.photoPreview, { [styles.noBorder]: file[index] })}>
+                      <div key={tourPreviews[index]?.id || index} className={cn(styles.photoPreview, { [styles.noBorder]: file[index] })}>
                         {
-                          file[index] ?
+                          tourPreviews[index] ?
                             <>
-                              <MediaFile src={getImageUrl(file[index])} alt={file[index].name} />
+                              <MediaFile src={tourPreviews[index].content} alt="VR" />
                               <ButtonCircle onClick={handleRemoveImage(index)} className={styles.btnRemove}>
                                 <CrossIcon />
                               </ButtonCircle>

@@ -95,11 +95,22 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
       <div className="container">
         <div className={styles.row}>
           <div className={styles.column}>
-            <MediaFile
-              src={listing?.thumbnail}
-              videoSrc={listing?.resource === 'Video' && listing?.nfts[0]?.ipfs?.file?.path}
-              controls
-              alt={listing?.name} />
+            {
+              !!listing?.link360 ?
+                <AspectRatioBox>
+                  <iframe
+                    className={styles.tour}
+                    src={listing.link360}
+                    allowFullScreen
+                    allow="clipboard-write; microphone; camera; gyroscope; accelerometer" />
+                </AspectRatioBox>
+                :
+                <MediaFile
+                  src={listing?.thumbnail}
+                  videoSrc={listing?.resource === 'Video' && listing?.nfts[0]?.ipfs?.file?.path}
+                  controls
+                  alt={listing?.name} />
+            }
             <Timer className={styles.timer} endDate={'2021-11-27 3:33'} />
             <Offers
               className={styles.offers}
