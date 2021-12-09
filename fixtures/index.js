@@ -32,3 +32,10 @@ export const questions = [
     content: 'For additional information, please email us at real@homejab.com.'
   },
 ]
+
+export const blockchainOptions = [
+  {
+    label: 'Binance Smart Chain',
+    value: 'binance_smart_chain'
+  },
+]

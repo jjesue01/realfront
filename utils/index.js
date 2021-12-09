@@ -80,12 +80,16 @@ export function getShortWalletAddress(walletAddress) {
 
 export function buildFormData(data) {
   const formData = new FormData()
-
   for (const [key, value] of Object.entries(data)) {
     const keyLowerCase = key.toLowerCase()
     if (keyLowerCase.includes('image') || keyLowerCase.includes('file') || keyLowerCase.includes('raw')) {
       if (typeof value?.name === 'string')
         formData.append(key, value, value.name)
+      if (Array.isArray(value))
+        value.forEach(item => {
+          if (typeof item?.name === 'string')
+            formData.append(key, item, value.name)
+        })
     } else {
       formData.append(key, value)
     }

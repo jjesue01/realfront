@@ -30,13 +30,7 @@ import MediaFile from "../../media-file/MediaFile";
 import ConfirmationDialog from "../../dialogs/confirmation-dialog/ConfirmationDialog";
 import Tabs from "../../tabs/Tabs";
 import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
-
-const selectOptions = [
-  {
-    label: 'Binance Smart Chain',
-    value: 'binance_smart_chain'
-  },
-]
+import {blockchainOptions} from "../../../fixtures";
 
 const libraries = ['places']
 
@@ -127,6 +121,7 @@ function Form({ mode }) {
   }
 
   function handleResourceChange({ target: { value } }) {
+    if (isReseller) return;
     setResourceType(value)
   }
 
@@ -237,17 +232,25 @@ function Form({ mode }) {
               city: {
                 label: data?.city?.name || '',
                 value: data?.city?.ID || ''
-              }
+              },
+              link360: data?.link360 || ''
             })
 
             if (data?.resource === 'Video') {
               setIsVideo(true)
               setFile([data.nfts[0]?.ipfs?.file?.path])
-            } else {
+              setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+            } else if (data?.resource === 'Image') {
               setFile([data.thumbnail])
+              setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+            } else {
+              setFile(data.nfts.map(nft => nft?.ipfs?.file?.path))
+              setTourPreviews(data.nfts.map((nft, index) => ({
+                id: `${Date.now()}-${index}`,
+                content: nft?.ipfs?.file?.path
+              })))
             }
-            setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
-            setResourceType(data?.resource || 'Image')
+            setResourceType((data?.resource?.includes('360') ? '360 Tour' : data?.resource) || 'Image')
           } else {
             setListingError(error.data)
           }
@@ -328,7 +331,7 @@ function Form({ mode }) {
           }
         </Typography>
         <Tabs
-          className={styles.resourceTypes}
+          className={cn(styles.resourceTypes, { [styles.readOnly]: isReseller })}
           name="resourceType"
           value={resourceType}
           onChange={handleResourceChange}
@@ -408,9 +411,12 @@ function Form({ mode }) {
                           tourPreviews[index] ?
                             <>
                               <MediaFile src={tourPreviews[index].content} alt="VR" />
-                              <ButtonCircle onClick={handleRemoveImage(index)} className={styles.btnRemove}>
-                                <CrossIcon />
-                              </ButtonCircle>
+                              {
+                                !isReseller &&
+                                <ButtonCircle onClick={handleRemoveImage(index)} className={styles.btnRemove}>
+                                  <CrossIcon />
+                                </ButtonCircle>
+                              }
                             </>
                             :
                             <AspectRatioBox />
@@ -512,7 +518,7 @@ function Form({ mode }) {
         <Select
           className={styles.input}
           name="blockchain"
-          options={selectOptions}
+          options={blockchainOptions}
           value={formik.values.blockchain}
           onChange={formik.handleChange}
           label="Blockchain" />

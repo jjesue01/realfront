@@ -17,6 +17,7 @@ import Offers from "../offers/Offers";
 import Timer from "../timer/Timer";
 import AspectRatioBox from "../../../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../../../media-file/MediaFile";
+import {blockchainOptions} from "../../../../fixtures";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
@@ -327,7 +328,12 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                     <p>Blockchain</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>{ listing?.blockchain }</p>
+                    <p>
+                      {
+                        blockchainOptions
+                          .find(blockchain => listing?.blockchain === blockchain)?.label || blockchainOptions[0].label
+                      }
+                    </p>
                   </div>
                 </div>
               </div>
