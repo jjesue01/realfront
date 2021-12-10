@@ -38,12 +38,13 @@ export const transactionsApi = createApi({
       })
     }),
     postBid: builder.mutation({
-      query: ({ id, price }) => ({
+      query: ({ id, price, bidIndex }) => ({
         url: `/bids`,
         method: 'POST',
         body: {
           listingID: id,
-          price
+          price,
+          bidIndex
         }
       })
     }),

@@ -105,9 +105,9 @@ function PhotoDetails({ openLogin }) {
     const contractApi = require('/services/contract')
 
     return new Promise((resolve, reject) => {
-      contractApi.approve(price, user.walletAddress)
-        .then(() => {
-          postBid({ id, price }).unwrap()
+      contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
+        .then((bidIndex) => {
+          postBid({ id, price, bidIndex }).unwrap()
             .then((result) => {
               toggleMakeOffer()
               refetchBids()
@@ -273,8 +273,8 @@ function PhotoDetails({ openLogin }) {
             listing={listing}
             onClose={handleCloseCongratulations} />
           <MakeOffer
-            title={ bids?.length ? 'Place a bid' : 'Make an offer' }
-            btnTitle={ bids?.length ? 'Place bid' : 'Make offer' }
+            title={ listing?.bid?.endDate || bids?.length  ? 'Place a bid' : 'Make an offer' }
+            btnTitle={ listing?.bid?.endDate || bids?.length  ? 'Place bid' : 'Make offer' }
             listing={listing}
             maxBidPrice={maxBid}
             opened={makeOfferOpened}

@@ -2,7 +2,7 @@ const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
 
-const HOMEJAB_ADDRESS = '0x35702cC56EBBbd0023F25d3560E1BCBB4A60cA2d'
+const HOMEJAB_ADDRESS = '0x3730F29f0F569141d5C797aAF54827670102Fabe'
 const DBUSD_ADDRESS = '0xDf1AE3eCFF4E32431e9010B04c36E901f7ED388b'
 
 if (typeof window !== "undefined" && window?.web3App) {
@@ -13,11 +13,11 @@ if (typeof window !== "undefined" && window?.web3App) {
     busd,
     DBUSD_ADDRESS);
 
-  contractApi.mintAndList = (royalties, price, walletAddress) => {
+  contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())
 
-      homejab.methods.mintAndList(royalties, weiPrice).send({ from: walletAddress })
+      homejab.methods.mintAndList(royalties, weiPrice, endTime).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           const tokenID = receipt.events['Minted'].returnValues._id
           resolve(tokenID)
@@ -38,6 +38,41 @@ if (typeof window !== "undefined" && window?.web3App) {
         .on('error', (error) => {
           reject(error)
         })
+    })
+  }
+
+  contractApi.listForAuction = (tokenID, price, endTime, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      const weiPrice = window.web3App.utils.toWei(price.toString())
+      homejab.methods.listForEnglishAuction(tokenID, weiPrice, endTime).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          resolve()
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
+  contractApi.bidOnAuction = (tokenID, bidPrice, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      contractApi.approve(bidPrice + 1, walletAddress)
+        .then(() => {
+          const weiPrice = window.web3App.utils.toWei(bidPrice.toString())
+          homejab.methods.bidOnAuction(tokenID, weiPrice).send({ from: walletAddress })
+            .once('confirmation', (confirmation, receipt) => {
+              if (receipt.events['BidSuccess'] !== undefined) {
+                const bidIndex = receipt.events['BidSuccess'].returnValues._id
+                resolve(bidIndex)
+                console.log('bought')
+              } else {
+                reject()
+                console.log('error')
+              }
+            })
+            .on('error', reject)
+        })
+        .catch(reject)
     })
   }
 

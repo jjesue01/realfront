@@ -39,3 +39,54 @@ export const blockchainOptions = [
     value: 'binance_smart_chain'
   },
 ]
+
+export const scheduleOptions = [
+  {
+    label: 'In 1 day',
+    value: '1'
+  },
+  {
+    label: 'In 2 days',
+    value: '2'
+  },
+  {
+    label: 'In 3 days',
+    value: '3'
+  },
+  {
+    label: 'In 4 days',
+    value: '4'
+  },
+]
+export const durationOptions = [
+  {
+    label: '1 day',
+    value: '1'
+  },
+  {
+    label: '2 days',
+    value: '2'
+  },
+  {
+    label: '3 days',
+    value: '3'
+  },
+  {
+    label: '4 days',
+    value: '4'
+  },
+  {
+    label: '5 days',
+    value: '5'
+  },
+  {
+    label: '6 days',
+    value: '6'
+  },
+  {
+    label: '7 days',
+    value: '7'
+  },
+]
+
+export const DAY = 1000 * 60 * 60 * 24

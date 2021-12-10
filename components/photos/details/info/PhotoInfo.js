@@ -112,7 +112,10 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                   controls
                   alt={listing?.name} />
             }
-            <Timer className={styles.timer} endDate={'2021-11-27 3:33'} />
+            {
+              listing?.bid?.endDate &&
+              <Timer className={styles.timer} endDate={listing.bid.endDate} />
+            }
             <Offers
               className={styles.offers}
               data={bids}
@@ -234,14 +237,15 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                     </div>
                     <div className={cn(styles.itemActions, styles.noMargin)}>
                       {
-                        !bids?.length &&
-                        <Button onClick={onBuy}>
-                          Buy now
-                        </Button>
+                        (listing?.bid?.endDate || bids?.length ) ?
+                          <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
+                            { listing?.bid?.endDate || bids?.length  ? 'Place bid': 'Make offer' }
+                          </Button>
+                          :
+                          <Button onClick={onBuy}>
+                            Buy now
+                          </Button>
                       }
-                      <Button onClick={onOffer} type={ bids?.length ? 'accent': 'outlined' }>
-                        { bids?.length ? 'Place bid': 'Make offer' }
-                      </Button>
                     </div>
                   </div>
                   :
@@ -249,9 +253,12 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                     <Button onClick={goTo(`/photos/edit/${id}`)} type="outlined">
                       Edit
                     </Button>
-                    <Button onClick={goTo(`/photos/sell/${id}`)}>
-                      Sell
-                    </Button>
+                    {
+                      !listing?.isPublished &&
+                      <Button onClick={goTo(`/photos/sell/${id}`)}>
+                        Sell
+                      </Button>
+                    }
                   </div>
               }
               <div className={styles.description}>

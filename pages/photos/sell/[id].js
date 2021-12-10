@@ -22,25 +22,7 @@ import Error from "../../../components/error/Error";
 import DollarIcon from '/public/icons/dollar.svg'
 import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
-
-const scheduleOptions = [
-  {
-    label: 'In 1 day',
-    value: '1'
-  },
-  {
-    label: 'In 2 days',
-    value: '2'
-  },
-  {
-    label: 'In 3 days',
-    value: '3'
-  },
-  {
-    label: 'In 4 days',
-    value: '4'
-  },
-]
+import {DAY, durationOptions, scheduleOptions} from "../../../fixtures";
 
 const validationSchema = Yup.object({
   price: Yup.number().required('Price is required').positive('Price should be more than zero'),
@@ -48,7 +30,8 @@ const validationSchema = Yup.object({
   royalties: Yup.number().min(0).max(10).integer(),
   scheduleFrequency: Yup.string(),
   scheduleTime: Yup.string(),
-  buyerAddress: Yup.string()
+  buyerAddress: Yup.string(),
+  duration: Yup.string()
 })
 
 function SellItem() {
@@ -72,7 +55,8 @@ function SellItem() {
       royalties: 0,
       scheduleFrequency: '',
       scheduleTime: '',
-      buyerAddress: ''
+      buyerAddress: '',
+      duration: '7'
     },
     validationSchema,
     onSubmit: handleSubmit
@@ -152,17 +136,26 @@ function SellItem() {
       id
     }
 
+    const endTime = sellType === 'auction' ? Date.now() + parseInt(values.duration) * DAY : 0
+
+    if (sellType === 'auction') {
+      data.sellMethod = 'Auction';
+      data.endDate = endTime
+    }
+
     let promise;
 
     if (listing?.tokenID === undefined) {
-      promise = contractApi.mintAndList(+values.royalties, values.price, user.walletAddress)
+      promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
       console.log('mint')
     } else if (listing.isPublished) {
       promise = contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
       console.log('update price')
-    } else {
+    } else if (sellType === 'fixed') {
       console.log('set on sell')
       promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
+    } else {
+      promise = contractApi.listForAuction(data.tokenID, data.price, user.walletAddress)
     }
 
     promise
@@ -286,88 +279,115 @@ function SellItem() {
                     </Typography>
                   </button>
                 </div>
-                <Input
-                  className={styles.field}
-                  type="price"
-                  name="price"
-                  value={formik.values.price}
-                  onChange={handlePriceChange}
-                  placeholder="e.g. 1"
-                  required
-                  step={0.01}
-                  subLabel="Will be on sale until you transfer this item or cancel it."
-                  error={errors.price && touched.price}
-                  errorText={errors.price}
-                  label="Price*" />
-                <Input
-                  type="number"
-                  className={styles.field}
-                  name="copies"
-                  value={formik.values.copies}
-                  onChange={handleCopiesChange}
-                  placeholder="e.g. 5"
-                  label="Number of copies" />
                 {
-                  !listing?.tokenID &&
-                  <Input
-                    type="number"
-                    className={cn(styles.field)}
-                    name="royalties"
-                    value={formik.values.royalties}
-                    onChange={handleRoyaltiesChange}
-                    placeholder="e.g. 10"
-                    iconRight={<span className={styles.percentIcon}>%</span>}
-                    subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"
-                    label="Royalties" />
-                }
-                <div className={styles.additionalFields}>
-                  <div className={styles.addField}>
-                    <Switcher
-                      className={styles.switcher}
-                      name="schedule"
-                      value={switchers.schedule}
-                      onChange={handleSwitcherChange} />
-                    <p className={styles.fieldLabel}>
-                      Schedule for a future time
-                    </p>
-                    <p className={styles.fieldSubLabel}>
-                      You can schedule this listing to only be buyable at a future date.
-                    </p>
-                    <div className={cn(styles.scheduleRow, { [styles.disabled]: !switchers.schedule })}>
-                      <Select
-                        className={styles.selectFrequency}
-                        name="scheduleFrequency"
-                        value={formik.values.scheduleFrequency}
-                        onChange={formik.handleChange}
-                        options={scheduleOptions}
-                        placeholder="In 3 days" />
-                      <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 0 30px'}>
-                        at
-                      </Typography>
+                  sellType === 'fixed' ?
+                    <>
                       <Input
-                        className={styles.selectFrequency}
-                        name="scheduleTime"
-                        value={formik.values.scheduleTime}
+                        className={styles.field}
+                        type="price"
+                        name="price"
+                        value={formik.values.price}
+                        onChange={handlePriceChange}
+                        placeholder="e.g. 1"
+                        required
+                        step={0.01}
+                        subLabel="Will be on sale until you transfer this item or cancel it."
+                        error={errors.price && touched.price}
+                        errorText={errors.price}
+                        label="Price*" />
+                      <Input
+                        type="number"
+                        className={styles.field}
+                        name="copies"
+                        value={formik.values.copies}
+                        onChange={handleCopiesChange}
+                        placeholder="e.g. 5"
+                        label="Number of copies" />
+                      {
+                        !listing?.tokenID &&
+                        <Input
+                          type="number"
+                          className={cn(styles.field)}
+                          name="royalties"
+                          value={formik.values.royalties}
+                          onChange={handleRoyaltiesChange}
+                          placeholder="e.g. 10"
+                          iconRight={<span className={styles.percentIcon}>%</span>}
+                          subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"
+                          label="Royalties" />
+                      }
+                      <div className={styles.additionalFields}>
+                        <div className={styles.addField}>
+                          <Switcher
+                            className={styles.switcher}
+                            name="schedule"
+                            value={switchers.schedule}
+                            onChange={handleSwitcherChange} />
+                          <p className={styles.fieldLabel}>
+                            Schedule for a future time
+                          </p>
+                          <p className={styles.fieldSubLabel}>
+                            You can schedule this listing to only be buyable at a future date.
+                          </p>
+                          <div className={cn(styles.scheduleRow, { [styles.disabled]: !switchers.schedule })}>
+                            <Select
+                              className={styles.selectFrequency}
+                              name="scheduleFrequency"
+                              value={formik.values.scheduleFrequency}
+                              onChange={formik.handleChange}
+                              options={scheduleOptions}
+                              placeholder="In 3 days" />
+                            <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 0 30px'}>
+                              at
+                            </Typography>
+                            <Input
+                              className={styles.selectFrequency}
+                              name="scheduleTime"
+                              value={formik.values.scheduleTime}
+                              onChange={formik.handleChange}
+                              placeholder="6:00 PM" />
+                          </div>
+                        </div>
+                        <div className={styles.addField}>
+                          <Switcher
+                            className={styles.switcher}
+                            name="private"
+                            value={switchers.private}
+                            onChange={handleSwitcherChange} />
+                          <Input
+                            className={cn(styles.input, { [styles.disabledInput]: !switchers.private })}
+                            name="buyerAddress"
+                            value={formik.values.buyerAddress}
+                            onChange={formik.handleChange}
+                            placeholder="Buyer address, e.g. 0x489423..."
+                            subLabel="You can keep your listing public, or your can specify one address that's allowed to buy it."
+                            label="Privacy" />
+                        </div>
+                      </div>
+                    </>
+                    :
+                    <>
+                      <Input
+                        className={styles.field}
+                        type="price"
+                        name="price"
+                        value={formik.values.price}
+                        onChange={handlePriceChange}
+                        placeholder="Amount"
+                        required
+                        step={0.01}
+                        error={errors.price && touched.price}
+                        errorText={errors.price}
+                        label="Starting price*" />
+                      <Select
+                        className={styles.field}
+                        name="duration"
+                        label="Duration"
+                        value={formik.values.duration}
                         onChange={formik.handleChange}
-                        placeholder="6:00 PM" />
-                    </div>
-                  </div>
-                  <div className={styles.addField}>
-                    <Switcher
-                      className={styles.switcher}
-                      name="private"
-                      value={switchers.private}
-                      onChange={handleSwitcherChange} />
-                    <Input
-                      className={cn(styles.input, { [styles.disabledInput]: !switchers.private })}
-                      name="buyerAddress"
-                      value={formik.values.buyerAddress}
-                      onChange={formik.handleChange}
-                      placeholder="Buyer address, e.g. 0x489423..."
-                      subLabel="You can keep your listing public, or your can specify one address that's allowed to buy it."
-                      label="Privacy" />
-                  </div>
-                </div>
+                        options={durationOptions} />
+                    </>
+                }
               </div>
               <div className={styles.summaryContainer}>
                 <Summary
