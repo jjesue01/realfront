@@ -78,6 +78,12 @@ export const listingsApi = createApi({
         method: 'POST'
       })
     }),
+    finishAuction: builder.mutation({
+      query: (id) => ({
+        url: `/listings/${id}/auction`,
+        method: 'POST'
+      })
+    }),
     getListings: builder.query({
       query: (params = {}) => ({
         url: '/listings',
@@ -115,6 +121,7 @@ export const {
   usePublishListingMutation,
   useLikeListingMutation,
   usePurchaseListingMutation,
+  useFinishAuctionMutation,
   useGetListingsQuery,
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,

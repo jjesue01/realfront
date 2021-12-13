@@ -6,7 +6,7 @@ import MoreFromCollection from "../../components/photos/details/more/MoreFromCol
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {
-  listingsApi,
+  listingsApi, useFinishAuctionMutation,
   useGetListingByIdQuery,
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
@@ -33,6 +33,8 @@ function PhotoDetails({ openLogin }) {
   const user = useSelector(state => state.auth.user)
   const [postBid] = usePostBidMutation()
   const [deleteBid] = useDeleteBidMutation()
+  const [purchaseListing] = usePurchaseListingMutation()
+  const [finishAuction] = useFinishAuctionMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
   const bids = bidsData?.docs || []
@@ -44,13 +46,11 @@ function PhotoDetails({ openLogin }) {
     limit: 3
   }, { skip: !cityId })
   const isLoading = (!listing || !transactions || !listings) && !error || isFetching || bidsFetching
-  const [purchaseListing] = usePurchaseListingMutation()
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const [makeOfferOpened, setMakeOfferOpened] = useState(false)
   const [transactionHash, setTransactionHash] = useState('')
   const [listingError, setListingError] = useState(false)
-  const [finishAuction, setFinishAuction] = useState(false)
   const [cancelConfirmationOpened, setCancelConfirmation] = useState(false)
 
   const maxBid = useMemo(() => {
@@ -107,7 +107,7 @@ function PhotoDetails({ openLogin }) {
     return new Promise((resolve, reject) => {
       contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
         .then((bidIndex) => {
-          postBid({ id, price, bidIndex }).unwrap()
+          postBid({ id, price, bidIndex: bids.length.toString() }).unwrap()
             .then((result) => {
               toggleMakeOffer()
               refetchBids()
@@ -152,25 +152,34 @@ function PhotoDetails({ openLogin }) {
   }
 
   function handleFinishAuction() {
-    const contract = require('/services/contract')
-    const bidderWalletAddress = bids[0].bidder.address
-    return;
+    return new Promise(async (resolve, reject) => {
+      const contract = require('/services/contract')
 
-    validateSell()
-      .then(() => {
-        contract.editPrice(listing.tokenID, maxBid, user.walletAddress)
-          .then(() => {
-            // contract.pureBuy(listing?.tokenID, bidderWalletAddress)
-            //   .then((result) => {
-            //     console.log(result)
-            //   })
-            //   .catch(console.log)
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      })
+      const lastBid = bids[0].bidIndex
+      const bidderWalletAddress = bids[0].bidder.address;
 
+      const bidderBalance = await contract.balanceOf(bidderWalletAddress)
+      //const isApproved = await contract.isApprovedForAll(user.walletAddress, bidderWalletAddress)
+
+      if (+bidderBalance < listing.bid.highest) reject()
+
+      contract.acceptBid(listing.tokenID, lastBid, user.walletAddress)
+        .then((result) => {
+          finishAuction(id).unwrap()
+            .then(({ transactionHash: hash }) => {
+              console.log(hash)
+              setTransactionHash(hash)
+              resolve()
+              setIsDone(true)
+            })
+            .catch(() => {
+              reject()
+            })
+        })
+        .catch(() => {
+          reject()
+        })
+    })
   }
 
   function handleBuy() {
@@ -264,14 +273,6 @@ function PhotoDetails({ openLogin }) {
       {
         !ownItem &&
         <>
-          <DoneCongratulation
-            imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
-            message={`You just purchased ${listing?.name}. It should be confirmed on the blockhain shortly.`}
-            opened={isDone}
-            title={'Complete checkout'}
-            transactionHash={transactionHash}
-            listing={listing}
-            onClose={handleCloseCongratulations} />
           <MakeOffer
             title={ listing?.bid?.endDate || bids?.length  ? 'Place a bid' : 'Make an offer' }
             btnTitle={ listing?.bid?.endDate || bids?.length  ? 'Place bid' : 'Make offer' }
@@ -289,6 +290,14 @@ function PhotoDetails({ openLogin }) {
             message={'Do you really what to cancel your offer?'} />
         </>
       }
+      <DoneCongratulation
+        imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
+        message={`You just ${ maxBid ? 'sold' :  'purchased' } ${listing?.name}. It should be confirmed on the blockhain shortly.`}
+        opened={isDone}
+        title={'Complete checkout'}
+        transactionHash={transactionHash}
+        listing={listing}
+        onClose={handleCloseCongratulations} />
       <ConfirmCheckout
         opened={confirmOpened}
         maxBid={maxBid}

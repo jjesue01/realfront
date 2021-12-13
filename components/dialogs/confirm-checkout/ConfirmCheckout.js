@@ -28,12 +28,18 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
 
     if (!!maxBid) {
       onFinishAuction()
+        .then(() => {
+          onClose()
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     } else {
       console.log('buy')
       onCheckout()
+        .then(onClose)
         .finally(() => {
           setLoading(false)
-          onClose()
         })
     }
   }
@@ -131,7 +137,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
             onChange={toggleCheckbox} />
         }
         <div className={styles.actions}>
-          <Button onClick={handleCheckout} disabled={!checked || maxBid} loading={isLoading}>
+          <Button onClick={handleCheckout} disabled={!checked && !maxBid} loading={isLoading}>
             { !!maxBid ? 'Finish': 'Checkout' }
           </Button>
         </div>

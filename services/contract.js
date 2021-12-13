@@ -54,6 +54,22 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
+  contractApi.acceptBid = (tokenID, bidIndex, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      homejab.methods.acceptBid(tokenID, bidIndex).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          console.log(receipt)
+          if (receipt?.events?.Bought)
+            resolve(receipt)
+          else
+            reject('Something went wrong')
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
   contractApi.bidOnAuction = (tokenID, bidPrice, walletAddress) => {
     return new Promise((resolve, reject) => {
       contractApi.approve(bidPrice + 1, walletAddress)
@@ -64,7 +80,7 @@ if (typeof window !== "undefined" && window?.web3App) {
               if (receipt.events['BidSuccess'] !== undefined) {
                 const bidIndex = receipt.events['BidSuccess'].returnValues._id
                 resolve(bidIndex)
-                console.log('bought')
+                console.log(receipt)
               } else {
                 reject()
                 console.log('error')
@@ -133,6 +149,8 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
+  console.log(homejab.methods)
+
   contractApi.pureBuy = (tokenID, walletAddress) => {
     return new Promise((resolve, reject) => {
       homejab.methods.buy(tokenID).send({ from: walletAddress })
@@ -156,6 +174,10 @@ if (typeof window !== "undefined" && window?.web3App) {
   contractApi.balanceOf = async (address) => {
     const weiBalance = await dummyBUSD.methods.balanceOf(address).call()
     return window.web3App.utils.fromWei(weiBalance)
+  }
+
+  contractApi.isApprovedForAll = async (ownerAddress, spenderAddress) => {
+    return await homejab.methods.isApprovedForAll(ownerAddress, spenderAddress).call()
   }
 }
 
