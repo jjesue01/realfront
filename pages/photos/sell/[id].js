@@ -155,7 +155,7 @@ function SellItem() {
       console.log('set on sell')
       promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
     } else {
-      promise = contractApi.listForAuction(data.tokenID, data.price, user.walletAddress)
+      promise = contractApi.listForAuction(data.tokenID, data.price, endTime, user.walletAddress)
     }
 
     promise

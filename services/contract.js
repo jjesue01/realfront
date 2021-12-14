@@ -137,6 +137,19 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
+  contractApi.disapprove = (walletAddress) => {
+    return new Promise((resolve, reject) => {
+      const weiPrice = window.web3App.utils.toWei('0')
+      dummyBUSD.methods.decreaseAllowance(walletAddress, weiPrice).send({from: walletAddress})
+        .once('confirmation', (confirmation, receipt) => {
+          resolve()
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
   contractApi.buy = (tokenID, price, walletAddress) => {
     return new Promise((resolve, reject) => {
       contractApi.approve(price, walletAddress)
@@ -148,8 +161,6 @@ if (typeof window !== "undefined" && window?.web3App) {
         .catch(reject)
     })
   }
-
-  console.log(homejab.methods)
 
   contractApi.pureBuy = (tokenID, walletAddress) => {
     return new Promise((resolve, reject) => {
@@ -176,8 +187,9 @@ if (typeof window !== "undefined" && window?.web3App) {
     return window.web3App.utils.fromWei(weiBalance)
   }
 
-  contractApi.isApprovedForAll = async (ownerAddress, spenderAddress) => {
-    return await homejab.methods.isApprovedForAll(ownerAddress, spenderAddress).call()
+  contractApi.allowance = async (address) => {
+    const weiAllowance = await dummyBUSD.methods.allowance(address, HOMEJAB_ADDRESS).call()
+    return window.web3App.utils.fromWei(weiAllowance)
   }
 }
 

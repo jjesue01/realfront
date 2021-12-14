@@ -45,7 +45,8 @@ function PhotoDetails({ openLogin }) {
     exclude: id,
     limit: 3
   }, { skip: !cityId })
-  const isLoading = (!listing || !transactions || !listings) && !error || isFetching || bidsFetching
+  const [manualLoading, setLoading] = useState(false)
+  const isLoading = (!listing || !transactions || !listings) && !error || isFetching || bidsFetching || manualLoading
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const [makeOfferOpened, setMakeOfferOpened] = useState(false)
@@ -128,12 +129,24 @@ function PhotoDetails({ openLogin }) {
   }
 
   function handleCancelBid() {
+    const contract = require('/services/contract')
     const bid = bids.find(({ bidder: { id } }) => id === user._id)
 
     if (bid) {
-      deleteBid({ id: bid._id }).unwrap()
+      setLoading(true)
+      contract.disapprove(user.walletAddress)
         .then(() => {
-          refetchBids()
+          deleteBid({ id: bid._id }).unwrap()
+            .then(() => {
+              refetchBids()
+              setLoading(false)
+            })
+            .catch(() => {
+
+            })
+        })
+        .catch(() => {
+
         })
     }
   }
@@ -158,15 +171,18 @@ function PhotoDetails({ openLogin }) {
       const lastBid = bids[0].bidIndex
       const bidderWalletAddress = bids[0].bidder.address;
 
-      const bidderBalance = await contract.balanceOf(bidderWalletAddress)
-      //const isApproved = await contract.isApprovedForAll(user.walletAddress, bidderWalletAddress)
+      const bidderBalance = +await contract.balanceOf(bidderWalletAddress)
+      const allowance = +await contract.allowance(bidderWalletAddress)
 
-      if (+bidderBalance < listing.bid.highest) reject()
+      if (bidderBalance < listing.bid.highest || allowance > bidderBalance || allowance < listing.bid.highest) {
+        reject()
+        return;
+      }
 
       contract.acceptBid(listing.tokenID, lastBid, user.walletAddress)
-        .then((result) => {
+        .then(({ transactionHash: hash }) => {
           finishAuction(id).unwrap()
-            .then(({ transactionHash: hash }) => {
+            .then(() => {
               console.log(hash)
               setTransactionHash(hash)
               resolve()
@@ -254,7 +270,7 @@ function PhotoDetails({ openLogin }) {
           ownItem={ownItem}
           user={user}
           bids={bids}
-          maxBid={maxBid}
+          maxBid={listing?.bid?.highest}
           listing={listing}
           onCancelBid={toggleCancelConfirmation}
           onFinishAuction={toggleConfirmDialog}
@@ -277,7 +293,7 @@ function PhotoDetails({ openLogin }) {
             title={ listing?.bid?.endDate || bids?.length  ? 'Place a bid' : 'Make an offer' }
             btnTitle={ listing?.bid?.endDate || bids?.length  ? 'Place bid' : 'Make offer' }
             listing={listing}
-            maxBidPrice={maxBid}
+            maxBidPrice={ listing?.bid?.highest }
             opened={makeOfferOpened}
             onOffer={handleMakeOffer}
             onClose={handleCloseMakeOffer} />

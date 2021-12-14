@@ -21,13 +21,14 @@ import {blockchainOptions} from "../../../../fixtures";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
-function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxBid, onFinishAuction, onCancelBid }) {
+function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
+  const isAuction = listing?.sellMethod === 'Auction'
 
   const copyRef = useRef()
   const fbRef = useRef()
@@ -231,7 +232,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, maxB
                           fontSize={28}
                           fontWeight={600}
                           lHeight={34}>
-                          { getMoneyView(bids?.length ? maxBid : listing?.price) }
+                          { getMoneyView(listing?.bid?.highest) }
                         </Typography>
                       </div>
                     </div>

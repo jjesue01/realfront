@@ -17,7 +17,8 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
 
   const mounted = useRef(false)
 
-  const total = !maxBid ? listing?.price : maxBid * (1 - marketplaceFee / 100)
+  const isAuction = listing?.sellMethod === 'Auction'
+  const total = isAuction ? maxBid * (1 - marketplaceFee / 100) : listing?.price
 
   function toggleCheckbox() {
     setChecked(prevState => !prevState)
@@ -26,7 +27,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
   function handleCheckout() {
     setLoading(true)
 
-    if (!!maxBid) {
+    if (isAuction) {
       onFinishAuction()
         .then(() => {
           onClose()
@@ -70,7 +71,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
     <PopupWrapper className={styles.root} opened={opened} onClose={handleClose}>
       <div className={styles.dialog}>
         <Typography fontWeight={600} fontSize={24} lHeight={29} align="center">
-          { !!maxBid ? 'Finish auction': 'Complete checkout' }
+          { isAuction ? 'Finish auction': 'Complete checkout' }
         </Typography>
         <div className={styles.table}>
           <div className={styles.tableHeader}>
@@ -96,13 +97,13 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
               <div className={styles.priceContainer}>
                 <div className={styles.price}>
                   <Typography fontWeight={600} fontSize={16} lHeight={20} margin={'0 8px 0 0'}>
-                    { getMoneyView(!maxBid ? listing?.price : maxBid) }
+                    { getMoneyView(!isAuction ? listing?.price : maxBid) }
                   </Typography>
                 </div>
               </div>
             </div>
             {
-              !!maxBid &&
+              isAuction &&
               <div className={styles.feeItem}>
                 <Typography fontWeight={600} fontSize={16} lHeight={20}>
                   Fees
@@ -129,7 +130,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
           </div>
         </div>
         {
-          !maxBid &&
+          !isAuction &&
           <Checkbox
             className={styles.checkbox}
             checked={checked}
@@ -138,7 +139,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
         }
         <div className={styles.actions}>
           <Button onClick={handleCheckout} disabled={!checked && !maxBid} loading={isLoading}>
-            { !!maxBid ? 'Finish': 'Checkout' }
+            { isAuction ? 'Finish': 'Checkout' }
           </Button>
         </div>
       </div>
