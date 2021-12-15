@@ -123,6 +123,27 @@ function Form({ mode }) {
   function handleResourceChange({ target: { value } }) {
     if (isReseller) return;
     setResourceType(value)
+
+    /* TODO: finish files validation logic */
+
+    // const previewFormats = FORMATS[value].preview
+    // const rawFormats = FORMATS[value].raw
+
+    switch (value) {
+      case 'Image': {
+        break;
+      }
+      case 'Video': {
+        break;
+      }
+      case '360 Tour': {
+        break;
+      }
+      default: {
+        setFile([])
+        setRawFile([])
+      }
+    }
   }
 
   function handleRemoveImage(index) {

@@ -84,6 +84,12 @@ export const listingsApi = createApi({
         method: 'POST'
       })
     }),
+    downloadNFT: builder.mutation({
+      query: (id) => ({
+        url: `/listings/${id}/download`,
+        method: 'GET'
+      })
+    }),
     getListings: builder.query({
       query: (params = {}) => ({
         url: '/listings',
@@ -122,6 +128,7 @@ export const {
   useLikeListingMutation,
   usePurchaseListingMutation,
   useFinishAuctionMutation,
+  useDownloadNFTMutation,
   useGetListingsQuery,
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,

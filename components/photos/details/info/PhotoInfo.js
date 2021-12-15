@@ -117,12 +117,15 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
               listing?.bid?.endDate &&
               <Timer className={styles.timer} endDate={listing.bid.endDate} />
             }
-            <Offers
-              className={styles.offers}
-              data={bids}
-              isOwner={ownItem}
-              onCancel={onCancelBid}
-              onFinish={onFinishAuction} />
+            {
+              isAuction &&
+              <Offers
+                className={styles.offers}
+                data={bids}
+                isOwner={ownItem}
+                onCancel={onCancelBid}
+                onFinish={onFinishAuction} />
+            }
           </div>
           <div className={styles.content}>
             <div className={styles.mainInfo}>

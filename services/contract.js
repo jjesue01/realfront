@@ -140,7 +140,7 @@ if (typeof window !== "undefined" && window?.web3App) {
   contractApi.disapprove = (walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei('0')
-      dummyBUSD.methods.decreaseAllowance(walletAddress, weiPrice).send({from: walletAddress})
+      dummyBUSD.methods.approve(walletAddress, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
           resolve()
         })

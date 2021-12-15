@@ -226,7 +226,11 @@ export function buildPlace(address_components) {
 }
 
 export function download(url, filename) {
-  fetch(url)
+  fetch(url, {
+    headers: {
+      'Authorization': getIdToken()
+    }
+  })
     .then(response => response.blob())
     .then(blob => {
       const link = document.createElement("a");

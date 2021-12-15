@@ -6,7 +6,7 @@ import MoreFromCollection from "../../components/photos/details/more/MoreFromCol
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {
-  listingsApi, useFinishAuctionMutation,
+  listingsApi, useDownloadNFTMutation, useFinishAuctionMutation,
   useGetListingByIdQuery,
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
@@ -35,6 +35,7 @@ function PhotoDetails({ openLogin }) {
   const [deleteBid] = useDeleteBidMutation()
   const [purchaseListing] = usePurchaseListingMutation()
   const [finishAuction] = useFinishAuctionMutation()
+  const [downloadNFT] = useDownloadNFTMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
   const bids = bidsData?.docs || []
@@ -215,10 +216,18 @@ function PhotoDetails({ openLogin }) {
                   .then(result => {
                     resolve()
                     setIsDone(true)
-                    //downloadNFT(listing.ipfs.cid, listing.rawFileName)
-                    listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
-                      download(path, originalName)
-                    })
+
+                    let fileName = listing.nfts[0].ipfs.file.originalName
+
+                    if (listing.resource.includes('360'))
+                      fileName = listing.name + '.zip'
+
+                    download(process.env.NEXT_PUBLIC_API_URL + `listings/${id}/download`, fileName)
+
+                    // downloadNFT(listing.ipfs.cid, listing.rawFileName)
+                    // listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
+                    //   download(path, originalName)
+                    // })
                   })
                   .catch(error => {
                     console.log(error)

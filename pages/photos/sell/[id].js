@@ -133,7 +133,8 @@ function SellItem() {
       copies: values.copies || 1,
       royalties: values.royalties || 0,
       tokenID: listing?.tokenID,
-      id
+      id,
+      sellMethod: 'Fixed Price'
     }
 
     const endTime = sellType === 'auction' ? Date.now() + parseInt(values.duration) * DAY : 0
@@ -386,6 +387,19 @@ function SellItem() {
                         value={formik.values.duration}
                         onChange={formik.handleChange}
                         options={durationOptions} />
+                      {
+                        !listing?.tokenID &&
+                          <Input
+                            type="number"
+                            className={cn(styles.field)}
+                            name="royalties"
+                            value={formik.values.royalties}
+                            onChange={handleRoyaltiesChange}
+                            placeholder="e.g. 10"
+                            iconRight={<span className={styles.percentIcon}>%</span>}
+                            subLabel="Suggested: 0%, 3%, 5%, 7%. Maximum is 10%"
+                            label="Royalties" />
+                      }
                     </>
                 }
               </div>

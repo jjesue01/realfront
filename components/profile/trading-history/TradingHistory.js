@@ -16,8 +16,8 @@ function TradingHistory({ data = [] }) {
         <div className={styles.imageContainer}>
           <div className={styles.imageWrapper}>
             {
-              item?.listingID?.filePath &&
-              <Image src={item.listingID.filePath} layout="fill" objectFit="cover" alt={item?.listingID?.name} />
+              item?.listingID?.thumbnail &&
+              <Image src={item.listingID.thumbnail} layout="fill" objectFit="cover" alt={item?.listingID?.name} />
             }
           </div>
         </div>
