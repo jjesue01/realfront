@@ -165,37 +165,47 @@ function PhotoDetails({ openLogin }) {
     })
   }
 
-  function handleFinishAuction() {
-    return new Promise(async (resolve, reject) => {
-      const contract = require('/services/contract')
-
-      const lastBid = bids[0].bidIndex
-      const bidderWalletAddress = bids[0].bidder.address;
+  async function getAvailableBid() {
+    const contract = require('/services/contract')
+    for (const bid of bids) {
+      const bidderWalletAddress = bid.bidder.address;
 
       const bidderBalance = +await contract.balanceOf(bidderWalletAddress)
       const allowance = +await contract.allowance(bidderWalletAddress)
 
-      if (bidderBalance < listing.bid.highest || allowance > bidderBalance || allowance < listing.bid.highest) {
-        reject()
-        return;
+      if (bidderBalance >= listing.bid.highest && allowance <= bidderBalance && allowance >= listing.bid.highest) {
+        return bid
       }
+    }
+    return null
+  }
 
-      contract.acceptBid(listing.tokenID, lastBid, user.walletAddress)
-        .then(({ transactionHash: hash }) => {
-          finishAuction(id).unwrap()
-            .then(() => {
-              console.log(hash)
-              setTransactionHash(hash)
-              resolve()
-              setIsDone(true)
-            })
-            .catch(() => {
-              reject()
-            })
-        })
-        .catch(() => {
-          reject()
-        })
+  function handleFinishAuction() {
+    return new Promise(async (resolve, reject) => {
+      const contract = require('/services/contract')
+
+      const bid = await getAvailableBid();
+
+      if (bid) {
+        contract.acceptBid(listing.tokenID, bid.bidIndex, user.walletAddress)
+          .then(({ transactionHash: hash }) => {
+            finishAuction(id).unwrap()
+              .then(() => {
+                console.log(hash)
+                setTransactionHash(hash)
+                resolve()
+                setIsDone(true)
+              })
+              .catch(() => {
+                reject()
+              })
+          })
+          .catch(() => {
+            reject()
+          })
+      } else {
+        console.error('No available bids')
+      }
     })
   }
 

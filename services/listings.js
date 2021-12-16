@@ -45,6 +45,8 @@ export const listingsApi = createApi({
     updateListing: builder.mutation({
       query: ({ id, ...data }) => {
         const formData = buildFormData(data)
+        if (data?.filesForDelete)
+          formData.append('filesForDelete', data.filesForDelete)
 
         return {
           url: `/listings/${id}`,

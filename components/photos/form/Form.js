@@ -68,6 +68,7 @@ function Form({ mode }) {
   const [isDeleting, setDeleting] = useState(false)
   const [isCreated, setIsCreated] = useState(false)
   const [deleteConfirmationOpened, setDeleteConfirmation] = useState(false)
+  const [filesForDelete, setFilesForDelete] = useState([])
   const [file, setFile] = useState([])
   const [rawFile, setRawFile] = useState([])
   const [filePreview, setFilePreview] = useState(null)
@@ -110,33 +111,46 @@ function Form({ mode }) {
             content: getImageUrl(item)
           }))
         ])
-      setFilePreview(getImageUrl(files[0]))
-      setIsVideo(files[0].type.includes('video'))
+      setFilePreview(files.length > 0 ? getImageUrl(files[0]) : null)
+      setIsVideo(files[0]?.type?.includes('video'))
     }
   }
 
   function handleFileRAWChange(files) {
     if (files.length > 0)
-      setRawFile(files)
+      setRawFile([...files])
   }
 
   function handleResourceChange({ target: { value } }) {
     if (isReseller) return;
+
+    const previewFormats = FORMATS[value].preview
+    const rawFormats = FORMATS[value].raw
+
+    const formats = value === 'Video' ? previewFormats : [...previewFormats, '.jpeg']
+    const updatedFiles = file.filter(({ name }) =>
+      formats.includes('.' + name.split('.').reverse()[0]))
+
     setResourceType(value)
 
-    /* TODO: finish files validation logic */
-
-    // const previewFormats = FORMATS[value].preview
-    // const rawFormats = FORMATS[value].raw
-
     switch (value) {
-      case 'Image': {
-        break;
-      }
+      case 'Image':
       case 'Video': {
+        setFile(updatedFiles)
+        setFilePreview(updatedFiles.length > 0 ? getImageUrl(updatedFiles[0]) : null)
+        setRawFile(rawFile.filter(({ name }) => rawFormats.includes(name.split('.').reverse()[0])))
+        setTourPreviews([])
         break;
       }
       case '360 Tour': {
+        setFile(updatedFiles)
+        setTourPreviews(
+          [...updatedFiles].map((item, index) => ({
+            id: `${Date.now()}-${index}`,
+            content: getImageUrl(item)
+          }))
+        )
+        setRawFile([])
         break;
       }
       default: {
@@ -150,6 +164,7 @@ function Form({ mode }) {
     return function () {
       setFile(prevState => prevState.filter((item, i) => index !== i))
       setTourPreviews(prevState => prevState.filter((item, i) => index !== i))
+      setFilesForDelete(prevState => [...prevState, tourPreviews[index]?.nftId || ''])
     }
   }
 
@@ -202,7 +217,12 @@ function Form({ mode }) {
             setSubmitting(false)
           })
       } else {
+        const formattedFilesForDelete = filesForDelete.join(', ')
         data.id = router.query.id
+        if (formattedFilesForDelete.length > 0) {
+          data.filesForDelete = formattedFilesForDelete
+        }
+        console.log(data)
         updateListing(data).unwrap()
           .then(result => {
             router.push(`/photos/${router.query.id}`)
@@ -268,7 +288,8 @@ function Form({ mode }) {
               setFile(data.nfts.map(nft => nft?.ipfs?.file?.path))
               setTourPreviews(data.nfts.map((nft, index) => ({
                 id: `${Date.now()}-${index}`,
-                content: nft?.ipfs?.file?.path
+                content: nft?.ipfs?.file?.path,
+                nftId: nft._id
               })))
             }
             setResourceType((data?.resource?.includes('360') ? '360 Tour' : data?.resource) || 'Image')

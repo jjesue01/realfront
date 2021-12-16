@@ -89,6 +89,7 @@ function FileUploader({ className, children, onChange, accept = '*', error, disa
         type="file"
         ref={inputRef}
         accept={accept}
+        value=""
         multiple={multiple}
         onChange={handleChange}
         title=""
