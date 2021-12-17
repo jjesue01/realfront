@@ -2,7 +2,7 @@ const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
 
-const HOMEJAB_ADDRESS = '0x3730F29f0F569141d5C797aAF54827670102Fabe'
+const HOMEJAB_ADDRESS = '0x7Ce16E1725DC42440ca717FAB9D7419D50Ccec0F'
 const DBUSD_ADDRESS = '0xDf1AE3eCFF4E32431e9010B04c36E901f7ED388b'
 
 if (typeof window !== "undefined" && window?.web3App) {
