@@ -21,7 +21,7 @@ import {blockchainOptions} from "../../../../fixtures";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
-function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid }) {
+function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid, onCancelListing }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -258,10 +258,14 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                       Edit
                     </Button>
                     {
-                      !listing?.isPublished &&
-                      <Button onClick={goTo(`/photos/sell/${id}`)}>
-                        Sell
-                      </Button>
+                      !listing?.isPublished ?
+                        <Button onClick={goTo(`/photos/sell/${id}`)}>
+                          Sell
+                        </Button>
+                        :
+                        <Button onClick={onCancelListing} type="outlined">
+                          Cancel Listing
+                        </Button>
                     }
                   </div>
               }

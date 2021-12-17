@@ -144,6 +144,11 @@ function SellItem() {
       data.endDate = endTime
     }
 
+    if (switchers.schedule) {
+      //data.activeDate = Date.now() + 1000 * 60 * 5
+      data.activeDate = Date.now() + DAY * +values.duration
+    }
+
     let promise;
 
     if (listing?.tokenID === undefined) {
@@ -341,6 +346,7 @@ function SellItem() {
                             <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 0 30px'}>
                               at
                             </Typography>
+                            {/*{ /(((0[1-9])|(1[0-2])):([0-5])(0|5)\s(A|P)M)/g }*/}
                             <Input
                               className={styles.selectFrequency}
                               name="scheduleTime"

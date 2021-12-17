@@ -68,6 +68,12 @@ export const listingsApi = createApi({
         body: data
       })
     }),
+    depublishListing: builder.mutation({
+      query: (id) => ({
+        url: `/listings/${id}/depublish`,
+        method: 'PATCH',
+      })
+    }),
     likeListing: builder.mutation({
       query: (id) => ({
         url: `/listings/${id}/like`,
@@ -84,12 +90,6 @@ export const listingsApi = createApi({
       query: (id) => ({
         url: `/listings/${id}/auction`,
         method: 'POST'
-      })
-    }),
-    downloadNFT: builder.mutation({
-      query: (id) => ({
-        url: `/listings/${id}/download`,
-        method: 'GET'
       })
     }),
     getListings: builder.query({
@@ -127,10 +127,10 @@ export const {
   useUpdateListingMutation,
   useDeleteListingMutation,
   usePublishListingMutation,
+  useDepublishListingMutation,
   useLikeListingMutation,
   usePurchaseListingMutation,
   useFinishAuctionMutation,
-  useDownloadNFTMutation,
   useGetListingsQuery,
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,

@@ -185,6 +185,17 @@ function Layout({ children }) {
     }
   }, [auth, dispatch, handleNotifications])
 
+  useEffect(function initEvents() {
+    window.ethereum.on('accountsChanged', (changedAccounts) => {
+      login(changedAccounts[0]).unwrap()
+        .then(({ token, user }) => {
+          const credentials = { user, token }
+          dispatch(setCredentials(credentials))
+        })
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>

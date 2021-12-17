@@ -6,7 +6,7 @@ import MoreFromCollection from "../../components/photos/details/more/MoreFromCol
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {
-  listingsApi, useDownloadNFTMutation, useFinishAuctionMutation,
+  listingsApi, useDepublishListingMutation, useDownloadNFTMutation, useFinishAuctionMutation,
   useGetListingByIdQuery,
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
@@ -35,7 +35,7 @@ function PhotoDetails({ openLogin }) {
   const [deleteBid] = useDeleteBidMutation()
   const [purchaseListing] = usePurchaseListingMutation()
   const [finishAuction] = useFinishAuctionMutation()
-  const [downloadNFT] = useDownloadNFTMutation()
+  const [depublishListing] = useDepublishListingMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
   const bids = bidsData?.docs || []
@@ -150,6 +150,19 @@ function PhotoDetails({ openLogin }) {
 
         })
     }
+  }
+
+  function handleCancelListing() {
+    const contract = require('/services/contract')
+
+    setLoading(true)
+    contract.revokeSell(listing.tokenID, user.walletAddress)
+      .then(() => depublishListing(id).unwrap())
+      .then(() => {
+        refetch()
+        setLoading(false)
+      })
+
   }
 
   function validateSell() {
@@ -292,6 +305,7 @@ function PhotoDetails({ openLogin }) {
           maxBid={listing?.bid?.highest}
           listing={listing}
           onCancelBid={toggleCancelConfirmation}
+          onCancelListing={handleCancelListing}
           onFinishAuction={toggleConfirmDialog}
           onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
