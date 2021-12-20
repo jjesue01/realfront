@@ -18,7 +18,12 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
   const mounted = useRef(false)
 
   const isAuction = listing?.sellMethod === 'Auction'
-  const total = isAuction ? maxBid * (1 - marketplaceFee / 100) : listing?.price
+  const isReseller = listing?.creator?.ID !== user?._id && listing?.owner === user?._id
+  let total = isAuction ? maxBid * (1 - marketplaceFee / 100) : listing?.price
+
+  if (isAuction && isReseller) {
+    total -= maxBid * (listing.royalties / 100)
+  }
 
   function toggleCheckbox() {
     setChecked(prevState => !prevState)
@@ -113,6 +118,14 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
                   <div className={styles.feeLine} />
                   <span>{marketplaceFee}%</span>
                 </div>
+                {
+                  isReseller &&
+                  <div className={styles.fee}>
+                    <p>Royalty</p>
+                    <div className={styles.feeLine} />
+                    <span>{listing.royalties}%</span>
+                  </div>
+                }
               </div>
             }
           </div>

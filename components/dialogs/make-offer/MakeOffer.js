@@ -18,11 +18,20 @@ function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnT
   })
   const listingPrice = !!maxBidPrice ? maxBidPrice : listing?.price;
 
+  function getDefaultPrice() {
+    return listing?.bid?.highestBidder ? listingPrice + 1 : listingPrice
+  }
+
   function handleValidate(values) {
     const errors = {}
 
     if (!values.price) errors.price = 'Price is required'
-    if (!!values.price && values.price <= listingPrice) errors.price = 'Price must be more than listing price'
+    if (!!values.price && values.price <= listingPrice) {
+      if (listing?.bid?.highestBidder)
+        errors.price = 'Price must be more than last bid price'
+      else if (values.price < listingPrice)
+        errors.price = 'Price must be more or equal than starting price'
+    }
     if (!checked) errors.terms = 'You need to check it'
 
     return errors
@@ -35,7 +44,7 @@ function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnT
   function handleClose() {
     if (formik.isSubmitting) return;
     onClose()
-    setValues({ price: listingPrice + 1 })
+    setValues({ price: getDefaultPrice()})
     setChecked(false)
   }
 
@@ -52,9 +61,9 @@ function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnT
 
   useEffect(function initPrice() {
     if (listingPrice) {
-      setValues({ price: listingPrice + 1 })
+      setValues({ price: listing?.bid?.highestBidder ? listingPrice + 1 : listingPrice })
     }
-  }, [listingPrice, setValues])
+  }, [listing, listingPrice, setValues])
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={handleClose}>

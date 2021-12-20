@@ -1,14 +1,14 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import styles from './Offers.module.sass'
+import styles from './Bids.module.sass'
 import ArrowShort from '/public/icons/arrow-short.svg'
 import cn from "classnames";
-import {getMoneyView, getSortedArray, timeAgo} from "../../../../utils";
+import {getFormattedDate, getMoneyView, getShortWalletAddress, getSortedArray, timeAgo} from "../../../../utils";
 import Typography from "../../../Typography";
 import Image from "next/image";
 import {useSelector} from "react-redux";
 import Button from "../../../button/Button";
 
-function Offers({ className, data = [], isOwner, onCancel, onFinish }) {
+function Bids({ className, data = [], isOwner, onCancel, onFinish }) {
   const user = useSelector(state => state.auth.user)
   const [opened, setOpened] = useState(true);
   const hasBid = useMemo(() => {
@@ -30,14 +30,11 @@ function Offers({ className, data = [], isOwner, onCancel, onFinish }) {
       <div className={cn(styles.col, styles.colPrice)}>
         <p>{ getMoneyView(item.price) }</p>
       </div>
-      <div className={cn(styles.col, styles.colDiff)}>
-        <p>98,1% below</p>
+      <div className={cn(styles.col, styles.colDate)}>
+        <p>{ getFormattedDate(item.createdAt) }</p>
       </div>
-      <div className={cn(styles.col, styles.colExpiration)}>
-        <p>in 5 days</p>
-      </div>
-      <div className={cn(styles.col, styles.colFrom)}>
-        <p>{ item.bidder.name }</p>
+      <div className={cn(styles.col, styles.colWalletAddress)}>
+        <p>{ getShortWalletAddress(item.bidder.address) }</p>
       </div>
     </div>
   ))
@@ -64,7 +61,7 @@ function Offers({ className, data = [], isOwner, onCancel, onFinish }) {
       <div className={cn(styles.tableWrapper)}>
         <button onClick={toggleTable} className={styles.btnShowTable}>
           <Typography tag="h3" fontSize={20} fontWeight={600}>
-            Offers
+            Bids
           </Typography>
           <ArrowShort />
         </button>
@@ -77,14 +74,11 @@ function Offers({ className, data = [], isOwner, onCancel, onFinish }) {
                   <div className={cn(styles.col, styles.colPrice)}>
                     <p>Price</p>
                   </div>
-                  <div className={cn(styles.col, styles.colDiff)}>
-                    <p>Floor difference</p>
+                  <div className={cn(styles.col, styles.colDate)}>
+                    <p>Date</p>
                   </div>
-                  <div className={cn(styles.col, styles.colExpiration)}>
-                    <p>Expiration</p>
-                  </div>
-                  <div className={cn(styles.col, styles.colFrom)}>
-                    <p>From</p>
+                  <div className={cn(styles.col, styles.colWalletAddress)}>
+                    <p>Address</p>
                   </div>
                 </div>
                 <div className={styles.tableBody}>
@@ -124,4 +118,4 @@ function Offers({ className, data = [], isOwner, onCancel, onFinish }) {
   )
 }
 
-export default Offers
+export default Bids

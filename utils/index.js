@@ -305,3 +305,13 @@ export function getFormattedEndTime(dateStr) {
 export function getFormattedFileFormats(formatsArr) {
   return formatsArr.map(format => format.slice(1).toUpperCase()).join(', ')
 }
+
+export function getFormattedDate(dateStr) {
+  const date = new Date(dateStr)
+  const options = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }
+  return  new Intl.DateTimeFormat('en-US', options).format(date)
+}

@@ -335,8 +335,8 @@ function PhotoDetails({ openLogin }) {
             onClose={toggleCancelConfirmation}
             onSubmit={handleCancelBid}
             btnSubmitTitle={'Cancel'}
-            title={'Cancel offer'}
-            message={'Do you really what to cancel your offer?'} />
+            title={'Cancel bid'}
+            message={'Do you really what to cancel your bid?'} />
         </>
       }
       <DoneCongratulation

@@ -9,11 +9,11 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import {copyValue, getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
+import { getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
 import {useLikeListingMutation} from "../../../../services/listings";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 import ButtonCopy from "../../../button-copy/ButtonCopy";
-import Offers from "../offers/Offers";
+import Bids from "../bids/Bids";
 import Timer from "../timer/Timer";
 import AspectRatioBox from "../../../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../../../media-file/MediaFile";
@@ -119,7 +119,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
             }
             {
               isAuction &&
-              <Offers
+              <Bids
                 className={styles.offers}
                 data={bids}
                 isOwner={ownItem}
