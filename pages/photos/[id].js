@@ -54,6 +54,9 @@ function PhotoDetails({ openLogin }) {
   const [transactionHash, setTransactionHash] = useState('')
   const [listingError, setListingError] = useState(false)
   const [cancelConfirmationOpened, setCancelConfirmation] = useState(false)
+  const [cancelListingOpened, setCancelListingOpened] = useState(false)
+  const [bidWarningOpened, setBidWarningOpened] = useState(false)
+  const [availableBid, setAvailableBid] = useState(null)
 
   const maxBid = useMemo(() => {
     if (bidsData?.docs?.length) {
@@ -129,6 +132,14 @@ function PhotoDetails({ openLogin }) {
     setCancelConfirmation(prevState => !prevState)
   }
 
+  function toggleCancelListing() {
+    setCancelListingOpened(prevState => !prevState)
+  }
+
+  function toggleBidWarning() {
+    setBidWarningOpened(prevState => !prevState)
+  }
+
   function handleCancelBid() {
     const contract = require('/services/contract')
     const bid = bids.find(({ bidder: { id } }) => id === user._id)
@@ -143,11 +154,11 @@ function PhotoDetails({ openLogin }) {
               setLoading(false)
             })
             .catch(() => {
-
+              setLoading(false)
             })
         })
         .catch(() => {
-
+          setLoading(false)
         })
     }
   }
@@ -160,6 +171,8 @@ function PhotoDetails({ openLogin }) {
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
+      })
+      .catch(() => {
         setLoading(false)
       })
 
@@ -186,7 +199,12 @@ function PhotoDetails({ openLogin }) {
       const bidderBalance = +await contract.balanceOf(bidderWalletAddress)
       const allowance = +await contract.allowance(bidderWalletAddress)
 
-      if (bidderBalance >= listing.bid.highest && allowance <= bidderBalance && allowance >= listing.bid.highest) {
+      if (bidderBalance >= bid.price && allowance <= bidderBalance && allowance >= bid.price) {
+        if (bid.price !== bids[0].price && !availableBid) {
+          setAvailableBid(bid)
+          toggleBidWarning();
+          console.log('fallback bid')
+        }
         return bid
       }
     }
@@ -198,6 +216,14 @@ function PhotoDetails({ openLogin }) {
       const contract = require('/services/contract')
 
       const bid = await getAvailableBid();
+
+      if (bid?.price !== bids[0].price && !availableBid) {
+        reject()
+        handleCloseConfirm();
+        return;
+      }
+
+      console.log('run accept bid logic')
 
       if (bid) {
         contract.acceptBid(listing.tokenID, bid.bidIndex, user.walletAddress)
@@ -305,7 +331,7 @@ function PhotoDetails({ openLogin }) {
           maxBid={listing?.bid?.highest}
           listing={listing}
           onCancelBid={toggleCancelConfirmation}
-          onCancelListing={handleCancelListing}
+          onCancelListing={toggleCancelListing}
           onFinishAuction={toggleConfirmDialog}
           onOffer={toggleMakeOffer}
           onBuy={toggleConfirmDialog} />
@@ -320,24 +346,43 @@ function PhotoDetails({ openLogin }) {
         }
       </div>
       {
-        !ownItem &&
-        <>
-          <MakeOffer
-            title={ listing?.bid?.endDate || bids?.length  ? 'Place a bid' : 'Make an offer' }
-            btnTitle={ listing?.bid?.endDate || bids?.length  ? 'Place bid' : 'Make offer' }
-            listing={listing}
-            maxBidPrice={ listing?.bid?.highest }
-            opened={makeOfferOpened}
-            onOffer={handleMakeOffer}
-            onClose={handleCloseMakeOffer} />
-          <ConfirmationDialog
-            opened={cancelConfirmationOpened}
-            onClose={toggleCancelConfirmation}
-            onSubmit={handleCancelBid}
-            btnSubmitTitle={'Cancel'}
-            title={'Cancel bid'}
-            message={'Do you really what to cancel your bid?'} />
-        </>
+        !ownItem ?
+          <>
+            <MakeOffer
+              title={ listing?.bid?.endDate || bids?.length  ? 'Place a bid' : 'Make an offer' }
+              btnTitle={ listing?.bid?.endDate || bids?.length  ? 'Place bid' : 'Make offer' }
+              listing={listing}
+              maxBidPrice={ listing?.bid?.highest }
+              opened={makeOfferOpened}
+              onOffer={handleMakeOffer}
+              onClose={handleCloseMakeOffer} />
+            <ConfirmationDialog
+              opened={cancelConfirmationOpened}
+              onClose={toggleCancelConfirmation}
+              onSubmit={handleCancelBid}
+              btnSubmitTitle={'Cancel'}
+              title={'Cancel bid'}
+              message={'Do you really want to cancel your bid?'} />
+          </>
+          :
+          <>
+            <ConfirmationDialog
+              wide
+              opened={cancelListingOpened}
+              onClose={toggleCancelListing}
+              onSubmit={handleCancelListing}
+              btnSubmitTitle={'Cancel listing'}
+              title={'Are you sure you want to cancel your listing?'}
+              message={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisi volutpat ornare tortor viverra nam ultrices. Amet dignissim amet, massa sed.'} />
+            <ConfirmationDialog
+              wide
+              opened={bidWarningOpened}
+              onClose={toggleBidWarning}
+              onSubmit={toggleConfirmDialog}
+              btnSubmitTitle={'Show next available bid'}
+              title={'Sorry, the highest bid is not available'}
+              message={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisi volutpat ornare tortor viverra nam ultrices. Amet dignissim amet, massa sed.'} />
+          </>
       }
       <DoneCongratulation
         imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
@@ -350,6 +395,7 @@ function PhotoDetails({ openLogin }) {
       <ConfirmCheckout
         opened={confirmOpened}
         maxBid={maxBid}
+        availableBid={availableBid}
         listing={listing}
         onClose={handleCloseConfirm}
         onFinishAuction={handleFinishAuction}

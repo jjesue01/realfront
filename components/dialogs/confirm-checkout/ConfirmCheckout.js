@@ -9,7 +9,7 @@ import Button from "../../button/Button";
 import {useSelector} from "react-redux";
 import MediaFile from "../../media-file/MediaFile";
 
-function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinishAuction }) {
+function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onCheckout, onFinishAuction }) {
   const user = useSelector(state => state.auth.user)
   const [marketplaceFee, setMarketplaceFee] = useState(2.5)
   const [checked, setChecked] = useState(false)
@@ -18,11 +18,15 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
   const mounted = useRef(false)
 
   const isAuction = listing?.sellMethod === 'Auction'
+  const actualBid = availableBid ? availableBid.price : maxBid
   const isReseller = listing?.creator?.ID !== user?._id && listing?.owner === user?._id
-  let total = isAuction ? maxBid * (1 - marketplaceFee / 100) : listing?.price
+  let total = isAuction ?
+    actualBid * (1 - marketplaceFee / 100)
+    :
+    listing?.price
 
   if (isAuction && isReseller) {
-    total -= maxBid * (listing.royalties / 100)
+    total -= actualBid * (listing.royalties / 100)
   }
 
   function toggleCheckbox() {
@@ -102,7 +106,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
               <div className={styles.priceContainer}>
                 <div className={styles.price}>
                   <Typography fontWeight={600} fontSize={16} lHeight={20} margin={'0 8px 0 0'}>
-                    { getMoneyView(!isAuction ? listing?.price : maxBid) }
+                    { getMoneyView(!isAuction ? listing?.price : actualBid) }
                   </Typography>
                 </div>
               </div>
@@ -152,7 +156,7 @@ function ConfirmCheckout({ opened, listing, onClose, onCheckout, maxBid, onFinis
         }
         <div className={styles.actions}>
           <Button onClick={handleCheckout} disabled={!checked && !maxBid} loading={isLoading}>
-            { isAuction ? 'Finish': 'Checkout' }
+            { isAuction ? 'Accept': 'Checkout' }
           </Button>
         </div>
       </div>

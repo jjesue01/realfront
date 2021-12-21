@@ -131,7 +131,6 @@ function SellItem() {
     const data = {
       price: values.price,
       copies: values.copies || 1,
-      royalties: values.royalties || 0,
       tokenID: listing?.tokenID,
       id,
       sellMethod: 'Fixed Price'
@@ -168,6 +167,7 @@ function SellItem() {
       .then((tokenID) => {
         if (data.tokenID === undefined) {
           data.tokenID = tokenID
+          data.royalties = values.royalties || 0
         }
 
         publishListing(data).unwrap()
