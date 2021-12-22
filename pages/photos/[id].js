@@ -200,7 +200,7 @@ function PhotoDetails({ openLogin }) {
       const bidderBalance = +await contract.balanceOf(bidderWalletAddress)
       const allowance = +await contract.allowance(bidderWalletAddress)
 
-      if (bidderBalance >= bid.price && allowance <= bidderBalance && allowance >= bid.price) {
+      if (bidderBalance >= bid.price && allowance >= bid.price) {
         if (bid.price !== bids[0].price && !availableBid) {
           setAvailableBid(bid)
           toggleBidWarning();

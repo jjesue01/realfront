@@ -72,15 +72,14 @@ if (typeof window !== "undefined" && window?.web3App) {
 
   contractApi.bidOnAuction = (tokenID, bidPrice, walletAddress) => {
     return new Promise((resolve, reject) => {
-      contractApi.approve(bidPrice + 1, walletAddress)
+      contractApi.increaseAllowance(bidPrice + 1, walletAddress)
         .then(() => {
           const weiPrice = window.web3App.utils.toWei(bidPrice.toString())
           homejab.methods.bidOnAuction(tokenID, weiPrice).send({ from: walletAddress })
             .once('confirmation', (confirmation, receipt) => {
-              if (receipt.events['BidSuccess'] !== undefined) {
-                const bidIndex = receipt.events['BidSuccess'].returnValues._id
-                resolve(bidIndex)
-                console.log(receipt)
+              if (receipt.events['BidUpdate'] !== undefined) {
+                resolve()
+                console.log('bidOnAuction')
               } else {
                 reject()
                 console.log('error')
@@ -122,8 +121,6 @@ if (typeof window !== "undefined" && window?.web3App) {
         })
     })
   }
-
-  console.log(dummyBUSD.methods)
 
   contractApi.getSellData = (tokenID, walletAddress) => {
     return homejab.methods.sellData(tokenID).call({ from: walletAddress })
@@ -173,7 +170,7 @@ if (typeof window !== "undefined" && window?.web3App) {
       const weiPrice = window.web3App.utils.toWei(price.toString())
       dummyBUSD.methods.increaseAllowance(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
-          console.log(receipt)
+          console.log('increaseAllowance')
           resolve()
         })
         .on('error', (error) => {

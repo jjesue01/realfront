@@ -125,11 +125,11 @@ function Form({ mode }) {
     if (isReseller) return;
 
     const previewFormats = FORMATS[value].preview
-    const rawFormats = FORMATS[value].raw
+    //const rawFormats = FORMATS[value].raw
 
     const formats = value === 'Video' ? previewFormats : [...previewFormats, '.jpeg']
-    const updatedFiles = file.filter(({ name }) =>
-      formats.includes('.' + name.split('.').reverse()[0]))
+    const updatedFiles = file.filter((item) =>
+      formats.includes('.' + (item?.name ? item.name : item).split('.').reverse()[0]))
 
     setResourceType(value)
 
@@ -138,7 +138,7 @@ function Form({ mode }) {
       case 'Video': {
         setFile(updatedFiles)
         setFilePreview(updatedFiles.length > 0 ? getImageUrl(updatedFiles[0]) : null)
-        setRawFile(rawFile.filter(({ name }) => rawFormats.includes(name.split('.').reverse()[0])))
+        setRawFile([])
         setTourPreviews([])
         break;
       }
