@@ -2,7 +2,7 @@ const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
 
-const HOMEJAB_ADDRESS = '0x7Ce16E1725DC42440ca717FAB9D7419D50Ccec0F'
+const HOMEJAB_ADDRESS = '0xCf1CE606c75DB27D9499Dcd6380106DA202a73AA'
 const DBUSD_ADDRESS = '0xDf1AE3eCFF4E32431e9010B04c36E901f7ED388b'
 
 if (typeof window !== "undefined" && window?.web3App) {
@@ -107,6 +107,24 @@ if (typeof window !== "undefined" && window?.web3App) {
     })
   }
 
+  contractApi.revokeBid = (tokenID, bidIndex, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      homejab.methods.revokeBid(tokenID, bidIndex).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          console.log(receipt)
+          if (receipt?.events?.BidUpdate)
+            resolve(receipt)
+          else
+            reject('Something went wrong')
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
+  console.log(dummyBUSD.methods)
+
   contractApi.getSellData = (tokenID, walletAddress) => {
     return homejab.methods.sellData(tokenID).call({ from: walletAddress })
   }
@@ -142,6 +160,20 @@ if (typeof window !== "undefined" && window?.web3App) {
       const weiPrice = window.web3App.utils.toWei('0')
       dummyBUSD.methods.approve(walletAddress, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
+          resolve()
+        })
+        .on('error', (error) => {
+          reject(error)
+        })
+    })
+  }
+
+  contractApi.increaseAllowance = (price, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      const weiPrice = window.web3App.utils.toWei(price.toString())
+      dummyBUSD.methods.increaseAllowance(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
+        .once('confirmation', (confirmation, receipt) => {
+          console.log(receipt)
           resolve()
         })
         .on('error', (error) => {

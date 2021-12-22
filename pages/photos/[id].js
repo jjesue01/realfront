@@ -146,10 +146,11 @@ function PhotoDetails({ openLogin }) {
 
     if (bid) {
       setLoading(true)
-      contract.disapprove(user.walletAddress)
+      contract.revokeBid(listing.tokenID, bid.bidIndex , user.walletAddress)
         .then(() => {
           deleteBid({ id: bid._id }).unwrap()
             .then(() => {
+              refetch()
               refetchBids()
               setLoading(false)
             })

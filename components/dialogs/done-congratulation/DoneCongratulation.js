@@ -3,6 +3,7 @@ import styles from './DoneCongratulation.module.sass'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import Image from "next/image";
+import Link from "next/link";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 import {getHost, getShortWalletAddress} from "../../../utils";
 import cn from "classnames";
@@ -12,6 +13,7 @@ import ButtonCopy from "../../button-copy/ButtonCopy";
 import MediaFile from "../../media-file/MediaFile";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
+const EXPLORER_LINK = 'https://testnet.bscscan.com/tx/'
 
 function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash, listing, hasShare = true }) {
   const router = useRouter()
@@ -78,9 +80,14 @@ function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message
                   <p>Transaction Hash</p>
                 </div>
                 <div className={styles.buyInfoContent}>
-                  <p className={styles.transactionHash}>
-                    { !!transactionHash && getShortWalletAddress(transactionHash) }
-                  </p>
+                  {
+                    !!transactionHash &&
+                    <Link href={EXPLORER_LINK + transactionHash} passHref>
+                      <a className={styles.transactionHash} target="_blank" rel="noreferrer">
+                        { getShortWalletAddress(transactionHash) }
+                      </a>
+                    </Link>
+                  }
                 </div>
               </div>
             </div>
