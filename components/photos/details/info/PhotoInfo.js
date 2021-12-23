@@ -219,52 +219,55 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                 lHeight={34}>
                 { listing?.name }
               </Typography>
+
+              <div className={styles.price}>
+                <div className={styles.priceContent}>
+                  <Typography
+                    fontWeight={600}
+                    fontSize={12}
+                    lHeight={15}
+                    color={'#878D97'}>
+                    { bids?.length ? 'Top bid': 'Current price' }
+                  </Typography>
+                  <div className={styles.priceDetails}>
+                    <Typography
+                      fontSize={28}
+                      fontWeight={600}
+                      lHeight={34}>
+                      { getMoneyView(listing?.bid?.highest) }
+                    </Typography>
+                  </div>
+                </div>
+              </div>
               {
                 !ownItem ?
-                  <div className={styles.price}>
-                    <div className={styles.priceContent}>
-                      <Typography
-                        fontWeight={600}
-                        fontSize={12}
-                        lHeight={15}
-                        color={'#878D97'}>
-                        { bids?.length ? 'Top bid': 'Current price' }
-                      </Typography>
-                      <div className={styles.priceDetails}>
-                        <Typography
-                          fontSize={28}
-                          fontWeight={600}
-                          lHeight={34}>
-                          { getMoneyView(listing?.bid?.highest) }
-                        </Typography>
-                      </div>
-                    </div>
-                    <div className={cn(styles.itemActions, styles.noMargin)}>
-                      {
-                        (listing?.bid?.endDate || bids?.length ) ?
-                          <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
-                            { listing?.bid?.endDate || bids?.length  ? 'Place bid': 'Make offer' }
-                          </Button>
-                          :
-                          <Button onClick={onBuy}>
-                            Buy now
-                          </Button>
-                      }
-                    </div>
+                  <div className={styles.itemActions}>
+                    {
+                      (listing?.bid?.endDate || bids?.length ) ?
+                        <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
+                          { listing?.bid?.endDate || bids?.length  ? 'Place bid': 'Make offer' }
+                        </Button>
+                        :
+                        <Button onClick={onBuy}>
+                          Buy now
+                        </Button>
+                    }
                   </div>
                   :
                   <div className={styles.itemActions}>
+                    {
+                      listing?.isPublished &&
+                      <Button onClick={onCancelListing} type="outlined">
+                        Cancel Listing
+                      </Button>
+                    }
                     <Button onClick={goTo(`/photos/edit/${id}`)} type="outlined">
                       Edit
                     </Button>
                     {
-                      !listing?.isPublished ?
+                      !listing?.isPublished &&
                         <Button onClick={goTo(`/photos/sell/${id}`)}>
                           Sell
-                        </Button>
-                        :
-                        <Button onClick={onCancelListing} type="outlined">
-                          Cancel Listing
                         </Button>
                     }
                   </div>

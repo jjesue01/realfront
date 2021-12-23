@@ -29,11 +29,20 @@ export const transactionsApi = createApi({
       query: () => '/transactions/me'
     }),
     getBids: builder.query({
-      query: (listingId) => ({
+      query: (params) => ({
         url: '/bids',
         params: {
           limit: 20,
-          listingID: listingId
+          ...params
+        }
+      })
+    }),
+    getMyBids: builder.query({
+      query: (params = {}) => ({
+        url: '/bids/me',
+        params: {
+          limit: 20,
+          ...params
         }
       })
     }),
@@ -61,6 +70,7 @@ export const {
   useGetTransactionsByListingIdQuery,
   useGetProfileTransactionsQuery,
   useGetBidsQuery,
+  useGetMyBidsQuery,
   usePostBidMutation,
   useDeleteBidMutation,
 } = transactionsApi

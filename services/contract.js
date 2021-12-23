@@ -71,8 +71,11 @@ if (typeof window !== "undefined" && window?.web3App) {
   }
 
   contractApi.bidOnAuction = (tokenID, bidPrice, walletAddress) => {
-    return new Promise((resolve, reject) => {
-      contractApi.increaseAllowance(bidPrice + 1, walletAddress)
+    return new Promise(async (resolve, reject) => {
+      const allowance = await contractApi.allowance(walletAddress)
+      const hasAllowance = allowance > 0
+
+      contractApi[hasAllowance ? 'increaseAllowance' : 'approve'](bidPrice + 1, walletAddress)
         .then(() => {
           const weiPrice = window.web3App.utils.toWei(bidPrice.toString())
           homejab.methods.bidOnAuction(tokenID, weiPrice).send({ from: walletAddress })

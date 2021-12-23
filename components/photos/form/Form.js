@@ -217,7 +217,7 @@ function Form({ mode }) {
             setSubmitting(false)
           })
       } else {
-        const formattedFilesForDelete = filesForDelete.join(', ')
+        const formattedFilesForDelete = filesForDelete.join(',')
         data.id = router.query.id
         if (formattedFilesForDelete.length > 0) {
           data.filesForDelete = formattedFilesForDelete

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import styles from '../styles/Profile.module.sass'
 import Head from "next/head";
 import UserInfo from "../components/profile/user-info/UserInfo";
@@ -17,10 +17,16 @@ import Tabs from "../components/tabs/Tabs";
 import {useRouter} from "next/router";
 import {useGetCurrentUserQuery} from "../services/auth";
 import {useGetListingsQuery} from "../services/listings";
-import {useGetProfileTransactionsQuery} from "../services/transactions";
+import {
+  useDeleteBidMutation,
+  useGetMyBidsQuery,
+  useGetProfileTransactionsQuery
+} from "../services/transactions";
 import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
+import Bids from "../components/profile/bids/Bids";
+import ConfirmationDialog from "../components/dialogs/confirmation-dialog/ConfirmationDialog";
 
-const tabs = ['collected', 'created', 'favorited', 'activity']
+const tabs = ['collected', 'created', 'favorited', 'activity', 'my bids']
 
 const initialFilters = {
   searchValue: '',
@@ -38,12 +44,15 @@ const initialFilters = {
 
 function MyProfile() {
   const router = useRouter()
+  const [deleteBid] = useDeleteBidMutation()
   const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
   const { data: collectedListings, refetch: refetchCollected } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
   const { data: createdListings, refetch: refetchCreated } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
   const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
   const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
-  const isLoading = !user || !collectedListings || !createdListings || !favoriteListings
+  const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery()
+  const [manualLoading, setManualLoading] = useState(false)
+  const isLoading = !user || !collectedListings || !createdListings || !favoriteListings || isFetching || manualLoading
   const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
   const [options, setOptions] = useState({
@@ -57,6 +66,16 @@ function MyProfile() {
     sortBy: 'price_low'
   })
   const [filterValues, setFilterValues] = useState([])
+  const [cancelBidOpened, setCancelBidOpened] = useState(false)
+  const [bidForDelete, setBidForDelete] = useState(null)
+
+  const pendingBids = useMemo(() => {
+    return bids?.docs?.filter(bid => !bid.status.includes('Close'))
+  }, [bids?.docs])
+
+  const closedBids = useMemo(() => {
+    return bids?.docs?.filter(bid => bid.status.includes('Close'))
+  }, [bids?.docs])
 
   const itemsList = filteredData.map((item) => (
     <PhotoItem
@@ -83,6 +102,38 @@ function MyProfile() {
 
   function toggleFilter() {
     setFilterOpened(prevState => !prevState)
+  }
+
+  function toggleCancelBidConfirmation() {
+    setCancelBidOpened(prevState => !prevState)
+  }
+
+  function openCancelBid(bid) {
+    return function () {
+      setBidForDelete(bid)
+      toggleCancelBidConfirmation()
+    }
+  }
+
+  function handleCancelBid() {
+    const contract = require('/services/contract')
+
+    if (bidForDelete) {
+      setManualLoading(true)
+      contract.revokeBid(bidForDelete.listing?.tokenID, bidForDelete.bidIndex , user.walletAddress)
+        .then(() => {
+          deleteBid({ id: bidForDelete._id }).unwrap()
+            .then(() => {
+              refetchBids()
+            })
+            .catch(() => {
+              setManualLoading(false)
+            })
+        })
+        .catch(() => {
+          setManualLoading(false)
+        })
+    }
   }
 
   function handleDeleteValue(item) {
@@ -244,7 +295,8 @@ function MyProfile() {
     refetchCreated()
     refetchFavorite()
     refetchTransactions()
-  }, [refetchUser, refetchCollected, refetchCreated, refetchFavorite, refetchTransactions])
+    refetchBids()
+  }, [refetchUser, refetchCollected, refetchCreated, refetchFavorite, refetchTransactions, refetchBids])
 
   return (
     <main className={styles.root}>
@@ -312,7 +364,7 @@ function MyProfile() {
           }
           <div className={cn(styles.tabContent, { [styles.contentMargin]: ['collected', 'created'].includes(currentTab) })}>
             {
-              currentTab !== 'activity' ?
+              ['collected', 'created', 'favorited'].includes(currentTab) &&
                 <div className={styles.itemsContainer}>
                   <Typography fontSize={16} lHeight={20}>
                     { filteredData.length > 0 ? filteredData.length : 'No' } items
@@ -321,12 +373,35 @@ function MyProfile() {
                     { itemsList }
                   </div>
                 </div>
-                :
+            }
+            {
+              currentTab === 'activity' &&
                 <TradingHistory data={transactions} />
+            }
+            {
+              currentTab === 'my bids' &&
+                <>
+                  <Bids
+                    data={pendingBids}
+                    title="Pending bids"
+                    onCancel={openCancelBid}
+                    withTotal />
+                  <Bids
+                    className={styles.closedBids}
+                    data={closedBids}
+                    title="Closed bids" />
+                </>
             }
           </div>
         </div>
       </div>
+      <ConfirmationDialog
+        opened={cancelBidOpened}
+        onClose={toggleCancelBidConfirmation}
+        onSubmit={handleCancelBid}
+        btnSubmitTitle={'Cancel'}
+        title={'Cancel bid'}
+        message={'Do you really want to cancel your bid?'} />
       <SideFilter
         options={currentTab === 'collected' ? options.collected : options.created}
         opened={filterOpened}

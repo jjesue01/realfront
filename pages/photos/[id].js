@@ -37,7 +37,7 @@ function PhotoDetails({ openLogin }) {
   const [finishAuction] = useFinishAuctionMutation()
   const [depublishListing] = useDepublishListingMutation()
   const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
-  const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery(id, { skip: !id })
+  const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery({ listingID: id }, { skip: !id })
   const bids = bidsData?.docs || []
   const cityId = listing?.city?.ID;
   const { data: transactions } = useGetTransactionsByListingIdQuery(id, { skip: !id })
@@ -96,6 +96,8 @@ function PhotoDetails({ openLogin }) {
   }
 
   function toggleMakeOffer() {
+    // const contract = require('/services/contract')
+    // contract.approve(0, user.walletAddress)
     validatePublish()
       .then(() => {
         setMakeOfferOpened(prevState => !prevState)
@@ -172,11 +174,11 @@ function PhotoDetails({ openLogin }) {
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
+        setLoading(false)
       })
       .catch(() => {
         setLoading(false)
       })
-
   }
 
   function validateSell() {

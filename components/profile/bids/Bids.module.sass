@@ -1,0 +1,96 @@
+.root
+  width: 100%
+  padding: 31px
+  border: 1px solid #D3D9E1
+.table
+  width: 100%
+  margin-top: 32px
+.tableHeader
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  padding-bottom: 7px
+  p
+    font-size: 12px
+    font-weight: 600
+    line-height: 15px
+    color: #878D97
+.col
+  width: 100%
+  overflow: hidden
+  margin-right: 20px
+  p
+    width: 100%
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+  &:last-child
+    margin-right: 0
+.colItem
+  max-width: 351px
+.colPrice
+  max-width: 254px
+.colDate
+  max-width: 90px
+  min-height: 1px
+.colActions
+  max-width: 324px
+  min-height: 1px
+.tableItem
+  width: 100%
+  height: 86px
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  .col
+    p
+      font-size: 14px
+      color: #111
+  .colPrice
+    p
+      font-weight: 600
+  .colDate
+    p
+      color: #878D97
+  .colItem
+    display: flex
+    align-items: center
+    justify-content: flex-start
+  .colActions
+    display: flex
+    justify-content: flex-end
+    button
+      height: 40px
+      min-width: 88px
+.imageContainer
+  padding: 9px 2px
+  border: 1px solid #ECEFF4
+  margin-right: 12px
+.imageWrapper
+  position: relative
+  width: 100%
+  height: 35px
+  min-width: 49px
+.total
+  position: relative
+  padding-top: 15px
+  height: auto
+  border-bottom: 0
+  .colActions
+    margin-right: 0
+.noMoney
+  position: absolute
+  top: 15px
+  right: 0
+  border: 1px solid #FFA63E
+  border-radius: 30px
+  padding: 6px 10px
+  p
+    font-family: 'Montserrat', sans-serif
+    font-style: italic
+    font-size: 12px
+    line-height: 15px
+    color: #FFA63E
+    white-space: nowrap
