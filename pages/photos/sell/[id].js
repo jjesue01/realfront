@@ -356,7 +356,7 @@ function SellItem() {
                               placeholder="6:00 PM" />
                           </div>
                         </div>
-                        <DatePicker />
+                        {/*<DatePicker />*/}
                         <div className={styles.addField}>
                           <Switcher
                             className={styles.switcher}
