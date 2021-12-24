@@ -23,6 +23,7 @@ import DollarIcon from '/public/icons/dollar.svg'
 import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
 import {DAY, durationOptions, scheduleOptions} from "../../../fixtures";
+import DatePicker from "../../../components/date-picker/DatePicker";
 
 const validationSchema = Yup.object({
   price: Yup.number().required('Price is required').positive('Price should be more than zero'),
@@ -355,6 +356,7 @@ function SellItem() {
                               placeholder="6:00 PM" />
                           </div>
                         </div>
+                        <DatePicker />
                         <div className={styles.addField}>
                           <Switcher
                             className={styles.switcher}

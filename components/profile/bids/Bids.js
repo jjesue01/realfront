@@ -38,7 +38,7 @@ function Bids({ className, data = [], title, onCancel, withTotal = false }) {
 
   const rowsList = data.map((item, index) => (
     <div key={item._id} className={styles.tableItem}>
-      <Link href={`/photos/${item?.listing?.id}`} passHref>
+      <Link href={`/photos/${item?.listing?._id}`} passHref>
         <a className={cn(styles.col, styles.colItem)}>
           <div className={styles.imageContainer}>
             <div className={styles.imageWrapper}>
