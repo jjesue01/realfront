@@ -1,7 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import styles from './Input.module.sass'
 import cn from "classnames";
-import {getMoneyView} from "../../utils";
+import {getFormattedDate} from "../../utils";
+import DatePicker from "../date-picker/DatePicker";
+import CalendarIcon from '/public/icons/calendar.svg'
+import ClockIcon from '/public/icons/clock.svg'
+
+const dropdownTypes = ['date', 'time']
 
 function Input({
   className,
@@ -21,6 +26,9 @@ function Input({
   disabled,
   ...otherProps
 }, ref) {
+  const [isOpened, setOpened] = useState(false)
+
+  const needsDropdown = dropdownTypes.includes(type)
 
   const inputClassNames = cn(
     styles.input,
@@ -29,7 +37,8 @@ function Input({
       [styles.iconRight]: !!iconRight,
       [styles.withUrlPrefix]: urlPrefix,
       [styles.price]: type === 'price',
-      [styles.error]: error
+      [styles.error]: error,
+      [styles.iconLeft]: needsDropdown
     }
   )
 
@@ -37,9 +46,24 @@ function Input({
     let result = type
 
     if (type === 'price') result = 'number'
-    //if (type === 'url') result = 'text'
+    if (needsDropdown) result = 'text'
 
     return result
+  }
+
+  function toggleDropdown() {
+    if (needsDropdown)
+      setOpened(prevState => !prevState)
+  }
+
+  function getDisplayingValue() {
+    let displayingValue = value
+
+    if (type === 'date')
+      displayingValue = getFormattedDate(value)
+
+
+    return displayingValue
   }
 
   return (
@@ -61,7 +85,20 @@ function Input({
         }
         {
           type === 'price' &&
-          <p className={styles.currency}>usd</p>
+            <p className={styles.currency}>usd</p>
+        }
+        {
+          needsDropdown &&
+            <div className={styles.iconLeftWrapper}>
+              {
+                type === 'date' &&
+                  <CalendarIcon />
+              }
+              {
+                type === 'time' &&
+                  <ClockIcon />
+              }
+            </div>
         }
         <input
           ref={ref}
@@ -69,16 +106,28 @@ function Input({
           className={inputClassNames}
           type={getType()}
           name={name}
-          value={value}
+          value={getDisplayingValue()}
           onWheel={(e) => e.target.blur()}
           required={required}
+          onClick={toggleDropdown}
           onChange={onChange}
+          readOnly={needsDropdown || otherProps?.readOnly}
           placeholder={placeholder}
           { ...otherProps } />
         { iconRight }
         {
           error && errorText &&
           <p className={styles.errorText}>{ errorText }</p>
+        }
+        {
+          needsDropdown &&
+            <div className={cn(styles.dropdown, { [styles.dropdownOpened]: isOpened })}>
+              <DatePicker value={value} name={name} onChange={onChange} />
+            </div>
+        }
+        {
+          isOpened &&
+            <div onClick={toggleDropdown} className={styles.closeLayer} />
         }
       </div>
     </div>

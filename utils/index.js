@@ -133,8 +133,6 @@ export function buildFilterOptions(listings) {
       tagOptions = [...tagOptions, ...tags.split(',')]
   })
 
-  console.log(tagOptions)
-
   return {
     cities: [...cityOptions].map(city => JSON.parse(city)),
     tags: [...new Set(tagOptions)]
@@ -313,5 +311,13 @@ export function getFormattedDate(dateStr) {
     month: '2-digit',
     year: 'numeric'
   }
-  return  new Intl.DateTimeFormat('en-US', options).format(date)
+  return new Intl.DateTimeFormat('en-US', options).format(date)
+}
+
+export function dateToString(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1
+  const day = date.getDate();
+
+  return `${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`
 }

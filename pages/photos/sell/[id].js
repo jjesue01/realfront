@@ -15,7 +15,7 @@ import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
 import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
-import {clamp, getUser} from "../../../utils";
+import {clamp, dateToString, getUser} from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useSelector} from "react-redux";
 import Error from "../../../components/error/Error";
@@ -54,7 +54,7 @@ function SellItem() {
       price: 1,
       copies: 1,
       royalties: 0,
-      scheduleFrequency: '',
+      scheduleFrequency: dateToString(new Date()),
       scheduleTime: '',
       buyerAddress: '',
       duration: '7'
@@ -337,26 +337,25 @@ function SellItem() {
                             You can schedule this listing to only be buyable at a future date.
                           </p>
                           <div className={cn(styles.scheduleRow, { [styles.disabled]: !switchers.schedule })}>
-                            <Select
+                            <Input
+                              type="date"
                               className={styles.selectFrequency}
                               name="scheduleFrequency"
                               value={formik.values.scheduleFrequency}
                               onChange={formik.handleChange}
-                              options={scheduleOptions}
-                              placeholder="In 3 days" />
+                              placeholder="Date" />
                             <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 0 30px'}>
                               at
                             </Typography>
                             {/*{ /(((0[1-9])|(1[0-2])):([0-5])(0|5)\s(A|P)M)/g }*/}
                             <Input
-                              className={styles.selectFrequency}
+                              className={styles.selectTime}
                               name="scheduleTime"
                               value={formik.values.scheduleTime}
                               onChange={formik.handleChange}
                               placeholder="6:00 PM" />
                           </div>
                         </div>
-                        {/*<DatePicker />*/}
                         <div className={styles.addField}>
                           <Switcher
                             className={styles.switcher}

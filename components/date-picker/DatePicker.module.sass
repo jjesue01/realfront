@@ -2,20 +2,70 @@
   width: 100%
   max-width: 360px
   background: #FFFFFF
-  border: 1px solid #D3D9E1
+  padding: 32px 23px 31px
+.header
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 24px
+  p
+    font-family: 'Montserrat', sans-serif
+    font-weight: 600
+    font-size: 16px
+    line-height: 20px
+    color: #111111
+.actions
+  display: flex
+  button
+    width: 40px
+    height: 40px
+    border-color: #ABC9C1
+    margin-right: 16px
+    &:last-child
+      margin-right: 0
+      svg
+        transform: rotate(-180deg) translateX(-1px)
+    svg
+      transform: translateX(-1px)
 .day
+  position: relative
   width: 100%
   min-width: 41px
   height: 41px
   display: flex
   align-items: center
   justify-content: center
-  font-family: 'Montserrat', sans-serif
-  font-style: normal
-  font-weight: 500
-  font-size: 14px
-  line-height: 17px
-  color: #111111
   cursor: pointer
+  p
+    position: relative
+    font-family: 'Montserrat', sans-serif
+    font-style: normal
+    font-weight: 500
+    font-size: 14px
+    line-height: 17px
+    color: #111111
+    z-index: 2
+
 .inactiveMonth
-  color: #5A626F
+  p
+    color: #5A626F
+.circle
+  position: absolute
+  width: 41px
+  height: 41px
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%) scale(0.5)
+  opacity: 0
+  background-color: #1DC3A6
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: opacity, transform
+  border-radius: 50%
+  z-index: 1
+.active
+  p
+    color: #FFFFFF
+  .circle
+    opacity: 1
+    transform: translate(-50%, -50%) scale(1)
