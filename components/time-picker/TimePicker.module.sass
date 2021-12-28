@@ -1,0 +1,76 @@
+.root
+  width: 100%
+  padding: 30px 22px 21px
+  background-color: #fff
+.header
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 24px
+  p
+    font-family: 'Montserrat', sans-serif
+    font-weight: 600
+    font-size: 16px
+    line-height: 20px
+    color: #111111
+.modes
+  display: flex
+  align-items: flex-start
+.mode
+  position: relative
+  width: 50px
+  height: 50px
+  outline: none
+  border: 1px solid #D3D9E1
+  background-color: #fff
+  font-weight: 600
+  font-size: 13px
+  line-height: 16px
+  text-align: center
+  color: #111111
+  text-transform: uppercase
+  cursor: pointer
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: background-color, border-color
+  z-index: 1
+  &:first-child
+    margin-right: -1px
+button.active
+  z-index: 2
+  border-color: #ABC9C1
+  background-color: #F7FBFC
+.timeContainer
+  width: 100%
+  display: flex
+.numbers
+  position: relative
+  width: 100%
+  &:first-child
+    margin-right: 48px
+    &::after
+      content: ""
+      position: absolute
+      width: 1px
+      height: calc(100% - 20px)
+      top: 10px
+      right: -24px
+      background: #D3D9E1
+.btnNumber
+  display: block
+  width: 100%
+  height: 40px
+  outline: none
+  border: 1px solid #fff
+  background-color: #fff
+  font-weight: 500
+  font-size: 16px
+  line-height: 16px
+  text-align: center
+  color: #111111
+  cursor: pointer
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: background-color, border-color
+  z-index: 1
+  &:hover
+    background-color: #F7FBFC

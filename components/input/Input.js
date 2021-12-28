@@ -5,6 +5,7 @@ import {getFormattedDate} from "../../utils";
 import DatePicker from "../date-picker/DatePicker";
 import CalendarIcon from '/public/icons/calendar.svg'
 import ClockIcon from '/public/icons/clock.svg'
+import TimePicker from "../time-picker/TimePicker";
 
 const dropdownTypes = ['date', 'time']
 
@@ -66,6 +67,11 @@ function Input({
     return displayingValue
   }
 
+  function handleDateChange(e) {
+    onChange(e)
+    toggleDropdown()
+  }
+
   return (
     <div className={cn(className, styles.inputContainer, { [styles.label]: label, [styles.disabled]: disabled })}>
       {
@@ -122,7 +128,20 @@ function Input({
         {
           needsDropdown &&
             <div className={cn(styles.dropdown, { [styles.dropdownOpened]: isOpened })}>
-              <DatePicker value={value} name={name} onChange={onChange} />
+              {
+                type === 'date' &&
+                <DatePicker
+                  name={name}
+                  value={value}
+                  onChange={handleDateChange} />
+              }
+              {
+                type === 'time' &&
+                  <TimePicker
+                    name={name}
+                    value={value}
+                    onChange={onChange} />
+              }
             </div>
         }
         {

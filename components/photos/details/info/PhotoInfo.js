@@ -219,26 +219,28 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                 lHeight={34}>
                 { listing?.name }
               </Typography>
-
-              <div className={styles.price}>
-                <div className={styles.priceContent}>
-                  <Typography
-                    fontWeight={600}
-                    fontSize={12}
-                    lHeight={15}
-                    color={'#878D97'}>
-                    { bids?.length ? 'Top bid': 'Current price' }
-                  </Typography>
-                  <div className={styles.priceDetails}>
-                    <Typography
-                      fontSize={28}
-                      fontWeight={600}
-                      lHeight={34}>
-                      { getMoneyView(listing?.bid?.highest) }
-                    </Typography>
+              {
+                listing?.isPublished &&
+                  <div className={styles.price}>
+                    <div className={styles.priceContent}>
+                      <Typography
+                        fontWeight={600}
+                        fontSize={12}
+                        lHeight={15}
+                        color={'#878D97'}>
+                        { bids?.length ? 'Top bid': 'Current price' }
+                      </Typography>
+                      <div className={styles.priceDetails}>
+                        <Typography
+                          fontSize={28}
+                          fontWeight={600}
+                          lHeight={34}>
+                          { getMoneyView(listing?.bid?.highest) }
+                        </Typography>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+              }
               {
                 !ownItem ?
                   <div className={styles.itemActions}>

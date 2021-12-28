@@ -55,7 +55,7 @@ function SellItem() {
       copies: 1,
       royalties: 0,
       scheduleFrequency: dateToString(new Date()),
-      scheduleTime: '',
+      scheduleTime: '6:00 PM',
       buyerAddress: '',
       duration: '7'
     },
@@ -349,6 +349,7 @@ function SellItem() {
                             </Typography>
                             {/*{ /(((0[1-9])|(1[0-2])):([0-5])(0|5)\s(A|P)M)/g }*/}
                             <Input
+                              type="time"
                               className={styles.selectTime}
                               name="scheduleTime"
                               value={formik.values.scheduleTime}
