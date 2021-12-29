@@ -9,7 +9,7 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import { getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
+import {download, getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
 import {useLikeListingMutation} from "../../../../services/listings";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 import ButtonCopy from "../../../button-copy/ButtonCopy";
@@ -85,6 +85,15 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
     const regex = new RegExp(HOST_NAME, 'g')
 
     return getShareLink().replace(regex, getHost())
+  }
+
+  function handleDownloadAssets() {
+    let fileName = listing.nfts[0].ipfs.file.originalName
+
+    if (listing.resource.includes('360'))
+      fileName = listing.name + '.zip'
+
+    download(process.env.NEXT_PUBLIC_API_URL + `listings/${id}/download`, fileName)
   }
 
   useEffect(function initLikes() {
@@ -271,6 +280,12 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                         <Button onClick={goTo(`/photos/sell/${id}`)}>
                           Sell
                         </Button>
+                    }
+                    {
+                      isAuction &&
+                      <Button onClick={handleDownloadAssets} type="outlined">
+                        Download assets
+                      </Button>
                     }
                   </div>
               }

@@ -1,5 +1,6 @@
 import Typography from "../components/Typography";
 import React from "react";
+import {execOnce} from "next/dist/shared/lib/utils";
 
 export function debounce(func, wait, immediate) {
   let timeout;
@@ -320,4 +321,21 @@ export function dateToString(date) {
   const day = date.getDate();
 
   return `${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`
+}
+
+export function dateFromESTtoISOString(dateStr, timeStr) {
+  const time24 = convertTime(timeStr)
+  const estString = `${dateStr}T${time24}:00.000-05:00`
+
+  return new Date(estString).toISOString()
+}
+
+export function convertTime(timeStr, hour12 = false) {
+  const date = new Date(`${dateToString(new Date)} ${timeStr}`)
+  const options = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12
+  }
+  return new Intl.DateTimeFormat('en-US', options).format(date)
 }

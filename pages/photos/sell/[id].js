@@ -15,15 +15,14 @@ import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
 import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
-import {clamp, dateToString, getUser} from "../../../utils";
+import {clamp, dateFromESTtoISOString, dateToString, getUser} from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useSelector} from "react-redux";
 import Error from "../../../components/error/Error";
 import DollarIcon from '/public/icons/dollar.svg'
 import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
-import {DAY, durationOptions, scheduleOptions} from "../../../fixtures";
-import DatePicker from "../../../components/date-picker/DatePicker";
+import {DAY, durationOptions} from "../../../fixtures";
 
 const validationSchema = Yup.object({
   price: Yup.number().required('Price is required').positive('Price should be more than zero'),
@@ -54,10 +53,11 @@ function SellItem() {
       price: 1,
       copies: 1,
       royalties: 0,
-      scheduleFrequency: dateToString(new Date()),
+      scheduleFrequency: dateToString(new Date(Date.now() + DAY)),
       scheduleTime: '6:00 PM',
       buyerAddress: '',
-      duration: '7'
+      auctionEndDate: dateToString(new Date(Date.now() + 7 * DAY)),
+      auctionEndTime: '6:00 PM'
     },
     validationSchema,
     onSubmit: handleSubmit
@@ -137,16 +137,17 @@ function SellItem() {
       sellMethod: 'Fixed Price'
     }
 
-    const endTime = sellType === 'auction' ? Date.now() + parseInt(values.duration) * DAY : 0
+    const isoString = dateFromESTtoISOString(values.auctionEndDate, values.auctionEndTime)
+    const endTime = sellType === 'auction' ? new Date(isoString).getTime() : 0
 
     if (sellType === 'auction') {
       data.sellMethod = 'Auction';
-      data.endDate = endTime
+      data.endDate = isoString
     }
 
     if (switchers.schedule) {
       //data.activeDate = Date.now() + 1000 * 60 * 5
-      data.activeDate = Date.now() + DAY * +values.duration
+      data.activeDate = dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)
     }
 
     let promise;
@@ -344,7 +345,7 @@ function SellItem() {
                               value={formik.values.scheduleFrequency}
                               onChange={formik.handleChange}
                               placeholder="Date" />
-                            <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 0 30px'}>
+                            <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 16px 30px'}>
                               at
                             </Typography>
                             {/*{ /(((0[1-9])|(1[0-2])):([0-5])(0|5)\s(A|P)M)/g }*/}
@@ -388,13 +389,27 @@ function SellItem() {
                         error={errors.price && touched.price}
                         errorText={errors.price}
                         label="Starting price*" />
-                      <Select
-                        className={styles.field}
-                        name="duration"
-                        label="Duration"
-                        value={formik.values.duration}
-                        onChange={formik.handleChange}
-                        options={durationOptions} />
+                      <div className={cn(styles.scheduleRow)}>
+                        <Input
+                          type="date"
+                          className={styles.selectFrequency}
+                          name="auctionEndDate"
+                          label="Auction ends"
+                          value={formik.values.auctionEndDate}
+                          onChange={formik.handleChange}
+                          placeholder="Date" />
+                        <Typography fontSize={14} color={'rgba(55, 65, 81, 0.8)'} margin={'0 16px 16px 30px'}>
+                          at
+                        </Typography>
+                        {/*{ /(((0[1-9])|(1[0-2])):([0-5])(0|5)\s(A|P)M)/g }*/}
+                        <Input
+                          type="time"
+                          className={styles.selectTime}
+                          name="auctionEndTime"
+                          value={formik.values.auctionEndTime}
+                          onChange={formik.handleChange}
+                          placeholder="6:00 PM" />
+                      </div>
                       {
                         !listing?.tokenID &&
                           <Input
