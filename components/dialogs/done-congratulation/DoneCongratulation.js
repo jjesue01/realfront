@@ -53,6 +53,7 @@ function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message
           { title }
         </Typography>
         <Typography
+          className={styles.message}
           fontSize={ transactionHash !== undefined ? 16 : 14}
           fontWeight={600}
           lHeight={transactionHash !== undefined ? 20 : 17}

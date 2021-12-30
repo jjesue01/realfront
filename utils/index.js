@@ -330,6 +330,16 @@ export function dateFromESTtoISOString(dateStr, timeStr) {
   return new Date(estString).toISOString()
 }
 
+export function getESTDateTimeFromISO(isoString) {
+  const estDateString = new Date(isoString).toLocaleString('en-US', { timeZone: 'America/New_York' })
+  const [dateString, time12] = estDateString.split(', ')
+
+  return {
+    date: dateToString(new Date(dateString)),
+    time: convertTime(time12, true)
+  }
+}
+
 export function convertTime(timeStr, hour12 = false) {
   const date = new Date(`${dateToString(new Date)} ${timeStr}`)
   const options = {

@@ -202,6 +202,7 @@ function Form({ mode }) {
         raw: rawFile,
         tags: decodeTags(values.tags),
         city: values.city.value,
+        resource: resourceType,
         ...location
       }
 
@@ -383,7 +384,7 @@ function Form({ mode }) {
             fontWeight={600}
             fontSize={16}
             lHeight={20}>
-            Upload a photo
+            Upload a { resourceType === 'Video' ? 'video' : `photo${ resourceType.includes('360') ? 's' : '' }` }
           </Typography>
           <Typography
             fontFamily={'Lato'}

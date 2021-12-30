@@ -15,7 +15,15 @@ import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
 import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
-import {clamp, dateFromESTtoISOString, dateToString, getUser} from "../../../utils";
+import {
+  clamp,
+  convertTime,
+  dateFromESTtoISOString,
+  dateToString,
+  getESTDateTimeFromISO,
+  getFormattedEndTime,
+  getUser
+} from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useSelector} from "react-redux";
 import Error from "../../../components/error/Error";
@@ -31,7 +39,6 @@ const validationSchema = Yup.object({
   scheduleFrequency: Yup.string(),
   scheduleTime: Yup.string(),
   buyerAddress: Yup.string(),
-  duration: Yup.string()
 })
 
 function SellItem() {
@@ -108,6 +115,7 @@ function SellItem() {
 
   function handleTypeChange(type) {
     return function () {
+      if (listing?.activeDate) return;
       setSellType(type)
     }
 
@@ -124,6 +132,15 @@ function SellItem() {
   function handleDone() {
     toggleSellSteps()
     setIsDone(true)
+  }
+
+  function getCongratulationMessage() {
+    const dateStr = dateFromESTtoISOString(formik.values.scheduleFrequency, formik.values.scheduleTime)
+
+    if (switchers.schedule)
+      return `Your listing ${listing?.name} will be set for sale on\n${getFormattedEndTime(dateStr)}`
+
+    return `Great! You just set on sale - ${listing?.name}`
   }
 
   function handleSubmit(values, { setSubmitting }) {
@@ -155,7 +172,7 @@ function SellItem() {
     if (listing?.tokenID === undefined) {
       promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
       console.log('mint')
-    } else if (listing.isPublished) {
+    } else if (listing.isPublished || listing?.activeDate) {
       promise = contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
       console.log('update price')
     } else if (sellType === 'fixed') {
@@ -200,14 +217,28 @@ function SellItem() {
 
   useEffect(function initListing() {
     if (listing !== undefined && listing.tokenID !== undefined) {
-      setValues(prevState => ({
-        ...prevState,
-        price: listing.price,
-        copies: listing.copies,
-        royalties: listing.royalties || 0
-      }))
+      setValues(prevState => {
+        const initialValues = {
+          ...prevState,
+          price: listing.price,
+          copies: listing.copies,
+          royalties: listing.royalties || 0
+        }
+
+        if (listing?.activeDate) {
+          const { date, time } = getESTDateTimeFromISO(listing.activeDate)
+          initialValues.scheduleFrequency = date
+          initialValues.scheduleTime = time
+        }
+
+        return initialValues
+      })
+      setSwitchers({
+        schedule: !!listing?.activeDate,
+        private: false
+      })
     }
-  }, [listing, setValues])
+  }, [listing, setValues, setSwitchers])
 
   useEffect(function initFee() {
     if (!mounted.current && user) {
@@ -267,7 +298,7 @@ function SellItem() {
             </Typography>
             <form className={styles.form} onSubmit={formik.handleSubmit}>
               <div className={styles.fieldsContainer}>
-                <div className={styles.sellTypes}>
+                <div className={cn(styles.sellTypes, { [styles.disabled]: listing?.activeDate })}>
                   <button
                     type="button"
                     onClick={handleTypeChange('fixed')}
@@ -442,7 +473,7 @@ function SellItem() {
         onDone={handleDone} />
       <DoneCongratulation
         imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
-        message={`Great! You just set on sale - ${listing?.name}`}
+        message={getCongratulationMessage()}
         opened={isDone}
         listing={listing}
         onClose={handleCloseCongratulations} />
