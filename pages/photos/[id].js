@@ -174,6 +174,7 @@ function PhotoDetails({ openLogin }) {
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
+        refetchBids()
         setLoading(false)
       })
       .catch(() => {

@@ -66,12 +66,33 @@ function SellItem() {
       auctionEndDate: dateToString(new Date(Date.now() + 7 * DAY)),
       auctionEndTime: '6:00 PM'
     },
-    validationSchema,
+    validate: handleValidate,
     onSubmit: handleSubmit
   });
 
   const mounted = useRef(false)
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
+
+  function handleValidate(values) {
+    const errors = {}
+
+    if (!values.price)
+      errors.price = 'Price is required'
+    else if (values.price < 0)
+      error.price = 'Price should be more than zero'
+
+    const currentDateStamp = new Date().getTime()
+    const scheduledDateStamp = new Date(dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)).getTime()
+
+    if (sellType === 'fixed' && switchers.schedule && scheduledDateStamp <= currentDateStamp)
+      errors.scheduleTime = 'Please, select future date'
+
+    const auctionEndDateStamp = new Date(dateFromESTtoISOString(values.auctionEndDate, values.auctionEndTime)).getTime()
+
+    if (sellType === 'auction' && auctionEndDateStamp <= currentDateStamp)
+      errors.auctionEndTime = 'Please, select future date'
+    return errors
+  }
 
   function handleSwitcherChange({ target: { name, value } }) {
     setSwitchers(prevSwitchers => ({
@@ -118,7 +139,6 @@ function SellItem() {
       if (listing?.activeDate) return;
       setSellType(type)
     }
-
   }
 
   function handleCloseCongratulations() {
@@ -163,7 +183,6 @@ function SellItem() {
     }
 
     if (switchers.schedule) {
-      //data.activeDate = Date.now() + 1000 * 60 * 5
       data.activeDate = dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)
     }
 
@@ -386,6 +405,8 @@ function SellItem() {
                               name="scheduleTime"
                               value={formik.values.scheduleTime}
                               onChange={formik.handleChange}
+                              error={errors.scheduleTime && touched.scheduleTime}
+                              errorText={errors.scheduleTime}
                               placeholder="6:00 PM" />
                           </div>
                         </div>
@@ -439,6 +460,8 @@ function SellItem() {
                           name="auctionEndTime"
                           value={formik.values.auctionEndTime}
                           onChange={formik.handleChange}
+                          error={errors.auctionEndTime && touched.auctionEndTime}
+                          errorText={errors.auctionEndTime}
                           placeholder="6:00 PM" />
                       </div>
                       {

@@ -431,7 +431,7 @@ function Form({ mode }) {
                     <div className={styles.imageContainer}>
                       <MediaFile
                         src={filePreview !== null ? filePreview : file[0]}
-                        videoSrc={isVideo && (filePreview !== null ? filePreview : file[0])}
+                        videoSrc={resourceType === 'Video' && (filePreview !== null ? filePreview : file[0])}
                         autoPlay
                         alt="nft item" />
                       {
@@ -588,7 +588,7 @@ function Form({ mode }) {
         imageUrl={file !== null && filePreview}
         message={`Great! You just created - ${formik.values.name}`}
         opened={isCreated}
-        listing={listing}
+        listing={{...listing, resource: resourceType}}
         hasShare={false}
         onClose={handleCloseCongratulations} />
       <ConfirmationDialog

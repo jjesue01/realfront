@@ -3,13 +3,14 @@ import styles from './DatePicker.module.sass'
 import cn from "classnames";
 import {dateToString} from "../../utils";
 
-function Day({ date, inactiveMonth, name, value, onChange }) {
+function Day({ date, inactiveMonth, name, value, onChange, past }) {
 
   const dayClassNames = cn(
     styles.day,
     {
       [styles.inactiveMonth]: inactiveMonth,
-      [styles.active]: dateToString(date) === value
+      [styles.active]: dateToString(date) === value,
+      [styles.disabled]: past
     }
   )
 
