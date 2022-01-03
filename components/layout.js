@@ -24,6 +24,7 @@ import {pushNotification} from "../features/notifications/notificationsSlice";
 import {
   useGetAutocompleteCitiesQuery,
 } from "../services/cities";
+import Toasts from "./toasts/Toasts";
 
 const accountLinks = [
   {
@@ -260,6 +261,7 @@ function Layout({ children }) {
             onClose={toggleDeposit} />
           <BuyWithCard opened={buyOpened} onClose={toggleBuy} />
           <Notifications />
+          <Toasts />
         </>
       }
       {

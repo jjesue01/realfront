@@ -2,10 +2,13 @@ import React, { useRef, useState } from 'react'
 import styles from './FileUploader.module.sass'
 import cn from "classnames";
 import Typography from "../../../Typography";
+import {useDispatch} from "react-redux";
+import {pushToast} from "../../../../features/toasts/toastsSlice";
 
 const MAX_KB_SIZE = 40000
 
 function FileUploader({ className, children, onChange, accept = '*', error, disabled, multiple = false }) {
+  const dispatch = useDispatch()
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef()
   const dropRef = useRef()
@@ -30,8 +33,10 @@ function FileUploader({ className, children, onChange, accept = '*', error, disa
     const resultFiles = []
 
     for (const file of files) {
-      if (Math.round(file.size / 1000) > MAX_KB_SIZE || accept !== '*' && !validateFormat(file))
+      if (Math.round(file.size / 1000) > MAX_KB_SIZE || accept !== '*' && !validateFormat(file)) {
+        dispatch(pushToast({ type: 'info', message: 'File size should be lower than 40 MB' }))
         continue;
+      }
 
       resultFiles.push(file)
 
