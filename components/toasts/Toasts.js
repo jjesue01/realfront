@@ -20,7 +20,7 @@ function Toasts() {
     if (+toastRef.current.style.opacity === 0) {
       dispatch(removeToast())
       setToast({})
-      toastRef.current.style.transform = 'translate(-50%, -101px)'
+      toastRef.current.style.transform = 'translate(-50%, -151px)'
     }
   }
 
