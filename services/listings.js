@@ -32,6 +32,7 @@ export const listingsApi = createApi({
         formData.append("longitude", data.longitude);
         formData.append("latitude", data.latitude);
         formData.append("link360", data.link360);
+        formData.append("resource", data.resource);
         if (!!data.link360)
           formData.append("thumbnail", data.file[0], data.file[0].name);
 

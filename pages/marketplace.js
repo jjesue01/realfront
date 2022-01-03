@@ -162,7 +162,8 @@ function Marketplace({ toggleFooter, openLogin }) {
         city: filters.cities.map(({ value }) => value).join(),
         price: [+filters.price.from || '', +filters.price.to || ''].join(),
         tags: filters.more.types.join(),
-        sort: filters.sortBy
+        sort: filters.sortBy,
+        keyword: filters.more.keywords.split(',').map(item => item.trim()).join()
       }
 
       if (filters.resources.length === 1)
@@ -247,7 +248,7 @@ function Marketplace({ toggleFooter, openLogin }) {
               className={styles.filter}
               name="more"
               value={filters.more}
-              options={[...new Set(tagsOptions)]}
+              options={tagsOptions}
               onChange={handleChange} />
           </div>
           <div className={cn(styles.resetFilters, { [styles.resetFiltersShown]: showReset })}>

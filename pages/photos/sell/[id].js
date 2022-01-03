@@ -91,6 +91,7 @@ function SellItem() {
 
     if (sellType === 'auction' && auctionEndDateStamp <= currentDateStamp)
       errors.auctionEndTime = 'Please, select future date'
+
     return errors
   }
 
@@ -192,7 +193,10 @@ function SellItem() {
       promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
       console.log('mint')
     } else if (listing.isPublished || listing?.activeDate) {
-      promise = contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
+      promise = data.price !== listing.price ?
+        contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
+        :
+        Promise.resolve()
       console.log('update price')
     } else if (sellType === 'fixed') {
       console.log('set on sell')
@@ -268,8 +272,12 @@ function SellItem() {
 
   if (error)
     return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />
+
   if (!ownItem && !isFetching)
-    return <Error errorCode={'ListingNoAccess' } />
+    return <Error errorCode={'ListingNoAccess'} />
+
+  if (listing && listing.isPublished)
+    return <Error errorCode={'PageNotFound'} />
 
   return (
     <main className="page-container">

@@ -80,21 +80,14 @@ function MoreFilter({ className, name, onChange, value, mode, options = [] }) {
     updatedData.forEach(item => {
       if (!item.checked) updatedCheckedAll = false
     })
-
     setCheckedAll(updatedCheckedAll)
-    setData(updatedData)
+    setData([...updatedData])
     setKeywords(value.keywords)
-  }, [value, options])
+  }, [value.types, value.keywords, options])
 
   useEffect(function () {
     handleReset()
   }, [value.types, value.keywords, handleReset])
-
-  useEffect(function initOptions() {
-    if (options.length !== 0) {
-      setData(options.map(option => ({ value: option, checked: false })))
-    }
-  }, [options])
 
   return (
     <FilterWrapper

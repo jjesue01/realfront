@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { authApi } from './services/auth'
-import authReducer from '/features/auth/authSlice'
-import notificationsReducer from '/features/notifications/notificationsSlice'
 import {citiesApi} from "./services/cities";
 import {listingsApi} from "./services/listings";
 import {transactionsApi} from "./services/transactions";
+import authReducer from '/features/auth/authSlice'
+import notificationsReducer from '/features/notifications/notificationsSlice'
+import toastsReducer from "./features/toasts/toastsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
     [listingsApi.reducerPath]: listingsApi.reducer,
     [transactionsApi.reducerPath]: transactionsApi.reducer,
     auth: authReducer,
-    notifications: notificationsReducer
+    notifications: notificationsReducer,
+    toasts: toastsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
