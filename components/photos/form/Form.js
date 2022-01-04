@@ -31,6 +31,7 @@ import ConfirmationDialog from "../../dialogs/confirmation-dialog/ConfirmationDi
 import Tabs from "../../tabs/Tabs";
 import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
 import {blockchainOptions} from "../../../fixtures";
+import {pushToast} from "../../../features/toasts/toastsSlice";
 
 const libraries = ['places']
 
@@ -255,7 +256,8 @@ function Form({ mode }) {
           setDeleting(false)
         })
     } catch (error) {
-      console.log(error)
+      dispatch(pushToast({ type: 'error', message: 'Revoke sell is cancelled by user' }))
+      setDeleting(false)
     }
   }
 

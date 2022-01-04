@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {getIdToken} from "../utils";
+import {pushToast} from "../features/toasts/toastsSlice";
 
 export const transactionsApi = createApi({
   reducerPath: 'transactionsApi',
@@ -24,9 +25,23 @@ export const transactionsApi = createApi({
           }
         })
       },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting listing transactions' }))
+        }
+      }
     }),
     getProfileTransactions: builder.query({
-      query: () => '/transactions/me'
+      query: () => '/transactions/me',
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting transactions' }))
+        }
+      }
     }),
     getBids: builder.query({
       query: (params) => ({
@@ -35,7 +50,14 @@ export const transactionsApi = createApi({
           limit: 20,
           ...params
         }
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting bids' }))
+        }
+      }
     }),
     getMyBids: builder.query({
       query: (params = {}) => ({
@@ -44,7 +66,14 @@ export const transactionsApi = createApi({
           limit: 20,
           ...params
         }
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting bids' }))
+        }
+      }
     }),
     postBid: builder.mutation({
       query: ({ id, price, bidIndex }) => ({
@@ -55,13 +84,29 @@ export const transactionsApi = createApi({
           price,
           bidIndex
         }
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'Bid has been successfully created' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting bids' }))
+        }
+      }
     }),
     deleteBid: builder.mutation({
       query: ({ id }) => ({
         url: `/bids/${id}`,
         method: 'DELETE'
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'Bid has been successfully deleted' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while deleting bid' }))
+        }
+      }
     }),
   }),
 })

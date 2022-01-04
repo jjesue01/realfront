@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {buildFormData, getIdToken, getUser} from "../utils";
+import {pushToast} from "../features/toasts/toastsSlice";
 
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -22,6 +23,13 @@ export const authApi = createApi({
       }),
       getCurrentUser: builder.query({
         query: () => `/users/me`,
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled
+          } catch (error) {
+            dispatch(pushToast({ type: 'error', message: 'Error while getting user info' }))
+          }
+        }
       }),
       updateUser: builder.mutation({
         query: ({ walletAddress, ...data }) => ({
@@ -29,6 +37,14 @@ export const authApi = createApi({
           method: 'PATCH',
           body: data
         }),
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled
+            dispatch(pushToast({ type: 'success', message: 'Account settings has been successfully updated' }))
+          } catch (error) {
+            dispatch(pushToast({ type: 'error', message: 'Error while updating account settings' }))
+          }
+        },
       }),
       updateUserImages: builder.mutation({
         query: (data) => ({
@@ -36,6 +52,14 @@ export const authApi = createApi({
           method: 'PATCH',
           body: buildFormData(data)
         }),
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled
+            dispatch(pushToast({ type: 'success', message: 'Profile image has been successfully updated' }))
+          } catch (error) {
+            dispatch(pushToast({ type: 'error', message: 'Error while updating profile image' }))
+          }
+        }
       }),
   }),
 })

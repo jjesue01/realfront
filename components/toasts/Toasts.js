@@ -8,7 +8,7 @@ import cn from "classnames";
 function Toasts() {
   const dispatch = useDispatch()
   const toasts = useSelector(state => state.toasts)
-  const [currentToast, setToast] = useState({ type: 'info' })
+  const [currentToast, setToast] = useState({})
   const toastRef = useRef()
 
   const toastClassNames = cn(
@@ -26,7 +26,7 @@ function Toasts() {
 
   useEffect(function manageToasts() {
     if (toasts.length !== 0 && !currentToast.id) {
-      setToast(toasts[0])
+      setToast({ id: Date.now(), ...toasts[0] })
 
       toastRef.current.style.transform = 'translate(-50%, 0)'
       toastRef.current.style.opacity = 1

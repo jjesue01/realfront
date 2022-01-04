@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import styles from './Bids.module.sass'
 import ArrowShort from '/public/icons/arrow-short.svg'
 import cn from "classnames";
-import {getFormattedDate, getMoneyView, getShortWalletAddress, getSortedArray, timeAgo} from "../../../../utils";
+import {getFormattedDate, getMoneyView, getShortWalletAddress} from "../../../../utils";
 import Typography from "../../../Typography";
 import Image from "next/image";
 import {useSelector} from "react-redux";

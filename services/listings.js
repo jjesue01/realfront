@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {buildFormData, getIdToken} from "../utils";
+import {pushToast} from "../features/toasts/toastsSlice";
 
 export const listingsApi = createApi({
   reducerPath: 'listingsApi',
@@ -42,6 +43,14 @@ export const listingsApi = createApi({
           body: formData
         }
       },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'Listing has been successfully created' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while creating listing' }))
+        }
+      }
     }),
     updateListing: builder.mutation({
       query: ({ id, ...data }) => {
@@ -55,25 +64,56 @@ export const listingsApi = createApi({
           body: formData
         }
       },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'Listing has been successfully updated' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while updating listing' }))
+        }
+      }
     }),
     deleteListing: builder.mutation({
       query: id => ({
         url: `/listings/${id}`,
         method: 'DELETE',
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'Listing has been successfully deleted' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while deleting listing' }))
+        }
+      }
     }),
     publishListing: builder.mutation({
       query: ({ id, ...data }) => ({
         url: `/listings/${id}/publish`,
         method: 'PATCH',
         body: data
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while setting on sale' }))
+        }
+      }
     }),
     depublishListing: builder.mutation({
       query: (id) => ({
         url: `/listings/${id}/depublish`,
         method: 'PATCH',
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'Listing has been successfully canceled' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while cancelling listing' }))
+        }
+      }
     }),
     likeListing: builder.mutation({
       query: (id) => ({
@@ -85,13 +125,27 @@ export const listingsApi = createApi({
       query: (id) => ({
         url: `/listings/${id}/purchase`,
         method: 'POST'
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while buying NFT' }))
+        }
+      }
     }),
     finishAuction: builder.mutation({
       query: (id) => ({
         url: `/listings/${id}/auction`,
         method: 'POST'
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while finishing auction' }))
+        }
+      }
     }),
     getListings: builder.query({
       query: (params = {}) => ({
@@ -101,9 +155,13 @@ export const listingsApi = createApi({
           ...params
         }
       }),
-      // transformResponse(baseQueryReturnValue, meta) {
-      //   return baseQueryReturnValue.docs
-      // }
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting listings' }))
+        }
+      }
     }),
     getPublishedListings: builder.query({
       query: (params = {}) => ({
@@ -113,12 +171,33 @@ export const listingsApi = createApi({
           ...params
         }
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting listings' }))
+        }
+      }
     }),
     getTags: builder.query({
       query: () => `/tags`,
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting tags' }))
+        }
+      }
     }),
     getListingById: builder.query({
       query: id => `/listings/${id}`,
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting listing' }))
+        }
+      }
     })
   }),
 })

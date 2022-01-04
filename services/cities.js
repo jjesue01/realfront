@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {buildFormData, getIdToken} from "../utils";
+import {pushToast} from "../features/toasts/toastsSlice";
 
 export const citiesApi = createApi({
   reducerPath: 'citiesApi',
@@ -24,6 +25,13 @@ export const citiesApi = createApi({
       }),
       transformResponse(baseQueryReturnValue, meta) {
         return baseQueryReturnValue.docs
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting cities' }))
+        }
       }
     }),
     createCity: builder.mutation({
@@ -34,6 +42,13 @@ export const citiesApi = createApi({
           body: data
         }
       },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while adding new city' }))
+        }
+      }
     }),
     getAutocompleteCities: builder.query({
       query: (params = {}) => ({
@@ -43,6 +58,13 @@ export const citiesApi = createApi({
           ...params
         }
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting cities' }))
+        }
+      }
     }),
   }),
 })

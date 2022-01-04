@@ -26,15 +26,15 @@ function UserInfo({ user }) {
     }
   }
 
-  function handleLogoChange(file) {
-    setLogo(file)
-    updateUserImages({ logoImage: file })
+  function handleLogoChange(files) {
+    setLogo(files[0])
+    updateUserImages({ logoImage: files[0] })
   }
 
 
-  function handleBannerChange(file) {
-    setBanner(file)
-    updateUserImages({ bannerImage: file })
+  function handleBannerChange(files) {
+    setBanner(files[0])
+    updateUserImages({ bannerImage: files[0] })
   }
 
   useEffect(function initUserImages() {
