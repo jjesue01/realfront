@@ -182,18 +182,19 @@ function PhotoDetails({ openLogin }) {
       })
   }
 
-  function validateSell() {
-    const contract = require('/services/contract')
-
-    return new Promise((resolve, reject) => {
-      contract.getSellData(listing.tokenID, user.walletAddress)
-        .then(({ forSell }) => {
-          if (forSell) {
-            resolve()
-          }
-        })
-    })
-  }
+  // function validateSell() {
+  //   const contract = require('/services/contract')
+  //
+  //   return new Promise((resolve, reject) => {
+  //     contract.getSellData(listing.tokenID, user.walletAddress)
+  //       .then(({ forSell }) => {
+  //         if (forSell) {
+  //           resolve()
+  //         }
+  //       })
+  //       .ca
+  //   })
+  // }
 
   async function getAvailableBid() {
     const contract = require('/services/contract')

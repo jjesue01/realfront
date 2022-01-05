@@ -1,3 +1,6 @@
+import {store} from "../store";
+import {pushToast} from "../features/toasts/toastsSlice";
+
 const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
@@ -12,6 +15,7 @@ if (typeof window !== "undefined" && window?.web3App) {
   const dummyBUSD = new window.web3App.eth.Contract(
     busd,
     DBUSD_ADDRESS);
+  const { dispatch } = store
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
@@ -23,6 +27,12 @@ if (typeof window !== "undefined" && window?.web3App) {
           resolve(tokenID)
         })
         .on('error', (error) => {
+          let message = 'Error while executing mintAndList'
+
+          if (error?.code === 4001)
+            message = 'User cancelled mint and list processes'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -36,6 +46,12 @@ if (typeof window !== "undefined" && window?.web3App) {
           resolve()
         })
         .on('error', (error) => {
+          let message = 'Error while executing listForSell'
+
+          if (error?.code === 4001)
+            message = 'User cancelled list for sell process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -49,6 +65,12 @@ if (typeof window !== "undefined" && window?.web3App) {
           resolve()
         })
         .on('error', (error) => {
+          let message = 'Error while executing listForAuction'
+
+          if (error?.code === 4001)
+            message = 'User cancelled list for auction process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -61,10 +83,18 @@ if (typeof window !== "undefined" && window?.web3App) {
           console.log(receipt)
           if (receipt?.events?.Bought)
             resolve(receipt)
-          else
+          else {
+            dispatch(pushToast({ type: 'error', message: 'Error while executing acceptBid' }))
             reject('Something went wrong')
+          }
         })
         .on('error', (error) => {
+          let message = 'Error while executing acceptBid'
+
+          if (error?.code === 4001)
+            message = 'User cancelled finish auction process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -84,11 +114,20 @@ if (typeof window !== "undefined" && window?.web3App) {
                 resolve()
                 console.log('bidOnAuction')
               } else {
+                dispatch(pushToast({ type: 'error', message: 'Error while executing bidOnAuction' }))
                 reject()
                 console.log('error')
               }
             })
-            .on('error', reject)
+            .on('error', error => {
+              let message = 'Error while executing bidOnAuction'
+
+              if (error?.code === 4001)
+                message = 'User cancelled bid on auction process'
+
+              dispatch(pushToast({ type: 'error', message }))
+              reject(error)
+            })
         })
         .catch(reject)
     })
@@ -100,10 +139,18 @@ if (typeof window !== "undefined" && window?.web3App) {
         .once('confirmation', (confirmation, receipt) => {
           if (receipt?.events?.Delisted)
             resolve(receipt)
-          else
+          else {
+            dispatch(pushToast({ type: 'error', message: 'Error while executing revokeSell' }))
             reject('Something went wrong')
+          }
         })
         .on('error', (error) => {
+          let message = 'Error while executing revokeSell'
+
+          if (error?.code === 4001)
+            message = 'User cancelled revoke sell process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -116,10 +163,18 @@ if (typeof window !== "undefined" && window?.web3App) {
           console.log(receipt)
           if (receipt?.events?.BidUpdate)
             resolve(receipt)
-          else
+          else {
+            dispatch(pushToast({ type: 'error', message: 'Error while executing revokeBid' }))
             reject('Something went wrong')
+          }
         })
         .on('error', (error) => {
+          let message = 'Error while executing revokeBid'
+
+          if (error?.code === 4001)
+            message = 'User cancelled revoke bid process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -137,6 +192,12 @@ if (typeof window !== "undefined" && window?.web3App) {
           resolve()
         })
         .on('error', (error) => {
+          let message = 'Error while executing editPrice'
+
+          if (error?.code === 4001)
+            message = 'User cancelled edit price process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -150,6 +211,12 @@ if (typeof window !== "undefined" && window?.web3App) {
           resolve()
         })
         .on('error', (error) => {
+          let message = 'Error while approving amount'
+
+          if (error?.code === 4001)
+            message = 'User cancelled approve amount process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -177,6 +244,12 @@ if (typeof window !== "undefined" && window?.web3App) {
           resolve()
         })
         .on('error', (error) => {
+          let message = 'Error while increasing allowance'
+
+          if (error?.code === 4001)
+            message = 'User cancelled increase allowance process'
+
+          dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
     })
@@ -202,11 +275,20 @@ if (typeof window !== "undefined" && window?.web3App) {
             resolve(receipt)
             console.log('bought')
           } else {
+            dispatch(pushToast({ type: 'error', message: 'Error while executing buy' }))
             reject()
             console.log('error')
           }
         })
-        .on('error', reject)
+        .on('error', error => {
+          let message = 'Error while executing buy'
+
+          if (error?.code === 4001)
+            message = 'User cancelled buy process'
+
+          dispatch(pushToast({ type: 'error', message }))
+          reject(error)
+        })
     })
   }
 
@@ -215,13 +297,25 @@ if (typeof window !== "undefined" && window?.web3App) {
   }
 
   contractApi.balanceOf = async (address) => {
-    const weiBalance = await dummyBUSD.methods.balanceOf(address).call()
-    return window.web3App.utils.fromWei(weiBalance)
+    try {
+      const weiBalance = await dummyBUSD.methods.balanceOf(address).call()
+      return window.web3App.utils.fromWei(weiBalance)
+    } catch (error) {
+      const message = `Error while getting user's balance`
+      dispatch(pushToast({ type: 'error', message }))
+      return 0
+    }
   }
 
   contractApi.allowance = async (address) => {
-    const weiAllowance = await dummyBUSD.methods.allowance(address, HOMEJAB_ADDRESS).call()
-    return window.web3App.utils.fromWei(weiAllowance)
+    try {
+      const weiAllowance = await dummyBUSD.methods.allowance(address, HOMEJAB_ADDRESS).call()
+      return window.web3App.utils.fromWei(weiAllowance)
+    } catch (error) {
+      const message = `Error while getting allowance balance`
+      dispatch(pushToast({ type: 'error', message }))
+      return 0
+    }
   }
 }
 

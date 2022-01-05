@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import styles from './WalletMenu.module.sass'
 import cn from "classnames";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import {getMoneyView, getShortWalletAddress} from "../../utils";
 function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   const router = useRouter()
   const [balance, setBalance] = useState(0)
+  const mounted = useRef(false)
 
   function handleLogout() {
     onLogOut()
@@ -41,7 +42,10 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   }, [router, onClose, opened])
 
   useEffect(function initBalance() {
-    handleRefreshBalance()
+    if (!mounted.current) {
+      handleRefreshBalance()
+      mounted.current = true
+    }
   }, [handleRefreshBalance])
 
   return (

@@ -25,12 +25,13 @@ import {
   getUser
 } from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Error from "../../../components/error/Error";
 import DollarIcon from '/public/icons/dollar.svg'
 import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
 import {DAY, durationOptions} from "../../../fixtures";
+import {pushToast} from "../../../features/toasts/toastsSlice";
 
 const validationSchema = Yup.object({
   price: Yup.number().required('Price is required').positive('Price should be more than zero'),
@@ -42,6 +43,7 @@ const validationSchema = Yup.object({
 })
 
 function SellItem() {
+  const dispatch = useDispatch()
   const router = useRouter()
   const { id } = router.query
   const user = useSelector(state => state.auth.user)
@@ -223,7 +225,13 @@ function SellItem() {
           })
       })
       .catch(error => {
-        console.log(error)
+        // console.log(error)
+        // let errorMessage = 'Error while executing contract method'
+        //
+        // if (error?.code === 4001)
+        //   errorMessage = 'User cancelled sell flow'
+        //
+        // dispatch(pushToast())
         setSubmitting(false)
       })
   }
@@ -235,7 +243,11 @@ function SellItem() {
       .then(fee => {
         setMarketplaceFee(+fee)
       })
+      .catch(error => {
+        dispatch(pushToast({ type: 'error', message: 'Error while getting marketplace fee' }))
+      })
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(function initListing() {

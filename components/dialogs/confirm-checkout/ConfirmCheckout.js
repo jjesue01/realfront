@@ -6,10 +6,12 @@ import Image from "next/image";
 import {getMoneyView} from "../../../utils";
 import Checkbox from "../../checkbox/Checkbox";
 import Button from "../../button/Button";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MediaFile from "../../media-file/MediaFile";
+import {pushToast} from "../../../features/toasts/toastsSlice";
 
 function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onCheckout, onFinishAuction }) {
+  const dispatch = useDispatch()
   const user = useSelector(state => state.auth.user)
   const [marketplaceFee, setMarketplaceFee] = useState(2.5)
   const [checked, setChecked] = useState(false)
@@ -67,6 +69,10 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
       .then(fee => {
         setMarketplaceFee(+fee)
       })
+      .catch(error => {
+        dispatch(pushToast({ type: 'error', message: 'Error while getting marketplace fee' }))
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(function initFee() {

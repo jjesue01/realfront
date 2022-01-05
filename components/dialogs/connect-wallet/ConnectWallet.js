@@ -4,6 +4,7 @@ import Web3 from 'web3'
 import Image from "next/image";
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
+import {BINANCE_TESTNET, DBUSD_TOKEN} from "../../../fixtures";
 
 const wallets = [
   {
@@ -13,24 +14,6 @@ const wallets = [
     name: 'MetaMask'
   }
 ]
-const BINANCE_TESTNET = {
-  chainId: '0x61',
-  chainName: 'Binance Smart Chain Testnet',
-  nativeCurrency: {
-    name: 'BNB',
-    symbol: 'tBNB',
-    decimals: 18,
-  },
-  rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
-  blockExplorerUrls: ['https://testnet.bscscan.com'],
-}
-
-const DBUSD_TOKEN = {
-  address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
-  symbol: 'DBUSD',
-  decimals: 18,
-  image: ''
-}
 
 function ConnectWallet({ opened, onClose, onLogin }) {
 

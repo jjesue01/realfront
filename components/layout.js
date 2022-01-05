@@ -25,6 +25,8 @@ import {
   useGetAutocompleteCitiesQuery,
 } from "../services/cities";
 import Toasts from "./toasts/Toasts";
+import {pushToast} from "../features/toasts/toastsSlice";
+import {BINANCE_TESTNET} from "../fixtures";
 
 const accountLinks = [
   {
@@ -154,8 +156,11 @@ function Layout({ children }) {
             if (!window?.web3App) {
               window.web3App = new Web3(window.ethereum);
             }
-            window.web3App.eth.getAccounts().then(accounts => {
+            window.web3App.eth.getAccounts().then(async (accounts) => {
               if (accounts.length !== 0) {
+                const chainId = await ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== BINANCE_TESTNET.chainId)
+                  dispatch(pushToast({ type: 'info', message: `Please switch to ${BINANCE_TESTNET.chainName} network to use marketplace` }))
                 dispatch(setCredentials(auth))
               } else {
                 isPrivateRoute(router.pathname) && router.push('/')
@@ -193,6 +198,13 @@ function Layout({ children }) {
           const credentials = { user, token }
           dispatch(setCredentials(credentials))
         })
+    });
+    window.ethereum.on('chainChanged', (chainId) => {
+      // Handle the new chain.
+      // Correctly handling chain changes can be complicated.
+      // We recommend reloading the page unless you have good reason not to.
+      console.log('network changed')
+      window.location.reload();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

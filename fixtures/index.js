@@ -90,3 +90,22 @@ export const durationOptions = [
 ]
 
 export const DAY = 1000 * 60 * 60 * 24
+
+export const BINANCE_TESTNET = {
+  chainId: '0x61',
+  chainName: 'Binance Smart Chain Testnet',
+  nativeCurrency: {
+    name: 'BNB',
+    symbol: 'tBNB',
+    decimals: 18,
+  },
+  rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+  blockExplorerUrls: ['https://testnet.bscscan.com'],
+}
+
+export const DBUSD_TOKEN = {
+  address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
+  symbol: 'DBUSD',
+  decimals: 18,
+  image: ''
+}
