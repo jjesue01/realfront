@@ -15,37 +15,52 @@ const TimeBox = ({ label, value }) => (
   </div>
 )
 
-function Timer({ className, endDate }) {
+function Timer({ className, endDate, onEnd = () => {} }) {
   const [timerData, setTimerData] = useState(null)
 
   useEffect(function initTimer() {
     if (!!endDate) {
       const interval = setInterval(() => {
-        setTimerData(countDownTime(endDate))
+        const timer = countDownTime(endDate)
+        setTimerData(timer)
+
+        if (!timer) {
+          onEnd()
+          clearInterval(interval)
+        }
       }, 1000)
 
       return () => {
         clearInterval(interval)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDate])
 
   return (
     <div className={cn(className, styles.root)}>
       <div className={styles.content}>
-        <Typography
-          fontWeight={600}
-          fontSize={12}
-          lHeight={15}
-          color={'#878D97'}>
-          Sale Ends
-        </Typography>
+        {
+          timerData !== null &&
+          <Typography
+            fontWeight={600}
+            fontSize={12}
+            lHeight={15}
+            color={'#878D97'}>
+            Sale Ends
+          </Typography>
+        }
         <Typography
           fontWeight={600}
           fontSize={14}
           lHeight={17}
           margin={'8px 0 0'}>
-          { getFormattedEndTime(endDate) }
+          {
+            timerData !== null ?
+              getFormattedEndTime(endDate)
+              :
+              'Bids are closed, waiting for user’s confirmation'
+          }
         </Typography>
       </div>
       {

@@ -46,7 +46,6 @@ export const listingsApi = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled
-          dispatch(pushToast({ type: 'success', message: 'Listing has been successfully created' }))
         } catch (error) {
           dispatch(pushToast({ type: 'error', message: 'Error while creating listing' }))
         }

@@ -88,7 +88,7 @@ export const transactionsApi = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled
-          dispatch(pushToast({ type: 'success', message: 'Bid has been successfully created' }))
+          dispatch(pushToast({ type: 'success', message: 'Bid has been successfully placed' }))
         } catch (error) {
           dispatch(pushToast({ type: 'error', message: 'Error while getting bids' }))
         }

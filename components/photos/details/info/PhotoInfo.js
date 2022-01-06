@@ -28,6 +28,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
+  const [timerFinished, setTimerFinished] = useState(false)
   const isAuction = listing?.sellMethod === 'Auction'
 
   const copyRef = useRef()
@@ -96,6 +97,10 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
     download(process.env.NEXT_PUBLIC_API_URL + `listings/${id}/download`, fileName)
   }
 
+  function handleTimerEnd() {
+    setTimerFinished(true)
+  }
+
   useEffect(function initLikes() {
     !!listing && setLikes(listing.likes)
     !!listing && !!user && setIsFavorite(user.favorites.includes(listing._id))
@@ -123,8 +128,11 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                   alt={listing?.name} />
             }
             {
-              listing?.bid?.endDate &&
-              <Timer className={styles.timer} endDate={listing.bid.endDate} />
+              listing?.bid?.endDate && listing?.isPublished &&
+              <Timer
+                className={styles.timer}
+                endDate={listing.bid.endDate}
+                onEnd={handleTimerEnd} />
             }
             {
               isAuction &&
@@ -255,9 +263,14 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                   <div className={styles.itemActions}>
                     {
                       (listing?.bid?.endDate || bids?.length ) ?
-                        <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
-                          { listing?.bid?.endDate || bids?.length  ? 'Place bid': 'Make offer' }
-                        </Button>
+                        <>
+                          {
+                            !timerFinished &&
+                            <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
+                              Place bid
+                            </Button>
+                          }
+                        </>
                         :
                         <Button onClick={onBuy}>
                           Buy now
