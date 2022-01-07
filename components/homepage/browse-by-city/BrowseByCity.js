@@ -5,38 +5,9 @@ import SectionTitle from "../../section-title/SectionTitle";
 import Typography from "../../Typography";
 import Button from "../../button/Button";
 import {
-  useGetAutocompleteCitiesQuery,
   useGetCitiesQuery,
 } from "../../../services/cities";
 import Link from "next/link";
-
-const cities = [
-  {
-    img: '/images/bc-ny.jpg',
-    name: 'New York, NY'
-  },
-  {
-    img: '/images/bc-la.jpg',
-    name: 'Los Angeles, CA'
-  },
-  {
-    img: '/images/bc-ch.jpg',
-    name: 'Chicago, IL'
-  },
-  {
-    img: '/images/bc-ho.jpg',
-    name: 'Houston, TX'
-  },
-  {
-    img: '/images/bc-ph.jpg',
-    name: 'Phoenix, AZ'
-  },
-  {
-    img: '/images/bc-phi.jpg',
-    name: 'Philadelphia, PA'
-  },
-]
-
 
 function BrowseByCity() {
   const { data = [] } = useGetCitiesQuery({ limit: 6 })

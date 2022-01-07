@@ -237,6 +237,21 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                 { listing?.name }
               </Typography>
               {
+                listing?.rawThumbnail &&
+                <div className={styles.rawPreviewContainer}>
+                  <span>
+                    RAW
+                  </span>
+                  <div className={styles.rawPreview}>
+                    <MediaFile
+                      src={listing.rawThumbnail}
+                      videoSrc={listing.resource === 'Video' && listing.rawThumbnail}
+                      autoPlay
+                      alt={listing.name} />
+                  </div>
+                </div>
+              }
+              {
                 listing?.isPublished &&
                   <div className={styles.price}>
                     <div className={styles.priceContent}>

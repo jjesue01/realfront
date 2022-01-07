@@ -7,6 +7,17 @@ import SkeletonBox from "../skeleton-box/SkeletonBox";
 function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= false }) {
   const [isLoading, setLoading] = useState(true)
 
+  const videoParams = {
+    autoPlay,
+    controls,
+    controlsList: 'nodownload',
+    loop: true
+  }
+
+  if (autoPlay) {
+    videoParams.playsInline = true
+  }
+
   function handleLoadingComplete() {
     setLoading(false)
   }
@@ -18,10 +29,8 @@ function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= f
           <video
             className={styles.video}
             src={videoSrc}
-            controls={controls}
-            controlsList="nodownload"
-            loop
-            autoPlay={autoPlay} />
+            muted
+            {...videoParams} />
           :
           src ?
             <Image
