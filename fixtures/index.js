@@ -109,3 +109,10 @@ export const DBUSD_TOKEN = {
   decimals: 18,
   image: ''
 }
+
+export const adminLinks = [
+  {
+    label: 'Invites',
+    url: '/admin/invites'
+  },
+]

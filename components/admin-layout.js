@@ -1,37 +1,42 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import styles from './admin-layout.module.sass'
 import SideMenu from "./admin/side-menu/SideMenu";
 import {useRouter} from "next/router";
 import cn from "classnames";
+import {useSelector} from "react-redux";
+import {adminLinks} from "../fixtures";
+import Toasts from "./toasts/Toasts";
 
 function AdminLayout({ children }) {
   const router = useRouter()
-  const [hasAccess, setAccess] = useState(true)
+  const admin = useSelector(state => state.auth.admin)
+  const pageName = adminLinks.find(({ url }) => url === router?.pathname)?.label || ''
 
-  // useEffect(function init() {
-  //   console.log('admin rerender')
-  //   if (router.pathname === '/admin') router.push('/admin/invites')
-  //   // eslint-disable-next-line
-  // }, [router.pathname])
+  useEffect(function init() {
+    if (!admin.hasAccess) router.push('/admin')
+    // eslint-disable-next-line
+  }, [admin.hasAccess])
 
   if (router.pathname === '/admin')
     return (
       <main className={cn(styles.root, styles.center)}>
         { children }
+        <Toasts />
       </main>
     )
 
   return (
     <main className={styles.root}>
-      <div className="container">
+      <div className={cn('container', styles.adminLayoutContainer)}>
         <SideMenu />
         <div className={styles.content}>
-          <h1>Invites</h1>
+          <h1>{ pageName }</h1>
           <div className={styles.pageContainer}>
             { children }
           </div>
         </div>
       </div>
+      <Toasts />
     </main>
   )
 }

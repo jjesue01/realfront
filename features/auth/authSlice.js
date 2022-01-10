@@ -3,7 +3,13 @@ import {authApi} from "../../services/auth";
 
 const slice = createSlice({
   name: 'auth',
-  initialState: { user: null, token: null },
+  initialState: {
+    user: null,
+    token: null,
+    admin: {
+      hasAccess: false
+    }
+  },
   reducers: {
     setCredentials: (state, { payload: { user, token } }) => {
       state.user = user
@@ -14,6 +20,9 @@ const slice = createSlice({
       state.user = null
       state.token = null
       localStorage.removeItem('auth')
+    },
+    setAdmin: (state, { payload }) => {
+      state.admin = { ...state.admin, ...payload }
     }
   },
   extraReducers: (builder) => {
@@ -27,7 +36,7 @@ const slice = createSlice({
   },
 })
 
-export const { setCredentials, logout } = slice.actions
+export const { setCredentials, logout, setAdmin } = slice.actions
 
 export default slice.reducer
 

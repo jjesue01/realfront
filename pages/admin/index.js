@@ -2,32 +2,49 @@ import React from "react";
 import styles from '/styles/Admin.module.sass'
 import Input from "../../components/input/Input";
 import {useFormik} from "formik";
-import {useRouter} from "next/router";
 import Button from "../../components/button/Button";
+import {useDispatch} from "react-redux";
+import {setAdmin} from "../../features/auth/authSlice";
+import {useRouter} from "next/router";
+import Head from "next/head";
+import {useAdminLoginMutation} from "../../services/admin";
 
 function Admin() {
   const router = useRouter()
+  const dispatch = useDispatch()
+  const [adminLogin] = useAdminLoginMutation()
   const { values, ...formik } = useFormik({
     initialValues: {
-      username: '',
+      email: '',
       password: ''
     },
     onSubmit: handleSubmit
   })
 
   function handleSubmit(values, { setSubmitting }) {
-    router.push('/admin/invites')
+    adminLogin(values).unwrap()
+      .then(({ token }) => {
+        dispatch(setAdmin({ hasAccess: true, token }))
+        router.push('/admin/invites')
+      })
+      .finally(() => {
+        setSubmitting(false)
+      })
   }
 
   return (
     <form onSubmit={formik.handleSubmit} className={styles.root}>
+      <Head>
+        <title>HOMEJAB - Admin</title>
+      </Head>
       <h1>Sign in</h1>
       <Input
-        name="username"
-        value={values.username}
+        type="email"
+        name="email"
+        value={values.email}
         onChange={formik.handleChange}
         required
-        label="Username" />
+        label="Email" />
       <Input
         type="password"
         className={styles.formField}
@@ -36,7 +53,7 @@ function Admin() {
         onChange={formik.handleChange}
         required
         label="Password" />
-      <Button className={styles.btnSubmit} htmlType="submit">
+      <Button className={styles.btnSubmit} loading={formik.isSubmitting} htmlType="submit">
         Sign in
       </Button>
     </form>

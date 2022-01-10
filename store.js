@@ -3,6 +3,7 @@ import { authApi } from './services/auth'
 import {citiesApi} from "./services/cities";
 import {listingsApi} from "./services/listings";
 import {transactionsApi} from "./services/transactions";
+import {adminApi} from "./services/admin";
 import authReducer from '/features/auth/authSlice'
 import notificationsReducer from '/features/notifications/notificationsSlice'
 import toastsReducer from "./features/toasts/toastsSlice";
@@ -10,6 +11,7 @@ import toastsReducer from "./features/toasts/toastsSlice";
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
+    [adminApi.reducerPath]: adminApi.reducer,
     [citiesApi.reducerPath]: citiesApi.reducer,
     [listingsApi.reducerPath]: listingsApi.reducer,
     [transactionsApi.reducerPath]: transactionsApi.reducer,
@@ -23,6 +25,7 @@ export const store = configureStore({
       citiesApi.middleware,
       listingsApi.middleware,
       transactionsApi.middleware,
+      adminApi.middleware,
     ),
 })
 
