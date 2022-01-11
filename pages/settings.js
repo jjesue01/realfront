@@ -57,7 +57,7 @@ function Settings() {
     const errors = {}
 
     if (general.username.length < 5 || general.username.length > 30) {
-      errors.username = `It can’t be less than 5 more than 30 characters`
+      errors.username = `It can’t be less than 5 or more than 30 characters`
     }
 
     setErrors(errors)

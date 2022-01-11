@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.sass'
@@ -27,6 +27,7 @@ import {
 import Toasts from "./toasts/Toasts";
 import {pushToast} from "../features/toasts/toastsSlice";
 import {BINANCE_TESTNET} from "../fixtures";
+import SignUp from "./dialogs/sign-up/SignUp";
 
 const accountLinks = [
   {
@@ -59,9 +60,12 @@ function Layout({ children }) {
   const [walletOpened, setWalletOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)
   const [depositOpened, setDepositOpened] = useState(false)
+  const [signUpOpened, setSignUpOpened] = useState(false)
   const [buyOpened, setBuyOpened] = useState(false)
   const [connectOpened, setConnectOpened] = useState(false)
   const [showFooter, setShowFooter] = useState(true)
+
+  const tempWalletAddress = useRef(null)
 
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
@@ -75,13 +79,30 @@ function Layout({ children }) {
     setShowFooter(prevState => !prevState)
   }
 
-  function handleLogin({ walletId }) {
+  function toggleSignUp() {
+    setSignUpOpened(prevState => !prevState)
+  }
+
+  function handleCheckRegistration({ walletId }) {
+    tempWalletAddress.current = walletId
     togglePopup()
-    login(walletId).unwrap()
+    toggleSignUp();
+  }
+// TODO: finish flow
+  async function handleLogin({ username, email }) {
+    console.log(username, email)
+
+    const data = { walletId: tempWalletAddress.current }
+    const invite = router.query?.invite
+
+    if (invite) data.invite = invite
+
+    await login(data).unwrap()
       .then(({ token, user }) => {
         const credentials = { user, token }
 
         dispatch(setCredentials(credentials))
+        if (invite) router.push('/profile')
       })
   }
 
@@ -193,7 +214,7 @@ function Layout({ children }) {
 
   useEffect(function initEvents() {
     window.ethereum.on('accountsChanged', (changedAccounts) => {
-      login(changedAccounts[0]).unwrap()
+      login({ walletId: changedAccounts[0] }).unwrap()
         .then(({ token, user }) => {
           const credentials = { user, token }
           dispatch(setCredentials(credentials))
@@ -208,6 +229,12 @@ function Layout({ children }) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(function verifyInvite() {
+    if (router.query?.invite) {
+      setConnectOpened(true)
+    }
+  }, [router.query])
 
   return (
     <div className={styles.wrapper}>
@@ -235,9 +262,12 @@ function Layout({ children }) {
               </li>
             </ul>
             <div className={styles.actions}>
-              <Button onClick={handleCreate} type="outlined">
-                Create
-              </Button>
+              {
+                auth.user?.invited &&
+                <Button onClick={handleCreate} type="outlined">
+                  Create
+                </Button>
+              }
               {
                 auth.token ?
                   <button
@@ -282,7 +312,11 @@ function Layout({ children }) {
       <ConnectWallet
         opened={connectOpened}
         onClose={togglePopup}
-        onLogin={handleLogin} />
+        onLogin={handleCheckRegistration} />
+      <SignUp
+        opened={signUpOpened}
+        onSignUp={handleLogin}
+        onClose={toggleSignUp} />
       {
         showFooter &&
         <footer className={styles.footer}>

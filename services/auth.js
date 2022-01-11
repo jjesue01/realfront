@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {buildFormData, getIdToken, getUser} from "../utils";
+import {buildFormData, getIdToken} from "../utils";
 import {pushToast} from "../features/toasts/toastsSlice";
 
 export const authApi = createApi({
@@ -16,10 +16,25 @@ export const authApi = createApi({
     }),
     endpoints: (builder) => ({
       login: builder.mutation({
-        query: (credentials) => ({
-          url: `/user/${credentials}`,
-          method: 'POST'
+        query: ({ walletId, ...params }) => ({
+          url: `/user/${walletId}`,
+          method: 'POST',
+          params
         }),
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled
+            if (arg?.invite)
+              dispatch(pushToast({ type: 'success', message: 'Invite has been successfully applied' }))
+          } catch (error) {
+            let errorMessage = 'Error while signing in'
+
+            if (arg?.invite && error?.error?.data?.message?.includes('Invalid'))
+              errorMessage = `Invitation code doesn't exist or expired`
+
+            dispatch(pushToast({ type: 'error', message: errorMessage }))
+          }
+        }
       }),
       getCurrentUser: builder.query({
         query: () => `/users/me`,

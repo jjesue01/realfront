@@ -360,6 +360,9 @@ function Form({ mode }) {
   if (mode === 'edit' && listing.name && !ownItem)
     return <Error errorCode={'ListingNoAccess' } />
 
+  if (mode === 'create' && user && !user?.invited)
+    return <Error errorCode={'PageNotFound' } />
+
   return (
     <div className={styles.root}>
       <form className={styles.form} onSubmit={formik.handleSubmit}>

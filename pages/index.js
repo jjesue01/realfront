@@ -5,6 +5,7 @@ import TrendingIn from "../components/homepage/trending-in/TrendingIn";
 import HowItWorks from "../components/how-it works/HowItWorks";
 import BrowseByCity from "../components/homepage/browse-by-city/BrowseByCity";
 import FAQ from "../components/homepage/faq/FAQ";
+import {useRouter} from "next/router";
 
 export default function Home({ openLogin }) {
 
