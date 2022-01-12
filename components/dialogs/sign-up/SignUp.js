@@ -31,14 +31,21 @@ function SignUp({ opened, onClose, onSignUp }) {
     onClose()
   }
 
-  async function handleSubmit(values, { setSubmitting, resetForm }) {
+  async function handleSubmit(values, { setSubmitting, resetForm, setErrors }) {
     try {
       await onSignUp(values)
       setSubmitting(false)
       onClose()
       resetForm()
     } catch (error) {
-      console.log(error)
+      const errors = {}
+
+      if (error?.data?.message?.includes('email'))
+        errors.email = 'Email already exists'
+      if (error?.data?.message?.includes('username'))
+        errors.email = 'Username already exists'
+
+      setErrors(errors)
     }
   }
 

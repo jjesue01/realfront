@@ -10,7 +10,7 @@ import WalletIcon from '/public/icons/wallet.svg'
 import WalletMenu from "./wallet-menu/WalletMenu";
 import ConnectWallet from "./dialogs/connect-wallet/ConnectWallet";
 import {useRouter} from "next/router";
-import {useLoginMutation} from "../services/auth";
+import {authApi, useLoginMutation} from "../services/auth";
 import {useDispatch, useSelector} from "react-redux";
 import {logout, setCredentials} from "../features/auth/authSlice";
 import AddFunds from "./dialogs/add-funds/AddFunds";
@@ -85,22 +85,33 @@ function Layout({ children }) {
 
   function handleCheckRegistration({ walletId }) {
     tempWalletAddress.current = walletId
-    togglePopup()
-    toggleSignUp();
+
+    dispatch(authApi.endpoints.checkRegistration.initiate(walletId, { forceRefetch: true }))
+      .then(({ isError, isSuccess }) => {
+        if (isError) {
+          console.log('needs sign up')
+          togglePopup()
+          toggleSignUp();
+        }
+        if (isSuccess) {
+          handleLogin({})
+        }
+      })
   }
-// TODO: finish flow
+
   async function handleLogin({ username, email }) {
     console.log(username, email)
-
-    const data = { walletId: tempWalletAddress.current }
+    let data = { walletId: tempWalletAddress.current }
     const invite = router.query?.invite
 
-    if (invite) data.invite = invite
+    if (invite) data = { ...data, params: { invite } }
+    if (email) data = { ...data, body: { username, email } }
+
 
     await login(data).unwrap()
       .then(({ token, user }) => {
         const credentials = { user, token }
-
+        setConnectOpened(false)
         dispatch(setCredentials(credentials))
         if (invite) router.push('/profile')
       })

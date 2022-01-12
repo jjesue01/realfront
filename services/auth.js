@@ -16,10 +16,10 @@ export const authApi = createApi({
     }),
     endpoints: (builder) => ({
       login: builder.mutation({
-        query: ({ walletId, ...params }) => ({
+        query: ({ walletId, ...otherParams }) => ({
           url: `/user/${walletId}`,
           method: 'POST',
-          params
+          ...otherParams
         }),
         async onQueryStarted(arg, { dispatch, queryFulfilled }) {
           try {
@@ -75,6 +75,9 @@ export const authApi = createApi({
             dispatch(pushToast({ type: 'error', message: 'Error while updating profile image' }))
           }
         }
+      }),
+      checkRegistration: builder.query({
+        query: (walletAddress) => `/users/${walletAddress}/check`,
       }),
   }),
 })
