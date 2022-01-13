@@ -240,10 +240,6 @@ export function download(url, filename) {
     .catch(console.error);
 }
 
-export function downloadNFT(id, filename) {
-  download(process.env.NEXT_PUBLIC_PINATA_URL + id, filename)
-}
-
 export function getHost() {
   if (typeof window === 'undefined') return ''
   return window.location.origin

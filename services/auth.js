@@ -16,16 +16,19 @@ export const authApi = createApi({
     }),
     endpoints: (builder) => ({
       login: builder.mutation({
-        query: ({ walletId, ...otherParams }) => ({
+        query: ({ walletId, ...body }) => ({
           url: `/user/${walletId}`,
           method: 'POST',
-          ...otherParams
+          body
         }),
         async onQueryStarted(arg, { dispatch, queryFulfilled }) {
           try {
             await queryFulfilled
+
             if (arg?.invite)
               dispatch(pushToast({ type: 'success', message: 'Invite has been successfully applied' }))
+            if (arg?.verify)
+              dispatch(pushToast({ type: 'success', message: 'Email has been successfully verified' }))
           } catch (error) {
             let errorMessage = 'Error while signing in'
 

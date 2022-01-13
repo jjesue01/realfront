@@ -67,6 +67,8 @@ function Layout({ children }) {
 
   const tempWalletAddress = useRef(null)
 
+  console.log(process.env.NEXT_PUBLIC_APP_ENV)
+
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
   }
@@ -100,12 +102,18 @@ function Layout({ children }) {
   }
 
   async function handleLogin({ username, email }) {
-    console.log(username, email)
-    let data = { walletId: tempWalletAddress.current }
+    let data = {
+      walletId: tempWalletAddress.current
+    }
     const invite = router.query?.invite
+    const verify = router.query?.verify
 
-    if (invite) data = { ...data, params: { invite } }
-    if (email) data = { ...data, body: { username, email } }
+    if (invite) data.invite = invite
+    if (verify) data.verify = verify
+    if (email) {
+      data.username = username
+      data.email = email
+    }
 
 
     await login(data).unwrap()
@@ -224,12 +232,9 @@ function Layout({ children }) {
   }, [auth, dispatch, handleNotifications])
 
   useEffect(function initEvents() {
+    console.log('init events')
     window.ethereum.on('accountsChanged', (changedAccounts) => {
-      login({ walletId: changedAccounts[0] }).unwrap()
-        .then(({ token, user }) => {
-          const credentials = { user, token }
-          dispatch(setCredentials(credentials))
-        })
+      handleCheckRegistration({ walletId: changedAccounts[0] })
     });
     window.ethereum.on('chainChanged', (chainId) => {
       // Handle the new chain.
@@ -242,7 +247,7 @@ function Layout({ children }) {
   }, [])
 
   useEffect(function verifyInvite() {
-    if (router.query?.invite) {
+    if (router.query?.invite || router.query?.verify) {
       setConnectOpened(true)
     }
   }, [router.query])
