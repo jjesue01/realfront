@@ -231,7 +231,6 @@ function Layout({ children }) {
   }, [auth, dispatch, handleNotifications])
 
   useEffect(function initEvents() {
-    console.log('init events')
     window.ethereum.on('accountsChanged', (changedAccounts) => {
       handleCheckRegistration({ walletId: changedAccounts[0] })
     });
