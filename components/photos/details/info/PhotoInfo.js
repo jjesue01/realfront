@@ -18,6 +18,7 @@ import Timer from "../timer/Timer";
 import AspectRatioBox from "../../../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../../../media-file/MediaFile";
 import {blockchainOptions} from "../../../../fixtures";
+import {getConfig} from "../../../../app-config";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
 
@@ -94,7 +95,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
     if (listing.resource.includes('360'))
       fileName = listing.name + '.zip'
 
-    download(process.env.NEXT_PUBLIC_API_URL + `listings/${id}/download`, fileName)
+    download(getConfig().API_URL + `listings/${id}/download`, fileName)
   }
 
   function handleTimerEnd() {

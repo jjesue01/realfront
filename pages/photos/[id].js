@@ -26,6 +26,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
+import {getConfig} from "../../app-config";
 
 function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
@@ -276,7 +277,7 @@ function PhotoDetails({ openLogin }) {
                     if (listing.resource.includes('360'))
                       fileName = listing.name + '.zip'
 
-                    download(process.env.NEXT_PUBLIC_API_URL + `listings/${id}/download`, fileName)
+                    download(getConfig().API_URL + `listings/${id}/download`, fileName)
 
                     // downloadNFT(listing.ipfs.cid, listing.rawFileName)
                     // listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {

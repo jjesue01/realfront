@@ -1,11 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {buildFormData, getIdToken} from "../utils";
 import {pushToast} from "../features/toasts/toastsSlice";
+import {getConfig} from "../app-config";
 
 export const listingsApi = createApi({
   reducerPath: 'listingsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: getConfig().API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = getIdToken()
       if (token) {

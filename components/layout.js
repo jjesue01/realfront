@@ -28,6 +28,7 @@ import Toasts from "./toasts/Toasts";
 import {pushToast} from "../features/toasts/toastsSlice";
 import {BINANCE_TESTNET} from "../fixtures";
 import SignUp from "./dialogs/sign-up/SignUp";
+import {getConfig} from "../app-config";
 
 const accountLinks = [
   {
@@ -67,8 +68,6 @@ function Layout({ children }) {
 
   const tempWalletAddress = useRef(null)
 
-  console.log(process.env.NEXT_PUBLIC_APP_ENV)
-
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
   }
@@ -89,7 +88,7 @@ function Layout({ children }) {
     tempWalletAddress.current = walletId
 
     dispatch(authApi.endpoints.checkRegistration.initiate(walletId, { forceRefetch: true }))
-      .then(({ isError, isSuccess }) => {
+      .then(async ({ isError, isSuccess }) => {
         if (isError) {
           console.log('needs sign up')
           togglePopup()
@@ -319,7 +318,6 @@ function Layout({ children }) {
             onClose={toggleDeposit} />
           <BuyWithCard opened={buyOpened} onClose={toggleBuy} />
           <Notifications />
-          <Toasts />
         </>
       }
       {
@@ -333,6 +331,7 @@ function Layout({ children }) {
         opened={signUpOpened}
         onSignUp={handleLogin}
         onClose={toggleSignUp} />
+      <Toasts />
       {
         showFooter &&
         <footer className={styles.footer}>

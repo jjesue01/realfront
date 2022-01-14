@@ -103,9 +103,28 @@ export const BINANCE_TESTNET = {
   blockExplorerUrls: ['https://testnet.bscscan.com'],
 }
 
+export const BINANCE_MAINNET = {
+  chainId: '0x38',
+  chainName: 'Binance Smart Chain Mainnet',
+  nativeCurrency: {
+    name: 'BNB',
+    symbol: 'BNB',
+    decimals: 18,
+  },
+  rpcUrls: ['https://bsc-dataseed1.binance.org'],
+  blockExplorerUrls: ['https://bscscan.com'],
+}
+
 export const DBUSD_TOKEN = {
   address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
   symbol: 'DBUSD',
+  decimals: 18,
+  image: ''
+}
+
+export const BUSD_TOKEN = {
+  address: '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
+  symbol: 'BUSD',
   decimals: 18,
   image: ''
 }

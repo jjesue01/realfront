@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
+import {getConfig} from "../app-config";
 
-const SOCKET_URL=process.env.NEXT_PUBLIC_API_URL
+const SOCKET_URL = getConfig().API_URL
 
 export function initSocket({ token, onEvent }) {
   const socket = io(SOCKET_URL, {

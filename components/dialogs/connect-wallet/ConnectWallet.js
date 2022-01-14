@@ -5,6 +5,7 @@ import Image from "next/image";
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import {BINANCE_TESTNET, DBUSD_TOKEN} from "../../../fixtures";
+import {getConfig} from "../../../app-config";
 
 const wallets = [
   {
@@ -40,7 +41,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: BINANCE_TESTNET.chainId }],
+          params: [{ chainId: getConfig().ETHEREUM_NETWORK.chainId }],
         });
         onLogin({
           walletId: accounts[0]
@@ -51,7 +52,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
           try {
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
-              params: [BINANCE_TESTNET],
+              params: [getConfig().ETHEREUM_NETWORK],
             });
             try {
               // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -59,7 +60,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
                 method: 'wallet_watchAsset',
                 params: {
                   type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                  options: DBUSD_TOKEN,
+                  options: getConfig().ETHEREUM_TOKEN,
                 },
               });
 

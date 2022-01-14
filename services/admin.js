@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {pushToast} from "../features/toasts/toastsSlice";
+import {getConfig} from "../app-config";
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: getConfig().API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.admin?.token
       if (token) headers.set('authorization', `${token}`)

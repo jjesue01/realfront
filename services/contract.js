@@ -1,12 +1,13 @@
 import {store} from "../store";
 import {pushToast} from "../features/toasts/toastsSlice";
+import {getConfig} from "../app-config";
 
 const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
 
-const HOMEJAB_ADDRESS = '0xCf1CE606c75DB27D9499Dcd6380106DA202a73AA'
-const DBUSD_ADDRESS = '0xDf1AE3eCFF4E32431e9010B04c36E901f7ED388b'
+const HOMEJAB_ADDRESS = getConfig().CONTRACT_ADDRESS
+const DBUSD_ADDRESS = getConfig().TOKEN_ADDRESS
 
 if (typeof window !== "undefined" && window?.web3App) {
   const homejab = new window.web3App.eth.Contract(
