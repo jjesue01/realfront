@@ -379,7 +379,7 @@ function PhotoDetails({ openLogin }) {
               onSubmit={handleCancelListing}
               btnSubmitTitle={'Cancel listing'}
               title={'Are you sure you want to cancel your listing?'}
-              message={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisi volutpat ornare tortor viverra nam ultrices. Amet dignissim amet, massa sed.'} />
+              message={'Your listing will be removed from marketplace'} />
             <ConfirmationDialog
               wide
               opened={bidWarningOpened}
@@ -387,7 +387,7 @@ function PhotoDetails({ openLogin }) {
               onSubmit={toggleConfirmDialog}
               btnSubmitTitle={'Show next available bid'}
               title={'Sorry, the highest bid is not available'}
-              message={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisi volutpat ornare tortor viverra nam ultrices. Amet dignissim amet, massa sed.'} />
+              message={`It happen when bidder doesn't have enough money finish transaction` } />
           </>
       }
       <DoneCongratulation
