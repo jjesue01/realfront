@@ -55,6 +55,7 @@ export function scrollToTop(top = 0) {
 }
 
 export function getIdToken() {
+  if (!localStorage) return null
   const auth = JSON.parse(localStorage.getItem('auth'))
   return auth?.token
 }

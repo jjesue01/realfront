@@ -231,16 +231,18 @@ function Layout({ children }) {
   }, [auth, dispatch, handleNotifications])
 
   useEffect(function initEvents() {
-    window.ethereum.on('accountsChanged', (changedAccounts) => {
-      handleCheckRegistration({ walletId: changedAccounts[0] })
-    });
-    window.ethereum.on('chainChanged', (chainId) => {
-      // Handle the new chain.
-      // Correctly handling chain changes can be complicated.
-      // We recommend reloading the page unless you have good reason not to.
-      console.log('network changed')
-      window.location.reload();
-    });
+    if (window?.ethereum) {
+      window.ethereum.on('accountsChanged', (changedAccounts) => {
+        handleCheckRegistration({ walletId: changedAccounts[0] })
+      });
+      window.ethereum.on('chainChanged', (chainId) => {
+        // Handle the new chain.
+        // Correctly handling chain changes can be complicated.
+        // We recommend reloading the page unless you have good reason not to.
+        console.log('network changed')
+        window.location.reload();
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

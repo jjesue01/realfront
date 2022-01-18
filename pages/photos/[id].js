@@ -6,7 +6,7 @@ import MoreFromCollection from "../../components/photos/details/more/MoreFromCol
 import Head from "next/head";
 import {useRouter} from "next/router";
 import {
-  listingsApi, useDepublishListingMutation, useDownloadNFTMutation, useFinishAuctionMutation,
+  listingsApi, useDepublishListingMutation, useFinishAuctionMutation,
   useGetListingByIdQuery,
   useGetPublishedListingsQuery,
   usePurchaseListingMutation
@@ -27,6 +27,17 @@ import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import {getConfig} from "../../app-config";
+import {store} from "../../store";
+
+// export async function getServerSideProps({ params: { id } }) {
+//   await store.dispatch(listingsApi.endpoints.getListingById.initiate(id, {}))
+//   const result = listingsApi.endpoints.getListingById.select()(store.getState())
+//   console.log(data)
+//
+//   return {
+//     props: {}, // will be passed to the page component as props
+//   }
+// }
 
 function PhotoDetails({ openLogin }) {
   const dispatch = useDispatch()
