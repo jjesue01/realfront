@@ -16,6 +16,7 @@ if (typeof window !== "undefined" && window?.web3App) {
   const dummyBUSD = new window.web3App.eth.Contract(
     busd,
     DBUSD_ADDRESS);
+
   const { dispatch } = store
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {

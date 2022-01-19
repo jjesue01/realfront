@@ -28,21 +28,8 @@ import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
-//
-// export async function getInitialProps({query: { id }}) {
-//   console.log(context)
-//   const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
-//     .then(res => res.json())
-//     .catch(console.log)
-//
-//   return {
-//     //props: {
-//       prefetchedListing: prefetchedListing || {}
-//     //},
-//   }
-// }
 
-function PhotoDetails({ openLogin, prefetchedListing }) {
+function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -437,16 +424,16 @@ function PhotoDetails({ openLogin, prefetchedListing }) {
   )
 }
 
-PhotoDetails.getInitialProps = async ({ query: { id } }) =>  {
-  const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
-    .then(res => res.json())
-    .catch(console.log)
-
-  return {
-    //props: {
-    prefetchedListing: prefetchedListing || {}
-    //},
-  }
-}
+// export async function getServerSideProps({params: { id }}) {
+//   const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+//     .then(res => res.json())
+//     .catch(console.log)
+//
+//   return {
+//     props: {
+//       prefetchedListing: prefetchedListing || {}
+//     },
+//   }
+// }
 
 export default PhotoDetails
