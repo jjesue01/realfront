@@ -6,14 +6,24 @@ import HowItWorks from "../components/how-it works/HowItWorks";
 import BrowseByCity from "../components/homepage/browse-by-city/BrowseByCity";
 import FAQ from "../components/homepage/faq/FAQ";
 import {useRouter} from "next/router";
+import {HOST_NAME} from "../fixtures";
 
 export default function Home({ openLogin }) {
 
   return (
     <main>
       <Head>
-        <title>HOMEJAB - NFT Marketplace</title>
-        <meta name="description" content="NFT Marketplace" />
+        <title>NFT Marketplace - HomeJab Real Estate Photography</title>
+        <meta name="description" content="Collect and trade photos and videos from real estate photographers around the world in HomeJab’s peer-to-peer NFT marketplace." />
+
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content="NFT Marketplace - HomeJab Real Estate Photography" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={HOST_NAME + '/'} />
+        <meta property="og:image" content="/homejab-icon-512.png" />
+        <meta property="og:image:alt" content="HomeJab icon" />
+        <meta property="og:description" content="Collect and trade photos and videos from real estate photographers around the world in HomeJab’s peer-to-peer NFT marketplace." />
+
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
         <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png" />

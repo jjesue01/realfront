@@ -214,15 +214,15 @@ function Marketplace({ toggleFooter, openLogin }) {
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
       <Head>
-        <title>HOMEJAB - Marketplace</title>
-        <meta name="description" content="HomeJab - NFT Marketplace for real estate photographers" />
+        <title>Explore Real Estate NFTs For Sale - HomeJab</title>
+        <meta name="description" content="Search for real estate photos and videos for sale from professional photographers around the world." />
         <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content="HOMEJAB - Marketplace" />
+        <meta property="og:title" content="Explore Real Estate NFTs For Sale - HomeJab" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={HOST_NAME + '/marketplace'} />
         <meta property="og:image" content="/homejab-icon-512.png" />
         <meta property="og:image:alt" content="HomeJab icon" />
-        <meta property="og:description" content="HomeJab - NFT Marketplace for real estate photographers" />
+        <meta property="og:description" content="Search for real estate photos and videos for sale from professional photographers around the world." />
       </Head>
       <div className={styles.filters}>
         <div className={styles.filtersContainer}>

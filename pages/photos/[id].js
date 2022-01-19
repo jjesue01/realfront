@@ -21,7 +21,7 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getIdToken} from "../../utils";
+import {download, getIdToken, getMoneyView} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
@@ -30,6 +30,7 @@ import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
 
 function PhotoDetails({ openLogin, prefetchedListing = {} }) {
+  console.log(prefetchedListing)
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -316,7 +317,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
 
-  if (listing && !listing?.isPublished && !ownItem || listingError)
+  if (listing?._id && !listing?.isPublished && !ownItem || listingError)
     return <Error errorCode="ListingDeleted" />
 
   if (error?.data?.message) {
@@ -327,10 +328,10 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   return (
     <main className={styles.root}>
       <Head>
-        <title>HOMEJAB - {listing?.name || 'NFT Marketplace'}</title>
-        <meta name="description" content={listing?.description} />
+        <title>NFT of {listing?.address || ''} for sale - HomeJab</title>
+        <meta name="description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
         <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content={`HOMEJAB - ${listing?.name || 'NFT Marketplace'}`} />
+        <meta property="og:title" content={`NFT of ${listing?.address || ''} for sale - HomeJab`} />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={HOST_NAME + '/photos/' + listing?._id} />
         <meta property="og:image" content={listing?.thumbnail} />
