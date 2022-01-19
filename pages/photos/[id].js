@@ -342,6 +342,7 @@ function PhotoDetails({ openLogin, prefetchedListing }) {
       <Head>
         <title>HOMEJAB - {listing?.name || 'NFT Marketplace'}</title>
         <meta name="description" content={listing?.description} />
+        <meta property="og:locale" content="en_US" />
         <meta property="og:title" content={`HOMEJAB - ${listing?.name || 'NFT Marketplace'}`} />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={HOST_NAME + '/photos/' + listing?._id} />

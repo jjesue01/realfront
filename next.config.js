@@ -7,9 +7,11 @@ module.exports = {
 
       use: ['@svgr/webpack'],
     });
+
     const IGNORES = [
       'electron'
     ];
+
     config.externals.push(({ context, request }, cb) => {
       if (IGNORES.indexOf(request) >= 0) {
         return cb(null, "require('" + request + "')");
@@ -25,5 +27,9 @@ module.exports = {
       'nft-market-dev.s3.amazonaws.com',
       'homejab-dev.mypinata.cloud'
     ],
+  },
+  i18n: {
+    locales: ["en"],
+    defaultLocale: "en",
   },
 }
