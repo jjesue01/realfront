@@ -17,10 +17,8 @@ import Bids from "../bids/Bids";
 import Timer from "../timer/Timer";
 import AspectRatioBox from "../../../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../../../media-file/MediaFile";
-import {blockchainOptions} from "../../../../fixtures";
+import {blockchainOptions, HOST_NAME} from "../../../../fixtures";
 import {getConfig} from "../../../../app-config";
-
-const HOST_NAME = 'https://nft-homejab.netlify.app'
 
 function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid, onCancelListing }) {
   const router = useRouter()

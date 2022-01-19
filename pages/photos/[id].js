@@ -28,18 +28,21 @@ import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import {getConfig} from "../../app-config";
 import {store} from "../../store";
+import {HOST_NAME} from "../../fixtures";
 
-// export async function getServerSideProps({ params: { id } }) {
-//   await store.dispatch(listingsApi.endpoints.getListingById.initiate(id, {}))
-//   const result = listingsApi.endpoints.getListingById.select()(store.getState())
-//   console.log(data)
-//
-//   return {
-//     props: {}, // will be passed to the page component as props
-//   }
-// }
+export async function getServerSideProps({ params: { id } }) {
+  const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+    .then(res => res.json())
+    .catch(console.log)
 
-function PhotoDetails({ openLogin }) {
+  return {
+    props: {
+      prefetchedListing: prefetchedListing || {}
+    },
+  }
+}
+
+function PhotoDetails({ openLogin, prefetchedListing }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -48,7 +51,7 @@ function PhotoDetails({ openLogin }) {
   const [purchaseListing] = usePurchaseListingMutation()
   const [finishAuction] = useFinishAuctionMutation()
   const [depublishListing] = useDepublishListingMutation()
-  const { data: listing, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
+  const { data: listing = { ...prefetchedListing }, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
   const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery({ listingID: id }, { skip: !id })
   const bids = bidsData?.docs || []
   const cityId = listing?.city?.ID;
@@ -338,6 +341,17 @@ function PhotoDetails({ openLogin }) {
     <main className={styles.root}>
       <Head>
         <title>HOMEJAB - {listing?.name || 'NFT Marketplace'}</title>
+        <meta name="description" content={listing?.description} />
+        <meta property="og:title" content={`HOMEJAB - ${listing?.name || 'NFT Marketplace'}`} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={HOST_NAME + '/photos/' + listing?._id} />
+        <meta property="og:image" content={listing?.thumbnail} />
+        <meta property="og:image:alt" content={listing?.name} />
+        <meta property="og:description" content={listing?.description} />
+        {
+          listing?.resource === 'Video' &&
+          <meta property="og:video" content={listing?.nfts[0]?.ipfs?.file?.path} />
+        }
       </Head>
       <div className={styles.content}>
         <PhotoInfo

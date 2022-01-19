@@ -135,3 +135,5 @@ export const adminLinks = [
     url: '/admin/invites'
   },
 ]
+
+export const HOST_NAME = 'https://nft-homejab.netlify.app'

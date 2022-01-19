@@ -56,7 +56,7 @@ function PhotoItem({
   }, [favorite, data])
 
   return (
-    <div className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })} { ...otherProps }>
+    <article className={cn(className, styles.rootWrapper, { [styles.full]: type === 'full' })} { ...otherProps }>
       <ContextMenu href={`/photos/edit/${data._id}`}  className={styles.btnMenu} hasEdit={isOwn} />
       <Link href={`/photos/${data._id}`} passHref>
         <a onClick={handleClick}>
@@ -123,7 +123,7 @@ function PhotoItem({
           </div>
         </a>
       </Link>
-    </div>
+    </article>
   )
 }
 

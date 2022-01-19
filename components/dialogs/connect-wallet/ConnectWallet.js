@@ -4,7 +4,6 @@ import Web3 from 'web3'
 import Image from "next/image";
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
-import {BINANCE_TESTNET, DBUSD_TOKEN} from "../../../fixtures";
 import {getConfig} from "../../../app-config";
 
 const wallets = [
@@ -102,7 +101,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
           align="center"
           margin={'20px auto 32px'}
           maxWidth={427}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas ligula risus sed lacus nec, pellentesque at maecenas. Nisi, odio risus nunc cras.
+          A crypto wallet is an application or hardware that allows individuals to store and retrieve digital items. MetaMask is one of the most popular wallets, existing as both a mobile app and a browser extension. Please connect with our wallet provider listed below.
         </Typography>
         <div className={styles.wallets}>
           { walletsList }
