@@ -143,6 +143,10 @@ function Layout({ children }) {
     setDepositOpened(prevState => !prevState)
   }
 
+  function handleCloseDeposit() {
+    setDepositOpened(false)
+  }
+
   function toggleBuy() {
     toggleAddFunds()
     setBuyOpened(prevState => !prevState)
@@ -198,8 +202,8 @@ function Layout({ children }) {
             window.web3App.eth.getAccounts().then(async (accounts) => {
               if (accounts.length !== 0) {
                 const chainId = await ethereum.request({ method: 'eth_chainId' });
-                if (chainId !== BINANCE_TESTNET.chainId)
-                  dispatch(pushToast({ type: 'info', message: `Please switch to ${BINANCE_TESTNET.chainName} network to use marketplace` }))
+                if (chainId !== getConfig().ETHEREUM_NETWORK.chainId)
+                  dispatch(pushToast({ type: 'info', message: `Please switch to ${getConfig().ETHEREUM_NETWORK.chainName} network to use marketplace` }))
                 dispatch(setCredentials(auth))
               } else {
                 isPrivateRoute(router.pathname) && router.push('/')
@@ -233,7 +237,8 @@ function Layout({ children }) {
   useEffect(function initEvents() {
     if (window?.ethereum) {
       window.ethereum.on('accountsChanged', (changedAccounts) => {
-        handleCheckRegistration({ walletId: changedAccounts[0] })
+        if (changedAccounts.length !== 0)
+          handleCheckRegistration({ walletId: changedAccounts[0] })
       });
       window.ethereum.on('chainChanged', (chainId) => {
         // Handle the new chain.
@@ -316,6 +321,7 @@ function Layout({ children }) {
             onClose={toggleAddFunds} />
           <DepositFromExchange
             opened={depositOpened}
+            onDone={handleCloseDeposit}
             onClose={toggleDeposit} />
           <BuyWithCard opened={buyOpened} onClose={toggleBuy} />
           <Notifications />

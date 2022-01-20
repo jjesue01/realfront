@@ -19,7 +19,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
 
   const walletsList = wallets.map(({ name, ...icon }) => (
     <div onClick={handleLoginMetaMask} key={name} className={styles.wallet}>
-      <div onClick={handleLoginMetaMask} className={styles.iconContainer}>
+      <div className={styles.iconContainer}>
         <Image
           src={icon.iconUrl}
           width={icon.iconWidth}
