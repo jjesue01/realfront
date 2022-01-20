@@ -123,7 +123,7 @@ export const DBUSD_TOKEN = {
 }
 
 export const BUSD_TOKEN = {
-  address: '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
+  address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
   symbol: 'BUSD',
   decimals: 18,
   image: ''
