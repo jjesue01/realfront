@@ -22,7 +22,7 @@ ENV NODE_ENV production
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
-# You only need to copy next.config.js if you are NOT using the default configuration
+# Copying all the needed folders and files and making nextjs user the owner
 COPY --from=builder --chown=nextjs:nodejs /app/next.config.js ./
 COPY --from=builder --chown=nextjs:nodejs /app/store.js ./store.js
 COPY --from=builder --chown=nextjs:nodejs /app/app-config.js ./app-config.js
@@ -49,4 +49,6 @@ ENV PORT 3000
 ENV NEXT_TELEMETRY_DISABLED 1
 
 CMD ["npm", "run", "start"]
-# docker run --entrypoint "/bin/sh" -it
+# for troubleshooting inside the container image 
+# running an existing image id: docker run --entrypoint "/bin/sh" -it IMAGEID
+# logging into a running container: docker exec -it CONTAINERID /bin/sh
