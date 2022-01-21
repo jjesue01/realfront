@@ -335,7 +335,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
         <meta property="og:url" content={HOST_NAME + '/photos/' + listing?._id} />
         <meta property="og:image" content={listing?.thumbnail} />
         <meta property="og:image:alt" content={listing?.name} />
-        <meta property="og:description" content={listing?.description} />
+        <meta property="og:description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
         {
           listing?.resource === 'Video' &&
           <meta property="og:video" content={listing?.nfts[0]?.ipfs?.file?.path} />
