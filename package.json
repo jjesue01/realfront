@@ -28,6 +28,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^4.2.0",
     "@svgr/webpack": "^5.5.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2"
