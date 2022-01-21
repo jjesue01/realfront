@@ -30,7 +30,6 @@ import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
 
 function PhotoDetails({ openLogin, prefetchedListing = {} }) {
-  console.log(prefetchedListing)
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -425,16 +424,16 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   )
 }
 
-// export async function getServerSideProps({params: { id }}) {
-//   const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
-//     .then(res => res.json())
-//     .catch(console.log)
-//
-//   return {
-//     props: {
-//       prefetchedListing: prefetchedListing || {}
-//     },
-//   }
-// }
+export async function getServerSideProps({params: { id }}) {
+  const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+    .then(res => res.json())
+    .catch(console.log)
+
+  return {
+    props: {
+      prefetchedListing: prefetchedListing || {}
+    },
+  }
+}
 
 export default PhotoDetails
