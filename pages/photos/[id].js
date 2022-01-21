@@ -329,6 +329,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
       <Head>
         <title>NFT of {listing?.address || ''} for sale - HomeJab</title>
         <meta name="description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@homejab" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:title" content={`NFT of ${listing?.address || ''} for sale - HomeJab`} />
         <meta property="og:type" content="product" />
