@@ -438,4 +438,14 @@ export async function getServerSideProps({params: { id }}) {
   }
 }
 
+// PhotoDetails.getInitialProps = async ({query: { id }}) => {
+//   const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+//     .then(res => res.json())
+//     .catch(console.log)
+//
+//   return {
+//     prefetchedListing: prefetchedListing || {}
+//   }
+// }
+
 export default PhotoDetails
