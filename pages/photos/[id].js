@@ -30,7 +30,6 @@ import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
 
 function PhotoDetails({ openLogin, prefetchedListing = {} }) {
-  console.log(prefetchedListing)
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -330,13 +329,15 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
       <Head>
         <title>NFT of {listing?.address || ''} for sale - HomeJab</title>
         <meta name="description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@homejab" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:title" content={`NFT of ${listing?.address || ''} for sale - HomeJab`} />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={HOST_NAME + '/photos/' + listing?._id} />
         <meta property="og:image" content={listing?.thumbnail} />
         <meta property="og:image:alt" content={listing?.name} />
-        <meta property="og:description" content={listing?.description} />
+        <meta property="og:description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
         {
           listing?.resource === 'Video' &&
           <meta property="og:video" content={listing?.nfts[0]?.ipfs?.file?.path} />
@@ -425,16 +426,16 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   )
 }
 
-// export async function getServerSideProps({params: { id }}) {
-//   const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
-//     .then(res => res.json())
-//     .catch(console.log)
-//
-//   return {
-//     props: {
-//       prefetchedListing: prefetchedListing || {}
-//     },
-//   }
-// }
+export async function getServerSideProps({params: { id }}) {
+  const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+    .then(res => res.json())
+    .catch(console.log)
+
+  return {
+    props: {
+      prefetchedListing: prefetchedListing || {}
+    },
+  }
+}
 
 export default PhotoDetails
