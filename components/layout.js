@@ -47,7 +47,7 @@ const accountLinks = [
 
 const companyLinks = [
   {
-    name: 'About',
+    name: 'Our Story',
     link: '/about'
   }
 ]
@@ -273,10 +273,10 @@ function Layout({ children }) {
           <div className={styles.content}>
             <ul className={styles.links}>
               <li>
-                <NavLink href="/about">About</NavLink>
+                <NavLink href="/about">Our Story</NavLink>
               </li>
               <li>
-                <NavLink href="/marketplace">Marketplace</NavLink>
+                <NavLink href="/marketplace">Our Marketplace</NavLink>
               </li>
               <li>
                 <NavLink href="/faq">FAQ</NavLink>
@@ -361,7 +361,7 @@ function Layout({ children }) {
                     maxWidth={440}
                     margin="24px 0 0"
                     color={`rgba(55, 65, 81, 0.6)`}>
-                    HomeJab Real is a marketplace where real estate photographers can showcase and promote their work, without fear of losing ownership of their efforts.  Online image theft is rampant, especially in the real estate community.  And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image.  Photographers are forced to put their work out there with zero protections, at very little pay.  The HomeJab Real marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
+                    HomeJab is a marketplace where real estate photographers can showcase and promote their work, without fear of losing ownership of their efforts. Online image theft is rampant, especially in the real estate community. And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image. Photographers are forced to put their work out there with zero protections, at very little pay. The HomeJab NFT Marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
                   </Typography>
                 </div>
                 <div className={styles.navLinks}>
@@ -423,11 +423,15 @@ function Layout({ children }) {
                 © {new Date().getFullYear()} Homejab.LCC. All rights reserved.
               </Typography>
               <div className={styles.terms}>
-                <Link href="/privacy-policy">
-                  Privacy Policy
+                <Link href="https://homejab.com/privacy-policy/" passHref>
+                  <a target="_blank" rel="noopener noreferrer">
+                    Privacy Policy
+                  </a>
                 </Link>
-                <Link href="/terms-of-service">
-                  Terms of Service
+                <Link href="https://homejab.com/terms-and-conditions/" passHref>
+                  <a target="_blank" rel="noopener noreferrer">
+                    Terms of Service
+                  </a>
                 </Link>
               </div>
             </div>

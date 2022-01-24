@@ -30,7 +30,7 @@ import Error from "../../../components/error/Error";
 import DollarIcon from '/public/icons/dollar.svg'
 import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
-import {DAY, durationOptions} from "../../../fixtures";
+import {DAY} from "../../../fixtures";
 import {pushToast} from "../../../features/toasts/toastsSlice";
 
 const validationSchema = Yup.object({
