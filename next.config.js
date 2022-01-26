@@ -25,7 +25,8 @@ module.exports = {
     domains: [
       'nft-market-dev.s3.us-east-2.amazonaws.com',
       'nft-market-dev.s3.amazonaws.com',
-      'homejab-dev.mypinata.cloud'
+      'homejab-dev.mypinata.cloud',
+      'nft-market-production.s3.us-east-2.amazonaws.com'
     ],
   },
   i18n: {

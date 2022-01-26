@@ -147,7 +147,12 @@ function MyProfile() {
           updatedFilters[item.name][item.sub] = ''
         }
       } else if (Array.isArray(updatedFilters[item.name])) {
-        updatedFilters[item.name] = updatedFilters[item.name].filter(({ value }) => value !== item.value)
+        //updatedFilters[item.name] = updatedFilters[item.name].filter(({ value }) => value !== item.value)
+        updatedFilters[item.name] = updatedFilters[item.name].filter((filterItem) => {
+          if (filterItem?.value)
+            return filterItem.value !== item.value
+          return filterItem !== item.value
+        })
       } else {
         updatedFilters[item.name] = ''
       }
@@ -219,14 +224,16 @@ function MyProfile() {
     }
 
     if (filters.resources.length !== 0) {
-      // items = items.filter(({ resources }) => {
-      //   let result = false
-      //   filters.resources.forEach(resource => {
-      //     if (resources.includes(resource)) result = true
-      //   })
-      //   return result
-      // })
+      items = items.filter(({ resource }) => filters.resources.some((value) => value === resource))
       updatedFiltersCount += 1
+      updatedFilterValues = [
+        ...updatedFilterValues,
+        ...filters.resources.map(resource => ({
+          name: 'resources',
+          label: resource,
+          value: resource
+        }))
+      ]
     }
 
     if (filters.more.types.length !== 0) {

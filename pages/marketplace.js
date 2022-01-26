@@ -167,7 +167,7 @@ function Marketplace({ toggleFooter, openLogin }) {
         keyword: filters.more.keywords.split(',').map(item => item.trim()).join()
       }
 
-      if (filters.resources.length === 1)
+      if (filters.resources.length !== 0)
         params.resource = filters.resources.join()
 
       if (isMapHidden) {
