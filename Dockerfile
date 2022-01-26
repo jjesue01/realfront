@@ -9,8 +9,8 @@ RUN npm install --frozen-lockfile
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
 WORKDIR /app
-ENV NEXT_PUBLIC_APP_ENV ${STAGE}
-RUN echo ${STAGE}
+ARG NEXT_PUBLIC_APP_ENV
+RUN echo ${NEXT_PUBLIC_APP_ENV}
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
