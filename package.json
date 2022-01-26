@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NEXT_PUBLIC_APP_ENV=dev next build",
-    "build:prod": "NEXT_PUBLIC_APP_ENV=prod next build",
+    "build": "next build",
     "start": "next start -p ${PORT:=3000}",
     "lint": "next lint"
   },
