@@ -1,5 +1,7 @@
 import { io } from "socket.io-client";
 import {getConfig} from "../app-config";
+import {store} from "../store";
+import {pushToast} from "../features/toasts/toastsSlice";
 
 const SOCKET_URL = getConfig().API_URL
 
@@ -35,6 +37,12 @@ export function initSocket({ token, onEvent }) {
     console.log('itemSold')
     console.log(data);
     onEvent('itemSold', data);
+  });
+
+  socket.on("error", (data) => {
+    console.log('error')
+    console.log(data);
+    store.dispatch(pushToast({ type: 'error', message: data?.error }))
   });
 
   return socket;
