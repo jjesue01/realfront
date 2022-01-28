@@ -82,11 +82,11 @@ function WhoIsItFor() {
           </div>
           <div className={styles.imageWrapper}>
             <Image
-              src="/images/man.jpg"
-              width={457}
-              height={545}
+              src="/desert.jpeg"
+              width={1000}
+              height={1385}
               layout="responsive"
-              alt="Man and laptop" />
+              alt="desert" />
           </div>
         </div>
       </div>

@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react'
 import styles from './Map.module.sass'
-import {GoogleMap, MarkerClusterer, InfoWindow, Marker, InfoBox, useLoadScript} from '@react-google-maps/api';
+import {GoogleMap, MarkerClusterer, Marker, InfoBox, useLoadScript} from '@react-google-maps/api';
 import cn from "classnames";
 import {debounce, getLatLng} from "../../../utils";
 import Typography from "../../Typography";
-import {logout} from "../../../features/auth/authSlice";
 
 const containerStyle = {
   width: '100%',

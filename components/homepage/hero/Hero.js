@@ -77,19 +77,10 @@ function Hero() {
           </div>
           <div className={styles.collectionItem}>
             <Image
-              src="/hero-aparts-big.jpg"
+              src="/Lk9TUqFA.jpeg"
               layout="fill"
               objectFit="cover"
               alt="apartments" />
-            <div className={styles.collectionInfo}>
-              <div className={styles.collectionInfoImage}>
-                <Image src="/hero-aparts-small.jpg" width={50} height={50} alt="logo apartments" />
-              </div>
-              <div className={styles.collectionDescription}>
-                <p className={styles.collectionName}>Collection name</p>
-                <p className={styles.collectionBy}>by JOHN DOE</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
