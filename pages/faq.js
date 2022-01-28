@@ -22,14 +22,14 @@ function FAQ() {
         <meta property="og:title" content="FAQs - HomeJab’s NFT Marketplace" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={HOST_NAME + '/marketplace'} />
-        <meta property="og:image" content="/homejab-icon-512.png" />
+        <meta property="og:image" content="/Miami-Beach.jpeg" />
         <meta property="og:image:alt" content="HomeJab icon" />
         <meta property="og:description" content="General information about HomeJab’s NFT marketplace works and how to contact us with further questions." />
       </Head>
       <CommonHero
         title={'FAQ'}
         description={'Below is general information on how the HomeJab Real NFT marketplace works. For additional information, please email us at real@homejab.com'}
-        imgUrl={'/faq-hero.jpg'} />
+        imgUrl={'/Miami-Beach.jpeg'} />
       <section className={styles.questions}>
         <div className="container">
           <div className={styles.questionsContainer}>
