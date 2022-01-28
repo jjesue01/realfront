@@ -110,4 +110,4 @@ export const adminLinks = [
   },
 ]
 
-export const HOST_NAME = 'https://nft-homejab.netlify.app'
+export const HOST_NAME = 'https://nft.homejab.com'
