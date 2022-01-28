@@ -279,7 +279,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                       (listing?.bid?.endDate || bids?.length ) ?
                         <>
                           {
-                            !timerFinished &&
+                            listing && !timerFinished &&
                             <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
                               Place bid
                             </Button>
