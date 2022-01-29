@@ -1,35 +1,27 @@
 export const questions = [
   {
-    title: 'What makes a HomeJab Real NFT unique?',
-    content: 'HomeJab Real is the first and only NFT marketplace designed specifically for the real estate community. It not only protects the work of real estate photographers nationwide, it provides a digital footprint for each and every listing agent and homeowner nationwide.'
+    title: 'What makes a HomeJab NFT unique?',
+    content: 'HomeJab is the first and only NFT marketplace designed specifically for the real estate community. It not only protects the work of real estate photographers, it provides true digital ownership of each image bought and sold… protecting all parties involved in the transaction.'
   },
   {
-    title: 'What are the gas fees on HomeJab Real?',
+    title: 'What are the gas fees on the HomeJab NFT Marketplace?',
     content: 'Gas fees are paid in BNB. Currently, BNB gas fees are around 0.0007 to 0.0010 BNB which equates to roughly $1.80 per transaction.'
   },
   {
-    title: 'What are the royalties of minting on HomeJab Real?',
-    content: 'Payment is received in BUSD. And, you can set your fees anywhere between 0 - 10%.'
+    title: 'What are the transaction fees on the HomeJab NFT Marketplace?',
+    content: 'The HomeJab Marketplace takes a 4% base transaction fee for each NFT sale, while the artist receives 96% of the transaction. All fees are received in BUSD.'
   },
   {
-    title: 'What are transaction fees on HomeJab Real?',
-    content: 'Real receives a 4% base transaction fee for each NFT sale.'
+    title: 'Is there a residual fee structure (royalty) for NFT resales?',
+    content: 'Yes, with every minted NFT, the original artist can set a royalty fee anywhere between 0 - 10%... which they collect with each resale of that NFT.'
   },
   {
-    title: 'Are there any added benefits of minting on HomeJab Real?',
-    content: 'Yes, In addition to your royalty fees, HomeJab Real artists can obtain REAL tokens which will lower the transaction fees on their NFT sales.'
+    title: 'Where can I view my collection of HomeJab NFTs?',
+    content: 'In addition to the HomeJab NFT Marketplace, all of your HomeJab NFTs are stored in your HomeJab profile and your MetaMask wallet… until they sell of course!'
   },
   {
-    title: 'How do HomeJab Real Artists obtain REAL tokens?',
-    content: 'In addition to purchasing REAL tokens, artists will be gifted REAL tokens for minting NFTs. The greater the volume, the greater the reward.'
-  },
-  {
-    title: 'Where can I view my collection of HomeJab Real NFTs?',
-    content: 'In addition to the HomeJab Real marketplace, all of your HomeJab Real NFTs are stored in your MetaMask wallet until they sell of course!'
-  },
-  {
-    title: 'If I have more questions, how can I contact HomeJab Real?',
-    content: 'For additional information, please email us at real@homejab.com.'
+    title: 'If I have more questions, how can I contact the HomeJab NFT Marketplace?',
+    content: 'The HomeJab NFT Marketplace is a division of HomeJab Real Estate Photography. For additional information, please go to homejab.com and contact our support team.'
   },
 ]
 
@@ -40,24 +32,6 @@ export const blockchainOptions = [
   },
 ]
 
-export const scheduleOptions = [
-  {
-    label: 'In 1 day',
-    value: '1'
-  },
-  {
-    label: 'In 2 days',
-    value: '2'
-  },
-  {
-    label: 'In 3 days',
-    value: '3'
-  },
-  {
-    label: 'In 4 days',
-    value: '4'
-  },
-]
 export const durationOptions = [
   {
     label: '1 day',
@@ -123,7 +97,7 @@ export const DBUSD_TOKEN = {
 }
 
 export const BUSD_TOKEN = {
-  address: '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
+  address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
   symbol: 'BUSD',
   decimals: 18,
   image: ''

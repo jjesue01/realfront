@@ -21,28 +21,15 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getIdToken} from "../../utils";
+import {download, getIdToken, getMoneyView} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import {getConfig} from "../../app-config";
-import {store} from "../../store";
 import {HOST_NAME} from "../../fixtures";
 
-export async function getServerSideProps({ params: { id } }) {
-  const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
-    .then(res => res.json())
-    .catch(console.log)
-
-  return {
-    props: {
-      prefetchedListing: prefetchedListing || {}
-    },
-  }
-}
-
-function PhotoDetails({ openLogin, prefetchedListing }) {
+function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -329,7 +316,7 @@ function PhotoDetails({ openLogin, prefetchedListing }) {
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
 
-  if (listing && !listing?.isPublished && !ownItem || listingError)
+  if (listing?._id && !listing?.isPublished && !ownItem || listingError)
     return <Error errorCode="ListingDeleted" />
 
   if (error?.data?.message) {
@@ -340,14 +327,17 @@ function PhotoDetails({ openLogin, prefetchedListing }) {
   return (
     <main className={styles.root}>
       <Head>
-        <title>HOMEJAB - {listing?.name || 'NFT Marketplace'}</title>
-        <meta name="description" content={listing?.description} />
-        <meta property="og:title" content={`HOMEJAB - ${listing?.name || 'NFT Marketplace'}`} />
+        <title>NFT of {listing?.address || ''} for sale - HomeJab</title>
+        <meta name="description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@homejab" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content={`NFT of ${listing?.address || ''} for sale - HomeJab`} />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={HOST_NAME + '/photos/' + listing?._id} />
         <meta property="og:image" content={listing?.thumbnail} />
         <meta property="og:image:alt" content={listing?.name} />
-        <meta property="og:description" content={listing?.description} />
+        <meta property="og:description" content={`NFT of ${listing?.address || ''} is listed for sale for ${getMoneyView(listing?.price)}`} />
         {
           listing?.resource === 'Video' &&
           <meta property="og:video" content={listing?.nfts[0]?.ipfs?.file?.path} />
@@ -435,5 +425,27 @@ function PhotoDetails({ openLogin, prefetchedListing }) {
     </main>
   )
 }
+
+export async function getServerSideProps({params: { id }}) {
+  const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+    .then(res => res.json())
+    .catch(console.log)
+
+  return {
+    props: {
+      prefetchedListing: prefetchedListing || {}
+    },
+  }
+}
+
+// PhotoDetails.getInitialProps = async ({query: { id }}) => {
+//   const prefetchedListing = await fetch(getConfig().API_URL + 'listings/' + id)
+//     .then(res => res.json())
+//     .catch(console.log)
+//
+//   return {
+//     prefetchedListing: prefetchedListing || {}
+//   }
+// }
 
 export default PhotoDetails

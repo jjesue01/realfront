@@ -20,6 +20,7 @@ function CommonHero({ title, description, imgUrl }) {
             { title }
           </Typography>
           <Typography
+            className={styles.description}
             fontFamily={'Lato'}
             fontSize={18}
             lHeight={32}

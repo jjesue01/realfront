@@ -85,7 +85,7 @@ function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnT
         <Checkbox
           className={styles.checkbox}
           checked={checked}
-          label={<>By checking this box, I agree to Home Jab&apos;s <span>Terms of Service</span></>}
+          label={<>By checking this box, I agree to Home Jab&apos;s <a href="https://homejab.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms of Service</a></>}
           onChange={toggleCheckbox} />
         <Button
           className={styles.btnMakeOffer}

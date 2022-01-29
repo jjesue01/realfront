@@ -44,6 +44,7 @@ function Toasts() {
       onTransitionEnd={handleTransitionEnd}>
       <Typography
         fontWeight={600}
+        align="center"
         fontSize={16}>
         { currentToast.message }
       </Typography>

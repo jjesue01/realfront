@@ -4,6 +4,7 @@ import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import ExchangeIcon from '/public/icons/exchange.svg'
 import CardIcon from '/public/icons/credit-card.svg'
+import cn from "classnames";
 
 function AddFunds({ opened, onClose, onExchange, onBuy }) {
 
@@ -42,7 +43,7 @@ function AddFunds({ opened, onClose, onExchange, onBuy }) {
             </span>
             <p>Deposit from an exchange</p>
           </button>
-          <button onClick={handleBuy} className={styles.btnBuy}>
+          <button onClick={handleBuy} className={cn(styles.btnBuy, styles.disabled)}>
             <span>
               <CardIcon />
             </span>

@@ -9,7 +9,7 @@ import InfoIcon from '/public/icons/info.svg'
 import Tooltip from "../../tooltip/Tooltip";
 import ButtonCopy from "../../button-copy/ButtonCopy";
 
-function DepositFromExchange({ opened, onClose }) {
+function DepositFromExchange({ opened, onClose, onDone }) {
   const { walletAddress } = useSelector(state => state.auth.user)
 
   return (
@@ -60,7 +60,7 @@ function DepositFromExchange({ opened, onClose }) {
           <Button onClick={onClose} type="outlined">
             Back
           </Button>
-          <Button>
+          <Button onClick={onDone}>
             I’ve made my deposit
           </Button>
         </div>

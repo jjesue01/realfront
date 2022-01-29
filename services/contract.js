@@ -7,15 +7,16 @@ const busd = require('/public/busd.json')
 const contractApi = {};
 
 const HOMEJAB_ADDRESS = getConfig().CONTRACT_ADDRESS
-const DBUSD_ADDRESS = getConfig().TOKEN_ADDRESS
+const BUSD_ADDRESS = getConfig().TOKEN_ADDRESS
 
 if (typeof window !== "undefined" && window?.web3App) {
   const homejab = new window.web3App.eth.Contract(
     abi,
     HOMEJAB_ADDRESS);
-  const dummyBUSD = new window.web3App.eth.Contract(
+  const BUSD = new window.web3App.eth.Contract(
     busd,
-    DBUSD_ADDRESS);
+    BUSD_ADDRESS);
+
   const { dispatch } = store
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
@@ -207,7 +208,7 @@ if (typeof window !== "undefined" && window?.web3App) {
   contractApi.approve = (price, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())
-      dummyBUSD.methods.approve(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
+      BUSD.methods.approve(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
           resolve()
         })
@@ -226,7 +227,7 @@ if (typeof window !== "undefined" && window?.web3App) {
   contractApi.disapprove = (walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei('0')
-      dummyBUSD.methods.approve(walletAddress, weiPrice).send({from: walletAddress})
+      BUSD.methods.approve(walletAddress, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
           resolve()
         })
@@ -239,7 +240,7 @@ if (typeof window !== "undefined" && window?.web3App) {
   contractApi.increaseAllowance = (price, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())
-      dummyBUSD.methods.increaseAllowance(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
+      BUSD.methods.increaseAllowance(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
           console.log('increaseAllowance')
           resolve()
@@ -299,7 +300,7 @@ if (typeof window !== "undefined" && window?.web3App) {
 
   contractApi.balanceOf = async (address) => {
     try {
-      const weiBalance = await dummyBUSD.methods.balanceOf(address).call()
+      const weiBalance = await BUSD.methods.balanceOf(address).call()
       return window.web3App.utils.fromWei(weiBalance)
     } catch (error) {
       const message = `Error while getting user's balance`
@@ -310,7 +311,7 @@ if (typeof window !== "undefined" && window?.web3App) {
 
   contractApi.allowance = async (address) => {
     try {
-      const weiAllowance = await dummyBUSD.methods.allowance(address, HOMEJAB_ADDRESS).call()
+      const weiAllowance = await BUSD.methods.allowance(address, HOMEJAB_ADDRESS).call()
       return window.web3App.utils.fromWei(weiAllowance)
     } catch (error) {
       const message = `Error while getting allowance balance`

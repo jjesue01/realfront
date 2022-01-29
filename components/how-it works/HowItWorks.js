@@ -27,7 +27,7 @@ function HowItWorks({ center = false, onConnect }) {
               align={'center'}
               maxWidth={615}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Creating an NFT in HomeJab Real should be quick and easy (we want you happy). Just follow the steps below. Of course, if there are any issues, you can always email us at real@homejab.com.
+              Creating an NFT with HomeJab should be quick and easy (we want you happy). Just follow the steps below.  Of course, if there are any issues, you can always find us at homejab.com.
             </Typography>
         }
       </div>
@@ -56,7 +56,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Once you’ve set up your MetaMask wallet, connect it to HomeJab Real by clicking Connect Wallet in the top right corner.
+              Once you’ve set up your MetaMask wallet, connect it to the HomeJab NFT Marketplace by clicking Connect Wallet in the top right corner.
             </Typography>
           </div>
           <div className={styles.step}>
@@ -82,33 +82,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Click Create to set up your NFTs.  Add social links, a description, profile & banner images, and set a secondary sales fee.
-            </Typography>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepImage}>
-              <Image
-                src="/images/hiw-3.png"
-                width={61}
-                height={47}
-                alt="Crown" />
-            </div>
-            <Typography
-              fontSize={20}
-              fontWeight={600}
-              lHeight={24}
-              margin={'32px 0 18px'}
-              color={'#111111'}>
-              Add your NFT’s
-            </Typography>
-            <Typography
-              fontFamily={'Lato'}
-              fontSize={14}
-              lHeight={22}
-              maxWidth={231}
-              align={'center'}
-              color={'rgba(55, 65, 81, 0.8)'}>
-              Upload your work, add a title and description, and customize your NFTs with properties, stats, and unlockable content.
+              Click Create to set up your NFTs. Then, upload your work, add a title and description, and customize your NFTs with properties, stats, and unlockable content.
             </Typography>
           </div>
           <div className={styles.step}>
@@ -134,7 +108,33 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Choose between auctions, fixed price listings, and declining price listings. You choose how you want to sell your NFTs, and we help you sell them!
+              Choose the listing prices you want to set for each NFT. You pick the price, then we help you sell them!
+            </Typography>
+          </div>
+          <div className={styles.step}>
+            <div className={styles.stepImage}>
+              <Image
+                src="/images/hiw-3.png"
+                width={61}
+                height={47}
+                alt="Crown" />
+            </div>
+            <Typography
+              fontSize={20}
+              fontWeight={600}
+              lHeight={24}
+              margin={'32px 0 18px'}
+              color={'#111111'}>
+              Receive royalties
+            </Typography>
+            <Typography
+              fontFamily={'Lato'}
+              fontSize={14}
+              lHeight={22}
+              maxWidth={231}
+              align={'center'}
+              color={'rgba(55, 65, 81, 0.8)'}>
+              With every initial sale you receive 96% of the sale price. And, with every resale you can receive up to 10% of the resale price. You get to set your royalties, up to 10%!
             </Typography>
           </div>
         </div>

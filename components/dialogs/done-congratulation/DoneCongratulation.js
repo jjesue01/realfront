@@ -11,12 +11,13 @@ import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "reac
 import {useRouter} from "next/router";
 import ButtonCopy from "../../button-copy/ButtonCopy";
 import MediaFile from "../../media-file/MediaFile";
+import {getConfig} from "../../../app-config";
 
 const HOST_NAME = 'https://nft-homejab.netlify.app'
-const EXPLORER_LINK = 'https://testnet.bscscan.com/tx/'
 
 function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash, listing, hasShare = true }) {
   const router = useRouter()
+  const EXPLORER_LINK = getConfig().ETHEREUM_NETWORK.blockExplorerUrls[0] + '/tx/'
 
   function getShareMessage() {
     if (router.pathname.includes('/photos/create'))
