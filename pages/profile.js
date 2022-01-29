@@ -125,6 +125,7 @@ function MyProfile() {
           deleteBid({ id: bidForDelete._id }).unwrap()
             .then(() => {
               refetchBids()
+              setManualLoading(false)
             })
             .catch(() => {
               setManualLoading(false)
