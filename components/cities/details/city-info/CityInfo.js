@@ -22,9 +22,9 @@ function CityInfo({ itemsCount, city }) {
         <div className={styles.content}>
           <div className={styles.logoWrapper}>
             {
-              city?.logoImage &&
+              city?.logo &&
               <Image
-                src={city.logoImage}
+                src={city.logo}
                 layout="fill"
                 objectFit="cover"
                 alt={city?.name} />

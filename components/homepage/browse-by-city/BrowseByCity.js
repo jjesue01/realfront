@@ -20,13 +20,13 @@ function BrowseByCity() {
         </SectionTitle>
         <div className={styles.cities}>
           {
-            data.map(({ name, _id, url}) => (
+            data.map(({ name, logo, _id, url}) => (
               <Link key={_id} href={`/cities/${url}`}>
                 <a>
                   <div className={styles.city}>
                     <div className={styles.cityImage}>
                       <Image
-                        src={'/images/bc-ny.jpg'}
+                        src={logo || '/images/bc-ny.jpg'}
                         layout="fill"
                         alt={name}
                         objectFit="cover" />
