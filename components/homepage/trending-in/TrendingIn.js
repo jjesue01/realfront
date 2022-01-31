@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import styles from './TrendingIn.module.sass'
 import SectionTitle from "../../section-title/SectionTitle";
 import Link from "next/link";
@@ -37,12 +37,10 @@ function PrevArrow({ onClick }) {
 
 function TrendingIn() {
   const dispatch = useDispatch()
-  const [city, setCity] = useState({
-    label: 'New York',
-    value: NEW_YORK_ID
-  })
-  const { data } = useGetPublishedListingsQuery({ city: city.value });
+  const [city, setCity] = useState({})
+  const { data } = useGetPublishedListingsQuery({ city: city.value }, { skip: !city.value });
   const [cities, setCities] = useState([])
+  const mounted = useRef(false)
 
   const sliderSettings = {
     dots: true,
@@ -102,6 +100,13 @@ function TrendingIn() {
     dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
       .then(({data}) => {
         setCities(data)
+        if (!mounted.current) {
+          setCity({
+            label: data[0].label.split(', ')[0],
+            value: data[0].value
+          })
+          mounted.current = true
+        }
       })
   }, [dispatch])
 
