@@ -30,36 +30,9 @@ export const blockchainOptions = [
     label: 'Binance Smart Chain',
     value: 'binance_smart_chain'
   },
-]
-
-export const durationOptions = [
   {
-    label: '1 day',
-    value: '1'
-  },
-  {
-    label: '2 days',
-    value: '2'
-  },
-  {
-    label: '3 days',
-    value: '3'
-  },
-  {
-    label: '4 days',
-    value: '4'
-  },
-  {
-    label: '5 days',
-    value: '5'
-  },
-  {
-    label: '6 days',
-    value: '6'
-  },
-  {
-    label: '7 days',
-    value: '7'
+    label: 'Polygon',
+    value: 'polygon'
   },
 ]
 
@@ -89,6 +62,18 @@ export const BINANCE_MAINNET = {
   blockExplorerUrls: ['https://bscscan.com'],
 }
 
+export const POLYGON_MAINNET = {
+  chainId: '0x89',
+  chainName: 'Polygon Mainnet',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+  },
+  rpcUrls: ['https://polygon-rpc.com/'],
+  blockExplorerUrls: ['https://polygonscan.com'],
+}
+
 export const DBUSD_TOKEN = {
   address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
   symbol: 'DBUSD',
@@ -98,6 +83,13 @@ export const DBUSD_TOKEN = {
 
 export const BUSD_TOKEN = {
   address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+  symbol: 'BUSD',
+  decimals: 18,
+  image: ''
+}
+
+export const BUSD_POLYGON_TOKEN = {
+  address: '0xdab529f40e671a1d4bf91361c21bf9f0c9712ab7',
   symbol: 'BUSD',
   decimals: 18,
   image: ''

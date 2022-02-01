@@ -19,6 +19,17 @@ if (typeof window !== "undefined" && window?.web3App) {
 
   const { dispatch } = store
 
+  function contractWrapper(fn) {
+    return {
+      binance_smart_chain: () => fn(homejab),
+      polygon: () => fn(homejab)
+    }
+  }
+
+  contractApi.test = contractWrapper(() => {
+
+  })
+
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())

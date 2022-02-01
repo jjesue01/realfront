@@ -393,7 +393,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                     <p>
                       {
                         blockchainOptions
-                          .find(blockchain => listing?.blockchain === blockchain)?.label || blockchainOptions[0].label
+                          .find(blockchain => listing?.blockchain === blockchain.value)?.label
                       }
                     </p>
                   </div>
