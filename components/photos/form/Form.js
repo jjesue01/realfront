@@ -40,7 +40,7 @@ const RESOURCE_TYPES = ['Image', 'Video', '360 Tour']
 const FORMATS = {
   'Image': {
     preview: ['.jpg'],
-    raw: ['.raw', '.cr2', '.nef', '.arw']
+    raw: ['.raw', '.cr2', '.nef', '.arw', '.jpg']
   },
   'Video': {
     preview: ['.mp4', '.webm'],
@@ -397,7 +397,7 @@ function Form({ mode }) {
             lHeight={22}
             margin={'10px 0 0'}
             color={'rgba(55, 65, 81, 0.8)'}>
-            Preview file types: { getFormattedFileFormats(FORMATS[resourceType].preview) }.
+            NFT file types: { getFormattedFileFormats(FORMATS[resourceType].preview) }.
           </Typography>
           <Typography
             fontFamily={'Lato'}
@@ -426,7 +426,7 @@ function Form({ mode }) {
                     <div className={styles.uploaderContainer}>
                       <Image src="/images/form-jpg.svg" width={50} height={50} alt="jpg file" />
                       <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'}>
-                        { isTour ? 'Upload 360 tour images': 'Upload preview file' }
+                        { isTour ? 'Upload 360 tour images': 'Upload NFT file' }
                       </Typography>
                       <p className={styles.uploaderText}>
                         Drag & drop file{ isTour && 's' } or <span>browse media on your device</span>
@@ -477,7 +477,7 @@ function Form({ mode }) {
                 <div className={styles.uploader}>
                   <FileUploader
                     onChange={handleFileRAWChange}
-                    accept={FORMATS[resourceType].raw.join()}
+                    accept={FORMATS[resourceType].raw.join() + (resourceType !== 'Video' && ',.jpeg')}
                     disabled={isReseller}
                     error={rawFile.length === 0 && touched.name}>
                     <div className={styles.uploaderContainer}>
