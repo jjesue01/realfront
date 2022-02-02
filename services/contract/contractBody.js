@@ -1,23 +1,10 @@
-import {store} from "../store";
-import {pushToast} from "../features/toasts/toastsSlice";
-import {getConfig} from "../app-config";
+import {store} from "../../store";
+import {pushToast} from "../../features/toasts/toastsSlice";
 
-const abi = require('/public/abi.json')
-const busd = require('/public/busd.json')
-const contractApi = {};
+const { dispatch } = store
 
-const HOMEJAB_ADDRESS = getConfig().CONTRACT_ADDRESS
-const BUSD_ADDRESS = getConfig().TOKEN_ADDRESS
-
-if (typeof window !== "undefined" && window?.web3App) {
-  const homejab = new window.web3App.eth.Contract(
-    abi,
-    HOMEJAB_ADDRESS);
-  const BUSD = new window.web3App.eth.Contract(
-    busd,
-    BUSD_ADDRESS);
-
-  const { dispatch } = store
+export default function createContract(homejab, BUSD) {
+  const contractApi = {};
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
@@ -319,7 +306,7 @@ if (typeof window !== "undefined" && window?.web3App) {
       return 0
     }
   }
-}
 
-module.exports = contractApi
+  return contractApi
+}
 
