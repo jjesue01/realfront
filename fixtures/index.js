@@ -9,7 +9,7 @@ export const questions = [
   },
   {
     title: 'What are the transaction fees on the HomeJab NFT Marketplace?',
-    content: 'The HomeJab Marketplace takes a 4% base transaction fee for each NFT sale, while the artist receives 96% of the transaction. All fees are received in BUSD.'
+    content: 'The HomeJab Marketplace takes a 4% base transaction fee for each NFT sale, while the artist receives 96% of the transaction. All fees are received in USDC and BUSD.'
   },
   {
     title: 'Is there a residual fee structure (royalty) for NFT resales?',
