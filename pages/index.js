@@ -4,9 +4,8 @@ import Hero from "../components/homepage/hero/Hero";
 import TrendingIn from "../components/homepage/trending-in/TrendingIn";
 import HowItWorks from "../components/how-it works/HowItWorks";
 import BrowseByCity from "../components/homepage/browse-by-city/BrowseByCity";
-import FAQ from "../components/homepage/faq/FAQ";
-import {useRouter} from "next/router";
 import {HOST_NAME} from "../fixtures";
+import WhoIsItFor from "../components/about/who-is-it-for/WhoIsItFor";
 
 export default function Home({ openLogin }) {
 
@@ -52,7 +51,7 @@ export default function Home({ openLogin }) {
       <TrendingIn />
       <HowItWorks onConnect={openLogin} />
       <BrowseByCity />
-      <FAQ />
+      <WhoIsItFor />
     </main>
   )
 }
