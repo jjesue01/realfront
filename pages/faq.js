@@ -28,7 +28,7 @@ function FAQ() {
       </Head>
       <CommonHero
         title={'FAQ'}
-        description={'Below is general information on how the HomeJab Real NFT marketplace works. For additional information, please email us at real@homejab.com'}
+        description={'Below is general information on how the HomeJab NFT marketplace works. For additional information, please go to homejab.com and contact our support team.'}
         imgUrl={'/Miami-Beach.jpeg'} />
       <section className={styles.questions}>
         <div className="container">
