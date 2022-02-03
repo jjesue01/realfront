@@ -9,7 +9,6 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import Summary from "../../../components/sell/summary/Summary";
 import Input from "../../../components/input/Input";
-import Select from "../../../components/select/Select";
 import Switcher from "../../../components/switcher/Switcher";
 import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
@@ -17,7 +16,6 @@ import {useGetListingByIdQuery, usePublishListingMutation} from "../../../servic
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {
   clamp,
-  convertTime,
   dateFromESTtoISOString,
   dateToString,
   getESTDateTimeFromISO,
@@ -32,15 +30,6 @@ import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
 import {DAY} from "../../../fixtures";
 import {pushToast} from "../../../features/toasts/toastsSlice";
-
-const validationSchema = Yup.object({
-  price: Yup.number().required('Price is required').positive('Price should be more than zero'),
-  copies: Yup.number().positive().integer(),
-  royalties: Yup.number().min(0).max(10).integer(),
-  scheduleFrequency: Yup.string(),
-  scheduleTime: Yup.string(),
-  buyerAddress: Yup.string(),
-})
 
 function SellItem() {
   const dispatch = useDispatch()
@@ -167,8 +156,9 @@ function SellItem() {
   }
 
   function handleSubmit(values, { setSubmitting }) {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index')[listing.blockchain]
     const user = getUser();
+    console.log(user)
     const data = {
       price: values.price,
       copies: values.copies || 1,

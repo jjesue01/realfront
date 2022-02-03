@@ -12,12 +12,13 @@ export default function createContract(homejab, BUSD) {
 
       homejab.methods.mintAndList(royalties, weiPrice, endTime).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
+          console.log(receipt)
           const tokenID = receipt.events['Minted'].returnValues._id
           resolve(tokenID)
         })
         .on('error', (error) => {
           let message = 'Error while executing mintAndList'
-
+          console.log(error)
           if (error?.code === 4001)
             message = 'User cancelled mint and list processes'
 

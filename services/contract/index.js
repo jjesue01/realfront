@@ -26,8 +26,9 @@ const BUSD_POLYGON = new window.web3App.eth.Contract(
   BUSD_ADDRESS_POLYGON);
 
 const contractApi = {
-  polygon: createContract(homejab_POLYGON, BUSD_POLYGON)
+  polygon: createContract(homejab_POLYGON, BUSD_POLYGON),
+  binance_smart_chain: createContract(homejab_BSC, BUSD_BSC)
 }
 
-export default contractApi
+module.exports = contractApi
 

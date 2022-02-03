@@ -20,7 +20,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   }
 
   const handleRefreshBalance = useCallback(() => {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index').binance_smart_chain
 
     contractApi.balanceOf(user.walletAddress)
       .then(balance => {
