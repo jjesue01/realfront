@@ -116,7 +116,8 @@ function MyProfile() {
   }
 
   function handleCancelBid() {
-    const contract = require('/services/contract')
+    /* TODO: take blockchain from listing */
+    const contract = require('/services/contract/index').binance_smart_chain
 
     if (bidForDelete) {
       setManualLoading(true)

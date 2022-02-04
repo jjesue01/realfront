@@ -111,7 +111,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleMakeOffer(price) {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index')[listing.blockchain]
 
     return new Promise((resolve, reject) => {
       contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
@@ -145,7 +145,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleCancelBid() {
-    const contract = require('/services/contract')
+    const contract = require('/services/contract/index')[listing.blockchain]
     const bid = bids.find(({ bidder: { id } }) => id === user._id)
 
     if (bid) {
@@ -169,7 +169,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleCancelListing() {
-    const contract = require('/services/contract')
+    const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
     contract.revokeSell(listing.tokenID, user.walletAddress)
@@ -199,7 +199,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   // }
 
   async function getAvailableBid() {
-    const contract = require('/services/contract')
+    const contract = require('/services/contract/index')[listing.blockchain]
     for (const bid of bids) {
       const bidderWalletAddress = bid.bidder.address;
 
@@ -220,7 +220,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
 
   function handleFinishAuction() {
     return new Promise(async (resolve, reject) => {
-      const contract = require('/services/contract')
+      const contract = require('/services/contract/index')[listing.blockchain]
 
       const bid = await getAvailableBid();
 
@@ -259,7 +259,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     if (!confirmOpened) return;
 
     return new Promise((resolve, reject) => {
-      const contractApi = require('/services/contract')
+      const contractApi = require('/services/contract/index')[listing.blockchain]
 
       contractApi.getSellData(listing.tokenID, user.walletAddress)
         .then(({ forSell }) => {

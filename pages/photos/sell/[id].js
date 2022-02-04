@@ -158,7 +158,7 @@ function SellItem() {
   function handleSubmit(values, { setSubmitting }) {
     const contractApi = require('/services/contract/index')[listing.blockchain]
     const user = getUser();
-    console.log(user)
+
     const data = {
       price: values.price,
       copies: values.copies || 1,
@@ -227,7 +227,7 @@ function SellItem() {
   }
 
   const handleInitFee = useCallback(() => {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index')[listing.blockchain]
 
     contractApi.getMarketplaceFee()
       .then(fee => {
@@ -238,7 +238,7 @@ function SellItem() {
       })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [listing])
 
   useEffect(function initListing() {
     if (listing !== undefined && listing.tokenID !== undefined) {

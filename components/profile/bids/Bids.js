@@ -23,7 +23,7 @@ function Bids({ className, data = [], title, onCancel, withTotal = false }) {
   useEffect(function init() {
     if (user) {
       const initBalances = async () => {
-        const contract = require('/services/contract')
+        const contract = require('/services/contract/index').binance_smart_chain
 
         const balance = +await contract.balanceOf(user.walletAddress)
         const allowance = +await contract.allowance(user.walletAddress)

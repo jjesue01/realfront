@@ -63,7 +63,7 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }
 
   const handleInitFee = useCallback(() => {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index').binance_smart_chain
 
     contractApi.getMarketplaceFee()
       .then(fee => {
