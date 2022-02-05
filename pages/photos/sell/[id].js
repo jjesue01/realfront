@@ -227,7 +227,8 @@ function SellItem() {
   }
 
   const handleInitFee = useCallback(() => {
-    const contractApi = require('/services/contract/index')[listing.blockchain]
+    if (!listing) return;
+    const contractApi = require('/services/contract/index')[listing?.blockchain]
 
     contractApi.getMarketplaceFee()
       .then(fee => {

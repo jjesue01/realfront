@@ -3,7 +3,7 @@ import {pushToast} from "../../features/toasts/toastsSlice";
 
 const { dispatch } = store
 
-export default function createContract(homejab, BUSD) {
+export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
   const contractApi = {};
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {

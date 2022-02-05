@@ -74,6 +74,21 @@ export const POLYGON_MAINNET = {
   blockExplorerUrls: ['https://polygonscan.com'],
 }
 
+export const POLYGON_TESTNET = {
+  chainId: '0x13881',
+  chainName: 'Mumbai',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+  },
+  rpcUrls: ['https://matic-mumbai.chainstacklabs.com'],
+  blockExplorerUrls: ['https://mumbai.polygonscan.com'],
+}
+
+export const BSC_CHAINS = [BINANCE_MAINNET.chainId, BINANCE_TESTNET.chainId]
+export const POLYGON_CHAINS = [POLYGON_MAINNET.chainId, POLYGON_TESTNET.chainId]
+
 export const DBUSD_TOKEN = {
   address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
   symbol: 'DBUSD',
@@ -88,9 +103,16 @@ export const BUSD_TOKEN = {
   image: ''
 }
 
-export const BUSD_POLYGON_TOKEN = {
-  address: '0xdab529f40e671a1d4bf91361c21bf9f0c9712ab7',
-  symbol: 'BUSD',
+export const DUSDC_TOKEN = {
+  address: '0x6519cb1F694CcBCc72417570b364F2D051EEfb9d',
+  symbol: 'DUSDC',
+  decimals: 18,
+  image: ''
+}
+
+export const USDC_TOKEN = {
+  address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  symbol: 'USDC',
   decimals: 18,
   image: ''
 }
