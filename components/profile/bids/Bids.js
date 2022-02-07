@@ -4,14 +4,14 @@ import Typography from "../../Typography";
 import cn from "classnames";
 import Image from "next/image";
 import Link from "next/link";
-import {getFormattedDate, getMoneyView} from "../../../utils";
+import {getBlockchain, getFormattedDate, getMoneyView} from "../../../utils";
 import Button from "../../button/Button";
 import {useSelector} from "react-redux";
 
 function Bids({ className, data = [], title, onCancel, withTotal = false }) {
   const user = useSelector(state => state.auth.user)
   const [balance, setBalance] = useState(0)
-  const [allowance, setAllowance] = useState(0)
+  const [blockchain, setBlockchain] = useState('')
 
   const total = useMemo(() => {
     if (!withTotal)
@@ -23,13 +23,13 @@ function Bids({ className, data = [], title, onCancel, withTotal = false }) {
   useEffect(function init() {
     if (user) {
       const initBalances = async () => {
-        const contract = require('/services/contract/index').binance_smart_chain
+        const blockchain = await getBlockchain()
+        const contract = require('/services/contract/index')[blockchain]
 
         const balance = +await contract.balanceOf(user.walletAddress)
-        const allowance = +await contract.allowance(user.walletAddress)
 
         setBalance(balance)
-        setAllowance(allowance)
+        setBlockchain(blockchain)
       }
 
       initBalances()
@@ -64,7 +64,10 @@ function Bids({ className, data = [], title, onCancel, withTotal = false }) {
       <div className={cn(styles.col, styles.colActions)}>
         {
           onCancel &&
-            <Button onClick={onCancel(item)} type="outlined">
+            <Button
+              onClick={onCancel(item)}
+              type="outlined"
+              disabled={item?.listing?.blockchain !== blockchain}>
               Cancel
             </Button>
         }

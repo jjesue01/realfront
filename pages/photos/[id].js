@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import styles from '../../styles/PhotoDetails.module.sass'
 import PhotoInfo from "../../components/photos/details/info/PhotoInfo";
 import TradingHistory from "../../components/photos/details/trading-history/TradingHistory";
@@ -21,13 +21,14 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getIdToken, getMoneyView} from "../../utils";
+import {download, getBlockchain, getIdToken, getMoneyView} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
+import {pushToast} from "../../features/toasts/toastsSlice";
 
 function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   const dispatch = useDispatch()
@@ -60,6 +61,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   const [bidWarningOpened, setBidWarningOpened] = useState(false)
   const [availableBid, setAvailableBid] = useState(null)
 
+  const networkMessageShown = useRef(false)
+
   const maxBid = useMemo(() => {
     if (bidsData?.docs?.length) {
       return Math.max.apply(null, bidsData?.docs.map(({ price }) => price))
@@ -73,10 +76,44 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleConfirmDialog() {
-    validatePublish()
-      .then(() => {
-        setConfirmOpened(prevState => !prevState)
-      })
+    /**
+     * TODO: refactor Blockchain code
+     */
+    getBlockchain().then(async (blockchain) => {
+      const currentNetwork = listing.blockchain === 'polygon' ?
+        getConfig().POLYGON_NETWORK
+        :
+        getConfig().BSC_NETWORK
+
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: currentNetwork.chainId }],
+          });
+          validatePublish()
+            .then(() => {
+              setConfirmOpened(prevState => !prevState)
+            })
+        } catch (switchError) {
+          // This error code indicates that the chain has not been added to MetaMask.
+          if (switchError.code === 4902) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [currentNetwork],
+              });
+              validatePublish()
+                .then(() => {
+                  setConfirmOpened(prevState => !prevState)
+                })
+
+            } catch (addError) {
+              // handle "add" error
+            }
+          }
+          // handle other "switch" errors
+        }
+    })
   }
 
   function validatePublish() {
@@ -308,13 +345,34 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     router.push('/profile')
   }
 
-  useEffect(function () {
+  useEffect(function init() {
     if (getIdToken()) {
       dispatch(authApi.endpoints.getCurrentUser.initiate({}, { subscribe: false, forceRefetch: true }))
     }
+
     refetch()
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
+
+  useEffect(function networkToast() {
+    if (listing?._id && !networkMessageShown.current) {
+      getBlockchain().then(blockchain => {
+        const currentNetwork = listing.blockchain === 'polygon' ?
+          getConfig().POLYGON_NETWORK
+          :
+          getConfig().BSC_NETWORK
+
+        if (listing?.blockchain !== blockchain) {
+          dispatch(pushToast({
+            type: 'info',
+            message: `Please switch to ${currentNetwork.chainName} network to buy this NFT`
+          }))
+          networkMessageShown.current = true
+        }
+      })
+    }
+  }, [listing, dispatch])
+
 
   if (listing?._id && !listing?.isPublished && !ownItem || listingError)
     return <Error errorCode="ListingDeleted" />

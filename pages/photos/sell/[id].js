@@ -227,6 +227,7 @@ function SellItem() {
   }
 
   const handleInitFee = useCallback(() => {
+    console.log(listing)
     if (!listing) return;
     const contractApi = require('/services/contract/index')[listing?.blockchain]
 
@@ -267,11 +268,11 @@ function SellItem() {
   }, [listing, setValues, setSwitchers])
 
   useEffect(function initFee() {
-    if (!mounted.current && user) {
+    if (!mounted.current && user && listing) {
       handleInitFee()
       mounted.current = true
     }
-  }, [handleInitFee, user])
+  }, [handleInitFee, user, listing])
 
   if (error)
     return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />

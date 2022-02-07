@@ -63,7 +63,9 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }
 
   const handleInitFee = useCallback(() => {
-    const contractApi = require('/services/contract/index').binance_smart_chain
+    console.log(listing)
+    if (!listing?._id) return;
+    const contractApi = require('/services/contract/index')[listing?.blockchain]
 
     contractApi.getMarketplaceFee()
       .then(fee => {
@@ -73,7 +75,7 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
         dispatch(pushToast({ type: 'error', message: 'Error while getting marketplace fee' }))
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [listing])
 
   useEffect(function initFee() {
     if (!mounted.current && user) {

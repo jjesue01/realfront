@@ -1,6 +1,7 @@
 import Typography from "../components/Typography";
 import React from "react";
 import {execOnce} from "next/dist/shared/lib/utils";
+import {POLYGON_CHAINS} from "../fixtures";
 
 export function debounce(func, wait, immediate) {
   let timeout;
@@ -345,4 +346,9 @@ export function convertTime(timeStr, hour12 = false) {
     hour12
   }
   return new Intl.DateTimeFormat('en-US', options).format(date)
+}
+
+export async function getBlockchain() {
+  const chainId = await ethereum.request({ method: 'eth_chainId' });
+  return POLYGON_CHAINS.includes(chainId) ? 'polygon' : 'binance_smart_chain'
 }

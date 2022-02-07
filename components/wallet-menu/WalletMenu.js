@@ -7,7 +7,7 @@ import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
 import ButtonCopy from "../button-copy/ButtonCopy";
-import {getMoneyView, getShortWalletAddress} from "../../utils";
+import {getBlockchain, getMoneyView, getShortWalletAddress} from "../../utils";
 import {POLYGON_CHAINS} from "../../fixtures";
 
 function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
@@ -21,8 +21,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   }
 
   const handleRefreshBalance = useCallback(async () => {
-    const chainId = await ethereum.request({ method: 'eth_chainId' });
-    const blockchain = POLYGON_CHAINS.includes(chainId) ? 'polygon' : 'binance_smart_chain'
+    const blockchain = await getBlockchain()
     const contractApi = require('/services/contract/index')[blockchain]
 
     contractApi.balanceOf(user.walletAddress)
