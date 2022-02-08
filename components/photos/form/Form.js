@@ -20,7 +20,15 @@ import {
   useDeleteListingMutation,
   useUpdateListingMutation
 } from "../../../services/listings";
-import {buildPlace, decodeTags, encodeTags, getFormattedFileFormats, getImageUrl, scrollToTop} from "../../../utils";
+import {
+  buildPlace,
+  decodeTags,
+  encodeTags,
+  getBlockchain,
+  getFormattedFileFormats,
+  getImageUrl,
+  scrollToTop, switchNetwork
+} from "../../../utils";
 import {useLoadScript} from "@react-google-maps/api";
 import {useDispatch, useSelector} from "react-redux";
 import FullscreenLoader from "../../fullscreen-loader/FullscreenLoader";
@@ -32,6 +40,7 @@ import Tabs from "../../tabs/Tabs";
 import AspectRatioBox from "../../aspect-ratio-box/AspectRatioBox";
 import {blockchainOptions} from "../../../fixtures";
 import {pushToast} from "../../../features/toasts/toastsSlice";
+import {getConfig} from "../../../app-config";
 
 const libraries = ['places']
 
@@ -174,7 +183,8 @@ function Form({ mode }) {
   }
 
   function toggleDeleteConfirmation() {
-    setDeleteConfirmation(prevState => !prevState)
+    switchNetwork(listing.blockchain)
+      .then(() => setDeleteConfirmation(prevState => !prevState))
   }
 
   function handleValidate(values) {
@@ -296,6 +306,21 @@ function Form({ mode }) {
               })))
             }
             setResourceType((data?.resource?.includes('360') ? '360 Tour' : data?.resource) || 'Image')
+
+            getBlockchain().then(blockchain => {
+              const currentNetwork = data.blockchain === 'polygon' ?
+                getConfig().POLYGON_NETWORK
+                :
+                getConfig().BSC_NETWORK
+
+              if (data?.blockchain !== blockchain) {
+                dispatch(pushToast({
+                  type: 'info',
+                  message: `Please use ${currentNetwork.chainName} network for this NFT`
+                }))
+              }
+            })
+
           } else {
             setListingError(error.data)
           }
@@ -569,6 +594,7 @@ function Form({ mode }) {
           options={blockchainOptions}
           value={formik.values.blockchain}
           onChange={formik.handleChange}
+          disabled={isReseller}
           label="Blockchain" />
         <div className={styles.actions}>
           {

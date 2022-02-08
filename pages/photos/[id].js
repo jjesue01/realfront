@@ -21,7 +21,7 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getBlockchain, getIdToken, getMoneyView} from "../../utils";
+import {download, getBlockchain, getIdToken, getMoneyView, switchNetwork} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
@@ -75,45 +75,10 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     router.push(`/cities/${listing?.city?.url}`)
   }
 
-  function toggleConfirmDialog() {
-    /**
-     * TODO: refactor Blockchain code
-     */
-    getBlockchain().then(async (blockchain) => {
-      const currentNetwork = listing.blockchain === 'polygon' ?
-        getConfig().POLYGON_NETWORK
-        :
-        getConfig().BSC_NETWORK
-
-        try {
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: currentNetwork.chainId }],
-          });
-          validatePublish()
-            .then(() => {
-              setConfirmOpened(prevState => !prevState)
-            })
-        } catch (switchError) {
-          // This error code indicates that the chain has not been added to MetaMask.
-          if (switchError.code === 4902) {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [currentNetwork],
-              });
-              validatePublish()
-                .then(() => {
-                  setConfirmOpened(prevState => !prevState)
-                })
-
-            } catch (addError) {
-              // handle "add" error
-            }
-          }
-          // handle other "switch" errors
-        }
-    })
+  async function toggleConfirmDialog() {
+    switchNetwork(listing.blockchain)
+      .then(validatePublish)
+      .then(() => setConfirmOpened(prevState => !prevState))
   }
 
   function validatePublish() {
@@ -135,9 +100,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleMakeOffer() {
-    // const contract = require('/services/contract')
-    // contract.approve(0, user.walletAddress)
-    validatePublish()
+    switchNetwork(listing.blockchain)
+      .then(validatePublish)
       .then(() => {
         setMakeOfferOpened(prevState => !prevState)
       })
@@ -170,11 +134,13 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleCancelConfirmation() {
-    setCancelConfirmation(prevState => !prevState)
+    switchNetwork(listing.blockchain)
+      .then(() => setCancelConfirmation(prevState => !prevState))
   }
 
   function toggleCancelListing() {
-    setCancelListingOpened(prevState => !prevState)
+    switchNetwork(listing.blockchain)
+      .then(() => setCancelListingOpened(prevState => !prevState))
   }
 
   function toggleBidWarning() {
@@ -365,7 +331,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
         if (listing?.blockchain !== blockchain) {
           dispatch(pushToast({
             type: 'info',
-            message: `Please switch to ${currentNetwork.chainName} network to buy this NFT`
+            message: `Please use ${currentNetwork.chainName} network for this NFT`
           }))
           networkMessageShown.current = true
         }

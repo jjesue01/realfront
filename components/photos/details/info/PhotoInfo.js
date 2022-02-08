@@ -9,7 +9,7 @@ import HeartIcon from "../../../../public/icons/heart.svg";
 import HeartFilledIcon from "../../../../public/icons/heart-filled.svg";
 import ContextMenuWrapper from "../../../context-menu/ContextMenuWrapper";
 import {useRouter} from "next/router";
-import {download, getHost, getMoneyView, getShortWalletAddress} from "../../../../utils";
+import {download, getHost, getMoneyView, getShortWalletAddress, switchNetwork} from "../../../../utils";
 import {useLikeListingMutation} from "../../../../services/listings";
 import {FacebookShareButton, TelegramShareButton, TwitterShareButton} from "react-share";
 import ButtonCopy from "../../../button-copy/ButtonCopy";
@@ -54,8 +54,9 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
   }
 
   function goTo(path) {
-    return function () {
-      router.push(path)
+    return async function () {
+      switchNetwork(listing.blockchain)
+        .then(() => router.push(path))
     }
   }
 

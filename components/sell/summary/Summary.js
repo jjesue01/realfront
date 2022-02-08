@@ -4,7 +4,8 @@ import Typography from "../../Typography";
 import Button from "../../button/Button";
 
 
-function Summary({ loading, royalty, marketplaceFee }) {
+function Summary({ loading, royalty, marketplaceFee, listing, blockchain }) {
+  console.log(loading)
   return (
     <div className={styles.summary}>
       <Typography fontWeight={600} fontSize={20} lHeight={24}>
@@ -40,7 +41,11 @@ function Summary({ loading, royalty, marketplaceFee }) {
         <div className={styles.feeLine} />
         <span>{marketplaceFee + royalty}%</span>
       </div>
-      <Button className={styles.btnSubmit} htmlType="submit" loading={loading}>
+      <Button
+        className={styles.btnSubmit}
+        htmlType="submit"
+        disabled={listing?.blockchain !== blockchain}
+        loading={loading}>
         Post your listing
       </Button>
     </div>

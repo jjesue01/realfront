@@ -17,10 +17,10 @@ import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {
   clamp,
   dateFromESTtoISOString,
-  dateToString,
+  dateToString, getBlockchain,
   getESTDateTimeFromISO,
   getFormattedEndTime,
-  getUser
+  getUser, switchNetwork
 } from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
@@ -30,6 +30,7 @@ import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
 import {DAY} from "../../../fixtures";
 import {pushToast} from "../../../features/toasts/toastsSlice";
+import {getConfig} from "../../../app-config";
 
 function SellItem() {
   const dispatch = useDispatch()
@@ -42,6 +43,7 @@ function SellItem() {
   const [lowBalance, setLowBalance] = useState(false)
   const [sellType, setSellType] = useState('fixed')
   const [marketplaceFee, setMarketplaceFee] = useState(2.5)
+  const [blockchain, setBlockchain] = useState('')
   const [switchers, setSwitchers] = useState({
     schedule: false,
     private: false
@@ -155,9 +157,13 @@ function SellItem() {
     return `Great! You just set on sale - ${listing?.name}`
   }
 
-  function handleSubmit(values, { setSubmitting }) {
+  async function handleSubmit(values, { setSubmitting }) {
     const contractApi = require('/services/contract/index')[listing.blockchain]
     const user = getUser();
+    /**
+     * TODO: fix loading issue
+     */
+    setSubmitting(true)
 
     const data = {
       price: values.price,
@@ -270,9 +276,24 @@ function SellItem() {
   useEffect(function initFee() {
     if (!mounted.current && user && listing) {
       handleInitFee()
+      getBlockchain().then(blockchain => {
+        const currentNetwork = listing.blockchain === 'polygon' ?
+          getConfig().POLYGON_NETWORK
+          :
+          getConfig().BSC_NETWORK
+
+        if (listing?.blockchain !== blockchain) {
+          dispatch(pushToast({
+            type: 'info',
+            message: `Please use ${currentNetwork.chainName} network for this NFT`
+          }))
+        }
+
+        setBlockchain(blockchain)
+      })
       mounted.current = true
     }
-  }, [handleInitFee, user, listing])
+  }, [handleInitFee, user, listing, dispatch])
 
   if (error)
     return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />
@@ -495,6 +516,8 @@ function SellItem() {
               <div className={styles.summaryContainer}>
                 <Summary
                   loading={formik.isSubmitting}
+                  listing={listing}
+                  blockchain={blockchain}
                   marketplaceFee={marketplaceFee}
                   royalty={listing?.tokenID && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
               </div>
