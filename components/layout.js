@@ -152,6 +152,11 @@ function Layout({ children }) {
     setBuyOpened(prevState => !prevState)
   }
 
+  function handleRemoveContextMenu(e) {
+    if (process.env.NEXT_PUBLIC_APP_ENV === 'prod')
+      e.preventDefault();
+  }
+
   const handleNotifications = useCallback((evenName, data) => {
     switch (evenName) {
       case 'priceChange':
@@ -258,7 +263,7 @@ function Layout({ children }) {
   }, [router.query])
 
   return (
-    <div className={styles.wrapper}>
+    <div onContextMenu={ handleRemoveContextMenu } className={styles.wrapper}>
       <header className={styles.header}>
         <div className={styles.wideContainer}>
           <Link href="/" passHref>
