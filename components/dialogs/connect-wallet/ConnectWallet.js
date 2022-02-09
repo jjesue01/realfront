@@ -40,7 +40,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: getConfig().ETHEREUM_NETWORK.chainId }],
+          params: [{ chainId: getConfig().BSC_NETWORK.chainId }],
         });
         onLogin({
           walletId: accounts[0]
@@ -51,7 +51,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
           try {
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
-              params: [getConfig().ETHEREUM_NETWORK],
+              params: [getConfig().BSC_NETWORK],
             });
             try {
               // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -59,7 +59,7 @@ function ConnectWallet({ opened, onClose, onLogin }) {
                 method: 'wallet_watchAsset',
                 params: {
                   type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                  options: getConfig().ETHEREUM_TOKEN,
+                  options: getConfig().BSC_TOKEN,
                 },
               });
 

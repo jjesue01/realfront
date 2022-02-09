@@ -7,7 +7,8 @@ import Typography from "../Typography";
 import Button from "../button/Button";
 import {useRouter} from "next/router";
 import ButtonCopy from "../button-copy/ButtonCopy";
-import {getMoneyView, getShortWalletAddress} from "../../utils";
+import {getBlockchain, getMoneyView, getShortWalletAddress} from "../../utils";
+import {POLYGON_CHAINS} from "../../fixtures";
 
 function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
   const router = useRouter()
@@ -19,8 +20,9 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
     onClose()
   }
 
-  const handleRefreshBalance = useCallback(() => {
-    const contractApi = require('/services/contract')
+  const handleRefreshBalance = useCallback(async () => {
+    const blockchain = await getBlockchain()
+    const contractApi = require('/services/contract/index')[blockchain]
 
     contractApi.balanceOf(user.walletAddress)
       .then(balance => {

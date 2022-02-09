@@ -1,23 +1,10 @@
-import {store} from "../store";
-import {pushToast} from "../features/toasts/toastsSlice";
-import {getConfig} from "../app-config";
+import {store} from "../../store";
+import {pushToast} from "../../features/toasts/toastsSlice";
 
-const abi = require('/public/abi.json')
-const busd = require('/public/busd.json')
-const contractApi = {};
+const { dispatch } = store
 
-const HOMEJAB_ADDRESS = getConfig().BSC_CONTRACT_ADDRESS
-const BUSD_ADDRESS = getConfig().BSC_TOKEN_ADDRESS
-
-if (typeof window !== "undefined" && window?.web3App) {
-  const homejab = new window.web3App.eth.Contract(
-    abi,
-    HOMEJAB_ADDRESS);
-  const BUSD = new window.web3App.eth.Contract(
-    busd,
-    BUSD_ADDRESS);
-
-  const { dispatch } = store
+export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
+  const contractApi = {};
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
@@ -25,12 +12,13 @@ if (typeof window !== "undefined" && window?.web3App) {
 
       homejab.methods.mintAndList(royalties, weiPrice, endTime).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
+          console.log(receipt)
           const tokenID = receipt.events['Minted'].returnValues._id
           resolve(tokenID)
         })
         .on('error', (error) => {
           let message = 'Error while executing mintAndList'
-
+          console.log(error)
           if (error?.code === 4001)
             message = 'User cancelled mint and list processes'
 
@@ -319,7 +307,7 @@ if (typeof window !== "undefined" && window?.web3App) {
       return 0
     }
   }
-}
 
-module.exports = contractApi
+  return contractApi
+}
 

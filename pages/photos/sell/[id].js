@@ -9,7 +9,6 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import Summary from "../../../components/sell/summary/Summary";
 import Input from "../../../components/input/Input";
-import Select from "../../../components/select/Select";
 import Switcher from "../../../components/switcher/Switcher";
 import cn from "classnames";
 import DoneCongratulation from "../../../components/dialogs/done-congratulation/DoneCongratulation";
@@ -17,12 +16,11 @@ import {useGetListingByIdQuery, usePublishListingMutation} from "../../../servic
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {
   clamp,
-  convertTime,
   dateFromESTtoISOString,
-  dateToString,
+  dateToString, getBlockchain,
   getESTDateTimeFromISO,
   getFormattedEndTime,
-  getUser
+  getUser, switchNetwork
 } from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";
@@ -32,15 +30,7 @@ import HistoryIcon from '/public/icons/history.svg'
 import MediaFile from "../../../components/media-file/MediaFile";
 import {DAY} from "../../../fixtures";
 import {pushToast} from "../../../features/toasts/toastsSlice";
-
-const validationSchema = Yup.object({
-  price: Yup.number().required('Price is required').positive('Price should be more than zero'),
-  copies: Yup.number().positive().integer(),
-  royalties: Yup.number().min(0).max(10).integer(),
-  scheduleFrequency: Yup.string(),
-  scheduleTime: Yup.string(),
-  buyerAddress: Yup.string(),
-})
+import {getConfig} from "../../../app-config";
 
 function SellItem() {
   const dispatch = useDispatch()
@@ -53,6 +43,7 @@ function SellItem() {
   const [lowBalance, setLowBalance] = useState(false)
   const [sellType, setSellType] = useState('fixed')
   const [marketplaceFee, setMarketplaceFee] = useState(2.5)
+  const [blockchain, setBlockchain] = useState('')
   const [switchers, setSwitchers] = useState({
     schedule: false,
     private: false
@@ -167,8 +158,11 @@ function SellItem() {
   }
 
   function handleSubmit(values, { setSubmitting }) {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index')[listing.blockchain]
     const user = getUser();
+
+    console.log(contractApi)
+
     const data = {
       price: values.price,
       copies: values.copies || 1,
@@ -225,7 +219,7 @@ function SellItem() {
           })
       })
       .catch(error => {
-        // console.log(error)
+         console.log(error)
         // let errorMessage = 'Error while executing contract method'
         //
         // if (error?.code === 4001)
@@ -237,10 +231,14 @@ function SellItem() {
   }
 
   const handleInitFee = useCallback(() => {
-    const contractApi = require('/services/contract')
+    if (!listing) return;
+    const contractApi = require('/services/contract/index')[listing?.blockchain]
+
+    console.log('init fee')
 
     contractApi.getMarketplaceFee()
       .then(fee => {
+        console.log(fee)
         setMarketplaceFee(+fee)
       })
       .catch(error => {
@@ -248,7 +246,7 @@ function SellItem() {
       })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [listing])
 
   useEffect(function initListing() {
     if (listing !== undefined && listing.tokenID !== undefined) {
@@ -276,11 +274,26 @@ function SellItem() {
   }, [listing, setValues, setSwitchers])
 
   useEffect(function initFee() {
-    if (!mounted.current && user) {
+    if (!mounted.current && user && listing) {
       handleInitFee()
+      getBlockchain().then(blockchain => {
+        const currentNetwork = listing.blockchain === 'polygon' ?
+          getConfig().POLYGON_NETWORK
+          :
+          getConfig().BSC_NETWORK
+
+        if (listing?.blockchain !== blockchain) {
+          dispatch(pushToast({
+            type: 'info',
+            message: `Please use ${currentNetwork.chainName} network for this NFT`
+          }))
+        }
+
+        setBlockchain(blockchain)
+      })
       mounted.current = true
     }
-  }, [handleInitFee, user])
+  }, [handleInitFee, user, listing, dispatch])
 
   if (error)
     return <Error errorCode={'Listing' + error?.data?.message || 'Deleted' } />
@@ -503,6 +516,8 @@ function SellItem() {
               <div className={styles.summaryContainer}>
                 <Summary
                   loading={formik.isSubmitting}
+                  listing={listing}
+                  blockchain={blockchain}
                   marketplaceFee={marketplaceFee}
                   royalty={listing?.tokenID && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
               </div>

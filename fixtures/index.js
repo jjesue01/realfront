@@ -30,36 +30,9 @@ export const blockchainOptions = [
     label: 'Binance Smart Chain',
     value: 'binance_smart_chain'
   },
-]
-
-export const durationOptions = [
   {
-    label: '1 day',
-    value: '1'
-  },
-  {
-    label: '2 days',
-    value: '2'
-  },
-  {
-    label: '3 days',
-    value: '3'
-  },
-  {
-    label: '4 days',
-    value: '4'
-  },
-  {
-    label: '5 days',
-    value: '5'
-  },
-  {
-    label: '6 days',
-    value: '6'
-  },
-  {
-    label: '7 days',
-    value: '7'
+    label: 'Polygon',
+    value: 'polygon'
   },
 ]
 
@@ -89,6 +62,33 @@ export const BINANCE_MAINNET = {
   blockExplorerUrls: ['https://bscscan.com'],
 }
 
+export const POLYGON_MAINNET = {
+  chainId: '0x89',
+  chainName: 'Polygon Mainnet',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+  },
+  rpcUrls: ['https://polygon-rpc.com/'],
+  blockExplorerUrls: ['https://polygonscan.com'],
+}
+
+export const POLYGON_TESTNET = {
+  chainId: '0x13881',
+  chainName: 'Mumbai',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+  },
+  rpcUrls: ['https://matic-mumbai.chainstacklabs.com'],
+  blockExplorerUrls: ['https://mumbai.polygonscan.com'],
+}
+
+export const BSC_CHAINS = [BINANCE_MAINNET.chainId, BINANCE_TESTNET.chainId]
+export const POLYGON_CHAINS = [POLYGON_MAINNET.chainId, POLYGON_TESTNET.chainId]
+
 export const DBUSD_TOKEN = {
   address: '0xdf1ae3ecff4e32431e9010b04c36e901f7ed388b',
   symbol: 'DBUSD',
@@ -99,6 +99,20 @@ export const DBUSD_TOKEN = {
 export const BUSD_TOKEN = {
   address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
   symbol: 'BUSD',
+  decimals: 18,
+  image: ''
+}
+
+export const DUSDC_TOKEN = {
+  address: '0x6519cb1F694CcBCc72417570b364F2D051EEfb9d',
+  symbol: 'DUSDC',
+  decimals: 18,
+  image: ''
+}
+
+export const USDC_TOKEN = {
+  address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  symbol: 'USDC',
   decimals: 18,
   image: ''
 }

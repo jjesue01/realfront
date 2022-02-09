@@ -4,7 +4,7 @@ import cn from "classnames";
 import Typography from "../Typography";
 import ArrowIcon from '/public/icons/arrow-short.svg'
 
-function Select({ className, value, name, options = [], onChange, size = 'default', placeholder, label }) {
+function Select({ className, value, name, options = [], onChange, size = 'default', placeholder, label, disabled = false }) {
   const [opened, setOpened] = useState(false)
 
   const resultText = options.find(option => option.value === value)?.label || ''
@@ -16,7 +16,8 @@ function Select({ className, value, name, options = [], onChange, size = 'defaul
       [styles.small]: size === 'small',
       [styles.opened]: opened,
       [styles.noValue]: value === '',
-      [styles.label]: label
+      [styles.label]: label,
+      [styles.disabled]: disabled
     }
   )
 
@@ -32,6 +33,7 @@ function Select({ className, value, name, options = [], onChange, size = 'defaul
 
   function handleClick(value) {
     return function () {
+      if (disabled) return;
       onChange({ target: { name, value } })
       toggleList()
     }

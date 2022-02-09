@@ -201,9 +201,9 @@ function Layout({ children }) {
             }
             window.web3App.eth.getAccounts().then(async (accounts) => {
               if (accounts.length !== 0) {
-                const chainId = await ethereum.request({ method: 'eth_chainId' });
-                if (chainId !== getConfig().ETHEREUM_NETWORK.chainId)
-                  dispatch(pushToast({ type: 'info', message: `Please switch to ${getConfig().ETHEREUM_NETWORK.chainName} network to use marketplace` }))
+                // const chainId = await ethereum.request({ method: 'eth_chainId' });
+                // if (chainId !== getConfig().ETHEREUM_NETWORK.chainId)
+                //   dispatch(pushToast({ type: 'info', message: `Please switch to ${getConfig().ETHEREUM_NETWORK.chainName} network to use marketplace` }))
                 dispatch(setCredentials(auth))
               } else {
                 isPrivateRoute(router.pathname) && router.push('/')
