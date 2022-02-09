@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import styles from '../../styles/PhotoDetails.module.sass'
 import PhotoInfo from "../../components/photos/details/info/PhotoInfo";
 import TradingHistory from "../../components/photos/details/trading-history/TradingHistory";
@@ -21,13 +21,14 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getIdToken, getMoneyView} from "../../utils";
+import {download, getBlockchain, getIdToken, getMoneyView, switchNetwork} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
+import {pushToast} from "../../features/toasts/toastsSlice";
 
 function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   const dispatch = useDispatch()
@@ -60,6 +61,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   const [bidWarningOpened, setBidWarningOpened] = useState(false)
   const [availableBid, setAvailableBid] = useState(null)
 
+  const networkMessageShown = useRef(false)
+
   const maxBid = useMemo(() => {
     if (bidsData?.docs?.length) {
       return Math.max.apply(null, bidsData?.docs.map(({ price }) => price))
@@ -72,11 +75,10 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     router.push(`/cities/${listing?.city?.url}`)
   }
 
-  function toggleConfirmDialog() {
-    validatePublish()
-      .then(() => {
-        setConfirmOpened(prevState => !prevState)
-      })
+  async function toggleConfirmDialog() {
+    switchNetwork(listing.blockchain)
+      .then(validatePublish)
+      .then(() => setConfirmOpened(prevState => !prevState))
   }
 
   function validatePublish() {
@@ -98,9 +100,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleMakeOffer() {
-    // const contract = require('/services/contract')
-    // contract.approve(0, user.walletAddress)
-    validatePublish()
+    switchNetwork(listing.blockchain)
+      .then(validatePublish)
       .then(() => {
         setMakeOfferOpened(prevState => !prevState)
       })
@@ -111,7 +112,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleMakeOffer(price) {
-    const contractApi = require('/services/contract')
+    const contractApi = require('/services/contract/index')[listing.blockchain]
 
     return new Promise((resolve, reject) => {
       contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
@@ -133,11 +134,13 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleCancelConfirmation() {
-    setCancelConfirmation(prevState => !prevState)
+    switchNetwork(listing.blockchain)
+      .then(() => setCancelConfirmation(prevState => !prevState))
   }
 
   function toggleCancelListing() {
-    setCancelListingOpened(prevState => !prevState)
+    switchNetwork(listing.blockchain)
+      .then(() => setCancelListingOpened(prevState => !prevState))
   }
 
   function toggleBidWarning() {
@@ -145,7 +148,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleCancelBid() {
-    const contract = require('/services/contract')
+    const contract = require('/services/contract/index')[listing.blockchain]
     const bid = bids.find(({ bidder: { id } }) => id === user._id)
 
     if (bid) {
@@ -169,7 +172,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleCancelListing() {
-    const contract = require('/services/contract')
+    const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
     contract.revokeSell(listing.tokenID, user.walletAddress)
@@ -199,7 +202,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   // }
 
   async function getAvailableBid() {
-    const contract = require('/services/contract')
+    const contract = require('/services/contract/index')[listing.blockchain]
     for (const bid of bids) {
       const bidderWalletAddress = bid.bidder.address;
 
@@ -220,7 +223,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
 
   function handleFinishAuction() {
     return new Promise(async (resolve, reject) => {
-      const contract = require('/services/contract')
+      const contract = require('/services/contract/index')[listing.blockchain]
 
       const bid = await getAvailableBid();
 
@@ -259,7 +262,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     if (!confirmOpened) return;
 
     return new Promise((resolve, reject) => {
-      const contractApi = require('/services/contract')
+      const contractApi = require('/services/contract/index')[listing.blockchain]
 
       contractApi.getSellData(listing.tokenID, user.walletAddress)
         .then(({ forSell }) => {
@@ -308,13 +311,34 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     router.push('/profile')
   }
 
-  useEffect(function () {
+  useEffect(function init() {
     if (getIdToken()) {
       dispatch(authApi.endpoints.getCurrentUser.initiate({}, { subscribe: false, forceRefetch: true }))
     }
+
     refetch()
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
+
+  useEffect(function networkToast() {
+    if (listing?._id && !networkMessageShown.current) {
+      getBlockchain().then(blockchain => {
+        const currentNetwork = listing.blockchain === 'polygon' ?
+          getConfig().POLYGON_NETWORK
+          :
+          getConfig().BSC_NETWORK
+
+        if (listing?.blockchain !== blockchain) {
+          dispatch(pushToast({
+            type: 'info',
+            message: `Please use ${currentNetwork.chainName} network for this NFT`
+          }))
+          networkMessageShown.current = true
+        }
+      })
+    }
+  }, [listing, dispatch])
+
 
   if (listing?._id && !listing?.isPublished && !ownItem || listingError)
     return <Error errorCode="ListingDeleted" />

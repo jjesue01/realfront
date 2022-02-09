@@ -116,7 +116,8 @@ function MyProfile() {
   }
 
   function handleCancelBid() {
-    const contract = require('/services/contract')
+    /* TODO: take blockchain from listing */
+    const contract = require('/services/contract/index')[bidForDelete.listing?.blockchain]
 
     if (bidForDelete) {
       setManualLoading(true)

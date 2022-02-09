@@ -152,6 +152,11 @@ function Layout({ children }) {
     setBuyOpened(prevState => !prevState)
   }
 
+  function handleRemoveContextMenu(e) {
+    if (process.env.NEXT_PUBLIC_APP_ENV === 'prod')
+      e.preventDefault();
+  }
+
   const handleNotifications = useCallback((evenName, data) => {
     switch (evenName) {
       case 'priceChange':
@@ -201,9 +206,9 @@ function Layout({ children }) {
             }
             window.web3App.eth.getAccounts().then(async (accounts) => {
               if (accounts.length !== 0) {
-                const chainId = await ethereum.request({ method: 'eth_chainId' });
-                if (chainId !== getConfig().ETHEREUM_NETWORK.chainId)
-                  dispatch(pushToast({ type: 'info', message: `Please switch to ${getConfig().ETHEREUM_NETWORK.chainName} network to use marketplace` }))
+                // const chainId = await ethereum.request({ method: 'eth_chainId' });
+                // if (chainId !== getConfig().ETHEREUM_NETWORK.chainId)
+                //   dispatch(pushToast({ type: 'info', message: `Please switch to ${getConfig().ETHEREUM_NETWORK.chainName} network to use marketplace` }))
                 dispatch(setCredentials(auth))
               } else {
                 isPrivateRoute(router.pathname) && router.push('/')
@@ -258,7 +263,7 @@ function Layout({ children }) {
   }, [router.query])
 
   return (
-    <div className={styles.wrapper}>
+    <div onContextMenu={ handleRemoveContextMenu } className={styles.wrapper}>
       <header className={styles.header}>
         <div className={styles.wideContainer}>
           <Link href="/" passHref>

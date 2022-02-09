@@ -1,6 +1,8 @@
 import Typography from "../components/Typography";
 import React from "react";
 import {execOnce} from "next/dist/shared/lib/utils";
+import {POLYGON_CHAINS} from "../fixtures";
+import {getConfig} from "../app-config";
 
 export function debounce(func, wait, immediate) {
   let timeout;
@@ -345,4 +347,42 @@ export function convertTime(timeStr, hour12 = false) {
     hour12
   }
   return new Intl.DateTimeFormat('en-US', options).format(date)
+}
+
+export async function getBlockchain() {
+  const chainId = await ethereum.request({ method: 'eth_chainId' });
+  return POLYGON_CHAINS.includes(chainId) ? 'polygon' : 'binance_smart_chain'
+}
+
+export function switchNetwork(targetNetwork) {
+  return new Promise(async (resolve, reject) => {
+    const currentNetwork = targetNetwork === 'polygon' ?
+      getConfig().POLYGON_NETWORK
+      :
+      getConfig().BSC_NETWORK
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: currentNetwork.chainId }],
+      });
+      resolve('switch')
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [currentNetwork],
+          });
+          resolve('add')
+        } catch (addError) {
+          // handle "add" error
+          reject()
+        }
+      }
+      reject()
+      // handle other "switch" errors
+    }
+  })
 }
