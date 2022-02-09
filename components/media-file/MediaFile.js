@@ -3,6 +3,7 @@ import styles from './MediaFile.module.sass'
 import AspectRatioBox from "../aspect-ratio-box/AspectRatioBox";
 import Image from "next/image";
 import SkeletonBox from "../skeleton-box/SkeletonBox";
+import cn from "classnames";
 
 function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= false }) {
   const [isLoading, setLoading] = useState(true)
@@ -23,7 +24,7 @@ function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= f
   }
 
   return (
-    <AspectRatioBox className={className}>
+    <AspectRatioBox className={cn(className, styles.root)}>
       {
         !!videoSrc ?
           <video
@@ -33,13 +34,16 @@ function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= f
             {...videoParams} />
           :
           src ?
-            <Image
-              src={src}
-              layout="fill"
-              objectFit={'cover'}
-              onLoadingComplete={handleLoadingComplete}
-              alt={alt} />
-              :
+            <>
+              <Image
+                src={src}
+                layout="fill"
+                objectFit={'cover'}
+                onLoadingComplete={handleLoadingComplete}
+                alt={alt} />
+              <div className={styles.layer} />
+            </>
+            :
             null
       }
       <SkeletonBox loading={isLoading && !videoSrc} />
