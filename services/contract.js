@@ -6,8 +6,8 @@ const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
 const contractApi = {};
 
-const HOMEJAB_ADDRESS = getConfig().CONTRACT_ADDRESS
-const BUSD_ADDRESS = getConfig().TOKEN_ADDRESS
+const HOMEJAB_ADDRESS = getConfig().BSC_CONTRACT_ADDRESS
+const BUSD_ADDRESS = getConfig().BSC_TOKEN_ADDRESS
 
 if (typeof window !== "undefined" && window?.web3App) {
   const homejab = new window.web3App.eth.Contract(

@@ -5,7 +5,6 @@ import Button from "../../button/Button";
 
 
 function Summary({ loading, royalty, marketplaceFee, listing, blockchain }) {
-  console.log(loading)
   return (
     <div className={styles.summary}>
       <Typography fontWeight={600} fontSize={20} lHeight={24}>

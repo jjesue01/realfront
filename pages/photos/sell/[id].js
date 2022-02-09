@@ -157,13 +157,11 @@ function SellItem() {
     return `Great! You just set on sale - ${listing?.name}`
   }
 
-  async function handleSubmit(values, { setSubmitting }) {
+  function handleSubmit(values, { setSubmitting }) {
     const contractApi = require('/services/contract/index')[listing.blockchain]
     const user = getUser();
-    /**
-     * TODO: fix loading issue
-     */
-    setSubmitting(true)
+
+    console.log(contractApi)
 
     const data = {
       price: values.price,
@@ -221,7 +219,7 @@ function SellItem() {
           })
       })
       .catch(error => {
-        // console.log(error)
+         console.log(error)
         // let errorMessage = 'Error while executing contract method'
         //
         // if (error?.code === 4001)
@@ -233,12 +231,14 @@ function SellItem() {
   }
 
   const handleInitFee = useCallback(() => {
-    console.log(listing)
     if (!listing) return;
     const contractApi = require('/services/contract/index')[listing?.blockchain]
 
+    console.log('init fee')
+
     contractApi.getMarketplaceFee()
       .then(fee => {
+        console.log(fee)
         setMarketplaceFee(+fee)
       })
       .catch(error => {
