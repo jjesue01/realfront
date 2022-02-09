@@ -5,7 +5,7 @@ import Typography from "../../../Typography";
 import {useDispatch} from "react-redux";
 import {pushToast} from "../../../../features/toasts/toastsSlice";
 
-const MAX_KB_SIZE = 40000
+const MAX_KB_SIZE = 80000
 
 function FileUploader({ className, children, onChange, accept = '*', error, disabled, multiple = false }) {
   const dispatch = useDispatch()
