@@ -82,7 +82,7 @@ export const POLYGON_TESTNET = {
     symbol: 'MATIC',
     decimals: 18,
   },
-  rpcUrls: ['https://matic-mumbai.chainstacklabs.com'],
+  rpcUrls: ['https://rpc-mumbai.matic.today'],
   blockExplorerUrls: ['https://mumbai.polygonscan.com'],
 }
 
@@ -113,7 +113,7 @@ export const DUSDC_TOKEN = {
 export const USDC_TOKEN = {
   address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
   symbol: 'USDC',
-  decimals: 18,
+  decimals: 6,
   image: ''
 }
 

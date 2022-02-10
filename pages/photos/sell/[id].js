@@ -18,9 +18,9 @@ import {
   clamp,
   dateFromESTtoISOString,
   dateToString, getBlockchain,
-  getESTDateTimeFromISO,
+  getESTDateTimeFromISO, getFormattedDate,
   getFormattedEndTime,
-  getUser, switchNetwork
+  getUser,
 } from "../../../utils";
 import FullscreenLoader from "../../../components/fullscreen-loader/FullscreenLoader";
 import {useDispatch, useSelector} from "react-redux";

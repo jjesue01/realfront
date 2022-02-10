@@ -32,7 +32,7 @@ function DepositFromExchange({ opened, onClose, onDone }) {
           color={'rgba(55, 65, 81, 0.8)'}
           margin={'20px 0 0'}
           align="center">
-          Deposit ETH from your <span className={styles.accent}>exchange</span>
+          Deposit crypto from your <span className={styles.accent}>exchange</span>
           <Tooltip
             className={styles.info}
             direction="bottom"
@@ -47,15 +47,6 @@ function DepositFromExchange({ opened, onClose, onDone }) {
             <ButtonCopy className={styles.btnCopy} value={walletAddress} />
           }
           readOnly />
-        <Typography
-          fontFamily={'Lato'}
-          fontSize={14}
-          lHeight={22}
-          color={'rgba(55, 65, 81, 0.8)'}
-          margin={'32px 0 0'}
-          align="center">
-          Only send ETH or any other ERC-20 token to this address
-        </Typography>
         <div className={styles.actions}>
           <Button onClick={onClose} type="outlined">
             Back

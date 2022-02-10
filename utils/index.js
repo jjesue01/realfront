@@ -340,7 +340,7 @@ export function getESTDateTimeFromISO(isoString) {
 }
 
 export function convertTime(timeStr, hour12 = false) {
-  const date = new Date(`${dateToString(new Date)} ${timeStr}`)
+  const date = new Date(`${getFormattedDate(new Date())} ${timeStr}`)
   const options = {
     hour: '2-digit',
     minute: '2-digit',
