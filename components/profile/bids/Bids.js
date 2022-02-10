@@ -24,7 +24,7 @@ function Bids({ className, data = [], title, onCancel, withTotal = false }) {
     if (user) {
       const initBalances = async () => {
         const blockchain = await getBlockchain()
-        const contract = require('/services/contract/index')[blockchain]
+        const contract = (await require('/services/contract/index'))[blockchain]
 
         const balance = +await contract.balanceOf(user.walletAddress)
 
