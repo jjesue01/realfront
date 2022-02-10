@@ -115,9 +115,8 @@ function MyProfile() {
     }
   }
 
-  function handleCancelBid() {
-    /* TODO: take blockchain from listing */
-    const contract = require('/services/contract/index')[bidForDelete.listing?.blockchain]
+  async function handleCancelBid() {
+    const contract = (await require('/services/contract/index'))[bidForDelete.listing?.blockchain]
 
     if (bidForDelete) {
       setManualLoading(true)
