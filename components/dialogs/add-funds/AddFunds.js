@@ -34,7 +34,7 @@ function AddFunds({ opened, onClose, onExchange, onBuy }) {
           color={'rgba(55, 65, 81, 0.8)'}
           margin={'20px 0 0'}
           align="center">
-          Select one of the options to deposit ETH to your wallet
+          Select one of the options to deposit crypto to your wallet
         </Typography>
         <div className={styles.actions}>
           <button onClick={handleExchange} className={styles.btnBuy}>
