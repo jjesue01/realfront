@@ -436,7 +436,7 @@ function Form({ mode }) {
             fontSize={14}
             lHeight={22}
             color={'rgba(55, 65, 81, 0.8)'}>
-            Max size: 40 Mb
+            Max size: 80 Mb
           </Typography>
           <div className={styles.uploaders}>
             <div className={styles.uploader}>
