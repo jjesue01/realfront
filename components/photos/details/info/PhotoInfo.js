@@ -20,7 +20,7 @@ import MediaFile from "../../../media-file/MediaFile";
 import {blockchainOptions, HOST_NAME} from "../../../../fixtures";
 import {getConfig} from "../../../../app-config";
 
-function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid, onCancelListing }) {
+function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid, onCancelListing, loading }) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -280,7 +280,7 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                       (listing?.bid?.endDate || bids?.length ) ?
                         <>
                           {
-                            listing && !timerFinished &&
+                             listing && !timerFinished &&
                             <Button onClick={onOffer} type={ listing?.bid?.endDate ? 'accent': 'outlined' }>
                               Place bid
                             </Button>

@@ -10,6 +10,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())
 
+
       homejab.methods.mintAndList(royalties, weiPrice, endTime).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           console.log(receipt)
@@ -29,8 +30,9 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
   }
 
   contractApi.listForSell = (tokenID, price, walletAddress) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString())
+      const weiGasPrice = await web3App.eth.getGasPrice()
       homejab.methods.listForSell(tokenID, weiPrice).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           resolve()
