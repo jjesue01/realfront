@@ -158,81 +158,85 @@ function SellItem() {
   }
 
   function handleSubmit(values, { setSubmitting }) {
-    const contractApi = require('/services/contract/index')[listing.blockchain]
-    const user = getUser();
+    async function submit() {
+      const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+      const user = getUser();
 
-    console.log(contractApi)
+      console.log(contractApi)
 
-    const data = {
-      price: values.price,
-      copies: values.copies || 1,
-      tokenID: listing?.tokenID,
-      id,
-      sellMethod: 'Fixed Price'
+      const data = {
+        price: values.price,
+        copies: values.copies || 1,
+        tokenID: listing?.tokenID,
+        id,
+        sellMethod: 'Fixed Price'
+      }
+
+      const isoString = dateFromESTtoISOString(values.auctionEndDate, values.auctionEndTime)
+      const endTime = sellType === 'auction' ? new Date(isoString).getTime() : 0
+
+      if (sellType === 'auction') {
+        data.sellMethod = 'Auction';
+        data.endDate = isoString
+      }
+
+      if (switchers.schedule) {
+        data.activeDate = dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)
+      }
+
+      let promise;
+
+      if (listing?.tokenID === undefined) {
+        promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
+        console.log('mint')
+      } else if (listing.isPublished || listing?.activeDate) {
+        promise = data.price !== listing.price ?
+          contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
+          :
+          Promise.resolve()
+        console.log('update price')
+      } else if (sellType === 'fixed') {
+        console.log('set on sell')
+        promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
+      } else {
+        promise = contractApi.listForAuction(data.tokenID, data.price, endTime, user.walletAddress)
+      }
+
+      promise
+        .then((tokenID) => {
+          if (data.tokenID === undefined) {
+            data.tokenID = tokenID
+            data.royalties = values.royalties || 0
+          }
+
+          publishListing(data).unwrap()
+            .then(result => {
+              console.log(result)
+              setIsDone(true)
+            })
+            .catch(error => {
+              console.log(error)
+              setSubmitting(false)
+            })
+        })
+        .catch(error => {
+          console.log(error)
+          // let errorMessage = 'Error while executing contract method'
+          //
+          // if (error?.code === 4001)
+          //   errorMessage = 'User cancelled sell flow'
+          //
+          // dispatch(pushToast())
+          setSubmitting(false)
+        })
     }
 
-    const isoString = dateFromESTtoISOString(values.auctionEndDate, values.auctionEndTime)
-    const endTime = sellType === 'auction' ? new Date(isoString).getTime() : 0
-
-    if (sellType === 'auction') {
-      data.sellMethod = 'Auction';
-      data.endDate = isoString
-    }
-
-    if (switchers.schedule) {
-      data.activeDate = dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)
-    }
-
-    let promise;
-
-    if (listing?.tokenID === undefined) {
-      promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
-      console.log('mint')
-    } else if (listing.isPublished || listing?.activeDate) {
-      promise = data.price !== listing.price ?
-        contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
-        :
-        Promise.resolve()
-      console.log('update price')
-    } else if (sellType === 'fixed') {
-      console.log('set on sell')
-      promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
-    } else {
-      promise = contractApi.listForAuction(data.tokenID, data.price, endTime, user.walletAddress)
-    }
-
-    promise
-      .then((tokenID) => {
-        if (data.tokenID === undefined) {
-          data.tokenID = tokenID
-          data.royalties = values.royalties || 0
-        }
-
-        publishListing(data).unwrap()
-          .then(result => {
-            console.log(result)
-            setIsDone(true)
-          })
-          .catch(error => {
-            console.log(error)
-            setSubmitting(false)
-          })
-      })
-      .catch(error => {
-         console.log(error)
-        // let errorMessage = 'Error while executing contract method'
-        //
-        // if (error?.code === 4001)
-        //   errorMessage = 'User cancelled sell flow'
-        //
-        // dispatch(pushToast())
-        setSubmitting(false)
-      })
+    submit();
   }
 
-  const handleInitFee = useCallback(() => {
+  const handleInitFee = useCallback(async () => {
     if (!listing) return;
-    const contractApi = require('/services/contract/index')[listing?.blockchain]
+    const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
 
     console.log('init fee')
 

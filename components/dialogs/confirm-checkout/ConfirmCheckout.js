@@ -62,10 +62,10 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
     onClose()
   }
 
-  const handleInitFee = useCallback(() => {
+  const handleInitFee = useCallback(async () => {
     console.log(listing)
     if (!listing?._id) return;
-    const contractApi = require('/services/contract/index')[listing?.blockchain]
+    const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
 
     contractApi.getMarketplaceFee()
       .then(fee => {

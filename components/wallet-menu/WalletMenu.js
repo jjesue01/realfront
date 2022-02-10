@@ -22,7 +22,9 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
 
   const handleRefreshBalance = useCallback(async () => {
     const blockchain = await getBlockchain()
-    const contractApi = require('/services/contract/index')[blockchain]
+    const contractApi = (await require('/services/contract/index'))[blockchain]
+
+    console.log(contractApi)
 
     contractApi.balanceOf(user.walletAddress)
       .then(balance => {
