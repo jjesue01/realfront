@@ -361,6 +361,11 @@ export function switchNetwork(targetNetwork) {
       :
       getConfig().BSC_NETWORK
 
+    const currentToken = targetNetwork === 'polygon' ?
+      getConfig().POLYGON_TOKEN
+      :
+      getConfig().BSC_TOKEN
+
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -374,6 +379,13 @@ export function switchNetwork(targetNetwork) {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [currentNetwork],
+          });
+          const wasAdded = await ethereum.request({
+            method: 'wallet_watchAsset',
+            params: {
+              type: 'ERC20', // Initially only supports ERC20, but eventually more!
+              options: currentToken,
+            },
           });
           resolve('add')
         } catch (addError) {

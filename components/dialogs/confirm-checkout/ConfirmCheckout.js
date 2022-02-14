@@ -3,7 +3,7 @@ import styles from './ConfirmCheckout.module.sass'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import Image from "next/image";
-import {getMoneyView} from "../../../utils";
+import {getBlockchain, getMoneyView} from "../../../utils";
 import Checkbox from "../../checkbox/Checkbox";
 import Button from "../../button/Button";
 import {useDispatch, useSelector} from "react-redux";
@@ -63,9 +63,9 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }
 
   const handleInitFee = useCallback(async () => {
-    console.log(listing)
     if (!listing?._id) return;
-    const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
+    const blockchain = await getBlockchain();
+    const contractApi = (await require('/services/contract/index'))[blockchain]
 
     contractApi.getMarketplaceFee()
       .then(fee => {

@@ -236,7 +236,8 @@ function SellItem() {
 
   const handleInitFee = useCallback(async () => {
     if (!listing) return;
-    const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
+    const blockchain = await getBlockchain();
+    const contractApi = (await require('/services/contract/index'))[blockchain]
 
     console.log('init fee')
 
