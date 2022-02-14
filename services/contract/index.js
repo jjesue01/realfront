@@ -3,7 +3,6 @@ import createContract from "./contractBody";
 
 const abi = require('/public/abi.json')
 const busd = require('/public/busd.json')
-const usdc = require('/public/usdc-abi.json')
 
 const HOMEJAB_ADDRESS_BSC = getConfig().BSC_CONTRACT_ADDRESS
 const TOKEN_ADDRESS_BSC = getConfig().BSC_TOKEN_ADDRESS
@@ -15,8 +14,6 @@ const HOMEJAB_ADDRESS_POLYGON = getConfig().POLYGON_CONTRACT_ADDRESS
 const TOKEN_ADDRESS_POLYGON = getConfig().POLYGON_TOKEN_ADDRESS
 
 async function initContracts() {
-  const weiGasPrice = await window.web3App.eth.getGasPrice()
-
   const HOMEJAB_BSC = new window.web3App.eth.Contract(
     abi,
     HOMEJAB_ADDRESS_BSC);
@@ -28,14 +25,20 @@ async function initContracts() {
     abi,
     HOMEJAB_ADDRESS_POLYGON,
     {
-      gasPrice: weiGasPrice
+      gasPrice: '35000000000'
     });
   const TOKEN_POLYGON = new window.web3App.eth.Contract(
     busd,
-    TOKEN_ADDRESS_POLYGON);
+    TOKEN_ADDRESS_POLYGON,
+    {
+      gasPrice: '35000000000'
+    });
+
+  const polygonWeiUnit = process.env.NEXT_PUBLIC_APP_ENV === 'prod' ? 'mwei' : 'ether'
+  //const polygonWeiUnit = 'ether'
 
   return {
-    polygon: createContract(HOMEJAB_POLYGON, TOKEN_POLYGON, HOMEJAB_ADDRESS_POLYGON),
+    polygon: createContract(HOMEJAB_POLYGON, TOKEN_POLYGON, HOMEJAB_ADDRESS_POLYGON, polygonWeiUnit),
     binance_smart_chain: createContract(HOMEJAB_BSC, TOKEN_BSC, HOMEJAB_ADDRESS_BSC)
   }
 }

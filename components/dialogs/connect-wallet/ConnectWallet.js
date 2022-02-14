@@ -5,6 +5,7 @@ import Image from "next/image";
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import {getConfig} from "../../../app-config";
+import {switchNetwork} from "../../../utils";
 
 const wallets = [
   {
@@ -37,48 +38,23 @@ function ConnectWallet({ opened, onClose, onLogin }) {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       window.web3App = new Web3(window.ethereum);
 
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: getConfig().BSC_NETWORK.chainId }],
-        });
+      const chainId = await ethereum.request({ method: 'eth_chainId' });
+      const AVAILABLE_CHAINS = [
+        getConfig().BSC_NETWORK.chainId,
+        getConfig().POLYGON_NETWORK.chainId
+      ]
+
+      if (AVAILABLE_CHAINS.includes(chainId)) {
         onLogin({
           walletId: accounts[0]
         })
-      } catch (switchError) {
-        // This error code indicates that the chain has not been added to MetaMask.
-        if (switchError.code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [getConfig().BSC_NETWORK],
-            });
-            try {
-              // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-              const wasAdded = await ethereum.request({
-                method: 'wallet_watchAsset',
-                params: {
-                  type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                  options: getConfig().BSC_TOKEN,
-                },
-              });
-
-              if (wasAdded) {
-                console.log('Thanks for your interest!');
-              } else {
-                console.log('Your loss!');
-              }
-            } catch (error) {
-              console.log(error);
-            }
+      } else {
+        switchNetwork('binance_smart_chain')
+          .then(mode => {
             onLogin({
               walletId: accounts[0]
             })
-          } catch (addError) {
-            // handle "add" error
-          }
-        }
-        // handle other "switch" errors
+          })
       }
 
       return true;

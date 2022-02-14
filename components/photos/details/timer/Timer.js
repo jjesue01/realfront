@@ -20,6 +20,13 @@ function Timer({ className, endDate, onEnd = () => {} }) {
 
   useEffect(function initTimer() {
     if (!!endDate) {
+      const timer = countDownTime(endDate)
+      setTimerData(timer)
+
+      if (!timer) {
+        onEnd()
+      }
+
       const interval = setInterval(() => {
         const timer = countDownTime(endDate)
         setTimerData(timer)
