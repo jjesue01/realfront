@@ -390,14 +390,14 @@ function SellItem() {
                         error={errors.price && touched.price}
                         errorText={errors.price}
                         label="Price*" />
-                      <Input
-                        type="number"
-                        className={styles.field}
-                        name="copies"
-                        value={formik.values.copies}
-                        onChange={handleCopiesChange}
-                        placeholder="e.g. 5"
-                        label="Number of copies" />
+                      {/*<Input*/}
+                      {/*  type="number"*/}
+                      {/*  className={styles.field}*/}
+                      {/*  name="copies"*/}
+                      {/*  value={formik.values.copies}*/}
+                      {/*  onChange={handleCopiesChange}*/}
+                      {/*  placeholder="e.g. 5"*/}
+                      {/*  label="Number of copies" />*/}
                       {
                         !listing?.tokenID &&
                         <Input

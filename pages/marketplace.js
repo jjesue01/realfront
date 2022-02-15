@@ -138,6 +138,12 @@ function Marketplace({ toggleFooter, openLogin }) {
       })
   }, [dispatch])
 
+  const handleResize = useCallback(() => {
+    // if (window.innerWidth < 950 && !isMapHidden) {
+    //   toggleMap()
+    // }
+  }, [isMapHidden, toggleMap])
+
   useEffect(function mount() {
     return () => {
       mounted.current = false
@@ -210,6 +216,14 @@ function Marketplace({ toggleFooter, openLogin }) {
     }
     getCities('')
   }, [dispatch, getCities])
+
+  useEffect(function init() {
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
