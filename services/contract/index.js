@@ -7,11 +7,10 @@ const busd = require('/public/busd.json')
 const HOMEJAB_ADDRESS_BSC = getConfig().BSC_CONTRACT_ADDRESS
 const TOKEN_ADDRESS_BSC = getConfig().BSC_TOKEN_ADDRESS
 
-// const HOMEJAB_ADDRESS_POLYGON = '0xB299cAee17e49c224FaaD30b14775E98964e1B15'
-// const TOKEN_ADDRESS_POLYGON = '0x6519cb1F694CcBCc72417570b364F2D051EEfb9d'
-
 const HOMEJAB_ADDRESS_POLYGON = getConfig().POLYGON_CONTRACT_ADDRESS
 const TOKEN_ADDRESS_POLYGON = getConfig().POLYGON_TOKEN_ADDRESS
+
+const POLYGON_GAS_PRICE = '40000000000' // 40 Gwei
 
 async function initContracts() {
   const HOMEJAB_BSC = new window.web3App.eth.Contract(
@@ -25,17 +24,16 @@ async function initContracts() {
     abi,
     HOMEJAB_ADDRESS_POLYGON,
     {
-      gasPrice: '35000000000'
+      gasPrice: POLYGON_GAS_PRICE
     });
   const TOKEN_POLYGON = new window.web3App.eth.Contract(
     busd,
     TOKEN_ADDRESS_POLYGON,
     {
-      gasPrice: '35000000000'
+      gasPrice: POLYGON_GAS_PRICE
     });
 
   const polygonWeiUnit = process.env.NEXT_PUBLIC_APP_ENV === 'prod' ? 'mwei' : 'ether'
-  //const polygonWeiUnit = 'ether'
 
   return {
     polygon: createContract(HOMEJAB_POLYGON, TOKEN_POLYGON, HOMEJAB_ADDRESS_POLYGON, polygonWeiUnit),
