@@ -138,12 +138,6 @@ function Marketplace({ toggleFooter, openLogin }) {
       })
   }, [dispatch])
 
-  const handleResize = useCallback(() => {
-    // if (window.innerWidth < 950 && !isMapHidden) {
-    //   toggleMap()
-    // }
-  }, [isMapHidden, toggleMap])
-
   useEffect(function mount() {
     return () => {
       mounted.current = false
@@ -218,11 +212,14 @@ function Marketplace({ toggleFooter, openLogin }) {
   }, [dispatch, getCities])
 
   useEffect(function init() {
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
+    if (window.innerWidth < 950) {
+      console.log('hide map')
+      document.body.style.position = 'static'
+      mapMounted.current = false
+      setIsMapHidden(true)
+      toggleFooter()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -250,29 +247,31 @@ function Marketplace({ toggleFooter, openLogin }) {
               size="small"
               iconRight={<SearchIcon />}
               placeholder="Enter an address" />
-            <CollectionFilter
-              className={styles.filter}
-              name="cities"
-              value={filters.cities}
-              options={citiesOptions}
-              refetchOptions={getCities}
-              onChange={handleChange} />
-            <PriceFilter
-              className={styles.filter}
-              name="price"
-              value={filters.price}
-              onChange={handleChange} />
-            <ResourcesFilter
-              className={styles.filter}
-              name="resources"
-              value={filters.resources}
-              onChange={handleChange} />
-            <MoreFilter
-              className={styles.filter}
-              name="more"
-              value={filters.more}
-              options={tagsOptions}
-              onChange={handleChange} />
+            <div className={styles.filterItems}>
+              <CollectionFilter
+                className={styles.filter}
+                name="cities"
+                value={filters.cities}
+                options={citiesOptions}
+                refetchOptions={getCities}
+                onChange={handleChange} />
+              <PriceFilter
+                className={styles.filter}
+                name="price"
+                value={filters.price}
+                onChange={handleChange} />
+              <ResourcesFilter
+                className={styles.filter}
+                name="resources"
+                value={filters.resources}
+                onChange={handleChange} />
+              <MoreFilter
+                className={styles.filter}
+                name="more"
+                value={filters.more}
+                options={tagsOptions}
+                onChange={handleChange} />
+            </div>
           </div>
           <div className={cn(styles.resetFilters, { [styles.resetFiltersShown]: showReset })}>
             <button onClick={handleResetFilters} className={styles.btnReset} />

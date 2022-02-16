@@ -63,7 +63,6 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }
 
   const handleInitFee = useCallback(async () => {
-    console.log(listing)
     if (!listing?._id) return;
     const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
 
@@ -78,11 +77,11 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }, [listing])
 
   useEffect(function initFee() {
-    if (!mounted.current && user) {
+    if (!mounted.current && user && opened) {
       handleInitFee()
       mounted.current = true
     }
-  }, [handleInitFee, user])
+  }, [handleInitFee, user, opened])
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={handleClose}>
