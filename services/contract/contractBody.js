@@ -1,10 +1,13 @@
 import {store} from "../../store";
 import {pushToast} from "../../features/toasts/toastsSlice";
+import {isAllOf} from "@reduxjs/toolkit";
 
 const { dispatch } = store
 
 export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit = 'ether') {
   const contractApi = {};
+  if (!window?.ethereum)
+    return contractApi
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {

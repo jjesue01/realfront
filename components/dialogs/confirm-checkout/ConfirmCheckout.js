@@ -78,11 +78,11 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }, [listing])
 
   useEffect(function initFee() {
-    if (!mounted.current && user) {
+    if (!mounted.current && user && opened) {
       handleInitFee()
       mounted.current = true
     }
-  }, [handleInitFee, user])
+  }, [handleInitFee, user, opened])
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={handleClose}>

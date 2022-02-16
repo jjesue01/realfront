@@ -38,7 +38,7 @@ function MediaFile({ className, src, videoSrc, alt, controls= false, autoPlay= f
               <Image
                 src={src}
                 layout="fill"
-                objectFit={'cover'}
+                objectFit={'contain'}
                 onLoadingComplete={handleLoadingComplete}
                 alt={alt} />
               <div className={styles.layer} />
