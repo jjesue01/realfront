@@ -17,7 +17,7 @@ const HOST_NAME = 'https://nft-homejab.netlify.app'
 
 function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash, listing, hasShare = true }) {
   const router = useRouter()
-  const currentNetwork = listing.blockchain === 'polygon' ?
+  const currentNetwork = listing?.blockchain === 'polygon' ?
     getConfig().POLYGON_NETWORK
     :
     getConfig().BSC_NETWORK
