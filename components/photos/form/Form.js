@@ -250,7 +250,7 @@ function Form({ mode }) {
   }
 
   async function handleDelete() {
-    const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+    const contractApi = require('/services/contract/index')[listing.blockchain]
 
     setDeleting(true)
 

@@ -76,8 +76,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   async function toggleConfirmDialog() {
-    switchNetwork(listing.blockchain)
-      .then(validatePublish)
+    validatePublish()
+      .then(() => switchNetwork(listing.blockchain))
       .then(() => setConfirmOpened(prevState => !prevState))
   }
 
@@ -100,8 +100,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleMakeOffer() {
-    switchNetwork(listing.blockchain)
-      .then(validatePublish)
+    validatePublish()
+      .then(() => switchNetwork(listing.blockchain))
       .then(() => {
         setMakeOfferOpened(prevState => !prevState)
       })
@@ -112,8 +112,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleMakeOffer(price) {
-    return new Promise(async (resolve, reject) => {
-      const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+    return new Promise((resolve, reject) => {
+      const contractApi = require('/services/contract/index')[listing.blockchain]
 
       contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
         .then((bidIndex) => {
@@ -147,8 +147,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     setBidWarningOpened(prevState => !prevState)
   }
 
-  async function handleCancelBid() {
-    const contract = (await require('/services/contract/index'))[listing.blockchain]
+  function handleCancelBid() {
+    const contract = require('/services/contract/index')[listing.blockchain]
     const bid = bids.find(({ bidder: { id } }) => id === user._id)
 
     if (bid) {
@@ -171,8 +171,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     }
   }
 
-  async function handleCancelListing() {
-    const contract = (await require('/services/contract/index'))[listing.blockchain]
+  function handleCancelListing() {
+    const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
     contract.revokeSell(listing.tokenID, user.walletAddress)
@@ -202,7 +202,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   // }
 
   async function getAvailableBid() {
-    const contract = (await require('/services/contract/index'))[listing.blockchain]
+    const contract = require('/services/contract/index')[listing.blockchain]
     for (const bid of bids) {
       const bidderWalletAddress = bid.bidder.address;
 
@@ -223,7 +223,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
 
   function handleFinishAuction() {
     return new Promise(async (resolve, reject) => {
-      const contract = (await require('/services/contract/index'))[listing.blockchain]
+      const contract = require('/services/contract/index')[listing.blockchain]
 
       const bid = await getAvailableBid();
 
@@ -261,8 +261,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   function handleBuy() {
     if (!confirmOpened) return;
 
-    return new Promise(async (resolve, reject) => {
-      const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+    return new Promise((resolve, reject) => {
+      const contractApi = require('/services/contract/index')[listing.blockchain]
 
       contractApi.getSellData(listing.tokenID, user.walletAddress)
         .then(({ forSell }) => {

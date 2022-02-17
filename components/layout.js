@@ -191,8 +191,7 @@ function Layout({ children }) {
 
   useEffect(function checkAuth() {
     //if (localStorage) {
-      const auth = JSON.parse(localStorage.getItem('auth'))
-
+    const auth = JSON.parse(localStorage.getItem('auth'))
       if (auth?.token) {
         if (isTokenExpired(auth.token)) {
           dispatch(logout())
