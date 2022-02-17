@@ -23,13 +23,13 @@ const HOMEJAB_POLYGON = new window.web3App.eth.Contract(
   abi,
   HOMEJAB_ADDRESS_POLYGON,
   {
-    gasPrice: POLYGON_GAS_PRICE
+    //gasPrice: POLYGON_GAS_PRICE
   });
 const TOKEN_POLYGON = new window.web3App.eth.Contract(
   busd,
   TOKEN_ADDRESS_POLYGON,
   {
-    gasPrice: POLYGON_GAS_PRICE
+    //gasPrice: POLYGON_GAS_PRICE
   });
 
 const polygonWeiUnit = process.env.NEXT_PUBLIC_APP_ENV === 'prod' ? 'mwei' : 'ether'
