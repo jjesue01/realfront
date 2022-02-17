@@ -531,7 +531,7 @@ function SellItem() {
         onClose={toggleSellSteps}
         onDone={handleDone} />
       <DoneCongratulation
-        imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
+        imageUrl={listing?.resource === 'Video' ? listing?.assets?.[0]?.path : listing?.thumbnail}
         message={getCongratulationMessage()}
         opened={isDone}
         listing={listing}
