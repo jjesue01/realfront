@@ -350,12 +350,17 @@ export function convertTime(timeStr, hour12 = false) {
 }
 
 export async function getBlockchain() {
-  const chainId = await ethereum.request({ method: 'eth_chainId' });
+  if (!window.ethereum) return 'binance_smart_chain';
+  const chainId = await window.ethereum.request({ method: 'eth_chainId' });
   return POLYGON_CHAINS.includes(chainId) ? 'polygon' : 'binance_smart_chain'
 }
 
 export function switchNetwork(targetNetwork) {
   return new Promise(async (resolve, reject) => {
+    if (!window?.ethereum) {
+      reject()
+      return;
+    }
     const currentNetwork = targetNetwork === 'polygon' ?
       getConfig().POLYGON_NETWORK
       :
