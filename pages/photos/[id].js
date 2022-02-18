@@ -271,7 +271,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
               .then(({ transactionHash: hash }) => {
                 console.log(hash)
                 setTransactionHash(hash)
-                purchaseListing(listing._id)
+                purchaseListing(listing)
                   .then(result => {
                     resolve()
                     setIsDone(true)
