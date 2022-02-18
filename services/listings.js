@@ -122,9 +122,12 @@ export const listingsApi = createApi({
       })
     }),
     purchaseListing: builder.mutation({
-      query: (id) => ({
-        url: `/listings/${id}/purchase`,
-        method: 'POST'
+      query: (listing) => ({
+        url: `/listings/${listing._id}/purchase`,
+        method: 'POST',
+        body: {
+          tokenId: listing.tokenIds[0]
+        }
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
