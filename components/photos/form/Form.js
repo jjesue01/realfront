@@ -108,12 +108,12 @@ function Form({ mode }) {
   const inputRef = useRef()
   const autocompleteRef = useRef()
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
-  const isReseller = mode === 'edit' && listing?.tokenID
+  const isReseller = mode === 'edit' && listing?.tokenIds?.length !== 0
 
   function handleFileJPGChange(files) {
     if (files.length > 0 ) {
-      setFile(prevState => [...prevState, ...files])
-      if (isTour)
+      if (isTour) {
+        setFile(prevState => [...prevState, ...files])
         setTourPreviews(prevState => [
           ...prevState,
           ...[...files].map((item, index) => ({
@@ -121,6 +121,9 @@ function Form({ mode }) {
             content: getImageUrl(item)
           }))
         ])
+      } else {
+        setFile([...files])
+      }
       setFilePreview(files.length > 0 ? getImageUrl(files[0]) : null)
       setIsVideo(files[0]?.type?.includes('video'))
     }
@@ -256,7 +259,7 @@ function Form({ mode }) {
 
     try {
       if (listing?.isPublished)
-        await contractApi.revokeSell(listing.tokenID, user.walletAddress)
+        await contractApi.revokeSell(listing.tokenIds[0], user.walletAddress)
 
       deleteListing(router.query.id).unwrap()
         .then(result => {

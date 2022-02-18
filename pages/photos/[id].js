@@ -115,7 +115,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     return new Promise((resolve, reject) => {
       const contractApi = require('/services/contract/index')[listing.blockchain]
 
-      contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
+      contractApi.bidOnAuction(listing.tokenIds[0], price, user.walletAddress)
         .then((bidIndex) => {
           postBid({ id, price, bidIndex: bids.length.toString() }).unwrap()
             .then((result) => {
@@ -153,7 +153,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
 
     if (bid) {
       setLoading(true)
-      contract.revokeBid(listing.tokenID, bid.bidIndex , user.walletAddress)
+      contract.revokeBid(listing.tokenIds[0], bid.bidIndex , user.walletAddress)
         .then(() => {
           deleteBid({ id: bid._id }).unwrap()
             .then(() => {
@@ -175,7 +175,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
-    contract.revokeSell(listing.tokenID, user.walletAddress)
+    contract.revokeSell(listing.tokenIds[0], user.walletAddress)
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
@@ -236,7 +236,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
       console.log('run accept bid logic')
 
       if (bid) {
-        contract.acceptBid(listing.tokenID, bid.bidIndex, user.walletAddress)
+        contract.acceptBid(listing.tokenIds[0], bid.bidIndex, user.walletAddress)
           .then(({ transactionHash: hash }) => {
             finishAuction(id).unwrap()
               .then(() => {
@@ -264,10 +264,10 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     return new Promise((resolve, reject) => {
       const contractApi = require('/services/contract/index')[listing.blockchain]
 
-      contractApi.getSellData(listing.tokenID, user.walletAddress)
+      contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
         .then(({ forSell }) => {
           if (forSell) {
-            contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
+            contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
               .then(({ transactionHash: hash }) => {
                 console.log(hash)
                 setTransactionHash(hash)
