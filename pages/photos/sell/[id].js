@@ -161,12 +161,10 @@ function SellItem() {
     const contractApi = require('/services/contract/index')[listing.blockchain]
     const user = getUser();
 
-    console.log(contractApi)
-
     const data = {
       price: values.price,
       copies: values.copies || 1,
-      tokenID: listing?.tokenID,
+      tokenIds: listing?.tokenIds,
       id,
       sellMethod: 'Fixed Price'
     }
@@ -185,28 +183,30 @@ function SellItem() {
 
     let promise;
 
-    if (listing?.tokenID === undefined) {
+    if (listing?.tokenIds?.length === 0) {
       promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
       console.log('mint')
     } else if (listing.isPublished || listing?.activeDate) {
       promise = data.price !== listing.price ?
-        contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
+        contractApi.editPrice(data.tokenIds[0], data.price, user.walletAddress)
         :
         Promise.resolve()
       console.log('update price')
     } else if (sellType === 'fixed') {
       console.log('set on sell')
-      promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
+      promise = contractApi.listForSell(data.tokenIds[0], data.price, user.walletAddress)
     } else {
-      promise = contractApi.listForAuction(data.tokenID, data.price, endTime, user.walletAddress)
+      promise = contractApi.listForAuction(data.tokenIds[0], data.price, endTime, user.walletAddress)
     }
 
     promise
       .then((tokenID) => {
-        if (data.tokenID === undefined) {
-          data.tokenID = tokenID
-          data.royalties = values.royalties || 0
+        if (data.tokenIds.length === 0) {
+          //data.tokenID = tokenID
+          data.tokenIds = [tokenID]
         }
+
+        data.royalties = values.royalties || 0
 
         publishListing(data).unwrap()
           .then(result => {
@@ -250,7 +250,7 @@ function SellItem() {
   }, [listing])
 
   useEffect(function initListing() {
-    if (listing !== undefined && listing.tokenID !== undefined) {
+    if (listing !== undefined && listing.tokenIds.length !== 0) {
       setValues(prevState => {
         const initialValues = {
           ...prevState,
@@ -396,7 +396,7 @@ function SellItem() {
                       {/*  placeholder="e.g. 5"*/}
                       {/*  label="Number of copies" />*/}
                       {
-                        !listing?.tokenID &&
+                        listing?.tokenIds.length === 0 &&
                         <Input
                           type="number"
                           className={cn(styles.field)}
@@ -499,7 +499,7 @@ function SellItem() {
                           placeholder="6:00 PM" />
                       </div>
                       {
-                        !listing?.tokenID &&
+                        listing?.tokenIds.length === 0 &&
                           <Input
                             type="number"
                             className={cn(styles.field)}
@@ -520,7 +520,7 @@ function SellItem() {
                   listing={listing}
                   blockchain={blockchain}
                   marketplaceFee={marketplaceFee}
-                  royalty={listing?.tokenID && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
+                  royalty={!!listing?.tokenIds.length && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
               </div>
             </form>
           </div>
