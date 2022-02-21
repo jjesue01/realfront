@@ -122,8 +122,8 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                 </AspectRatioBox>
                 :
                 <MediaFile
-                  src={listing?.thumbnail}
-                  videoSrc={listing?.resource === 'Video' && listing?.nfts[0]?.ipfs?.file?.path}
+                  src={listing?.assets?.[0]?.path}
+                  videoSrc={listing?.resource === 'Video' && listing?.assets?.[0]?.path}
                   controls
                   alt={listing?.name} />
             }

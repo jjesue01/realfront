@@ -276,7 +276,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
                     resolve()
                     setIsDone(true)
 
-                    let fileName = listing.nfts[0].ipfs.file.originalName
+                    let fileName = listing?.assets?.[0]?.fileName
 
                     if (listing.resource.includes('360'))
                       fileName = listing.name + '.zip'
@@ -430,7 +430,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
           </>
       }
       <DoneCongratulation
-        imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
+        imageUrl={listing?.resource === 'Video' ? listing?.assets?.[0]?.path : listing?.thumbnail}
         message={`You just ${ maxBid ? 'sold' :  'purchased' } ${listing?.name}. It should be confirmed on the blockhain shortly.`}
         opened={isDone}
         title={'Complete checkout'}

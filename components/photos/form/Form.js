@@ -87,7 +87,6 @@ function Form({ mode }) {
   const [id, setId] = useState(null)
   const [listing, setListing] = useState({})
   const [listingError, setListingError] = useState({})
-  const [isVideo, setIsVideo] = useState(false)
   const isTour = resourceType.includes('360')
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
@@ -125,7 +124,6 @@ function Form({ mode }) {
         setFile([...files])
       }
       setFilePreview(files.length > 0 ? getImageUrl(files[0]) : null)
-      setIsVideo(files[0]?.type?.includes('video'))
     }
   }
 
@@ -294,18 +292,17 @@ function Form({ mode }) {
             })
 
             if (data?.resource === 'Video') {
-              setIsVideo(true)
-              setFile([data.nfts[0]?.ipfs?.file?.path])
-              setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+              setFile([data?.assets?.[0].path])
+              setRawFile([data?.rawFileName])
             } else if (data?.resource === 'Image') {
-              setFile([data.thumbnail])
-              setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+              setFile([data?.assets?.[0].path])
+              setRawFile([data?.rawFileName])
             } else {
-              setFile(data.nfts.map(nft => nft?.ipfs?.file?.path))
-              setTourPreviews(data.nfts.map((nft, index) => ({
+              setFile(data?.assets?.map(asset => asset.path))
+              setTourPreviews(data?.assets?.map((asset, index) => ({
                 id: `${Date.now()}-${index}`,
-                content: nft?.ipfs?.file?.path,
-                nftId: nft._id
+                content: asset?.path,
+                nftId: asset._id
               })))
             }
             setResourceType((data?.resource?.includes('360') ? '360 Tour' : data?.resource) || 'Image')
