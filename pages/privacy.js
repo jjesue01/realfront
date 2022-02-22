@@ -1,15 +1,19 @@
 import React from "react";
 import styles from '../styles/Policy.module.sass'
+import Head from "next/head";
 
 function PrivacyPolicy() {
   return (
-    <div className={styles.root}>
+    <main className={styles.root}>
+      <Head>
+        <title>NFT Marketplace - Privacy Policy</title>
+      </Head>
       <div className={styles.policyContainer}>
         <h1>Privacy Policy</h1>
         <section className={styles.policyItem}>
           <h2>Introduction</h2>
           <p>
-            HomeJab Inc. d/b/a HomeJab (“HomeJab,” “we”, “us”, or “our”) is committed to protecting your privacy. We have prepared this Privacy Policy to describe to you our practices regarding the Personal Data (as defined below) we collect, use, and share in connection with the HomeJab NFT website (nft.homejab.com), and other software provided on or in connection with our services, as described in our Terms of Service (collectively, the “Service”). “NFT” in this Privacy Policy means a non-fungible token or similar digital item implemented on a blockchain (such as the Binance Smart Chain blockchain), which uses smart contracts to link to or otherwise be associated with certain content or data.
+            HomeJab Inc. d/b/a HomeJab (“HomeJab,” “we”, “us”, or “our”) is committed to protecting your privacy. We have prepared this Privacy Policy to describe to you our practices regarding the Personal Data (as defined below) we collect, use, and share in connection with the HomeJab NFT website (<a href="https://nft.homejab.com" target="_blank" rel="noreferrer">nft.homejab.com</a>), and other software provided on or in connection with our services, as described in our Terms of Service (collectively, the “Service”). “NFT” in this Privacy Policy means a non-fungible token or similar digital item implemented on a blockchain (such as the Binance Smart Chain blockchain), which uses smart contracts to link to or otherwise be associated with certain content or data.
           </p>
         </section>
         <section className={styles.policyItem}>
@@ -135,7 +139,7 @@ function PrivacyPolicy() {
               Corporate Restructuring. We may share some or all of your Personal Data in connection with or during negotiation of any merger, financing, acquisition, or dissolution transaction or proceeding involving sale, transfer, divestiture, or disclosure of all or a portion of our business or assets. In the event of an insolvency, bankruptcy, or receivership, Personal Data may also be transferred as a business asset. If another company acquires our company, business, or assets, that company will possess the Personal Data collected by us and will assume the rights and obligations regarding your Personal Data as described in this Privacy Policy.
             </li>
             <li>
-              Legal Rights. Regardless of any choices you make regarding your Personal Data (as described below), HomeJab may disclose Personal Data if it believes in good faith that such disclosure is necessary: (a) in connection with any legal investigation; (b) to comply with relevant laws or to respond to subpoenas, warrants, or other legal process served on nft.homejab.com; (c) to protect or defend the rights or property of HomeJab or users of the Service; and/or (d) to investigate or assist in preventing any violation or potential violation of the law, this Privacy Policy, or our Terms of Service.
+              Legal Rights. Regardless of any choices you make regarding your Personal Data (as described below), HomeJab may disclose Personal Data if it believes in good faith that such disclosure is necessary: (a) in connection with any legal investigation; (b) to comply with relevant laws or to respond to subpoenas, warrants, or other legal process served on <a href="https://nft.homejab.com" target="_blank" rel="noreferrer">nft.homejab.com</a>; (c) to protect or defend the rights or property of HomeJab or users of the Service; and/or (d) to investigate or assist in preventing any violation or potential violation of the law, this Privacy Policy, or our Terms of Service.
             </li>
             <li>
               Other Disclosures. We may also disclose your Personal Data: to fulfill the purpose for which you provide it; for any other purpose disclosed by us when you provide it; or with your consent.
@@ -167,7 +171,7 @@ function PrivacyPolicy() {
               If you are a California resident, you have certain rights under the California Consumer Privacy Act (“CCPA”). These include the right to (i) request access to, details regarding, and a copy of the personal information we have collected about you and/or shared with third parties; (ii) request deletion of the personal information that we have collected about you; and (iii) the right to opt-out of sale of your personal information. As the terms are defined under the CCPA, we do not “sell” your “personal information.”
             </li>
             <li>
-              If you wish to exercise your rights under the GDPR, CCPA, or other applicable data protection or privacy laws, please contact us by emailing support@homejab.com, specify your request, and reference the applicable law. We may ask you to verify your identity, or ask for more information about your request. We will consider and act upon any above request in accordance with applicable law. We will not discriminate against you for exercising any of these rights.
+              If you wish to exercise your rights under the GDPR, CCPA, or other applicable data protection or privacy laws, please contact us by emailing <a href="mailto:support@homejab.com" target="_blank" rel="noreferrer">support@homejab.com</a>, specify your request, and reference the applicable law. We may ask you to verify your identity, or ask for more information about your request. We will consider and act upon any above request in accordance with applicable law. We will not discriminate against you for exercising any of these rights.
             </li>
             <li>
               Notwithstanding the above, we cannot edit or delete any information that is stored on a blockchain, for example the Binance Smart Chain blockchain, as we do not have custody or control over any blockchains. The information stored on the blockchain may include purchases, sales, and transfers related to your blockchain address and NFTs held at that address.
@@ -180,8 +184,45 @@ function PrivacyPolicy() {
             We may retain your Personal Data as long as you continue to use the Service, have an account with us, or for as long as is necessary to fulfill the purposes outlined in this Privacy Policy. We may continue to retain your Personal Data even after you deactivate your account and/or cease to use the Service if such retention is reasonably necessary to comply with our legal obligations, to resolve disputes, prevent fraud and abuse, enforce our Terms or other agreements, and/or protect our legitimate interests. Where your Personal Data is no longer required for these purposes, we will delete it.
           </p>
         </section>
+        <section className={styles.policyItem}>
+          <h2>Data Protection</h2>
+          <p>
+            We care about the security of your information and use physical, administrative, and technological safeguards to preserve the integrity and security of information collected through our Service. However, no security system is impenetrable and we cannot guarantee the security of our systems. In the event that any information under our custody and control is compromised as a result of a breach of security, we will take steps to investigate and remediate the situation and, in accordance with applicable laws and regulations, notify those individuals whose information may have been compromised.
+          </p>
+          <ul>
+            <li>
+              You are responsible for the security of your digital wallet, and we urge you to take steps to ensure it is and remains secure. If you discover an issue related to your wallet, please contact your wallet provider.
+            </li>
+          </ul>
+        </section>
+        <section className={styles.policyItem}>
+          <h2>
+            Minors
+          </h2>
+          <p>
+            We do not intentionally gather Personal Data from visitors who are under the age of 13. Our Terms of Service require all users to be at least 18 years old. Minors who are at least 13 years old but are under 18 years old may use a parent or guardian’s HomeJab account, but only with the involvement of the account holder. If a child under 13 submits Personal Data to HomeJab and we learn that the Personal Data is the information of a child under 13, we will attempt to delete the information as soon as possible. If you believe that we might have any Personal Data from a child under 13, please contact us by emailing <a href="mailto:support@homejab.com" target="_blank" rel="noreferrer">support@homejab.com</a>.
+          </p>
+        </section>
+        <section className={styles.policyItem}>
+          <h2>Users Outside of the United States</h2>
+          <p>
+            If you are a non-U.S. user of the Service, by visiting the Service and providing us with data, you acknowledge and agree that your Personal Data may be processed for the purposes identified in the Privacy Policy. In addition, your Personal Data may be processed in the country in which it was collected and in other countries, including the United States, where laws regarding processing of Personal Data may be less stringent than the laws in your country. By providing your Personal Data, you consent to such transfer.
+          </p>
+        </section>
+        <section className={styles.policyItem}>
+          <h2>Changes to This Privacy Policy</h2>
+          <p>
+            This Privacy Policy may be updated from time to time for any reason. We will notify you of any changes to our Privacy Policy by posting the new Privacy Policy at <a href="https://nft.homejab.com/privacy" target="_blank" rel="noreferrer">https://nft.homejab.com/privacy</a>. The date the Privacy Policy was last revised is identified at the beginning of this Privacy Policy. You are responsible for periodically visiting our Service and this Privacy Policy to check for any changes.
+          </p>
+        </section>
+        <section className={styles.policyItem}>
+          <h2>Questions; Contacting HomeJab; Reporting Violations</h2>
+          <p>
+            If you have any questions or concerns or complaints about our Privacy Policy or our data collection or processing practices, or if you want to report any security violations to us, please contact us by emailing <a href="mailto:support@homejab.com" target="_blank" rel="noreferrer">support@homejab.com</a>.
+          </p>
+        </section>
       </div>
-    </div>
+    </main>
   )
 }
 
