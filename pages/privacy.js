@@ -109,7 +109,7 @@ function PrivacyPolicy() {
               send you notifications related to actions on the Service, including notifications of offers on your NFTs;
             </li>
             <li>
-              send you newsletters, promotional materials, and other notices related to our Services or third parties' goods and services;
+              send you newsletters, promotional materials, and other notices related to our Services or third parties&apos; goods and services;
             </li>
             <li>
               respond to your inquiries related to employment opportunities or other requests;
