@@ -427,12 +427,12 @@ function Layout({ children }) {
                 © {new Date().getFullYear()} Homejab.LCC. All rights reserved.
               </Typography>
               <div className={styles.terms}>
-                <Link href="https://homejab.com/privacy-policy/" passHref>
+                <Link href="/privacy" passHref>
                   <a target="_blank" rel="noopener noreferrer">
                     Privacy Policy
                   </a>
                 </Link>
-                <Link href="https://homejab.com/terms-and-conditions/" passHref>
+                <Link href="/terms" passHref>
                   <a target="_blank" rel="noopener noreferrer">
                     Terms of Service
                   </a>
