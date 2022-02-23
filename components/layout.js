@@ -29,6 +29,8 @@ import {pushToast} from "../features/toasts/toastsSlice";
 import {BINANCE_TESTNET} from "../fixtures";
 import SignUp from "./dialogs/sign-up/SignUp";
 import {getConfig} from "../app-config";
+import useBreakpoint from "../hooks/useBreakpoint";
+import MobileMenu from "./mobile-menu/MobileMenu";
 
 const accountLinks = [
   {
@@ -59,6 +61,7 @@ function Layout({ children }) {
   const { data: marketplaceLinks = [] } = useGetAutocompleteCitiesQuery({ search: '' })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
+  const [menuOpened, setMenuOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)
   const [depositOpened, setDepositOpened] = useState(false)
   const [signUpOpened, setSignUpOpened] = useState(false)
@@ -68,12 +71,18 @@ function Layout({ children }) {
 
   const tempWalletAddress = useRef(null)
 
+  const isMobile = useBreakpoint(820)
+
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
   }
 
   function toggleWallet() {
     setWalletOpened(prevState => !prevState)
+  }
+
+  function toggleMenu() {
+    setMenuOpened(prevState => !prevState)
   }
 
   function toggleFooter() {
@@ -274,39 +283,48 @@ function Layout({ children }) {
                 alt="HOMEJAB logo" />
             </a>
           </Link>
-          <div className={styles.content}>
-            <ul className={styles.links}>
-              <li>
-                <NavLink href="/about">Our Story</NavLink>
-              </li>
-              <li>
-                <NavLink href="/marketplace">Marketplace</NavLink>
-              </li>
-              <li>
-                <NavLink href="/faq">FAQ</NavLink>
-              </li>
-            </ul>
-            <div className={styles.actions}>
-              {
-                auth.user?.invited &&
-                <Button onClick={handleCreate} type="outlined">
-                  Create
-                </Button>
-              }
-              {
-                auth.token ?
-                  <button
-                    onClick={toggleWallet}
-                    className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
-                    <WalletIcon />
-                  </button>
-                  :
-                  <Button onClick={togglePopup} type="accent">
-                    Connect Wallet
+          {
+            !isMobile ?
+            <div className={styles.content}>
+              <ul className={styles.links}>
+                <li>
+                  <NavLink href="/about">Our Story</NavLink>
+                </li>
+                <li>
+                  <NavLink href="/marketplace">Marketplace</NavLink>
+                </li>
+                <li>
+                  <NavLink href="/faq">FAQ</NavLink>
+                </li>
+              </ul>
+              <div className={styles.actions}>
+                {
+                  auth.user?.invited &&
+                  <Button onClick={handleCreate} type="outlined">
+                    Create
                   </Button>
-              }
+                }
+                {
+                  auth.token ?
+                    <button
+                      onClick={toggleWallet}
+                      className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
+                      <WalletIcon />
+                    </button>
+                    :
+                    <Button onClick={togglePopup} type="accent">
+                      Connect Wallet
+                    </Button>
+                }
+              </div>
             </div>
-          </div>
+              :
+            <button
+              onClick={toggleMenu}
+              className={cn(styles.btnMenu, { [styles.btnMenu_opened]: menuOpened })}>
+              <span />
+            </button>
+          }
         </div>
       </header>
       {
@@ -333,6 +351,12 @@ function Layout({ children }) {
       }
       {
         React.cloneElement(children, { toggleFooter, openLogin: togglePopup })
+      }
+      {
+        isMobile &&
+        <MobileMenu
+          opened={menuOpened}
+          onClose={toggleMenu} />
       }
       <ConnectWallet
         opened={connectOpened}
