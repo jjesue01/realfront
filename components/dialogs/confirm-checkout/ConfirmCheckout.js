@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import styles from './ConfirmCheckout.module.sass'
+import Link from 'next/link'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
 import {getBlockchain, getMoneyView} from "../../../utils";
@@ -158,7 +159,7 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
           <Checkbox
             className={styles.checkbox}
             checked={checked}
-            label={<>By checking this box, I agree to Home Jab&apos;s <a href="https://homejab.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms of Service</a></>}
+            label={<>By checking this box, I agree to Home Jab&apos;s <Link href="/terms" passHref><a target="_blank" rel="noopener noreferrer">Terms of Service</a></Link></>}
             onChange={toggleCheckbox} />
         }
         <div className={styles.actions}>
