@@ -34,7 +34,7 @@ function FileUploader({ className, children, onChange, accept = '*', error, disa
 
     for (const file of files) {
       if (Math.round(file.size / 1000) > MAX_KB_SIZE || accept !== '*' && !validateFormat(file)) {
-        dispatch(pushToast({ type: 'info', message: 'File size should be less than 40 MB' }))
+        dispatch(pushToast({ type: 'info', message: `File size should be less than ${MAX_KB_SIZE / 1000} MB and have supported format` }))
         continue;
       }
 
