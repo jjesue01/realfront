@@ -49,7 +49,7 @@ const RESOURCE_TYPES = ['Image', 'Video', '360 Tour']
 const FORMATS = {
   'Image': {
     preview: ['.jpg'],
-    raw: ['.raw', '.cr2', '.nef', '.arw', '.dng', '.raf', '.jpg']
+    raw: ['.raw', '.cr2', '.cr3', '.nef', '.arw', '.dng', '.raf', '.jpg']
   },
   'Video': {
     preview: ['.mp4', '.webm'],
