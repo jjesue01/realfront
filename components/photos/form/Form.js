@@ -329,12 +329,13 @@ function Form({ mode }) {
   }, [mode, router.query.id, dispatch, setValues, getCities])
 
   useEffect(function initAutocomplete() {
-    if (isLoaded && mode === 'create') {
+    if (isLoaded) {
       const handlePlaceChange = async () => {
         const { geometry, formatted_address, address_components } = autocompleteRef.current.getPlace()
         let city = { label: '', value: '' }
         const parsedPlace = buildPlace(address_components)
-        const searchCity = `${parsedPlace.city}, ${parsedPlace.state}`
+        const isUSA = parsedPlace.country === 'United States'
+        const searchCity = `${parsedPlace.city}, ${ isUSA ? parsedPlace.state : parsedPlace.country}`
 
         const { data: cities } = await getCities(searchCity)
 
