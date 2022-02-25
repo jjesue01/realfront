@@ -30,7 +30,7 @@ import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
 import {pushToast} from "../../features/toasts/toastsSlice";
 
-function PhotoDetails({ openLogin, prefetchedListing = {} }) {
+function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -112,8 +112,21 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleMakeOffer(price) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const contractApi = require('/services/contract/index')[listing.blockchain]
+
+      const userBalance = +await contractApi.balanceOf(user.walletAddress)
+
+      if (userBalance < price) {
+        setMakeOfferOpened(false)
+        openAddFunds()
+        dispatch(pushToast({
+          type: 'info',
+          message: `Your balance is ${getMoneyView(userBalance)}. You need to fund ${getMoneyView(price - userBalance)} to place a bid.`
+        }))
+        reject()
+        return;
+      }
 
       contractApi.bidOnAuction(listing.tokenIds[0], price, user.walletAddress)
         .then((bidIndex) => {
@@ -261,8 +274,21 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   function handleBuy() {
     if (!confirmOpened) return;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const contractApi = require('/services/contract/index')[listing.blockchain]
+
+      const userBalance = +await contractApi.balanceOf(user.walletAddress)
+
+      if (userBalance < listing.price) {
+        setConfirmOpened(false)
+        openAddFunds()
+        dispatch(pushToast({
+          type: 'info',
+          message: `Your balance is ${getMoneyView(userBalance)}. You need to fund ${getMoneyView(listing.price - userBalance)} to buy this NFT.`
+        }))
+        reject()
+        return;
+      }
 
       contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
         .then(({ forSell }) => {

@@ -350,7 +350,14 @@ function Layout({ children }) {
         </>
       }
       {
-        React.cloneElement(children, { toggleFooter, openLogin: togglePopup })
+        React.cloneElement(
+          children,
+          {
+            toggleFooter,
+            openLogin: togglePopup,
+            openAddFunds: toggleAddFunds
+          }
+        )
       }
       {
         isMobile &&
