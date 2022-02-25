@@ -211,6 +211,17 @@ function Marketplace({ toggleFooter, openLogin }) {
     getCities('')
   }, [dispatch, getCities])
 
+  useEffect(function init() {
+    if (window.innerWidth < 950) {
+      console.log('hide map')
+      document.body.style.position = 'static'
+      mapMounted.current = false
+      setIsMapHidden(true)
+      toggleFooter()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <main className={cn(styles.root, { [styles.rootFull]: isMapHidden })}>
       <Head>
@@ -236,29 +247,31 @@ function Marketplace({ toggleFooter, openLogin }) {
               size="small"
               iconRight={<SearchIcon />}
               placeholder="Enter an address" />
-            <CollectionFilter
-              className={styles.filter}
-              name="cities"
-              value={filters.cities}
-              options={citiesOptions}
-              refetchOptions={getCities}
-              onChange={handleChange} />
-            <PriceFilter
-              className={styles.filter}
-              name="price"
-              value={filters.price}
-              onChange={handleChange} />
-            <ResourcesFilter
-              className={styles.filter}
-              name="resources"
-              value={filters.resources}
-              onChange={handleChange} />
-            <MoreFilter
-              className={styles.filter}
-              name="more"
-              value={filters.more}
-              options={tagsOptions}
-              onChange={handleChange} />
+            <div className={styles.filterItems}>
+              <CollectionFilter
+                className={styles.filter}
+                name="cities"
+                value={filters.cities}
+                options={citiesOptions}
+                refetchOptions={getCities}
+                onChange={handleChange} />
+              <PriceFilter
+                className={styles.filter}
+                name="price"
+                value={filters.price}
+                onChange={handleChange} />
+              <ResourcesFilter
+                className={styles.filter}
+                name="resources"
+                value={filters.resources}
+                onChange={handleChange} />
+              <MoreFilter
+                className={styles.filter}
+                name="more"
+                value={filters.more}
+                options={tagsOptions}
+                onChange={handleChange} />
+            </div>
           </div>
           <div className={cn(styles.resetFilters, { [styles.resetFiltersShown]: showReset })}>
             <button onClick={handleResetFilters} className={styles.btnReset} />

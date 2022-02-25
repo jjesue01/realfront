@@ -25,7 +25,7 @@ function AddFunds({ opened, onClose, onExchange, onBuy }) {
           fontWeight={600}
           lHeight={29}
           align="center">
-          Add ETH to your wallet
+          Add crypto to your wallet
         </Typography>
         <Typography
           fontFamily={'Lato'}

@@ -158,85 +158,82 @@ function SellItem() {
   }
 
   function handleSubmit(values, { setSubmitting }) {
-    async function submit() {
-      const contractApi = (await require('/services/contract/index'))[listing.blockchain]
-      const user = getUser();
+    const contractApi = require('/services/contract/index')[listing.blockchain]
+    const user = getUser();
 
-      console.log(contractApi)
-
-      const data = {
-        price: values.price,
-        copies: values.copies || 1,
-        tokenID: listing?.tokenID,
-        id,
-        sellMethod: 'Fixed Price'
-      }
-
-      const isoString = dateFromESTtoISOString(values.auctionEndDate, values.auctionEndTime)
-      const endTime = sellType === 'auction' ? new Date(isoString).getTime() : 0
-
-      if (sellType === 'auction') {
-        data.sellMethod = 'Auction';
-        data.endDate = isoString
-      }
-
-      if (switchers.schedule) {
-        data.activeDate = dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)
-      }
-
-      let promise;
-
-      if (listing?.tokenID === undefined) {
-        promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
-        console.log('mint')
-      } else if (listing.isPublished || listing?.activeDate) {
-        promise = data.price !== listing.price ?
-          contractApi.editPrice(data.tokenID, data.price, user.walletAddress)
-          :
-          Promise.resolve()
-        console.log('update price')
-      } else if (sellType === 'fixed') {
-        console.log('set on sell')
-        promise = contractApi.listForSell(data.tokenID, data.price, user.walletAddress)
-      } else {
-        promise = contractApi.listForAuction(data.tokenID, data.price, endTime, user.walletAddress)
-      }
-
-      promise
-        .then((tokenID) => {
-          if (data.tokenID === undefined) {
-            data.tokenID = tokenID
-            data.royalties = values.royalties || 0
-          }
-
-          publishListing(data).unwrap()
-            .then(result => {
-              console.log(result)
-              setIsDone(true)
-            })
-            .catch(error => {
-              console.log(error)
-              setSubmitting(false)
-            })
-        })
-        .catch(error => {
-          console.log(error)
-          // let errorMessage = 'Error while executing contract method'
-          //
-          // if (error?.code === 4001)
-          //   errorMessage = 'User cancelled sell flow'
-          //
-          // dispatch(pushToast())
-          setSubmitting(false)
-        })
+    const data = {
+      price: values.price,
+      copies: values.copies || 1,
+      tokenIds: listing?.tokenIds,
+      id,
+      sellMethod: 'Fixed Price'
     }
 
-    submit();
+    const isoString = dateFromESTtoISOString(values.auctionEndDate, values.auctionEndTime)
+    const endTime = sellType === 'auction' ? new Date(isoString).getTime() : 0
+
+    if (sellType === 'auction') {
+      data.sellMethod = 'Auction';
+      data.endDate = isoString
+    }
+
+    if (switchers.schedule) {
+      data.activeDate = dateFromESTtoISOString(values.scheduleFrequency, values.scheduleTime)
+    }
+
+    let promise;
+
+    if (listing?.tokenIds?.length === 0) {
+      promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
+      console.log('mint')
+    } else if (listing.isPublished || listing?.activeDate) {
+      promise = data.price !== listing.price ?
+        contractApi.editPrice(data.tokenIds[0], data.price, user.walletAddress)
+        :
+        Promise.resolve()
+      console.log('update price')
+    } else if (sellType === 'fixed') {
+      console.log('set on sell')
+      promise = contractApi.listForSell(data.tokenIds[0], data.price, user.walletAddress)
+    } else {
+      promise = contractApi.listForAuction(data.tokenIds[0], data.price, endTime, user.walletAddress)
+    }
+
+    promise
+      .then((tokenID) => {
+        if (data.tokenIds.length === 0) {
+          //data.tokenID = tokenID
+          data.tokenIds = [tokenID]
+        }
+
+        data.royalties = values.royalties || 0
+
+        publishListing(data).unwrap()
+          .then(result => {
+            console.log(result)
+            setIsDone(true)
+          })
+          .catch(error => {
+            console.log(error)
+            setSubmitting(false)
+          })
+      })
+      .catch(error => {
+        console.log(error)
+        // let errorMessage = 'Error while executing contract method'
+        //
+        // if (error?.code === 4001)
+        //   errorMessage = 'User cancelled sell flow'
+        //
+        // dispatch(pushToast())
+        setSubmitting(false)
+      })
   }
 
   const handleInitFee = useCallback(async () => {
     if (!listing) return;
-    const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
+    const blockchain = await getBlockchain();
+    const contractApi = require('/services/contract/index')[blockchain]
 
     console.log('init fee')
 
@@ -253,7 +250,7 @@ function SellItem() {
   }, [listing])
 
   useEffect(function initListing() {
-    if (listing !== undefined && listing.tokenID !== undefined) {
+    if (listing !== undefined && listing.tokenIds.length !== 0) {
       setValues(prevState => {
         const initialValues = {
           ...prevState,
@@ -390,16 +387,16 @@ function SellItem() {
                         error={errors.price && touched.price}
                         errorText={errors.price}
                         label="Price*" />
-                      <Input
-                        type="number"
-                        className={styles.field}
-                        name="copies"
-                        value={formik.values.copies}
-                        onChange={handleCopiesChange}
-                        placeholder="e.g. 5"
-                        label="Number of copies" />
+                      {/*<Input*/}
+                      {/*  type="number"*/}
+                      {/*  className={styles.field}*/}
+                      {/*  name="copies"*/}
+                      {/*  value={formik.values.copies}*/}
+                      {/*  onChange={handleCopiesChange}*/}
+                      {/*  placeholder="e.g. 5"*/}
+                      {/*  label="Number of copies" />*/}
                       {
-                        !listing?.tokenID &&
+                        listing?.tokenIds.length === 0 &&
                         <Input
                           type="number"
                           className={cn(styles.field)}
@@ -502,7 +499,7 @@ function SellItem() {
                           placeholder="6:00 PM" />
                       </div>
                       {
-                        !listing?.tokenID &&
+                        listing?.tokenIds.length === 0 &&
                           <Input
                             type="number"
                             className={cn(styles.field)}
@@ -523,7 +520,7 @@ function SellItem() {
                   listing={listing}
                   blockchain={blockchain}
                   marketplaceFee={marketplaceFee}
-                  royalty={listing?.tokenID && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
+                  royalty={!!listing?.tokenIds.length && listing?.creator?.ID !== user?._id ? formik.values.royalties : 0} />
               </div>
             </form>
           </div>
@@ -534,7 +531,7 @@ function SellItem() {
         onClose={toggleSellSteps}
         onDone={handleDone} />
       <DoneCongratulation
-        imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
+        imageUrl={listing?.resource === 'Video' ? listing?.assets?.[0]?.path : listing?.thumbnail}
         message={getCongratulationMessage()}
         opened={isDone}
         listing={listing}

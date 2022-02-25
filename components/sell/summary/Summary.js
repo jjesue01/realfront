@@ -1,10 +1,18 @@
-import React from 'react'
+import React, {useState} from 'react'
 import styles from './Summary.module.sass'
 import Typography from "../../Typography";
 import Button from "../../button/Button";
+import Link from "next/link";
+import Checkbox from "../../checkbox/Checkbox";
 
 
 function Summary({ loading, royalty, marketplaceFee, listing, blockchain }) {
+  const [confirmChecked, setChecked] = useState(false)
+
+  function toggleCheckbox() {
+    setChecked(prevState => !prevState)
+  }
+
   return (
     <div className={styles.summary}>
       <Typography fontWeight={600} fontSize={20} lHeight={24}>
@@ -40,10 +48,15 @@ function Summary({ loading, royalty, marketplaceFee, listing, blockchain }) {
         <div className={styles.feeLine} />
         <span>{marketplaceFee + royalty}%</span>
       </div>
+      <Checkbox
+        className={styles.checkbox}
+        checked={confirmChecked}
+        label={<>By checking this box, I agree to Home Jab&apos;s <Link href="/terms" passHref><a target="_blank" rel="noopener noreferrer">Terms of Service</a></Link></>}
+        onChange={toggleCheckbox} />
       <Button
         className={styles.btnSubmit}
         htmlType="submit"
-        disabled={listing?.blockchain !== blockchain}
+        disabled={listing?.blockchain !== blockchain || !confirmChecked}
         loading={loading}>
         Post your listing
       </Button>

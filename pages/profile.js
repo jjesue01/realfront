@@ -115,11 +115,14 @@ function MyProfile() {
     }
   }
 
-  async function handleCancelBid() {
-    const contract = (await require('/services/contract/index'))[bidForDelete.listing?.blockchain]
+  function handleCancelBid() {
+    const contract = require('/services/contract/index')[bidForDelete.listing?.blockchain]
 
     if (bidForDelete) {
       setManualLoading(true)
+      /**
+       * TODO: update tokenID here
+       */
       contract.revokeBid(bidForDelete.listing?.tokenID, bidForDelete.bidIndex , user.walletAddress)
         .then(() => {
           deleteBid({ id: bidForDelete._id }).unwrap()

@@ -6,6 +6,7 @@ import Input from "../../input/Input";
 import Button from "../../button/Button";
 import {useFormik} from "formik";
 import Checkbox from "../../checkbox/Checkbox";
+import Link from "next/link";
 
 function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnTitle }) {
   const [checked, setChecked] = useState(false)
@@ -85,7 +86,7 @@ function MakeOffer({ opened, onClose, onOffer, listing, maxBidPrice, title, btnT
         <Checkbox
           className={styles.checkbox}
           checked={checked}
-          label={<>By checking this box, I agree to Home Jab&apos;s <a href="https://homejab.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms of Service</a></>}
+          label={<>By checking this box, I agree to Home Jab&apos;s <Link href="/terms" passHref><a target="_blank" rel="noopener noreferrer">Terms of Service</a></Link></>}
           onChange={toggleCheckbox} />
         <Button
           className={styles.btnMakeOffer}

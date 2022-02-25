@@ -49,7 +49,7 @@ const RESOURCE_TYPES = ['Image', 'Video', '360 Tour']
 const FORMATS = {
   'Image': {
     preview: ['.jpg'],
-    raw: ['.raw', '.cr2', '.nef', '.arw', '.jpg']
+    raw: ['.raw', '.cr2', '.cr3', '.nef', '.arw', '.dng', '.raf', '.jpg']
   },
   'Video': {
     preview: ['.mp4', '.webm'],
@@ -87,7 +87,6 @@ function Form({ mode }) {
   const [id, setId] = useState(null)
   const [listing, setListing] = useState({})
   const [listingError, setListingError] = useState({})
-  const [isVideo, setIsVideo] = useState(false)
   const isTour = resourceType.includes('360')
   const { setValues, errors, touched, ...formik } = useFormik({
     initialValues: {
@@ -108,12 +107,12 @@ function Form({ mode }) {
   const inputRef = useRef()
   const autocompleteRef = useRef()
   const ownItem = listing?.owner ? listing.owner === user?._id : listing?.creator?.ID === user?._id
-  const isReseller = mode === 'edit' && listing?.tokenID
+  const isReseller = mode === 'edit' && listing?.tokenIds?.length !== 0
 
   function handleFileJPGChange(files) {
     if (files.length > 0 ) {
-      setFile(prevState => [...prevState, ...files])
-      if (isTour)
+      if (isTour) {
+        setFile(prevState => [...prevState, ...files])
         setTourPreviews(prevState => [
           ...prevState,
           ...[...files].map((item, index) => ({
@@ -121,8 +120,10 @@ function Form({ mode }) {
             content: getImageUrl(item)
           }))
         ])
+      } else {
+        setFile([...files])
+      }
       setFilePreview(files.length > 0 ? getImageUrl(files[0]) : null)
-      setIsVideo(files[0]?.type?.includes('video'))
     }
   }
 
@@ -250,13 +251,13 @@ function Form({ mode }) {
   }
 
   async function handleDelete() {
-    const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+    const contractApi = require('/services/contract/index')[listing.blockchain]
 
     setDeleting(true)
 
     try {
       if (listing?.isPublished)
-        await contractApi.revokeSell(listing.tokenID, user.walletAddress)
+        await contractApi.revokeSell(listing.tokenIds[0], user.walletAddress)
 
       deleteListing(router.query.id).unwrap()
         .then(result => {
@@ -291,18 +292,17 @@ function Form({ mode }) {
             })
 
             if (data?.resource === 'Video') {
-              setIsVideo(true)
-              setFile([data.nfts[0]?.ipfs?.file?.path])
-              setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+              setFile([data?.assets?.[0].path])
+              setRawFile([data?.rawFileName])
             } else if (data?.resource === 'Image') {
-              setFile([data.thumbnail])
-              setRawFile([data.nfts[0]?.ipfs?.raw?.originalName])
+              setFile([data?.assets?.[0].path])
+              setRawFile([data?.rawFileName])
             } else {
-              setFile(data.nfts.map(nft => nft?.ipfs?.file?.path))
-              setTourPreviews(data.nfts.map((nft, index) => ({
+              setFile(data?.assets?.map(asset => asset.path))
+              setTourPreviews(data?.assets?.map((asset, index) => ({
                 id: `${Date.now()}-${index}`,
-                content: nft?.ipfs?.file?.path,
-                nftId: nft._id
+                content: asset?.path,
+                nftId: asset._id
               })))
             }
             setResourceType((data?.resource?.includes('360') ? '360 Tour' : data?.resource) || 'Image')
@@ -329,12 +329,13 @@ function Form({ mode }) {
   }, [mode, router.query.id, dispatch, setValues, getCities])
 
   useEffect(function initAutocomplete() {
-    if (isLoaded && mode === 'create') {
+    if (isLoaded) {
       const handlePlaceChange = async () => {
         const { geometry, formatted_address, address_components } = autocompleteRef.current.getPlace()
         let city = { label: '', value: '' }
         const parsedPlace = buildPlace(address_components)
-        const searchCity = `${parsedPlace.city}, ${parsedPlace.state}`
+        const isUSA = parsedPlace.country === 'United States'
+        const searchCity = `${parsedPlace.city}, ${ isUSA ? parsedPlace.state : parsedPlace.country}`
 
         const { data: cities } = await getCities(searchCity)
 
@@ -370,7 +371,6 @@ function Form({ mode }) {
       }
 
       const options = {
-        componentRestrictions: { country: "us" },
         fields: ["address_components", "formatted_address", "geometry"],
       };
 

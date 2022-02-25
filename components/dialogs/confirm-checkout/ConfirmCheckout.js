@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import styles from './ConfirmCheckout.module.sass'
+import Link from 'next/link'
 import PopupWrapper from "../popup-wrapper/PopupWrapper";
 import Typography from "../../Typography";
-import Image from "next/image";
-import {getMoneyView} from "../../../utils";
+import {getBlockchain, getMoneyView} from "../../../utils";
 import Checkbox from "../../checkbox/Checkbox";
 import Button from "../../button/Button";
 import {useDispatch, useSelector} from "react-redux";
@@ -63,9 +63,9 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }
 
   const handleInitFee = useCallback(async () => {
-    console.log(listing)
     if (!listing?._id) return;
-    const contractApi = (await require('/services/contract/index'))[listing?.blockchain]
+    const blockchain = await getBlockchain();
+    const contractApi = require('/services/contract/index')[blockchain]
 
     contractApi.getMarketplaceFee()
       .then(fee => {
@@ -78,11 +78,11 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
   }, [listing])
 
   useEffect(function initFee() {
-    if (!mounted.current && user) {
+    if (!mounted.current && user && opened) {
       handleInitFee()
       mounted.current = true
     }
-  }, [handleInitFee, user])
+  }, [handleInitFee, user, opened])
 
   return (
     <PopupWrapper className={styles.root} opened={opened} onClose={handleClose}>
@@ -159,7 +159,7 @@ function ConfirmCheckout({ opened, listing, maxBid, availableBid, onClose, onChe
           <Checkbox
             className={styles.checkbox}
             checked={checked}
-            label={<>By checking this box, I agree to Home Jab&apos;s <a href="https://homejab.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms of Service</a></>}
+            label={<>By checking this box, I agree to Home Jab&apos;s <Link href="/terms" passHref><a target="_blank" rel="noopener noreferrer">Terms of Service</a></Link></>}
             onChange={toggleCheckbox} />
         }
         <div className={styles.actions}>

@@ -1,14 +1,17 @@
 import {store} from "../../store";
 import {pushToast} from "../../features/toasts/toastsSlice";
+import {isAllOf} from "@reduxjs/toolkit";
 
 const { dispatch } = store
 
-export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
+export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit = 'ether') {
   const contractApi = {};
+  if (!window?.ethereum)
+    return contractApi
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
-      const weiPrice = window.web3App.utils.toWei(price.toString())
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
 
 
       homejab.methods.mintAndList(royalties, weiPrice, endTime).send({ from: walletAddress })
@@ -31,8 +34,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
 
   contractApi.listForSell = (tokenID, price, walletAddress) => {
     return new Promise(async (resolve, reject) => {
-      const weiPrice = window.web3App.utils.toWei(price.toString())
-      const weiGasPrice = await web3App.eth.getGasPrice()
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
       homejab.methods.listForSell(tokenID, weiPrice).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           resolve()
@@ -51,7 +53,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
 
   contractApi.listForAuction = (tokenID, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
-      const weiPrice = window.web3App.utils.toWei(price.toString())
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
       homejab.methods.listForEnglishAuction(tokenID, weiPrice, endTime).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           resolve()
@@ -99,7 +101,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
 
       contractApi[hasAllowance ? 'increaseAllowance' : 'approve'](bidPrice + 1, walletAddress)
         .then(() => {
-          const weiPrice = window.web3App.utils.toWei(bidPrice.toString())
+          const weiPrice = window.web3App.utils.toWei(bidPrice.toString(), weiUnit)
           homejab.methods.bidOnAuction(tokenID, weiPrice).send({ from: walletAddress })
             .once('confirmation', (confirmation, receipt) => {
               if (receipt.events['BidUpdate'] !== undefined) {
@@ -178,7 +180,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
 
   contractApi.editPrice = (tokenID, price, walletAddress) => {
     return new Promise((resolve, reject) => {
-      const weiPrice = window.web3App.utils.toWei(price.toString())
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
       homejab.methods.editPrice(tokenID, weiPrice).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           resolve()
@@ -197,7 +199,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
 
   contractApi.approve = (price, walletAddress) => {
     return new Promise((resolve, reject) => {
-      const weiPrice = window.web3App.utils.toWei(price.toString())
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
       BUSD.methods.approve(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
           resolve()
@@ -229,7 +231,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
 
   contractApi.increaseAllowance = (price, walletAddress) => {
     return new Promise((resolve, reject) => {
-      const weiPrice = window.web3App.utils.toWei(price.toString())
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
       BUSD.methods.increaseAllowance(HOMEJAB_ADDRESS, weiPrice).send({from: walletAddress})
         .once('confirmation', (confirmation, receipt) => {
           console.log('increaseAllowance')
@@ -291,7 +293,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
   contractApi.balanceOf = async (address) => {
     try {
       const weiBalance = await BUSD.methods.balanceOf(address).call()
-      return window.web3App.utils.fromWei(weiBalance)
+      return window.web3App.utils.fromWei(weiBalance, weiUnit)
     } catch (error) {
       const message = `Error while getting user's balance`
       dispatch(pushToast({ type: 'error', message }))
@@ -302,7 +304,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS) {
   contractApi.allowance = async (address) => {
     try {
       const weiAllowance = await BUSD.methods.allowance(address, HOMEJAB_ADDRESS).call()
-      return window.web3App.utils.fromWei(weiAllowance)
+      return window.web3App.utils.fromWei(weiAllowance, weiUnit)
     } catch (error) {
       const message = `Error while getting allowance balance`
       dispatch(pushToast({ type: 'error', message }))

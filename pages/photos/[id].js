@@ -76,8 +76,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   async function toggleConfirmDialog() {
-    switchNetwork(listing.blockchain)
-      .then(validatePublish)
+    validatePublish()
+      .then(() => switchNetwork(listing.blockchain))
       .then(() => setConfirmOpened(prevState => !prevState))
   }
 
@@ -100,8 +100,8 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function toggleMakeOffer() {
-    switchNetwork(listing.blockchain)
-      .then(validatePublish)
+    validatePublish()
+      .then(() => switchNetwork(listing.blockchain))
       .then(() => {
         setMakeOfferOpened(prevState => !prevState)
       })
@@ -112,10 +112,10 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleMakeOffer(price) {
-    return new Promise(async (resolve, reject) => {
-      const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+    return new Promise((resolve, reject) => {
+      const contractApi = require('/services/contract/index')[listing.blockchain]
 
-      contractApi.bidOnAuction(listing.tokenID, price, user.walletAddress)
+      contractApi.bidOnAuction(listing.tokenIds[0], price, user.walletAddress)
         .then((bidIndex) => {
           postBid({ id, price, bidIndex: bids.length.toString() }).unwrap()
             .then((result) => {
@@ -147,13 +147,13 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     setBidWarningOpened(prevState => !prevState)
   }
 
-  async function handleCancelBid() {
-    const contract = (await require('/services/contract/index'))[listing.blockchain]
+  function handleCancelBid() {
+    const contract = require('/services/contract/index')[listing.blockchain]
     const bid = bids.find(({ bidder: { id } }) => id === user._id)
 
     if (bid) {
       setLoading(true)
-      contract.revokeBid(listing.tokenID, bid.bidIndex , user.walletAddress)
+      contract.revokeBid(listing.tokenIds[0], bid.bidIndex , user.walletAddress)
         .then(() => {
           deleteBid({ id: bid._id }).unwrap()
             .then(() => {
@@ -171,11 +171,11 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
     }
   }
 
-  async function handleCancelListing() {
-    const contract = (await require('/services/contract/index'))[listing.blockchain]
+  function handleCancelListing() {
+    const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
-    contract.revokeSell(listing.tokenID, user.walletAddress)
+    contract.revokeSell(listing.tokenIds[0], user.walletAddress)
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
@@ -202,7 +202,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   // }
 
   async function getAvailableBid() {
-    const contract = (await require('/services/contract/index'))[listing.blockchain]
+    const contract = require('/services/contract/index')[listing.blockchain]
     for (const bid of bids) {
       const bidderWalletAddress = bid.bidder.address;
 
@@ -223,7 +223,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
 
   function handleFinishAuction() {
     return new Promise(async (resolve, reject) => {
-      const contract = (await require('/services/contract/index'))[listing.blockchain]
+      const contract = require('/services/contract/index')[listing.blockchain]
 
       const bid = await getAvailableBid();
 
@@ -236,7 +236,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
       console.log('run accept bid logic')
 
       if (bid) {
-        contract.acceptBid(listing.tokenID, bid.bidIndex, user.walletAddress)
+        contract.acceptBid(listing.tokenIds[0], bid.bidIndex, user.walletAddress)
           .then(({ transactionHash: hash }) => {
             finishAuction(id).unwrap()
               .then(() => {
@@ -261,22 +261,22 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   function handleBuy() {
     if (!confirmOpened) return;
 
-    return new Promise(async (resolve, reject) => {
-      const contractApi = (await require('/services/contract/index'))[listing.blockchain]
+    return new Promise((resolve, reject) => {
+      const contractApi = require('/services/contract/index')[listing.blockchain]
 
-      contractApi.getSellData(listing.tokenID, user.walletAddress)
+      contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
         .then(({ forSell }) => {
           if (forSell) {
-            contractApi.buy(listing.tokenID, listing.price, user.walletAddress)
+            contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
               .then(({ transactionHash: hash }) => {
                 console.log(hash)
                 setTransactionHash(hash)
-                purchaseListing(listing._id)
+                purchaseListing(listing)
                   .then(result => {
                     resolve()
                     setIsDone(true)
 
-                    let fileName = listing.nfts[0].ipfs.file.originalName
+                    let fileName = listing?.assets?.[0]?.fileName
 
                     if (listing.resource.includes('360'))
                       fileName = listing.name + '.zip'
@@ -430,7 +430,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
           </>
       }
       <DoneCongratulation
-        imageUrl={listing?.resource === 'Video' ? listing?.nfts[0]?.ipfs?.file?.path : listing?.thumbnail}
+        imageUrl={listing?.resource === 'Video' ? listing?.assets?.[0]?.path : listing?.thumbnail}
         message={`You just ${ maxBid ? 'sold' :  'purchased' } ${listing?.name}. It should be confirmed on the blockhain shortly.`}
         opened={isDone}
         title={'Complete checkout'}

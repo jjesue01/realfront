@@ -17,7 +17,11 @@ const HOST_NAME = 'https://nft-homejab.netlify.app'
 
 function DoneCongratulation({ opened, onClose, imageUrl, title = 'Done', message, transactionHash, listing, hasShare = true }) {
   const router = useRouter()
-  const EXPLORER_LINK = getConfig().BSC_NETWORK.blockExplorerUrls[0] + '/tx/'
+  const currentNetwork = listing?.blockchain === 'polygon' ?
+    getConfig().POLYGON_NETWORK
+    :
+    getConfig().BSC_NETWORK
+  const EXPLORER_LINK = currentNetwork.blockExplorerUrls[0] + '/tx/'
 
   function getShareMessage() {
     if (router.pathname.includes('/photos/create'))

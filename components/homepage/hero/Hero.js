@@ -39,7 +39,7 @@ function Hero() {
       }
 
       const options = {
-        componentRestrictions: { country: "us" },
+        //componentRestrictions: { country: "us" },
         fields: ["address_components", "formatted_address", "geometry"],
       };
 

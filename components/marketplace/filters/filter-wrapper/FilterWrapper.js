@@ -28,10 +28,6 @@ function FilterWrapper({ className, title, onApply, onClose = () => {}, children
 
   return (
     <>
-      {
-        opened &&
-          <div onClick={handleClose} className={styles.closeLayer} />
-      }
       <div className={cn(className, styles.root, { [styles.opened]: opened })}>
         <button onClick={toggleFilter} className={cn(styles.btnFilter, { [styles.active]: opened || active })}>
           { title }
@@ -46,6 +42,10 @@ function FilterWrapper({ className, title, onApply, onClose = () => {}, children
             </button>
           </div>
         </div>
+        {
+          opened &&
+          <div onClick={handleClose} className={styles.closeLayer} />
+        }
       </div>
     </>
   )

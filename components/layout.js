@@ -29,6 +29,8 @@ import {pushToast} from "../features/toasts/toastsSlice";
 import {BINANCE_TESTNET} from "../fixtures";
 import SignUp from "./dialogs/sign-up/SignUp";
 import {getConfig} from "../app-config";
+import useBreakpoint from "../hooks/useBreakpoint";
+import MobileMenu from "./mobile-menu/MobileMenu";
 
 const accountLinks = [
   {
@@ -59,6 +61,7 @@ function Layout({ children }) {
   const { data: marketplaceLinks = [] } = useGetAutocompleteCitiesQuery({ search: '' })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
+  const [menuOpened, setMenuOpened] = useState(false)
   const [addFundsOpened, setAddFundsOpened] = useState(false)
   const [depositOpened, setDepositOpened] = useState(false)
   const [signUpOpened, setSignUpOpened] = useState(false)
@@ -68,12 +71,18 @@ function Layout({ children }) {
 
   const tempWalletAddress = useRef(null)
 
+  const isMobile = useBreakpoint(820)
+
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
   }
 
   function toggleWallet() {
     setWalletOpened(prevState => !prevState)
+  }
+
+  function toggleMenu() {
+    setMenuOpened(prevState => !prevState)
   }
 
   function toggleFooter() {
@@ -191,8 +200,7 @@ function Layout({ children }) {
 
   useEffect(function checkAuth() {
     //if (localStorage) {
-      const auth = JSON.parse(localStorage.getItem('auth'))
-
+    const auth = JSON.parse(localStorage.getItem('auth'))
       if (auth?.token) {
         if (isTokenExpired(auth.token)) {
           dispatch(logout())
@@ -275,39 +283,48 @@ function Layout({ children }) {
                 alt="HOMEJAB logo" />
             </a>
           </Link>
-          <div className={styles.content}>
-            <ul className={styles.links}>
-              <li>
-                <NavLink href="/about">Our Story</NavLink>
-              </li>
-              <li>
-                <NavLink href="/marketplace">Marketplace</NavLink>
-              </li>
-              <li>
-                <NavLink href="/faq">FAQ</NavLink>
-              </li>
-            </ul>
-            <div className={styles.actions}>
-              {
-                auth.user?.invited &&
-                <Button onClick={handleCreate} type="outlined">
-                  Create
-                </Button>
-              }
-              {
-                auth.token ?
-                  <button
-                    onClick={toggleWallet}
-                    className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
-                    <WalletIcon />
-                  </button>
-                  :
-                  <Button onClick={togglePopup} type="accent">
-                    Connect Wallet
+          {
+            !isMobile ?
+            <div className={styles.content}>
+              <ul className={styles.links}>
+                <li>
+                  <NavLink href="/about">Our Story</NavLink>
+                </li>
+                <li>
+                  <NavLink href="/marketplace">Marketplace</NavLink>
+                </li>
+                <li>
+                  <NavLink href="/faq">FAQ</NavLink>
+                </li>
+              </ul>
+              <div className={styles.actions}>
+                {
+                  auth.user?.invited &&
+                  <Button onClick={handleCreate} type="outlined">
+                    Create
                   </Button>
-              }
+                }
+                {
+                  auth.token ?
+                    <button
+                      onClick={toggleWallet}
+                      className={cn(styles.btnCircle, { [styles.btnCircleActive]: walletOpened })}>
+                      <WalletIcon />
+                    </button>
+                    :
+                    <Button onClick={togglePopup} type="accent">
+                      Connect Wallet
+                    </Button>
+                }
+              </div>
             </div>
-          </div>
+              :
+            <button
+              onClick={toggleMenu}
+              className={cn(styles.btnMenu, { [styles.btnMenu_opened]: menuOpened })}>
+              <span />
+            </button>
+          }
         </div>
       </header>
       {
@@ -334,6 +351,12 @@ function Layout({ children }) {
       }
       {
         React.cloneElement(children, { toggleFooter, openLogin: togglePopup })
+      }
+      {
+        isMobile &&
+        <MobileMenu
+          opened={menuOpened}
+          onClose={toggleMenu} />
       }
       <ConnectWallet
         opened={connectOpened}
@@ -428,12 +451,12 @@ function Layout({ children }) {
                 © {new Date().getFullYear()} Homejab.LCC. All rights reserved.
               </Typography>
               <div className={styles.terms}>
-                <Link href="https://homejab.com/privacy-policy/" passHref>
+                <Link href="/privacy" passHref>
                   <a target="_blank" rel="noopener noreferrer">
                     Privacy Policy
                   </a>
                 </Link>
-                <Link href="https://homejab.com/terms-and-conditions/" passHref>
+                <Link href="/terms" passHref>
                   <a target="_blank" rel="noopener noreferrer">
                     Terms of Service
                   </a>

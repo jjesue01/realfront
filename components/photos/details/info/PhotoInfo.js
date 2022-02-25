@@ -122,8 +122,8 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                 </AspectRatioBox>
                 :
                 <MediaFile
-                  src={listing?.thumbnail}
-                  videoSrc={listing?.resource === 'Video' && listing?.nfts[0]?.ipfs?.file?.path}
+                  src={listing?.assets?.[0]?.path}
+                  videoSrc={listing?.resource === 'Video' && listing?.assets?.[0]?.path}
                   controls
                   alt={listing?.name} />
             }
@@ -376,13 +376,13 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                   </div>
                 }
                 {
-                  listing?.tokenID &&
+                  !!listing?.tokenIds?.length &&
                   <div className={styles.field}>
                     <div className={cn(styles.detailsCol, styles.colName)}>
                       <p>Token ID</p>
                     </div>
                     <div className={cn(styles.detailsCol, styles.colContent)}>
-                      <p>{listing?.tokenID}</p>
+                      <p>{listing?.tokenIds[0]}</p>
                     </div>
                   </div>
                 }
