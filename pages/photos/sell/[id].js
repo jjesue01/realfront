@@ -182,9 +182,12 @@ function SellItem() {
     }
 
     let promise;
-
+    /**
+     * TODO: update logic for lazyMint
+     */
     if (listing?.tokenIds?.length === 0) {
-      promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
+      //promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
+      promise = Promise.resolve(Date.now() + '')
       console.log('mint')
     } else if (listing.isPublished || listing?.activeDate) {
       promise = data.price !== listing.price ?
@@ -201,6 +204,9 @@ function SellItem() {
 
     promise
       .then((tokenID) => {
+        /**
+         * TODO: update logic for lazyMint
+         */
         if (data.tokenIds.length === 0) {
           //data.tokenID = tokenID
           data.tokenIds = [tokenID]

@@ -293,6 +293,16 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
       contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
         .then(({ forSell }) => {
           if (forSell) {
+            /**
+             * TODO: add condition for tokenIds, also needs creatorAddress
+             */
+            let promise;
+
+            if (listing.tokenIds.length === 0) {
+              promise = contractApi.lazyMint('', listing.royalties, listing.price, user.walletAddress)
+            } else {
+              promise = contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
+            }
             contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
               .then(({ transactionHash: hash }) => {
                 console.log(hash)
