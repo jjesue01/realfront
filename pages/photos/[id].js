@@ -21,7 +21,7 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getBlockchain, getIdToken, getMoneyView, switchNetwork} from "../../utils";
+import {download, escapeValue, getBlockchain, getIdToken, getMoneyView, switchNetwork} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
@@ -30,7 +30,7 @@ import {getConfig} from "../../app-config";
 import {HOST_NAME} from "../../fixtures";
 import {pushToast} from "../../features/toasts/toastsSlice";
 
-function PhotoDetails({ openLogin, prefetchedListing = {} }) {
+function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const dispatch = useDispatch()
   const { query: { id }, ...router } = useRouter()
   const user = useSelector(state => state.auth.user)
@@ -112,8 +112,21 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   }
 
   function handleMakeOffer(price) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const contractApi = require('/services/contract/index')[listing.blockchain]
+
+      const userBalance = +await contractApi.balanceOf(user.walletAddress)
+
+      if (userBalance < price) {
+        setMakeOfferOpened(false)
+        openAddFunds()
+        dispatch(pushToast({
+          type: 'info',
+          message: `Your balance is ${getMoneyView(userBalance)}. You need to fund ${getMoneyView(price - userBalance)} to place a bid.`
+        }))
+        reject()
+        return;
+      }
 
       contractApi.bidOnAuction(listing.tokenIds[0], price, user.walletAddress)
         .then((bidIndex) => {
@@ -261,8 +274,21 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
   function handleBuy() {
     if (!confirmOpened) return;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const contractApi = require('/services/contract/index')[listing.blockchain]
+
+      const userBalance = +await contractApi.balanceOf(user.walletAddress)
+
+      if (userBalance < listing.price) {
+        setConfirmOpened(false)
+        openAddFunds()
+        dispatch(pushToast({
+          type: 'info',
+          message: `Your balance is ${getMoneyView(userBalance)}. You need to fund ${getMoneyView(listing.price - userBalance)} to buy this NFT.`
+        }))
+        reject()
+        return;
+      }
 
       contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
         .then(({ forSell }) => {
@@ -276,10 +302,7 @@ function PhotoDetails({ openLogin, prefetchedListing = {} }) {
                     resolve()
                     setIsDone(true)
 
-                    let fileName = listing?.assets?.[0]?.fileName
-
-                    if (listing.resource.includes('360'))
-                      fileName = listing.name + '.zip'
+                    const fileName = escapeValue(listing.name) + '.zip'
 
                     download(getConfig().API_URL + `listings/${id}/download`, fileName)
 
