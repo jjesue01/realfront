@@ -6,10 +6,12 @@ const { dispatch } = store
 
 export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit = 'ether') {
   const contractApi = {};
+
   if (!window?.ethereum)
     return contractApi
 
-  contractApi.lazyMint = (creatorAddress, royalty, price, walletAddress) => {
+  contractApi.pureLazyMint = (creatorAddress, royalty = 0, price, walletAddress) => {
+    console.log(creatorAddress, royalty, price, walletAddress)
     return new Promise((resolve, reject) => {
       const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
 
@@ -19,9 +21,9 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit =
           const tokenID = receipt?.events?.['Minted']?.returnValues?._id
 
           if (tokenID)
-            resolve(tokenID)
+            resolve({ ...receipt, tokenID })
           else
-            reject(tokenID)
+            reject()
         })
         .on('error', (error) => {
           let message = 'Error while executing lazyMint'
@@ -48,7 +50,7 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit =
           if (tokenID)
             resolve(tokenID)
           else
-            reject(tokenID)
+            reject()
         })
         .on('error', (error) => {
           let message = 'Error while executing mintAndList'
@@ -313,6 +315,15 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit =
           dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
+    })
+  }
+
+  contractApi.lazyMint = (creatorAddress, royalty, price, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      contractApi.approve(price, walletAddress)
+        .then(() => contractApi.pureLazyMint(creatorAddress, royalty, price, walletAddress))
+        .then(resolve)
+        .catch(reject)
     })
   }
 

@@ -256,7 +256,7 @@ function Form({ mode }) {
     setDeleting(true)
 
     try {
-      if (listing?.isPublished)
+      if (listing?.isPublished && !!listing?.tokenIds?.length)
         await contractApi.revokeSell(listing.tokenIds[0], user.walletAddress)
 
       deleteListing(router.query.id).unwrap()
