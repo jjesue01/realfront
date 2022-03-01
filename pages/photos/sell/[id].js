@@ -246,7 +246,7 @@ function SellItem() {
   }, [listing])
 
   useEffect(function initListing() {
-    if (listing !== undefined && listing.tokenIds.length !== 0) {
+    if (listing !== undefined && (listing.tokenIds.length !== 0 || listing?.activeDate)) {
       setValues(prevState => {
         const initialValues = {
           ...prevState,
