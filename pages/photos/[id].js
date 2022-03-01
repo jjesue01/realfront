@@ -21,7 +21,7 @@ import {authApi} from "../../services/auth";
 import ConfirmCheckout from "../../components/dialogs/confirm-checkout/ConfirmCheckout";
 import DoneCongratulation from "../../components/dialogs/done-congratulation/DoneCongratulation";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
-import {download, getBlockchain, getIdToken, getMoneyView, switchNetwork} from "../../utils";
+import {download, escapeValue, getBlockchain, getIdToken, getMoneyView, switchNetwork} from "../../utils";
 import {useDispatch, useSelector} from "react-redux";
 import Error from "../../components/error/Error";
 import MakeOffer from "../../components/dialogs/make-offer/MakeOffer";
@@ -326,10 +326,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
                 resolve()
                 setIsDone(true)
 
-                let fileName = listing?.assets?.[0]?.fileName
-
-                if (listing.resource.includes('360'))
-                  fileName = listing.name + '.zip'
+                const fileName = escapeValue(listing.name) + '.zip'
 
                 download(getConfig().API_URL + `listings/${id}/download`, fileName)
 
