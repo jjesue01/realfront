@@ -182,10 +182,12 @@ function SellItem() {
     }
 
     let promise;
-
     if (listing?.tokenIds?.length === 0) {
-      promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
-      console.log('mint')
+      //promise = contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
+      promise = sellType === 'auction' ?
+        contractApi.mintAndList(+values.royalties, values.price, endTime, user.walletAddress)
+        :
+        Promise.resolve()
     } else if (listing.isPublished || listing?.activeDate) {
       promise = data.price !== listing.price ?
         contractApi.editPrice(data.tokenIds[0], data.price, user.walletAddress)
@@ -201,9 +203,9 @@ function SellItem() {
 
     promise
       .then((tokenID) => {
-        if (data.tokenIds.length === 0) {
+        if (sellType === 'auction') {
           //data.tokenID = tokenID
-          data.tokenIds = [tokenID]
+          data.tokenIds = [+tokenID]
         }
 
         data.royalties = values.royalties || 0
@@ -220,12 +222,6 @@ function SellItem() {
       })
       .catch(error => {
         console.log(error)
-        // let errorMessage = 'Error while executing contract method'
-        //
-        // if (error?.code === 4001)
-        //   errorMessage = 'User cancelled sell flow'
-        //
-        // dispatch(pushToast())
         setSubmitting(false)
       })
   }
@@ -250,7 +246,7 @@ function SellItem() {
   }, [listing])
 
   useEffect(function initListing() {
-    if (listing !== undefined && listing.tokenIds.length !== 0) {
+    if (listing !== undefined && (listing.tokenIds.length !== 0 || listing?.activeDate)) {
       setValues(prevState => {
         const initialValues = {
           ...prevState,

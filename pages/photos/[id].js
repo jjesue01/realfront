@@ -188,7 +188,13 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
     const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
-    contract.revokeSell(listing.tokenIds[0], user.walletAddress)
+
+    const promise = !!listing?.tokenIds?.length ?
+      contract.revokeSell(listing.tokenIds[0], user.walletAddress)
+      :
+      Promise.resolve()
+
+    promise
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
@@ -290,43 +296,57 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
         return;
       }
 
-      contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
-        .then(({ forSell }) => {
-          if (forSell) {
-            contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
-              .then(({ transactionHash: hash }) => {
-                console.log(hash)
-                setTransactionHash(hash)
-                purchaseListing(listing)
-                  .then(result => {
-                    resolve()
-                    setIsDone(true)
+      let sellData = { forSell: true }
 
-                    const fileName = escapeValue(listing.name) + '.zip'
+      if (!!listing?.tokenIds?.length) {
+        sellData = await contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
+      }
 
-                    download(getConfig().API_URL + `listings/${id}/download`, fileName)
+      if (sellData?.forSell) {
+        let promise;
 
-                    // downloadNFT(listing.ipfs.cid, listing.rawFileName)
-                    // listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
-                    //   download(path, originalName)
-                    // })
-                  })
-                  .catch(error => {
-                    console.log(error)
-                    reject()
-                  })
+        if (listing.tokenIds.length === 0) {
+          promise = contractApi.lazyMint(listing.creator.walletAddress, listing.royalties, listing.price, user.walletAddress)
+          console.log()
+        } else {
+          promise = contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
+        }
+        promise
+          .then(({ transactionHash: hash, tokenID }) => {
+            console.log(hash)
+            const data = { ...listing }
+
+            if (listing?.tokenIds?.length === 0) {
+              data.tokenIds = [tokenID]
+            }
+
+            setTransactionHash(hash)
+            purchaseListing(data)
+              .then(result => {
+                resolve()
+                setIsDone(true)
+
+                const fileName = escapeValue(listing.name) + '.zip'
+
+                download(getConfig().API_URL + `listings/${id}/download`, fileName)
+
+                // downloadNFT(listing.ipfs.cid, listing.rawFileName)
+                // listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
+                //   download(path, originalName)
+                // })
               })
               .catch(error => {
                 console.log(error)
                 reject()
               })
-          } else {
-            setListingError(true)
-          }
-        })
-        .catch(() => {
-          setListingError(true)
-        })
+          })
+          .catch(error => {
+            console.log(error)
+            reject()
+          })
+      } else {
+        setListingError(true)
+      }
     })
   }
 
