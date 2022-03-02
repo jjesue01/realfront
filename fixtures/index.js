@@ -122,6 +122,10 @@ export const adminLinks = [
     label: 'Invites',
     url: '/admin/invites'
   },
+  {
+    label: 'User Management',
+    url: '/admin/user-management'
+  }
 ]
 
 export const HOST_NAME = 'https://nft.homejab.com'
