@@ -39,7 +39,9 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const [purchaseListing] = usePurchaseListingMutation()
   const [finishAuction] = useFinishAuctionMutation()
   const [depublishListing] = useDepublishListingMutation()
-  const { data: listing = { ...prefetchedListing }, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
+  const { data: listing = { ...prefetchedListing }, error, refetch, isFetching } = useGetListingByIdQuery(id, {
+    skip: !id,
+  })
   const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery({ listingID: id }, { skip: !id })
   const bids = bidsData?.docs || []
   const cityId = listing?.city?.ID;
@@ -50,7 +52,8 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
     limit: 3
   }, { skip: !cityId })
   const [manualLoading, setLoading] = useState(false)
-  const isLoading = (!listing || !transactions || !listings) && !error || isFetching || bidsFetching || manualLoading
+  const [isFileProcessing, setFileProcessing] = useState(false)
+  const isLoading = (!listing || !transactions || !listings) && !error || isFetching && !isFileProcessing || bidsFetching || manualLoading
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const [makeOfferOpened, setMakeOfferOpened] = useState(false)
@@ -62,6 +65,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const [availableBid, setAvailableBid] = useState(null)
 
   const networkMessageShown = useRef(false)
+  const pollingStarted = useRef(false)
 
   const maxBid = useMemo(() => {
     if (bidsData?.docs?.length) {
@@ -363,6 +367,28 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
 
+  useEffect(function initPolling() {
+    if (!listing?._id || listing?.assets?.[0]?.path || pollingStarted.current) {
+      return undefined;
+    }
+
+    pollingStarted.current = true
+    setFileProcessing(true)
+
+    let interval = setInterval(async function () {
+      const { data } = await dispatch(listingsApi.endpoints.getListingById.initiate(id, {
+        subscribe: false,
+        forceRefetch: true
+      }))
+
+      if (data?.assets?.[0]?.path) {
+        clearInterval(interval)
+        setFileProcessing(false)
+      }
+    }, 3000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listing])
+
   useEffect(function networkToast() {
     if (listing?._id && !networkMessageShown.current) {
       getBlockchain().then(blockchain => {
@@ -418,6 +444,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
           bids={bids}
           maxBid={listing?.bid?.highest}
           listing={listing}
+          isFileProcessing={isFileProcessing}
           onCancelBid={toggleCancelConfirmation}
           onCancelListing={toggleCancelListing}
           onFinishAuction={toggleConfirmDialog}
