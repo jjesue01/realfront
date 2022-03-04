@@ -19,8 +19,21 @@ import AspectRatioBox from "../../../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../../../media-file/MediaFile";
 import {blockchainOptions, HOST_NAME} from "../../../../fixtures";
 import {getConfig} from "../../../../app-config";
+import Loader from "../../../loader/Loader";
 
-function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFinishAuction, onCancelBid, onCancelListing, loading }) {
+function PhotoInfo({
+  listing,
+  user,
+  onBuy,
+  onOffer,
+  ownItem,
+  onLogin,
+  bids,
+  onFinishAuction,
+  onCancelBid,
+  onCancelListing,
+  isFileProcessing
+}) {
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
@@ -124,11 +137,19 @@ function PhotoInfo({ listing, user, onBuy, onOffer, ownItem, onLogin, bids, onFi
                   controls
                   alt={listing?.name} />
             }
+            <div className={cn(styles.fileProcessing, { [styles.fileProcessing__opened]: isFileProcessing })}>
+              <div className={styles.loaderSmall}>
+                <Loader
+                  opened={isFileProcessing}
+                  color="accent" />
+              </div>
+              <p>Please wait, file is processing</p>
+            </div>
             {
               listing?.bid?.endDate && listing?.isPublished &&
               <Timer
                 className={styles.timer}
-                endDate={listing.bid.endDate}
+                endDate={listing?.bid?.endDate}
                 onEnd={handleTimerEnd} />
             }
             {
