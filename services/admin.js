@@ -36,7 +36,7 @@ export const adminApi = createApi({
         try {
           await queryFulfilled
         } catch (error) {
-          dispatch(pushToast({ type: 'error', message: 'Error while getting invites list' }))
+          dispatch(pushToast({ type: 'error', message: 'Error while getting users list' }))
         }
       }
     }),
@@ -56,11 +56,25 @@ export const adminApi = createApi({
         }
       }
     }),
+    getAllUsers: builder.query({
+      query: (params = {}) => ({
+        url: '/admin/users',
+        params
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting invites list' }))
+        }
+      }
+    }),
   }),
 })
 
 export const {
   useAdminLoginMutation,
   useGetInvitesQuery,
+  useGetAllUsersQuery,
   useSendInviteMutation
 } = adminApi
