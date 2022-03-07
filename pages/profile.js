@@ -26,7 +26,7 @@ import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
 import Bids from "../components/profile/bids/Bids";
 import ConfirmationDialog from "../components/dialogs/confirmation-dialog/ConfirmationDialog";
 
-const tabs = ['collected', 'created', 'favorited', 'activity', 'my bids']
+const tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
 
 const initialFilters = {
   searchValue: '',
@@ -48,6 +48,7 @@ function MyProfile() {
   const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
   const { data: collectedListings, refetch: refetchCollected } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
   const { data: createdListings, refetch: refetchCreated } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
+  const { data: soldListings, refetch: refetchSold } = useGetListingsQuery({ seller: user?._id }, { skip: !user?._id })
   const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
   const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
   const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery()
@@ -187,6 +188,9 @@ function MyProfile() {
     if (currentTab === 'created')
       items = [...createdListings.docs]
 
+    if (currentTab === 'sold')
+      items = [...soldListings.docs]
+
     if (filters.searchValue !== '') {
       items = items.filter(({ name, address }) =>
         `${name.toLowerCase()}-${address.toLowerCase()}`.includes(filters.searchValue.toLowerCase()))
@@ -304,10 +308,11 @@ function MyProfile() {
     refetchUser()
     refetchCollected()
     refetchCreated()
+    refetchSold()
     refetchFavorite()
     refetchTransactions()
     refetchBids()
-  }, [refetchUser, refetchCollected, refetchCreated, refetchFavorite, refetchTransactions, refetchBids])
+  }, [refetchUser, refetchCollected, refetchCreated, refetchFavorite, refetchTransactions, refetchBids, refetchSold])
 
   return (
     <main className={styles.root}>
@@ -324,7 +329,7 @@ function MyProfile() {
             onChange={handleTabChange}
             tabs={tabs} />
           {
-            ['collected', 'created'].includes(currentTab) &&
+            ['collected', 'created', 'sold'].includes(currentTab) &&
             <div className={styles.filterControls}>
               <div className={styles.row}>
                 <Input
@@ -373,9 +378,9 @@ function MyProfile() {
               </div>
             </div>
           }
-          <div className={cn(styles.tabContent, { [styles.contentMargin]: ['collected', 'created'].includes(currentTab) })}>
+          <div className={cn(styles.tabContent, { [styles.contentMargin]: ['collected', 'created', 'sold'].includes(currentTab) })}>
             {
-              ['collected', 'created', 'favorited'].includes(currentTab) &&
+              ['collected', 'created', 'favorited', 'sold'].includes(currentTab) &&
                 <div className={styles.itemsContainer}>
                   <Typography fontSize={16} lHeight={20}>
                     { filteredData.length > 0 ? filteredData.length : 'No' } items

@@ -86,7 +86,7 @@ export function buildFormData(data) {
   const formData = new FormData()
   for (const [key, value] of Object.entries(data)) {
     const keyLowerCase = key.toLowerCase()
-    if (keyLowerCase.includes('image') || keyLowerCase.includes('file') || keyLowerCase.includes('raw')) {
+    if (keyLowerCase.includes('image') || keyLowerCase.includes('file')) {
       if (typeof value?.name === 'string')
         formData.append(key, value, value.name)
       if (Array.isArray(value))

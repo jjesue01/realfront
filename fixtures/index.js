@@ -5,7 +5,7 @@ export const questions = [
   },
   {
     title: 'What are the gas fees on the HomeJab NFT Marketplace?',
-    content: 'Gas fees are paid in BNB. Currently, BNB gas fees are around 0.0007 to 0.0010 BNB which equates to roughly $1.80 per transaction.'
+    content: 'Gas fees are paid in BNB. Currently, BNB gas fees are around 0.0007 to 0.0010 BNB (less than $1 per transaction).'
   },
   {
     title: 'What are the transaction fees on the HomeJab NFT Marketplace?',
