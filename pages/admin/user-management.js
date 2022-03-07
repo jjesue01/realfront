@@ -9,14 +9,25 @@ import Switcher from "../../components/switcher/Switcher";
 import DetailsIcon from '/public/icons/details.svg'
 import SearchIcon from "../../public/icons/search-icon.svg";
 import Input from "../../components/input/Input";
-import {useGetAllUsersQuery} from "../../services/admin";
+import {useGetAllUsersQuery, useUpdateUserMutation} from "../../services/admin";
 
-function UserManagement() {
-  const { data: users = [] } = useGetAllUsersQuery()
-  const [searchValue, setSearchValue] = useState('')
+function UserRow({ user }) {
+  const [updateUser] = useUpdateUserMutation()
+  const [switchers, setSwitchers] = useState({
+    invited: user.invited,
+    verified: user.verified
+  })
 
-  const rowsList = users.map((user, index) => (
-    <div key={user._id} className={styles.tableItem}>
+  function toggleSwitcher({ target: { name, value } }) {
+    setSwitchers(prevState => ({
+      ...prevState,
+      [name]: value
+    }))
+    updateUser({ ...user, [name]: value })
+  }
+
+  return (
+    <div className={styles.tableItem}>
       <div className={cn(styles.col, styles.colLogo)}>
         <div className={styles.logoWrapper}>
           {
@@ -35,16 +46,16 @@ function UserManagement() {
         <div className={cn(styles.col, styles.colInvited)}>
           <Switcher
             name="invited"
-            value={user.invited}
+            value={switchers.invited}
             size="small"
-            onChange={() => {}} />
+            onChange={toggleSwitcher} />
         </div>
         <div className={cn(styles.col, styles.colVerified)}>
           <Switcher
             name="verified"
-            value={user.verified}
+            value={switchers.verified}
             size="small"
-            onChange={() => {}} />
+            onChange={toggleSwitcher} />
         </div>
         <Link href={'/marketplace'}>
           <a className={styles.btnIcon}>
@@ -53,10 +64,20 @@ function UserManagement() {
         </Link>
       </div>
     </div>
+  )
+}
+
+function UserManagement() {
+  const [searchValue, setSearchValue] = useState('')
+  const { data: users = [] } = useGetAllUsersQuery({ search: searchValue })
+
+  const rowsList = users.map((user, index) => (
+    <UserRow key={user._id} user={user} />
   ))
 
   function handleChangeSearch({ target: { value } }) {
     setSearchValue(value)
+    //dispatch(adminApi.endpoints.getAllUsers.initiate({ search: value }))
   }
 
   return (

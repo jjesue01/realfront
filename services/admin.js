@@ -65,7 +65,22 @@ export const adminApi = createApi({
         try {
           await queryFulfilled
         } catch (error) {
-          dispatch(pushToast({ type: 'error', message: 'Error while getting invites list' }))
+          dispatch(pushToast({ type: 'error', message: 'Error while getting users' }))
+        }
+      }
+    }),
+    updateUser: builder.mutation({
+      query: ({ _id, ...user }) => ({
+        url: `/admin/users/${_id}`,
+        method: 'PATCH',
+        body: user
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'User has been successfully updated' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while updating user' }))
         }
       }
     }),
@@ -74,6 +89,7 @@ export const adminApi = createApi({
 
 export const {
   useAdminLoginMutation,
+  useUpdateUserMutation,
   useGetInvitesQuery,
   useGetAllUsersQuery,
   useSendInviteMutation
