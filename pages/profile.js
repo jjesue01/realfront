@@ -48,8 +48,7 @@ function MyProfile() {
   const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
   const { data: collectedListings, refetch: refetchCollected } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
   const { data: createdListings, refetch: refetchCreated } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
-  // TODO: update query param to ?seller=
-  const { data: soldListings, refetch: refetchSold } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
+  const { data: soldListings, refetch: refetchSold } = useGetListingsQuery({ seller: user?._id }, { skip: !user?._id })
   const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
   const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
   const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery()
