@@ -25,7 +25,7 @@ function SideMenu() {
       <ul className={styles.links}>
         {
           adminLinks.map(link => (
-            <li key={link.url} className={cn({ [styles.active]: link.url === router.pathname })}>
+            <li key={link.url} className={cn({ [styles.active]: router.pathname.includes(link.url) })}>
               <Link href={link.url}>
                 { link.label }
               </Link>

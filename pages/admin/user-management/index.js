@@ -2,14 +2,14 @@ import React, {useState} from "react";
 import Head from "next/head";
 import Link from 'next/link'
 import Image from "next/image";
-import styles from '../../styles/UserManagement.module.sass'
+import styles from '../../../styles/UserManagement.module.sass'
 import cn from "classnames";
-import Typography from "../../components/Typography";
-import Switcher from "../../components/switcher/Switcher";
+import Typography from "../../../components/Typography";
+import Switcher from "../../../components/switcher/Switcher";
 import DetailsIcon from '/public/icons/details.svg'
-import SearchIcon from "../../public/icons/search-icon.svg";
-import Input from "../../components/input/Input";
-import {useGetAllUsersQuery, useUpdateUserMutation} from "../../services/admin";
+import SearchIcon from "../../../public/icons/search-icon.svg";
+import Input from "../../../components/input/Input";
+import {useGetAllUsersQuery, useUpdateUserMutation} from "../../../services/admin";
 
 function UserRow({ user }) {
   const [updateUser] = useUpdateUserMutation()
@@ -57,7 +57,7 @@ function UserRow({ user }) {
             size="small"
             onChange={toggleSwitcher} />
         </div>
-        <Link href={'/marketplace'}>
+        <Link href={`/admin/user-management/${user._id}`}>
           <a className={styles.btnIcon}>
             <DetailsIcon />
           </a>
