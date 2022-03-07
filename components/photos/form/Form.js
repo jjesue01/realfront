@@ -49,15 +49,12 @@ const RESOURCE_TYPES = ['Image', 'Video', '360 Tour']
 const FORMATS = {
   'Image': {
     preview: ['.jpg'],
-    raw: ['.raw', '.cr2', '.cr3', '.nef', '.arw', '.dng', '.raf', '.jpg']
   },
   'Video': {
     preview: ['.mp4', '.webm'],
-    raw: ['.mp4', '.webm']
   },
   '360 Tour': {
     preview: ['.jpg'],
-    raw: ['.jpg']
   },
 }
 
@@ -80,7 +77,6 @@ function Form({ mode }) {
   const [deleteConfirmationOpened, setDeleteConfirmation] = useState(false)
   const [filesForDelete, setFilesForDelete] = useState([])
   const [file, setFile] = useState([])
-  const [rawFile, setRawFile] = useState([])
   const [filePreview, setFilePreview] = useState(null)
   const [tourPreviews, setTourPreviews] = useState([])
   const [location, setLocation] = useState({})
@@ -127,16 +123,10 @@ function Form({ mode }) {
     }
   }
 
-  function handleFileRAWChange(files) {
-    if (files.length > 0)
-      setRawFile([...files])
-  }
-
   function handleResourceChange({ target: { value } }) {
     if (isReseller) return;
 
     const previewFormats = FORMATS[value].preview
-    //const rawFormats = FORMATS[value].raw
 
     const formats = value === 'Video' ? previewFormats : [...previewFormats, '.jpeg']
     const updatedFiles = file.filter((item) =>
@@ -149,7 +139,6 @@ function Form({ mode }) {
       case 'Video': {
         setFile(updatedFiles)
         setFilePreview(updatedFiles.length > 0 ? getImageUrl(updatedFiles[0]) : null)
-        setRawFile([])
         setTourPreviews([])
         break;
       }
@@ -161,12 +150,10 @@ function Form({ mode }) {
             content: getImageUrl(item)
           }))
         )
-        setRawFile([])
         break;
       }
       default: {
         setFile([])
-        setRawFile([])
       }
     }
   }
@@ -207,11 +194,10 @@ function Form({ mode }) {
   }, [dispatch])
 
   function handleSubmit(values, { setSubmitting }) {
-    if (file.length !== 0 && (rawFile.length !== 0 || isTour)) {
+    if (file.length !== 0) {
       const data = {
         ...values,
         file: file,
-        raw: rawFile,
         tags: decodeTags(values.tags),
         city: values.city.value,
         resource: resourceType,
@@ -291,19 +277,15 @@ function Form({ mode }) {
               link360: data?.link360 || ''
             })
 
-            if (data?.resource === 'Video') {
-              setFile([data?.assets?.[0].path])
-              setRawFile([data?.rawFileName])
-            } else if (data?.resource === 'Image') {
-              setFile([data?.assets?.[0].path])
-              setRawFile([data?.rawFileName])
-            } else {
+            if (data?.resource?.includes('360')) {
               setFile(data?.assets?.map(asset => asset.path))
               setTourPreviews(data?.assets?.map((asset, index) => ({
                 id: `${Date.now()}-${index}`,
                 content: asset?.path,
                 nftId: asset._id
               })))
+            } else {
+              setFile([data?.assets?.[0].path])
             }
             setResourceType((data?.resource?.includes('360') ? '360 Tour' : data?.resource) || 'Image')
 
@@ -429,13 +411,6 @@ function Form({ mode }) {
             fontSize={14}
             lHeight={22}
             color={'rgba(55, 65, 81, 0.8)'}>
-            Raw file types: { getFormattedFileFormats(FORMATS[resourceType].raw) }.
-          </Typography>
-          <Typography
-            fontFamily={'Lato'}
-            fontSize={14}
-            lHeight={22}
-            color={'rgba(55, 65, 81, 0.8)'}>
             Max size: 80 Mb
           </Typography>
           <div className={styles.uploaders}>
@@ -475,7 +450,7 @@ function Form({ mode }) {
               </FileUploader>
             </div>
             {
-              isTour ?
+              isTour &&
                 <div className={styles.photoPreviews}>
                   {
                     new Array(Math.max(file.length, 6)).fill(null).map((item, index) => (
@@ -497,33 +472,6 @@ function Form({ mode }) {
                       </div>
                     ))
                   }
-                </div>
-                :
-                <div className={styles.uploader}>
-                  <FileUploader
-                    onChange={handleFileRAWChange}
-                    accept={FORMATS[resourceType].raw.join() + (resourceType !== 'Video' && ',.jpeg')}
-                    disabled={isReseller}
-                    error={rawFile.length === 0 && touched.name}>
-                    <div className={styles.uploaderContainer}>
-                      <Image src="/images/form-raw.svg" width={50} height={50} alt="raw file" />
-                      <Typography fontSize={20} fontWeight={600} lHeight={24} margin={'24px 0 0'} align="center">
-                        { rawFile.length === 0 ? 'Upload raw file' : (rawFile[0]?.name || rawFile[0] )}
-                      </Typography>
-                      {
-                        rawFile.length === 0 &&
-                        <p className={styles.uploaderText}>
-                          Drag & drop file or <span>browse media on your device</span>
-                        </p>
-                      }
-                      {
-                        rawFile.length !== 0 && !isReseller &&
-                        <ButtonCircle className={styles.btnEdit}>
-                          <PenIcon />
-                        </ButtonCircle>
-                      }
-                    </div>
-                  </FileUploader>
                 </div>
             }
           </div>

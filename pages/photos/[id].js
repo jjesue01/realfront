@@ -333,11 +333,6 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
                 const fileName = escapeValue(listing.name) + '.zip'
 
                 download(getConfig().API_URL + `listings/${id}/download`, fileName)
-
-                // downloadNFT(listing.ipfs.cid, listing.rawFileName)
-                // listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
-                //   download(path, originalName)
-                // })
               })
               .catch(error => {
                 console.log(error)
