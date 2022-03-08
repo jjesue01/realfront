@@ -102,7 +102,7 @@ function PhotoInfo({
   }
 
   function handleDownloadAssets() {
-    const fileName = escapeValue(listing.name) + '.zip'
+    const fileName = listing.name.replace(/\s/g, '-') + '_assets.zip'
 
     download(getConfig().API_URL + `listings/${id}/download`, fileName)
   }
