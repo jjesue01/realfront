@@ -2,7 +2,16 @@ import React from "react";
 import styles from './Switcher.module.sass'
 import cn from "classnames";
 
-function Switcher({ className, name, value, onChange }) {
+function Switcher({ className, name, value, size = 'default', onChange }) {
+
+  const btnClassNames = cn(
+    className,
+    styles.root,
+    {
+      [styles.active]: value,
+      [styles.small]: size === 'small'
+    }
+  )
 
   function handleClick() {
     onChange({ target: { name, value: !value } })
@@ -12,7 +21,7 @@ function Switcher({ className, name, value, onChange }) {
     <button
       type="button"
       onClick={handleClick}
-      className={cn(className, styles.root, { [styles.active]: value })}>
+      className={btnClassNames}>
       <span />
     </button>
   )
