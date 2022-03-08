@@ -81,6 +81,19 @@ export const adminApi = createApi({
         }
       }
     }),
+    getListings: builder.query({
+      query: (params) => ({
+        url: `/admin/listings`,
+        params
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting user' }))
+        }
+      }
+    }),
     updateUser: builder.mutation({
       query: ({ _id, ...user }) => ({
         url: `/admin/users/${_id}`,
@@ -103,6 +116,7 @@ export const {
   useAdminLoginMutation,
   useUpdateUserMutation,
   useGetUserByIdQuery,
+  useGetListingsQuery,
   useGetInvitesQuery,
   useGetAllUsersQuery,
   useSendInviteMutation

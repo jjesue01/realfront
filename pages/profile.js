@@ -121,9 +121,7 @@ function MyProfile() {
 
     if (bidForDelete) {
       setManualLoading(true)
-      /**
-       * TODO: update tokenID here
-       */
+
       contract.revokeBid(bidForDelete.listing?.tokenID, bidForDelete.bidIndex , user.walletAddress)
         .then(() => {
           deleteBid({ id: bidForDelete._id }).unwrap()

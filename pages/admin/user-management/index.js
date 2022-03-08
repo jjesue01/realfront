@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Head from "next/head";
 import Link from 'next/link'
 import Image from "next/image";
@@ -14,8 +14,8 @@ import {useGetAllUsersQuery, useUpdateUserMutation} from "../../../services/admi
 function UserRow({ user }) {
   const [updateUser] = useUpdateUserMutation()
   const [switchers, setSwitchers] = useState({
-    invited: user.invited,
-    verified: user.verified
+    invited: false,
+    verified: false
   })
 
   function toggleSwitcher({ target: { name, value } }) {
@@ -25,6 +25,15 @@ function UserRow({ user }) {
     }))
     updateUser({ ...user, [name]: value })
   }
+
+  useEffect(function () {
+    if (user) {
+      setSwitchers({
+        invited: user.invited,
+        verified: user.verified
+      })
+    }
+  }, [user])
 
   return (
     <div className={styles.tableItem}>
@@ -69,7 +78,7 @@ function UserRow({ user }) {
 
 function UserManagement() {
   const [searchValue, setSearchValue] = useState('')
-  const { data: users = [] } = useGetAllUsersQuery({ search: searchValue })
+  const { data: users = [], refetch } = useGetAllUsersQuery({ search: searchValue })
 
   const rowsList = users.map((user, index) => (
     <UserRow key={user._id} user={user} />
@@ -77,8 +86,12 @@ function UserManagement() {
 
   function handleChangeSearch({ target: { value } }) {
     setSearchValue(value)
-    //dispatch(adminApi.endpoints.getAllUsers.initiate({ search: value }))
   }
+
+  useEffect(function init() {
+    refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div>
