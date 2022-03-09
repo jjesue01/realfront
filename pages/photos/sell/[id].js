@@ -175,6 +175,7 @@ function SellItem() {
     if (sellType === 'auction') {
       data.sellMethod = 'Auction';
       data.endDate = isoString
+      data.copies = 1
     }
 
     if (switchers.schedule) {
@@ -246,7 +247,7 @@ function SellItem() {
   }, [listing])
 
   useEffect(function initListing() {
-    if (listing !== undefined && (listing.tokenIds.length !== 0 || listing?.activeDate)) {
+    if (listing !== undefined) {
       setValues(prevState => {
         const initialValues = {
           ...prevState,
@@ -383,14 +384,14 @@ function SellItem() {
                         error={errors.price && touched.price}
                         errorText={errors.price}
                         label="Price*" />
-                      {/*<Input*/}
-                      {/*  type="number"*/}
-                      {/*  className={styles.field}*/}
-                      {/*  name="copies"*/}
-                      {/*  value={formik.values.copies}*/}
-                      {/*  onChange={handleCopiesChange}*/}
-                      {/*  placeholder="e.g. 5"*/}
-                      {/*  label="Number of copies" />*/}
+                      <Input
+                        type="number"
+                        className={styles.field}
+                        name="copies"
+                        value={formik.values.copies}
+                        onChange={handleCopiesChange}
+                        placeholder="e.g. 5"
+                        label="Number of copies" />
                       {
                         listing?.tokenIds.length === 0 &&
                         <Input
