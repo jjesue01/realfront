@@ -325,7 +325,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
             }
 
             setTransactionHash(hash)
-            purchaseListing(data)
+            purchaseListing(data).unwrap()
               .then(result => {
                 resolve()
                 setIsDone(true)

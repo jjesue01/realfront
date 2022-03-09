@@ -406,6 +406,14 @@ function PhotoInfo({
                 }
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
+                    <p>Estimated copies</p>
+                  </div>
+                  <div className={cn(styles.detailsCol, styles.colContent)}>
+                    <p>{listing?.copies}</p>
+                  </div>
+                </div>
+                <div className={styles.field}>
+                  <div className={cn(styles.detailsCol, styles.colName)}>
                     <p>Blockchain</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
