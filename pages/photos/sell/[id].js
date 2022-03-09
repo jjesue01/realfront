@@ -247,7 +247,7 @@ function SellItem() {
   }, [listing])
 
   useEffect(function initListing() {
-    if (listing !== undefined) {
+    if (listing !== undefined && listing?.price) {
       setValues(prevState => {
         const initialValues = {
           ...prevState,
