@@ -406,7 +406,7 @@ function PhotoInfo({
                 }
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
-                    <p>Estimated copies</p>
+                    <p>Copies</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
                     <p>{listing?.copies}</p>
