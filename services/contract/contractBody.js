@@ -6,8 +6,36 @@ const { dispatch } = store
 
 export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit = 'ether') {
   const contractApi = {};
+
   if (!window?.ethereum)
     return contractApi
+
+  contractApi.pureLazyMint = (creatorAddress, royalty = 0, price, walletAddress) => {
+    console.log(creatorAddress, royalty, price, walletAddress)
+    return new Promise((resolve, reject) => {
+      const weiPrice = window.web3App.utils.toWei(price.toString(), weiUnit)
+
+      homejab.methods.lazyMint(creatorAddress, royalty, weiPrice).send({ from: walletAddress })
+        .once('confirmation', (confirmation, receipt) => {
+          console.log(receipt)
+          const tokenID = receipt?.events?.['Minted']?.returnValues?._id
+
+          if (tokenID)
+            resolve({ ...receipt, tokenID })
+          else
+            reject()
+        })
+        .on('error', (error) => {
+          let message = 'Error while executing lazyMint'
+          console.log(error)
+          if (error?.code === 4001)
+            message = 'User cancelled lazy minting process'
+
+          dispatch(pushToast({ type: 'error', message }))
+          reject(error)
+        })
+    })
+  }
 
   contractApi.mintAndList = (royalties, price, endTime, walletAddress) => {
     return new Promise((resolve, reject) => {
@@ -17,8 +45,12 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit =
       homejab.methods.mintAndList(royalties, weiPrice, endTime).send({ from: walletAddress })
         .once('confirmation', (confirmation, receipt) => {
           console.log(receipt)
-          const tokenID = receipt.events['Minted'].returnValues._id
-          resolve(tokenID)
+          const tokenID = receipt?.events?.['Minted']?.returnValues?._id
+
+          if (tokenID)
+            resolve(tokenID)
+          else
+            reject()
         })
         .on('error', (error) => {
           let message = 'Error while executing mintAndList'
@@ -283,6 +315,15 @@ export default function createContract(homejab, BUSD, HOMEJAB_ADDRESS, weiUnit =
           dispatch(pushToast({ type: 'error', message }))
           reject(error)
         })
+    })
+  }
+
+  contractApi.lazyMint = (creatorAddress, royalty, price, walletAddress) => {
+    return new Promise((resolve, reject) => {
+      contractApi.approve(price, walletAddress)
+        .then(() => contractApi.pureLazyMint(creatorAddress, royalty, price, walletAddress))
+        .then(resolve)
+        .catch(reject)
     })
   }
 

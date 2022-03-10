@@ -36,7 +36,7 @@ export const adminApi = createApi({
         try {
           await queryFulfilled
         } catch (error) {
-          dispatch(pushToast({ type: 'error', message: 'Error while getting invites list' }))
+          dispatch(pushToast({ type: 'error', message: 'Error while getting users list' }))
         }
       }
     }),
@@ -56,11 +56,68 @@ export const adminApi = createApi({
         }
       }
     }),
+    getAllUsers: builder.query({
+      query: (params = {}) => ({
+        url: '/admin/users',
+        params
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting users' }))
+        }
+      }
+    }),
+    getUserById: builder.query({
+      query: (id) => ({
+        url: `/admin/users/${id}`
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting user' }))
+        }
+      }
+    }),
+    getListings: builder.query({
+      query: (params) => ({
+        url: `/admin/listings`,
+        params
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting user' }))
+        }
+      }
+    }),
+    updateUser: builder.mutation({
+      query: ({ _id, ...user }) => ({
+        url: `/admin/users/${_id}`,
+        method: 'PATCH',
+        body: user
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+          dispatch(pushToast({ type: 'success', message: 'User has been successfully updated' }))
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while updating user' }))
+        }
+      }
+    }),
   }),
 })
 
 export const {
   useAdminLoginMutation,
+  useUpdateUserMutation,
+  useGetUserByIdQuery,
+  useGetListingsQuery,
   useGetInvitesQuery,
+  useGetAllUsersQuery,
   useSendInviteMutation
 } = adminApi

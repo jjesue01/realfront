@@ -10,7 +10,7 @@ import Toasts from "./toasts/Toasts";
 function AdminLayout({ children }) {
   const router = useRouter()
   const admin = useSelector(state => state.auth.admin)
-  const pageName = adminLinks.find(({ url }) => url === router?.pathname)?.label || ''
+  const pageName = adminLinks.find(({ url }) => router?.pathname.includes(url))?.label || ''
 
   useEffect(function init() {
     if (!admin.hasAccess) router.push('/admin')

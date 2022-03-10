@@ -39,7 +39,9 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const [purchaseListing] = usePurchaseListingMutation()
   const [finishAuction] = useFinishAuctionMutation()
   const [depublishListing] = useDepublishListingMutation()
-  const { data: listing = { ...prefetchedListing }, error, refetch, isFetching } = useGetListingByIdQuery(id, { skip: !id })
+  const { data: listing = { ...prefetchedListing }, error, refetch, isFetching } = useGetListingByIdQuery(id, {
+    skip: !id,
+  })
   const { data: bidsData, refetch: refetchBids, isFetching: bidsFetching } = useGetBidsQuery({ listingID: id }, { skip: !id })
   const bids = bidsData?.docs || []
   const cityId = listing?.city?.ID;
@@ -50,7 +52,8 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
     limit: 3
   }, { skip: !cityId })
   const [manualLoading, setLoading] = useState(false)
-  const isLoading = (!listing || !transactions || !listings) && !error || isFetching || bidsFetching || manualLoading
+  const [isFileProcessing, setFileProcessing] = useState(false)
+  const isLoading = (!listing || !transactions || !listings) && !error || isFetching && !isFileProcessing || bidsFetching || manualLoading
   const [confirmOpened, setConfirmOpened] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const [makeOfferOpened, setMakeOfferOpened] = useState(false)
@@ -62,6 +65,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const [availableBid, setAvailableBid] = useState(null)
 
   const networkMessageShown = useRef(false)
+  const pollingStarted = useRef(false)
 
   const maxBid = useMemo(() => {
     if (bidsData?.docs?.length) {
@@ -188,7 +192,13 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
     const contract = require('/services/contract/index')[listing.blockchain]
 
     setLoading(true)
-    contract.revokeSell(listing.tokenIds[0], user.walletAddress)
+
+    const promise = !!listing?.tokenIds?.length ?
+      contract.revokeSell(listing.tokenIds[0], user.walletAddress)
+      :
+      Promise.resolve()
+
+    promise
       .then(() => depublishListing(id).unwrap())
       .then(() => {
         refetch()
@@ -290,43 +300,52 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
         return;
       }
 
-      contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
-        .then(({ forSell }) => {
-          if (forSell) {
-            contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
-              .then(({ transactionHash: hash }) => {
-                console.log(hash)
-                setTransactionHash(hash)
-                purchaseListing(listing)
-                  .then(result => {
-                    resolve()
-                    setIsDone(true)
+      let sellData = { forSell: true }
 
-                    const fileName = escapeValue(listing.name) + '.zip'
+      if (!!listing?.tokenIds?.length) {
+        sellData = await contractApi.getSellData(listing.tokenIds[0], user.walletAddress)
+      }
 
-                    download(getConfig().API_URL + `listings/${id}/download`, fileName)
+      if (sellData?.forSell) {
+        let promise;
 
-                    // downloadNFT(listing.ipfs.cid, listing.rawFileName)
-                    // listing.nfts.forEach(({ ipfs: { file: { originalName, path } } }) => {
-                    //   download(path, originalName)
-                    // })
-                  })
-                  .catch(error => {
-                    console.log(error)
-                    reject()
-                  })
+        if (listing.tokenIds.length === 0) {
+          promise = contractApi.lazyMint(listing.creator.walletAddress, listing.royalties, listing.price, user.walletAddress)
+          console.log()
+        } else {
+          promise = contractApi.buy(listing.tokenIds[0], listing.price, user.walletAddress)
+        }
+        promise
+          .then(({ transactionHash: hash, tokenID }) => {
+            console.log(hash)
+            const data = { ...listing }
+
+            if (listing?.tokenIds?.length === 0) {
+              data.tokenIds = [tokenID]
+            }
+
+            setTransactionHash(hash)
+            purchaseListing(data).unwrap()
+              .then(result => {
+                resolve()
+                setIsDone(true)
+
+                const fileName = listing.name.replace(/\s/g, '-') + '_assets.zip'
+
+                download(getConfig().API_URL + `listings/${id}/download`, fileName)
               })
               .catch(error => {
                 console.log(error)
                 reject()
               })
-          } else {
-            setListingError(true)
-          }
-        })
-        .catch(() => {
-          setListingError(true)
-        })
+          })
+          .catch(error => {
+            console.log(error)
+            reject()
+          })
+      } else {
+        setListingError(true)
+      }
     })
   }
 
@@ -342,6 +361,28 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
     refetch()
     refetchListings()
   }, [dispatch, refetch, id, refetchListings])
+
+  useEffect(function initPolling() {
+    if (!listing?._id || listing?.assets?.[0]?.path || pollingStarted.current) {
+      return undefined;
+    }
+
+    pollingStarted.current = true
+    setFileProcessing(true)
+
+    let interval = setInterval(async function () {
+      const { data } = await dispatch(listingsApi.endpoints.getListingById.initiate(id, {
+        subscribe: false,
+        forceRefetch: true
+      }))
+
+      if (data?.assets?.[0]?.path) {
+        clearInterval(interval)
+        setFileProcessing(false)
+      }
+    }, 3000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listing])
 
   useEffect(function networkToast() {
     if (listing?._id && !networkMessageShown.current) {
@@ -398,6 +439,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
           bids={bids}
           maxBid={listing?.bid?.highest}
           listing={listing}
+          isFileProcessing={isFileProcessing}
           onCancelBid={toggleCancelConfirmation}
           onCancelListing={toggleCancelListing}
           onFinishAuction={toggleConfirmDialog}
