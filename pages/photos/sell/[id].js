@@ -204,7 +204,7 @@ function SellItem() {
 
     promise
       .then((tokenID) => {
-        if (sellType === 'auction') {
+        if (sellType === 'auction' && data.tokenIds.length === 0) {
           //data.tokenID = tokenID
           data.tokenIds = [+tokenID]
         }
