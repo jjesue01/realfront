@@ -4,9 +4,9 @@ import cn from "classnames";
 
 import CheckMarkIcon from '/public/icons/checkmark.svg'
 
-function Card({ className, checkmarkClassName, children, active }) {
+function Card({ className, checkmarkClassName, children, onClick, active }) {
   return (
-    <div className={cn(className, styles.root, { [styles.active]: active })}>
+    <div onClick={onClick} className={cn(className, styles.root, { [styles.active]: active })}>
       { children }
       <span className={cn(checkmarkClassName, styles.checkmark)}>
        <CheckMarkIcon />
