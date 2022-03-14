@@ -324,12 +324,12 @@ export function dateToString(date) {
 
 const getEstOffset = () => {
   const stdTimezoneOffset = () => {
-    var jan = new Date(0, 1)
-    var jul = new Date(6, 1)
+    const jan = new Date(0, 1)
+    const jul = new Date(6, 1)
     return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset())
   }
 
-  var today = new Date()
+  const today = new Date()
 
   const isDstObserved = (today) => {
     return today.getTimezoneOffset() < stdTimezoneOffset()
