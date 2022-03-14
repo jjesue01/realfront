@@ -385,7 +385,7 @@ function SellItem() {
                         errorText={errors.price}
                         label="Price*" />
                       {
-                        listing?.tokenIds.length === 0 &&
+                        (listing?.tokenIds.length === 0 && !listing?.copiesLeft) &&
                         <Input
                           type="number"
                           className={styles.field}
