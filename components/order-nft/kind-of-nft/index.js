@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from './index.module.sass'
 import Typography from "../../Typography";
 import Card from "../card";
@@ -44,11 +44,16 @@ function KindOfNft() {
             checkmarkClassName={styles.checkmark}
             onClick={handleClick(item.value)}
             active={item.value === currentValue}>
-            <Image src={item.imgUrl} width={item.width} height={item.height} alt={item.value} />
+            <div className={styles.imageWrapper}>
+              <Image
+                src={item.imgUrl}
+                width={item.width}
+                height={item.height}
+                alt={item.value} />
+            </div>
             <Typography
               fontWeight={600}
               fontSize={16}
-              margin="20px 0 0"
               lHeight={20}>
               { item.value }
             </Typography>

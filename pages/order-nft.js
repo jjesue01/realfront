@@ -45,6 +45,15 @@ const tabs = [
 
 function OrderNft() {
   const [activeTab, setActiveTab] = useState(0)
+  const [formData, setFormData] = useState({
+    resource: 'Photography',
+    type: 'Ground',
+    object: 'Historical Landmark',
+    location: '',
+    details: '',
+    contactMethod: 'Email',
+    contactInfo: ''
+  })
 
   function handleChangeStep(direction) {
     return function () {
@@ -54,6 +63,14 @@ function OrderNft() {
 
   function handleDone() {
 
+  }
+
+  function handleNext(data = {}) {
+    setFormData(prevState => ({
+      ...prevState,
+      ...data
+    }))
+    handleChangeStep(1)()
   }
 
   return (
@@ -100,7 +117,7 @@ function OrderNft() {
             </div>
           </div>
           {
-            tabs[activeTab].component
+            React.cloneElement(tabs[activeTab].component, { onNext: handleNext })
           }
           {
             activeTab < 5 ?
