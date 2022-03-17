@@ -1,12 +1,18 @@
 import React, {useState} from "react";
 import styles from './index.module.sass'
 import Textarea from "../../textarea/Textarea";
+import pageStyles from "../../../styles/OrderNFT.module.sass";
+import Button from "../../button/Button";
 
-function Details() {
-  const [details, setDetails] = useState('')
+function Details({ data, onNext }) {
+  const [details, setDetails] = useState(data.details)
 
   function handleChange({ target: { value } }) {
     setDetails(value)
+  }
+
+  function handleNext() {
+    onNext({ details })
   }
 
   return (
@@ -15,6 +21,9 @@ function Details() {
         value={details}
         onChange={handleChange}
         label="Details" />
+      <Button onClick={handleNext} className={pageStyles.btnContinue}>
+        Continue
+      </Button>
     </div>
   )
 }

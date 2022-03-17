@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import styles from './index.module.sass'
+import pageStyles from '/styles/OrderNFT.module.sass'
 import Typography from "../../Typography";
 import Checkbox from "../../checkbox/Checkbox";
 import Input from "../../input/Input";
+import Button from "../../button/Button";
 
 const items = [
   {
@@ -22,9 +24,10 @@ const items = [
   },
 ]
 
-function ContactChannel() {
-  const [currentValue, setCurrentValue] = useState('Email')
-  const [inputValue, setInputValue] = useState('')
+function ContactChannel({ data, onDone }) {
+  const [currentValue, setCurrentValue] = useState(data.contactMethod)
+  const [inputValue, setInputValue] = useState(data.contactInfo)
+  const [hasError, setError] = useState(false)
 
   function handleChange(value) {
     return function () {
@@ -34,6 +37,18 @@ function ContactChannel() {
 
   function handleInputChange({ target: { value } }) {
     setInputValue(value)
+  }
+
+  function handleDone() {
+    if (!inputValue) {
+      setError(true)
+      return;
+    }
+
+    onDone({
+      contactMethod: currentValue,
+      contactInfo: inputValue
+    })
   }
 
   return (
@@ -55,6 +70,7 @@ function ContactChannel() {
                 <Input
                   className={styles.input}
                   value={inputValue}
+                  error={hasError && !inputValue}
                   placeholder={'Enter your ' + item.value}
                   onChange={handleInputChange} />
               }
@@ -62,6 +78,9 @@ function ContactChannel() {
           ))
         }
       </div>
+      <Button onClick={handleDone} className={pageStyles.btnDone}>
+        Order custom NFT
+      </Button>
     </div>
   )
 }

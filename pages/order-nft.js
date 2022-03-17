@@ -3,7 +3,6 @@ import styles from '../styles/OrderNFT.module.sass'
 import Head from "next/head";
 import ButtonCircle from "../components/button-circle/ButtonCircle";
 import Typography from "../components/Typography";
-import Button from "../components/button/Button";
 import ArrowShort from '/public/icons/arrow-short.svg'
 import cn from "classnames";
 import KindOfNft from "../components/order-nft/kind-of-nft";
@@ -12,6 +11,11 @@ import WhatIsIt from "../components/order-nft/what-is-it";
 import Location from "../components/order-nft/location";
 import Details from "../components/order-nft/details";
 import ContactChannel from "../components/order-nft/contact-channel";
+import {useCreateOrderMutation} from "../services/misc";
+import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
+import PopupWrapper from "../components/dialogs/popup-wrapper/PopupWrapper";
+import Button from "../components/button/Button";
+import {useRouter} from "next/router";
 
 const tabs = [
   {
@@ -44,6 +48,10 @@ const tabs = [
 ]
 
 function OrderNft() {
+  const router = useRouter()
+  const [createOrder] = useCreateOrderMutation()
+  const [isLoading, setLoading] = useState(false)
+  const [isDialogOpened, setDialogOpened] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
   const [formData, setFormData] = useState({
     resource: 'Photography',
@@ -61,8 +69,28 @@ function OrderNft() {
     }
   }
 
-  function handleDone() {
+  function handleDone(data) {
+    setLoading(true)
 
+    const result = { ...formData, ...data }
+
+    const body = {
+      type: result.resource,
+      isAerial: result.type === 'Aerial',
+      object: result.object,
+      location: result.location,
+      details: result.details,
+      contactMethod: result.contactMethod,
+      contactInfo: result.contactInfo
+    }
+
+    createOrder(body).unwrap()
+      .then(() => {
+        setDialogOpened(true)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   function handleNext(data = {}) {
@@ -71,6 +99,11 @@ function OrderNft() {
       ...data
     }))
     handleChangeStep(1)()
+  }
+
+  function handleCloseDialog() {
+    setDialogOpened(false)
+    router.push('/')
   }
 
   return (
@@ -117,20 +150,40 @@ function OrderNft() {
             </div>
           </div>
           {
-            React.cloneElement(tabs[activeTab].component, { onNext: handleNext })
-          }
-          {
-            activeTab < 5 ?
-              <Button onClick={handleChangeStep(1)} className={styles.btnContinue}>
-                Continue
-              </Button>
-              :
-              <Button onClick={handleDone} className={styles.btnDone}>
-                Order custom NFT
-              </Button>
+            React.cloneElement(
+              tabs[activeTab].component,
+              {
+                data: formData,
+                onNext: handleNext,
+                onDone: handleDone,
+              })
           }
         </div>
       </div>
+      <FullscreenLoader opened={isLoading} />
+      <PopupWrapper
+        className={styles.dialog}
+        opened={isDialogOpened}
+        onClose={handleCloseDialog}>
+        <Typography
+          fontWeight={600}
+          fontSize={24}
+          lHeight={29}>
+          Done
+        </Typography>
+        <Typography
+          fontFamily={'Lato'}
+          fontSize={14}
+          maxWidth={430}
+          align={'center'}
+          margin={'20px 0 0'}
+          lHeight={22}>
+          We will respond to your request as soon as possible
+        </Typography>
+        <Button onClick={handleCloseDialog} className={styles.btnOk}>
+          Ok
+        </Button>
+      </PopupWrapper>
     </main>
   )
 }

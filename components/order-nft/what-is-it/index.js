@@ -3,6 +3,8 @@ import styles from './index.module.sass'
 import Card from "../card";
 import Typography from "../../Typography";
 import Input from "../../input/Input";
+import pageStyles from "../../../styles/OrderNFT.module.sass";
+import Button from "../../button/Button";
 
 const items = [
   {
@@ -25,9 +27,11 @@ const items = [
   },
 ]
 
-function WhatIsIt() {
-  const [currentValue, setCurrentValue] = useState(items[0].value)
-  const [otherValue, setOtherValue] = useState('')
+function WhatIsIt({ data, onNext }) {
+  const initialValue = items.find(({ value }) => value === data.object)?.value
+  const [currentValue, setCurrentValue] = useState(initialValue || 'Other')
+  const [otherValue, setOtherValue] = useState(initialValue ? '' : data.object)
+  const [hasError, setError] = useState(false)
 
   function handleClick(value) {
     return function () {
@@ -39,47 +43,61 @@ function WhatIsIt() {
     setOtherValue(value)
   }
 
+  function handleNext() {
+    if (currentValue === 'Other' && !otherValue) {
+      setError(true)
+      return;
+    }
+    onNext({ object: currentValue === 'Other' ? otherValue : currentValue })
+  }
+
   return (
-    <div className={styles.root}>
-      {
-        items.map(item => (
-          <Card
-            key={item.value}
-            onClick={handleClick(item.value)}
-            className={styles.card}
-            checkmarkClassName={styles.checkmark}
-            active={currentValue === item.value}>
-            <Typography fontWeight={600} fontSize={18} lHeight={30}>
-              { item.value }
-            </Typography>
-          </Card>
-        ))
-      }
-      <Card
-        onClick={handleClick('other')}
-        className={styles.card}
-        checkmarkClassName={styles.checkmark}
-        active={currentValue === 'other'}>
-        <Typography
-          fontWeight={600}
-          fontSize={18}
-          lHeight={30}>
-          Other
+    <>
+      <div className={styles.root}>
+        {
+          items.map(item => (
+            <Card
+              key={item.value}
+              onClick={handleClick(item.value)}
+              className={styles.card}
+              checkmarkClassName={styles.checkmark}
+              active={currentValue === item.value}>
+              <Typography fontWeight={600} fontSize={18} lHeight={30}>
+                { item.value }
+              </Typography>
+            </Card>
+          ))
+        }
+        <Card
+          onClick={handleClick('Other')}
+          className={styles.card}
+          checkmarkClassName={styles.checkmark}
+          active={currentValue === 'Other'}>
           <Typography
-            tag="span"
-            fontSize={16}
-            color={'#878D97'}
-            lHeight={30}
-            margin={'0 0 0 5px'}>
-            (Write in a field)
+            fontWeight={600}
+            fontSize={18}
+            lHeight={30}>
+            Other
+            <Typography
+              tag="span"
+              fontSize={16}
+              color={'#878D97'}
+              lHeight={30}
+              margin={'0 0 0 5px'}>
+              (Write in a field)
+            </Typography>
           </Typography>
-        </Typography>
-        <Input
-          className={styles.input}
-          value={otherValue}
-          onChange={handleChange}  />
-      </Card>
-    </div>
+          <Input
+            className={styles.input}
+            value={otherValue}
+            error={hasError && !otherValue}
+            onChange={handleChange}  />
+        </Card>
+      </div>
+      <Button onClick={handleNext} className={pageStyles.btnContinue}>
+        Continue
+      </Button>
+    </>
   )
 }
 

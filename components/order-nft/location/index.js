@@ -3,22 +3,34 @@ import styles from './index.module.sass'
 import Input from "../../input/Input";
 import LocationIcon from '/public/icons/location.svg'
 import {useLoadScript} from "@react-google-maps/api";
+import pageStyles from "../../../styles/OrderNFT.module.sass";
+import Button from "../../button/Button";
 
 const libraries = ['places']
 
-function Location() {
+function Location({ data, onNext }) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: 'AIzaSyDlqMYs6_uXvpAVJkVBf4hsUywAFVo5GBA',
     libraries,
     language: 'en'
   })
-  const [address, setAddress] = useState('')
+  const [address, setAddress] = useState(data.location)
+  const [hasError, setError] = useState(false)
 
   const inputRef = useRef()
   const autocompleteRef = useRef()
 
   function handleChange({ target: { value } }) {
     setAddress(value)
+  }
+
+  function handleNext() {
+    if (!address) {
+      setError(true)
+      return;
+    }
+
+    onNext({ location: address })
   }
 
   useEffect(function initAutocomplete() {
@@ -45,8 +57,12 @@ function Location() {
         value={address}
         iconRight={<LocationIcon className={styles.icon} />}
         onChange={handleChange}
+        error={hasError && !address}
         label="Location"
         placeholder="Enter property location" />
+      <Button onClick={handleNext} className={pageStyles.btnContinue}>
+        Continue
+      </Button>
     </div>
   )
 }
