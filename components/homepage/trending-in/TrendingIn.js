@@ -4,7 +4,6 @@ import SectionTitle from "../../section-title/SectionTitle";
 import Link from "next/link";
 import ArrowShort from '/public/icons/arrow-short.svg'
 import Slider from "react-slick";
-import Image from "next/image";
 import Typography from "../../Typography";
 import cn from "classnames";
 import CityPicker from "../city-picker/CityPicker";
@@ -12,8 +11,6 @@ import {citiesApi} from "../../../services/cities";
 import {useDispatch} from "react-redux";
 import {useGetPublishedListingsQuery} from "../../../services/listings";
 import PhotoItem from "../../photo-item/PhotoItem";
-
-const NEW_YORK_ID = '6177f24899faa9e1a38cbae3'
 
 function NextArrow({ onClick }) {
   return (
