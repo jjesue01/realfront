@@ -35,7 +35,7 @@ function PrevArrow({ onClick }) {
 function TrendingIn() {
   const dispatch = useDispatch()
   const [city, setCity] = useState({})
-  const { data } = useGetPublishedListingsQuery({ city: city.value }, { skip: !city.value });
+  const { data } = useGetPublishedListingsQuery({ city: city.value, limit: 10 }, { skip: !city.value });
   const [cities, setCities] = useState([])
   const mounted = useRef(false)
 
