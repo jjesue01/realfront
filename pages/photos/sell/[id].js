@@ -15,7 +15,7 @@ import DoneCongratulation from "../../../components/dialogs/done-congratulation/
 import {useGetListingByIdQuery, usePublishListingMutation} from "../../../services/listings";
 import SellSteps from "../../../components/dialogs/sell-steps/SellSteps";
 import {
-  clamp,
+  clamp, convertTime,
   dateFromESTtoISOString,
   dateToString, getBlockchain,
   getESTDateTimeFromISO, getFormattedDate,
@@ -385,7 +385,7 @@ function SellItem() {
                         errorText={errors.price}
                         label="Price*" />
                       {
-                        listing?.tokenIds.length === 0 &&
+                        (listing?.tokenIds.length === 0 && !listing?.copiesLeft) &&
                         <Input
                           type="number"
                           className={styles.field}

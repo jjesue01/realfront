@@ -143,6 +143,10 @@ function Layout({ children }) {
     auth.token ? router.push('/photos/create') : togglePopup()
   }
 
+  function handleOrderNFT() {
+    router.push('/order-nft')
+  }
+
   function toggleAddFunds() {
     setAddFundsOpened(prevState => !prevState)
   }
@@ -298,6 +302,9 @@ function Layout({ children }) {
                 </li>
               </ul>
               <div className={styles.actions}>
+                <Button onClick={handleOrderNFT} type="outlined">
+                  Order Custom NFT
+                </Button>
                 {
                   auth.user?.invited &&
                   <Button onClick={handleCreate} type="outlined">

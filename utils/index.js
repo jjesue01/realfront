@@ -290,7 +290,7 @@ export function getFormattedEndTime(dateStr) {
     dateStyle: 'full',
     timeStyle: 'short',
     hour12: true,
-    timeZone: 'EST'
+    timeZone: 'America/New_York'
   }
 
   const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date)
@@ -322,9 +322,30 @@ export function dateToString(date) {
   return `${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}`
 }
 
+const getEstOffset = () => {
+  const stdTimezoneOffset = () => {
+    const jan = new Date(0, 1)
+    const jul = new Date(6, 1)
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset())
+  }
+
+  const today = new Date()
+
+  const isDstObserved = (today) => {
+    return today.getTimezoneOffset() < stdTimezoneOffset()
+  }
+
+  if (isDstObserved(today)) {
+    return -4
+  } else {
+    return -5
+  }
+}
+
 export function dateFromESTtoISOString(dateStr, timeStr) {
   const time24 = convertTime(timeStr)
-  const estString = `${dateStr}T${time24}:00.000-05:00`
+  const timeZone = Math.abs(getEstOffset())
+  const estString = `${dateStr}T${time24}:00.000-0${timeZone}:00`
 
   return new Date(estString).toISOString()
 }

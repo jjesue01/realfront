@@ -4,6 +4,7 @@ import {citiesApi} from "./services/cities";
 import {listingsApi} from "./services/listings";
 import {transactionsApi} from "./services/transactions";
 import {adminApi} from "./services/admin";
+import {miscApi} from "./services/misc";
 import authReducer from '/features/auth/authSlice'
 import notificationsReducer from '/features/notifications/notificationsSlice'
 import toastsReducer from "./features/toasts/toastsSlice";
@@ -15,6 +16,7 @@ export const store = configureStore({
     [citiesApi.reducerPath]: citiesApi.reducer,
     [listingsApi.reducerPath]: listingsApi.reducer,
     [transactionsApi.reducerPath]: transactionsApi.reducer,
+    [miscApi.reducerPath]: miscApi.reducer,
     auth: authReducer,
     notifications: notificationsReducer,
     toasts: toastsReducer
@@ -25,6 +27,7 @@ export const store = configureStore({
       citiesApi.middleware,
       listingsApi.middleware,
       transactionsApi.middleware,
+      miscApi.middleware,
       adminApi.middleware,
     ),
 })

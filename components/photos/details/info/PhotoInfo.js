@@ -327,12 +327,9 @@ function PhotoInfo({
                           Sell
                         </Button>
                     }
-                    {
-                      isAuction &&
-                      <Button onClick={handleDownloadAssets} type="outlined">
-                        Download assets
-                      </Button>
-                    }
+                    <Button onClick={handleDownloadAssets} type="outlined">
+                      Download assets
+                    </Button>
                   </div>
               }
               <div className={styles.description}>
@@ -409,7 +406,7 @@ function PhotoInfo({
                     <p>Copies</p>
                   </div>
                   <div className={cn(styles.detailsCol, styles.colContent)}>
-                    <p>{listing?.copies}</p>
+                    <p>{ listing?.copiesLeft || listing?.copies }</p>
                   </div>
                 </div>
                 <div className={styles.field}>
