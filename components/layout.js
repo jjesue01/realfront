@@ -21,16 +21,15 @@ import {isPrivateRoute, isTokenExpired} from "../utils";
 import {initSocket} from "../services/socket";
 import Notifications from "./notifications/Notifications";
 import {pushNotification} from "../features/notifications/notificationsSlice";
-import {
-  useGetAutocompleteCitiesQuery,
-} from "../services/cities";
 import Toasts from "./toasts/Toasts";
-import {pushToast} from "../features/toasts/toastsSlice";
-import {BINANCE_TESTNET} from "../fixtures";
 import SignUp from "./dialogs/sign-up/SignUp";
-import {getConfig} from "../app-config";
 import useBreakpoint from "../hooks/useBreakpoint";
 import MobileMenu from "./mobile-menu/MobileMenu";
+import FacebookIcon from '/public/icons/fb.svg'
+import InstagramIcon from '/public/icons/instagram.svg'
+import TwitterIcon from '/public/icons/twitter.svg'
+import YoutubeIcon from '/public/icons/youtube.svg'
+import PinterestIcon from '/public/icons/pinterest.svg'
 
 const accountLinks = [
   {
@@ -51,6 +50,16 @@ const companyLinks = [
   {
     name: 'Our Story',
     link: '/about'
+  },
+  {
+    name: 'Newsroom',
+    link: 'https://homejab.com/newsroom/',
+    newTab: true
+  },
+  {
+    name: 'Become a Creator',
+    link: 'https://homejab.com/real-estate-photographer-jobs/',
+    newTab: true
   }
 ]
 
@@ -58,7 +67,6 @@ function Layout({ children }) {
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const [login, { isLoading }] = useLoginMutation()
-  const { data: marketplaceLinks = [] } = useGetAutocompleteCitiesQuery({ search: '' })
   const router = useRouter()
   const [walletOpened, setWalletOpened] = useState(false)
   const [menuOpened, setMenuOpened] = useState(false)
@@ -392,8 +400,8 @@ function Layout({ children }) {
                     <a>
                       <Image
                         src="/logo.svg"
-                        width={94}
-                        height={16}
+                        width={67}
+                        height={25}
                         alt="HOMEJAB logo" />
                     </a>
                   </Link>
@@ -407,22 +415,6 @@ function Layout({ children }) {
                   </Typography>
                 </div>
                 <div className={styles.navLinks}>
-                  <div className={cn(styles.navCol, styles.colMarketplace)}>
-                    <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
-                      Marketplace
-                    </Typography>
-                    <ul className={styles.list}>
-                      {
-                        marketplaceLinks.slice(0, 6).map(({ label, value }) => (
-                          <li key={value}>
-                            <Link href={`/marketplace?city=${value}`}>
-                              { label }
-                            </Link>
-                          </li>
-                        ))
-                      }
-                    </ul>
-                  </div>
                   <div className={cn(styles.navCol, styles.colAccount)}>
                     <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
                       My account
@@ -445,16 +437,48 @@ function Layout({ children }) {
                     </Typography>
                     <ul className={styles.list}>
                       {
-                        companyLinks.map(({ name, link }) => (
-                          <li key={name}>
-                            <Link href={link}>
-                              { name }
-                            </Link>
+                        companyLinks.map((item) => (
+                          <li key={item.name}>
+                            {
+                              item?.newTab ?
+                                <a href={item.link} target="_blank" rel="noreferrer noopener">{item.name}</a>
+                                :
+                                <Link href={item.link}>
+                                  { item.name }
+                                </Link>
+                            }
                           </li>
                         ))
                       }
                     </ul>
                   </div>
+                  <ul className={styles.socials}>
+                    <li>
+                      <a href="https://www.facebook.com/homejab" target="_blank" rel="noreferrer noopener">
+                        <FacebookIcon />
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://www.instagram.com/homejab/" target="_blank" rel="noreferrer noopener">
+                        <InstagramIcon />
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://twitter.com/HomeJab" target="_blank" rel="noreferrer noopener">
+                        <TwitterIcon />
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://www.youtube.com/channel/UC8GOaTipjEzi4W2kVjO1-ig" target="_blank" rel="noreferrer noopener">
+                        <YoutubeIcon />
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://www.pinterest.com/homejab" target="_blank" rel="noreferrer noopener">
+                        <PinterestIcon />
+                      </a>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
