@@ -43,6 +43,11 @@ function PhotoInfo({
   const [timerFinished, setTimerFinished] = useState(false)
   const isAuction = listing?.sellMethod === 'Auction'
 
+  const currency = (listing?.blockchain === 'polygon' ?
+    getConfig().POLYGON_TOKEN
+    :
+    getConfig().BSC_TOKEN).symbol
+
   const copyRef = useRef()
   const fbRef = useRef()
   const twitterRef = useRef()
@@ -285,7 +290,7 @@ function PhotoInfo({
                           fontSize={28}
                           fontWeight={600}
                           lHeight={34}>
-                          { getMoneyView(listing?.bid?.highest) }
+                          { getMoneyView(listing?.bid?.highest) } {currency}
                         </Typography>
                       </div>
                     </div>
