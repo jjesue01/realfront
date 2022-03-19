@@ -282,8 +282,8 @@ function Layout({ children }) {
             <a className={styles.homeLink}>
               <Image
                 src="/logo.svg"
-                width={94}
-                height={16}
+                width={67}
+                height={25}
                 alt="HOMEJAB logo" />
             </a>
           </Link>
