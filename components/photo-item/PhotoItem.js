@@ -12,6 +12,7 @@ import {getMoneyView} from "../../utils";
 import {useSelector} from "react-redux";
 import AspectRatioBox from "../aspect-ratio-box/AspectRatioBox";
 import MediaFile from "../media-file/MediaFile";
+import {getConfig} from "../../app-config";
 
 function PhotoItem({
   className,
@@ -28,6 +29,12 @@ function PhotoItem({
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [likeListing] = useLikeListingMutation()
+
+  const price = data?.bid?.highest ? data.bid.highest : data.price
+  const currency = (data?.blockchain === 'polygon' ?
+    getConfig().POLYGON_TOKEN
+    :
+    getConfig().BSC_TOKEN).symbol
 
   function handleClick(e) {
     const { target: { tagName } } = e
@@ -113,7 +120,7 @@ function PhotoItem({
                     </Typography>
                     <div className={styles.ethereum}>
                       <Typography fontWeight={600} fontSize={16}>
-                        { getMoneyView(data?.bid?.highest ? data.bid.highest : data.price) }
+                        { getMoneyView(price) } <span>{currency}</span>
                       </Typography>
                     </div>
                   </div>
