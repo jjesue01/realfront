@@ -316,6 +316,22 @@ function Form({ mode }) {
         const { geometry, formatted_address, address_components } = autocompleteRef.current.getPlace()
         let city = { label: '', value: '' }
         const parsedPlace = buildPlace(address_components)
+
+        if (!parsedPlace?.country) {
+          dispatch(pushToast({
+            type: 'error',
+            message: `Please, try another address, this location is unavailable`
+          }))
+          setValues(prevState => ({
+            ...prevState,
+            city: {
+              label: '',
+              value: ''
+            }
+          }))
+          return;
+        }
+
         const isUSA = parsedPlace.country === 'United States'
         const searchCity = `${parsedPlace.city}, ${ isUSA ? parsedPlace.state : parsedPlace.country}`
 
