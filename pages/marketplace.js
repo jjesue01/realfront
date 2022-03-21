@@ -132,7 +132,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value, listed: true }))
       .then(({ data }) => {
         setCitiesOptions(data)
       })
