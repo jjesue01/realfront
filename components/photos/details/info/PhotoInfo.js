@@ -255,7 +255,7 @@ function PhotoInfo({
                 tag="h1"
                 fontWeight={600}
                 fontSize={28}
-                noWrap
+                //noWrap
                 lHeight={34}>
                 { listing?.name }
               </Typography>
