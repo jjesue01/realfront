@@ -10,7 +10,7 @@ function AboutUs() {
       <div className="container">
         <div className={styles.content}>
           <div className={styles.imageContainer}>
-            <Image src="/KO1kXGGg.jpeg" layout="fill" objectFit="cover" alt="About us" />
+            <Image src="/images/why-we.jpeg" layout="fill" objectFit="cover" alt="About us" />
           </div>
           <div className={styles.info}>
             <SectionTitle>

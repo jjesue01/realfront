@@ -29,7 +29,7 @@ When an NFT is created by an artist it is traced back to that artist with every 
 
 We believe trading images as NFTs is the best way to protect the ownership and usage of these images, while also protecting the original artist who created them. The HomeJab NFT Marketplace provides a safe haven for all digital imagery, from creator to consumer. 
         `}
-        imgUrl={'/who-we-are.jpeg'} />
+        imgUrl={'/images/who-we-are.jpeg'} />
       <AboutUs />
       <HowItWorks onConnect={ openLogin } center />
       <WhoIsItFor />

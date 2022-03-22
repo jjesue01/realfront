@@ -28,7 +28,7 @@ function Hero() {
           </div>
           <div className={styles.collectionItem}>
             <Image
-              src="/Lk9TUqFA.jpeg"
+              src="/images/hero.jpeg"
               layout="fill"
               objectFit="cover"
               alt="apartments" />
