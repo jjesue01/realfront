@@ -306,6 +306,9 @@ function Layout({ children }) {
                   <NavLink href="/marketplace">Marketplace</NavLink>
                 </li>
                 <li>
+                  <NavLink href="/why-buy">Why Buy?</NavLink>
+                </li>
+                <li>
                   <NavLink href="/faq">FAQ</NavLink>
                 </li>
               </ul>
