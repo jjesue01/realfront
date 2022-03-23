@@ -82,7 +82,7 @@ function WhoIsItFor() {
           </div>
           <div className={styles.imageWrapper}>
             <Image
-              src="/desert.jpeg"
+              src="/images/who-for.jpeg"
               width={1000}
               height={1385}
               layout="responsive"
