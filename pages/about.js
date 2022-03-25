@@ -24,11 +24,11 @@ function About({ openLogin }) {
       <CommonHero
         title={'Who we are'}
         description={`
-        HomeJab is a marketplace where real estate photographers create and sell professional photos for consumers to trade online. Each HomeJab NFT is a unique portrayal of a real world landmark, landscape, institution or home created by a local artist from your community.
+        real is a marketplace where real estate photographers create and sell professional photos for consumers to trade online. Each real NFT is a unique portrayal of a real world landmark, landscape, institution or home created by a local artist from your community.
 
 When an NFT is created by an artist it is traced back to that artist with every transaction in the form of a royalty. So, the original artist is always credited and rewarded for the work they completed.  
 
-We believe trading images as NFTs is the best way to protect the ownership and usage of these images, while also protecting the original artist who created them. The HomeJab NFT Marketplace provides a safe haven for all digital imagery, from creator to consumer. 
+We believe trading images as NFTs is the best way to protect the ownership and usage of these images, while also protecting the original artist who created them. The real NFT Marketplace provides a safe haven for all digital imagery, from creator to consumer. 
         `}
         imgUrl={'/images/who-we-are.jpeg'} />
       <AboutUs
@@ -40,7 +40,7 @@ We believe trading images as NFTs is the best way to protect the ownership and u
           lHeight={32}
           margin={'24px 0 0'}
           color={'rgba(55, 65, 81, 0.8)'}>
-          Online image theft is rampant, especially in the real estate community. And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image. Photographers are forced to put their work out there with zero protections, at very little pay. The HomeJab NFT Marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
+          Online image theft is rampant, especially in the real estate community. And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image. Photographers are forced to put their work out there with zero protections, at very little pay. The real NFT Marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
         </Typography>
         <Typography
           fontFamily={'Lato'}
@@ -48,7 +48,7 @@ We believe trading images as NFTs is the best way to protect the ownership and u
           lHeight={32}
           margin={'32px 0 0'}
           color={'rgba(55, 65, 81, 0.8)'}>
-          When you purchase an NFT from HomeJab, you are not only owning a piece of real world history, you are supporting a real life artist. Most photographers work as independent contractors, with little recourse after a shoot is complete. Once the work is published, the possession is out of the artist’s control. The HomeJab NFT Marketplace is the only place, real or digital, that secures their efforts and the ongoing value they provide.
+          When you purchase an NFT from real, you are not only owning a piece of real world history, you are supporting a real life artist. Most photographers work as independent contractors, with little recourse after a shoot is complete. Once the work is published, the possession is out of the artist’s control. The real NFT Marketplace is the only place, real or digital, that secures their efforts and the ongoing value they provide.
         </Typography>
         <Typography
           fontFamily={'Lato'}
