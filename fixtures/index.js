@@ -166,6 +166,10 @@ export const adminLinks = [
   {
     label: 'User Management',
     url: '/admin/user-management'
+  },
+  {
+    label: 'Listings Management',
+    url: '/admin/listings'
   }
 ]
 
