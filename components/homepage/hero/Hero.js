@@ -17,7 +17,7 @@ function Hero() {
             <h1>
               Support real artists. Own the real world.
             </h1>
-            <p>Collect and trade real world images from real estate photographers worldwide, help support the artists that give us the world.</p>
+            <p>Collect and trade real world images from real estate photographers worldwide.  Help support the artists that give us the world.</p>
             <Link href="/marketplace" passHref>
               <a className={styles.btnExplore}>
                 <Button>

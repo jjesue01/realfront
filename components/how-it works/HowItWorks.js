@@ -27,7 +27,7 @@ function HowItWorks({ center = false, onConnect }) {
               align={'center'}
               maxWidth={615}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Creating an NFT with HomeJab should be quick and easy (we want you happy). Just follow the steps below.  Of course, if there are any issues, you can always find us at homejab.com.
+              Buying an NFT on the real marketplace is actually pretty easy, as long as you remember to use MetaMask for your wallet, BNB for your gas fees, and BUSD for your NFT purchases.
             </Typography>
         }
       </div>
@@ -46,7 +46,8 @@ function HowItWorks({ center = false, onConnect }) {
               fontWeight={600}
               lHeight={24}
               margin={'32px 0 18px'}
-              color={'#111111'}>
+              color={'#111111'}
+              align="center">
               Set up your wallet
             </Typography>
             <Typography
@@ -56,14 +57,14 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Once you’ve set up your MetaMask wallet, connect it to the HomeJab NFT Marketplace by clicking Connect Wallet in the top right corner.
+              We use MetaMask for our wallet.  Once you’ve set up your MetaMask wallet, connect it to the real NFT Marketplace by clicking Connect Wallet in the top right corner.
             </Typography>
           </div>
           <div className={styles.step}>
             <div className={styles.stepImage}>
               <Image
-                src="/images/hiw-2.png"
-                width={62}
+                src="/images/crypto-currency.png"
+                width={74}
                 height={60}
                 alt="Collection" />
             </div>
@@ -72,8 +73,9 @@ function HowItWorks({ center = false, onConnect }) {
               fontWeight={600}
               lHeight={24}
               margin={'32px 0 18px'}
-              color={'#111111'}>
-              Create your NFTs
+              color={'#111111'}
+              align="center">
+              Purchase your cryptocurrency
             </Typography>
             <Typography
               fontFamily={'Lato'}
@@ -82,12 +84,39 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Click Create to set up your NFTs. Then, upload your work, add a title and description, and customize your NFTs with properties, stats, and unlockable content.
+              We use BNB for our gas fees and BUSD for our NFT transactions.  You can purchase both BNB and BUSD on the Binance.US exchange, or a number of other exchanges.  Just remember, you will only need a little bit of BNB (gas fees are less than $1), and a lot of BUSD (the sky’s the limit on what you wish to purchase).
             </Typography>
           </div>
           <div className={styles.step}>
             <div className={styles.stepImage}>
               <Image
+                src="/images/nft.png"
+                width={72}
+                height={69}
+                alt="Sale" />
+            </div>
+            <Typography
+              fontSize={20}
+              fontWeight={600}
+              lHeight={24}
+              margin={'32px 0 18px'}
+              color={'#111111'}
+              align="center">
+              Purchase your NFTs
+            </Typography>
+            <Typography
+              fontFamily={'Lato'}
+              fontSize={14}
+              lHeight={22}
+              maxWidth={231}
+              align={'center'}
+              color={'rgba(55, 65, 81, 0.8)'}>
+              First, your wallet must be connected.  Once connected, you can select any NFT from our marketplace for purchase.  The price of the NFT will be listed in US dollars and BUSD (same equivalence).
+            </Typography>
+          </div>
+          <div className={styles.step}>
+            <div className={styles.stepImage}>
+            <Image
                 src="/images/hiw-4.png"
                 width={72}
                 height={69}
@@ -98,8 +127,9 @@ function HowItWorks({ center = false, onConnect }) {
               fontWeight={600}
               lHeight={24}
               margin={'32px 0 18px'}
-              color={'#111111'}>
-              List them for sale
+              color={'#111111'}
+              align="center">
+              Resell your NFTs
             </Typography>
             <Typography
               fontFamily={'Lato'}
@@ -108,33 +138,7 @@ function HowItWorks({ center = false, onConnect }) {
               maxWidth={231}
               align={'center'}
               color={'rgba(55, 65, 81, 0.8)'}>
-              Choose the listing prices you want to set for each NFT. You pick the price, then we help you sell them!
-            </Typography>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepImage}>
-              <Image
-                src="/images/hiw-3.png"
-                width={61}
-                height={47}
-                alt="Crown" />
-            </div>
-            <Typography
-              fontSize={20}
-              fontWeight={600}
-              lHeight={24}
-              margin={'32px 0 18px'}
-              color={'#111111'}>
-              Receive royalties
-            </Typography>
-            <Typography
-              fontFamily={'Lato'}
-              fontSize={14}
-              lHeight={22}
-              maxWidth={231}
-              align={'center'}
-              color={'rgba(55, 65, 81, 0.8)'}>
-              With every initial sale you receive 96% of the sale price. And, with every resale you can receive up to 10% of the resale price. You get to set your royalties, up to 10%!
+              Yes, you can resell your purchased NFTs.  To sell an NFT on the real marketplace, just go to your profile and click on the desired NFT.  Then select to sell that NFT, and set the sale price.  Just remember, once you mint your NFT for sale and the listing is live, you cannot go back and change the price.
             </Typography>
           </div>
         </div>

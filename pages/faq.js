@@ -28,7 +28,10 @@ function FAQ() {
       </Head>
       <CommonHero
         title={'FAQ'}
-        description={'Below is general information on how the HomeJab NFT marketplace works. For additional information, please go to homejab.com and contact our support team.'}
+        description={`Buying an NFT on the real marketplace is actually pretty easy, as long as you understand that you are buying your NFTs with cryptocurrency (not dollars).
+        If you are wondering how to get cryptocurrency, you first need a crypto wallet.
+        Below is more information on how to buy NFTs on the real marketplace.
+        `}
         imgUrl={'/images/faq-hero.jpg'} />
       <section className={styles.questions}>
         <div className="container">
@@ -41,7 +44,14 @@ function FAQ() {
                   index={index}
                   onClick={handleClick}
                   opened={index === activeIndex}>
-                  <p>{ content }</p>
+                  <div>
+                  {content.map((item) => (
+                       <>
+                        <h6>{item.question_subtitle}</h6>
+                        <p>{item.answer}</p>
+                       </>
+                  ))}
+                  </div>
                 </Question>
               ))
             }
