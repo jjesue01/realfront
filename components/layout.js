@@ -414,7 +414,7 @@ function Layout({ children }) {
                     maxWidth={440}
                     margin="24px 0 0"
                     color={`rgba(55, 65, 81, 0.6)`}>
-                    HomeJab is a marketplace where real estate photographers can showcase and promote their work, without fear of losing ownership of their efforts. Online image theft is rampant, especially in the real estate community. And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image. Photographers are forced to put their work out there with zero protections, at very little pay. The HomeJab NFT Marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
+                    real is a marketplace where real estate photographers can showcase and promote their work, without fear of losing ownership of their efforts. Online image theft is rampant, especially in the real estate community. And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image. Photographers are forced to put their work out there with zero protections, at very little pay. The real NFT marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
                   </Typography>
                 </div>
                 <div className={styles.navLinks}>
