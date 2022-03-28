@@ -20,7 +20,6 @@ import {useRouter} from "next/router";
 const tabs = [
   {
     title: 'What kind of NFT do you want?',
-    subTitle: 'Please select all that apply',
     component: <KindOfNft />
   },
   {
