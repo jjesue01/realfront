@@ -4,6 +4,7 @@ import Head from "next/head";
 import Input from "../components/input/Input";
 import SearchIcon from "../public/icons/search-icon.svg";
 import ArrowLongIcon from '/public/icons/arrow-long.svg'
+import HideMapIcon from '/public/icons/hide-map.svg'
 import cn from "classnames";
 import CollectionFilter from "../components/marketplace/filters/collection-filter/CollectionFilter";
 import PriceFilter from "../components/marketplace/filters/price-filter/PriceFilter";
@@ -291,7 +292,7 @@ function Marketplace({ toggleFooter, openLogin }) {
               onActiveItemChange={setActiveItem}
               onBoundsChange={handleMapChange} />
             <button onClick={toggleMap} className={styles.btnHideMap}>
-              <ArrowLongIcon />
+              <HideMapIcon />
             </button>
           </div>
         }
