@@ -132,7 +132,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   const getCities = useCallback((value) => {
-    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value }))
+    dispatch(citiesApi.endpoints.getAutocompleteCities.initiate({ search: value, listed: true }))
       .then(({ data }) => {
         setCitiesOptions(data)
       })
@@ -292,6 +292,9 @@ function Marketplace({ toggleFooter, openLogin }) {
               onBoundsChange={handleMapChange} />
             <button onClick={toggleMap} className={styles.btnHideMap}>
               <ArrowLongIcon />
+              <Typography tag="span" fontSize={14} color={'#000'}>
+                  Hide map
+              </Typography>
             </button>
           </div>
         }

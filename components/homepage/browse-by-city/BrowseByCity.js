@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 
 function BrowseByCity() {
-  const { data = [] } = useGetCitiesQuery({ limit: 6 })
+  const { data = [] } = useGetCitiesQuery({ limit: 6, listed: true })
 
   return (
     <section className={styles.root}>

@@ -1,28 +1,69 @@
 export const questions = [
   {
-    title: 'What makes a HomeJab NFT unique?',
-    content: 'HomeJab is the first and only NFT marketplace designed specifically for the real estate community. It not only protects the work of real estate photographers, it provides true digital ownership of each image bought and sold… protecting all parties involved in the transaction.'
-  },
-  {
-    title: 'What are the gas fees on the HomeJab NFT Marketplace?',
-    content: 'Gas fees are paid in BNB. Currently, BNB gas fees are around 0.0007 to 0.0010 BNB (less than $1 per transaction).'
-  },
-  {
-    title: 'What are the transaction fees on the HomeJab NFT Marketplace?',
-    content: 'The HomeJab Marketplace takes a 4% base transaction fee for each NFT sale, while the artist receives 96% of the transaction. All fees are received in USDC and BUSD.'
-  },
-  {
-    title: 'Is there a residual fee structure (royalty) for NFT resales?',
-    content: 'Yes, with every minted NFT, the original artist can set a royalty fee anywhere between 0 - 10%... which they collect with each resale of that NFT.'
-  },
-  {
-    title: 'Where can I view my collection of HomeJab NFTs?',
-    content: 'In addition to the HomeJab NFT Marketplace, all of your HomeJab NFTs are stored in your HomeJab profile and your MetaMask wallet… until they sell of course!'
-  },
-  {
-    title: 'If I have more questions, how can I contact the HomeJab NFT Marketplace?',
-    content: 'The HomeJab NFT Marketplace is a division of HomeJab Real Estate Photography. For additional information, please go to homejab.com and contact our support team.'
-  },
+    title: "For Patrons",
+    content: [
+        {
+            question_subtitle: "How do I create a crypto wallet?",
+            answer: "When you click the Connect Wallet icon at the top of the page (green button) you will be asked to select a wallet provider.  We use MetaMask as our provider, they are one of the largest and safest applications available.  Click on the MetaMask icon and continue within that application and create a MetaMask wallet.  You will be asked to create a username and password, and given a long phrase to save somewhere safe.  This phrase is your security code, used to protect your account and applied only if you do not remember your password.",
+        },
+        {
+            question_subtitle: "How do I purchase cryptocurrency?",
+            answer: "Once your wallet is created you will need to purchase cryptocurrency, which can be done on a number of currency exchanges.  We recommend the Binance.US exchange (here is the link… https://www.binance.us/en/home).  They have very low prices, and a huge global presence (very secure).  Just make sure you are using the US version (not the global version).",
+        },
+        {
+            question_subtitle:
+                "Which cryptocurrency do I need to purchase NFTs on the real marketplace?",
+            answer: "You will need two forms of cryptocurrency, BNB (to pay for your gas fees) and BUSD (to purchase the NFT).  BNB is Binance’s crypto coin that fluctuates with the market, and is the third most traded cryptocurrency among investors.  BUSD is Binance’s stablecoin which does not fluctuate, but mirrors the value of the US dollar.  Since the focus of the NFT world is the actual image (not the cryptocurrency), it’s important to have a stablecoin that will not fluctuate with the market.  A stablecoin is always recommended when purchasing a good or service.",
+        },
+        {
+            question_subtitle:
+                "How much cryptocurrency do I need to purchase NFTs on the real marketplace?",
+            answer: "When in Binance, you will create an account, link your MetaMask wallet and purchase both BNB & BUSD.  You do not need much BNB.  Gas fees are the processing fees (similar to a tax).  Most gas fees are under $1 per transaction.  As for BUSD, you should purchase enough to match what you want to purchase on the NFT real marketplace.  Now we are ready to purchase real NFTs!",
+        },
+        {
+            question_subtitle: "How do I search for NFTs to purchase?",
+            answer: "Our Marketplace page hosts all available NFTs for sale.  You can search by Address, City, Price, NFT type (under Resources tab), or even Keyword (under More tab).  Plus, you can also search Trending Cities on the main page.",
+        },
+        {
+            question_subtitle: "How do I purchase an NFT?",
+            answer: "First, your wallet must be connected.  Once connected, you can select any NFT from our marketplace for purchase.  The price of the NFT will be listed in US dollars and BUSD (same equivalence).  When you select your NFT for purchase, you will also have gas fees to pay (which are very minimal and paid in BNB).  Once the transaction is complete, your new NFT will be available for you in your profile.  In fact, all transaction history is visible in your user profile.  Of course, the official storage of your NFTs is in your MetaMask wallet, viewed in the real marketplace or anywhere you access your wallet.",
+        },
+        {
+            question_subtitle: "Can I sell an NFT that I purchase?  If so, how?",
+            answer: "Yes.  To sell an NFT on the real marketplace, just go to your profile and click on the desired NFT.  Then select to sell that NFT, and set the sale price.  Once you mint your NFT for sale and the listing is live, you cannot go back and change the price.  You can remove the NFT for sale, but cannot adjust the existing listing.  Remember, this is being stored on a massive decentralized platform (blockchain) so manipulation of any minting is not possible.",
+        },
+    ],
+},
+{
+    title: "For Artists",
+    content: [
+        {
+            question_subtitle: "What makes a real NFT unique?",
+            answer: "real is the first and only NFT marketplace designed specifically for the real estate community.  It not only protects the work of real estate photographers, it provides true digital ownership of each image bought and sold… protecting all parties involved in the transaction.",
+        },
+        {
+            question_subtitle: "What are the gas fees on the real NFT marketplace?",
+            answer: "Gas fees are paid in BNB.  As of March 2022, BNB gas fees are approximately 0.012 BNB (which equates to $0.05, a nickel per transaction).",
+        },
+        {
+            question_subtitle: "What are the transaction fees on the real NFT marketplace?",
+            answer: "The real marketplace takes a 4% base transaction fee for each NFT sale, while the artist receives 96% of the transaction.  All fees are received in BUSD.",
+        },
+        {
+            question_subtitle: "Is there a residual fee structure (royalty) for NFT reales?",
+            answer: "Yes, with every minted NFT, the original artist can set a royalty fee anywhere between 0 - 10% (which they collect with each resale of that NFT).",
+        },
+        {
+            question_subtitle: "Where can I view my collection of real NFTs?",
+            answer: "In addition to the real NFT marketplace, all of your real NFTs are accessible in your real profile and stored in your MetaMask wallet… until they sell of course!",
+        },
+        {
+            question_subtitle:
+                "If I have more questions, or want to become a real marketplace artist, how can I contact the real NFT marketplace?",
+            answer: "The real NFT marketplace is affiliated with HomeJab Real Estate Photography.  For additional information, please go to homejab.com or contact our support team at support@homejab.com.",
+        },
+    ],
+},
 ]
 
 export const blockchainOptions = [

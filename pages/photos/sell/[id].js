@@ -444,21 +444,21 @@ function SellItem() {
                               placeholder="6:00 PM" />
                           </div>
                         </div>
-                        <div className={styles.addField}>
-                          <Switcher
-                            className={styles.switcher}
-                            name="private"
-                            value={switchers.private}
-                            onChange={handleSwitcherChange} />
-                          <Input
-                            className={cn(styles.input, { [styles.disabledInput]: !switchers.private })}
-                            name="buyerAddress"
-                            value={formik.values.buyerAddress}
-                            onChange={formik.handleChange}
-                            placeholder="Buyer address, e.g. 0x489423..."
-                            subLabel="You can keep your listing public, or your can specify one address that's allowed to buy it."
-                            label="Privacy" />
-                        </div>
+                        {/*<div className={styles.addField}>*/}
+                        {/*  <Switcher*/}
+                        {/*    className={styles.switcher}*/}
+                        {/*    name="private"*/}
+                        {/*    value={switchers.private}*/}
+                        {/*    onChange={handleSwitcherChange} />*/}
+                        {/*  <Input*/}
+                        {/*    className={cn(styles.input, { [styles.disabledInput]: !switchers.private })}*/}
+                        {/*    name="buyerAddress"*/}
+                        {/*    value={formik.values.buyerAddress}*/}
+                        {/*    onChange={formik.handleChange}*/}
+                        {/*    placeholder="Buyer address, e.g. 0x489423..."*/}
+                        {/*    subLabel="You can keep your listing public, or your can specify one address that's allowed to buy it."*/}
+                        {/*    label="Privacy" />*/}
+                        {/*</div>*/}
                       </div>
                     </>
                     :
