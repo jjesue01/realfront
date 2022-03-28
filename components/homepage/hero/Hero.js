@@ -11,7 +11,7 @@ function Hero() {
       <div className={styles.bgImage}>
         <Image src="/bg-circle.png" width={416} height={397} alt="circle" />
       </div>
-        <collectionItem  className={styles.content}>
+        <div  className={styles.content}>
           <div className={styles.heroContent}>
             <h1>
               Support real artists. Own the real world.
@@ -34,7 +34,7 @@ function Hero() {
                 alt="apartments" />
             </div>
           </div>
-        </collectionItem>
+        </div>
     </section>
   )
 }
