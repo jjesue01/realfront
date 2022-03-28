@@ -12,15 +12,18 @@
 .content
   position: relative
   width: 100%
-  padding: 71px 0
+  padding-left: 150px
   display: flex
   align-items: center
   justify-content: space-between
   z-index: 2
+  max-width: 1440px
+  margin: 0 auto
 .heroContent
   width: 100%
   max-width: 554px
   margin-right: 60px
+  padding: 71px 15px 71px 0
   h1
     font-size: 42px
     font-weight: 600
@@ -34,10 +37,12 @@
     font-size: 18px
     line-height: 32px
     color: rgba(55, 65, 81, 0.8)
+.collectionItemContainer
+  width: 100%
+  padding-top: 71px
 .collectionItem
   position: relative
   width: 100%
-  max-width: 487px
   background: #FFFFFF
   box-shadow: 0 34px 40px rgba(78, 96, 91, 0.11)
   height: 397px
@@ -76,10 +81,15 @@
   display: block
   margin-top: 64px
 
+@media (max-width: 1440px)
+  .content
+    padding-left: 100px
+
 @media (max-width: 1200px)
+  .collectionItemContainer
+    padding-top: 0
   .collectionItem
-    height: 290px
-    max-width: 380px
+    height: 486px
   .collectionInfo
     padding: 15px
   .collectionInfoImage
@@ -91,14 +101,18 @@
     margin-top: 5px
 
 @media (max-width: 1000px)
-  .collectionItem
-    display: none
+  .content
+    padding-left: 50px
   .heroContent
     margin-right: 0
 
-@media (max-width: 700px)
+@media (max-width: 850px)
+  .content
+    flex-direction: column
+    padding-left: 0
   .heroContent
     max-width: 100%
+    padding-left: 15px
   .form
     min-width: auto
 

@@ -47,6 +47,11 @@ function MobileMenu({ opened, onClose }) {
             Marketplace
           </a>
         </Link>
+        <Link href="/why-buy">
+          <a className={styles.menuItem}>
+            Why Buy?
+          </a>
+        </Link>
         <Link href="/faq">
           <a className={styles.menuItem}>
             FAQ
