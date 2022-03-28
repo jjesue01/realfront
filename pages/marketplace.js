@@ -292,6 +292,9 @@ function Marketplace({ toggleFooter, openLogin }) {
               onBoundsChange={handleMapChange} />
             <button onClick={toggleMap} className={styles.btnHideMap}>
               <ArrowLongIcon />
+              <Typography tag="span" fontSize={14} color={'#000'}>
+                  Hide map
+              </Typography>
             </button>
           </div>
         }
