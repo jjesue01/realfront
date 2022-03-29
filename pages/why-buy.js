@@ -36,7 +36,7 @@ function WhyBuy() {
           lHeight={32}
           margin={'24px 0 0'}
           color={'rgba(55, 65, 81, 0.8)'}>
-          Online image theft is rampant, especially in the real estate community. And, while it seems harmless on the surface, it’s actually quite damaging for the artist who creates the image. Photographers are forced to put their work out there with zero protections, at very little pay. The HomeJab NFT Marketplace is designed to protect the ownership of an artist’s digital portfolio, while rewarding them for their hard work.
+          There is no limit on how many times NFTs can be sold. Think of a business owner who needs an image of downtown Chicago for a new marketing campaign.  They can purchase a NFT, use the image for a specific period of time, and then resell the image to another buyer after their marketing campaign is complete.
         </Typography>
         <Typography
           fontFamily={'Lato'}
@@ -44,7 +44,7 @@ function WhyBuy() {
           lHeight={32}
           margin={'32px 0 0'}
           color={'rgba(55, 65, 81, 0.8)'}>
-          When you purchase an NFT from HomeJab, you are not only owning a piece of real world history, you are supporting a real life artist. Most photographers work as independent contractors, with little recourse after a shoot is complete. Once the work is published, the possession is out of the artist’s control. The HomeJab NFT Marketplace is the only place, real or digital, that secures their efforts and the ongoing value they provide.
+          In this example, the buyer has paid for the image and then sold it, potentially making all of their money back and using the proceeds to purchase another image.  Our vision is for digital marketers to trade images like baseball cards so they always keep their content fresh.
         </Typography>
       </AboutUs>
       <CommonHero
