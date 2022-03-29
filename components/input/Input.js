@@ -133,7 +133,8 @@ function Input({
                 <DatePicker
                   name={name}
                   value={value}
-                  onChange={handleDateChange} />
+                  onChange={handleDateChange} 
+                  noPast={otherProps?.noPast}/>
               }
               {
                 type === 'time' &&

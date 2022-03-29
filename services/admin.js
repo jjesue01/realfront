@@ -90,7 +90,7 @@ export const adminApi = createApi({
         try {
           await queryFulfilled
         } catch (error) {
-          dispatch(pushToast({ type: 'error', message: 'Error while getting user' }))
+          dispatch(pushToast({ type: 'error', message: 'Error while getting listings' }))
         }
       }
     }),
@@ -109,6 +109,18 @@ export const adminApi = createApi({
         }
       }
     }),
+    // downloadPhoto: builder.query({
+    //   query: ({_id}) => ({
+    //     url: `admin/listings/${_id}/download`,
+    //   }),
+    //   async onQueryStarted(arg, {dispatch, queryFulfilled}){
+    //     try {
+    //       queryFulfilled.then(res => console.log(res.blob()));
+    //     } catch(error){
+    //       dispatch(pushToast({ type: 'error', message: 'Error download file' }))
+    //     }
+    //   }
+    // })
   }),
 })
 
@@ -119,5 +131,5 @@ export const {
   useGetListingsQuery,
   useGetInvitesQuery,
   useGetAllUsersQuery,
-  useSendInviteMutation
+  useSendInviteMutation,
 } = adminApi
