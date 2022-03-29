@@ -227,10 +227,10 @@ export function buildPlace(address_components) {
   return place
 }
 
-export function download(url, filename) {
+export function download(url, filename, token) {
   fetch(url, {
     headers: {
-      'Authorization': getIdToken()
+      'Authorization': token || getIdToken()
     }
   })
     .then(response => response.blob())
