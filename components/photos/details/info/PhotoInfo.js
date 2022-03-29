@@ -332,9 +332,12 @@ function PhotoInfo({
                           Sell
                         </Button>
                     }
-                    <Button onClick={handleDownloadAssets} type="outlined">
-                      Download assets
-                    </Button>
+                    {
+                    listing?.price &&
+                      <Button onClick={handleDownloadAssets} type="outlined">
+                        Download assets
+                      </Button>
+                    }
                   </div>
               }
               <div className={styles.description}>
