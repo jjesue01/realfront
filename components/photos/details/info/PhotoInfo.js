@@ -333,7 +333,7 @@ function PhotoInfo({
                         </Button>
                     }
                     {
-                    listing?.price &&
+                    listing?.bid?.highest &&
                       <Button onClick={handleDownloadAssets} type="outlined">
                         Download assets
                       </Button>
