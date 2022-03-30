@@ -5,6 +5,7 @@ import Input from "../components/input/Input";
 import SearchIcon from "../public/icons/search-icon.svg";
 import ArrowLongIcon from '/public/icons/arrow-long.svg'
 import cn from "classnames";
+import Button from "../components/button/Button"
 import CollectionFilter from "../components/marketplace/filters/collection-filter/CollectionFilter";
 import PriceFilter from "../components/marketplace/filters/price-filter/PriceFilter";
 import ResourcesFilter from "../components/marketplace/filters/resources-filter/ResourcesFilter";
@@ -66,6 +67,7 @@ function Marketplace({ toggleFooter, openLogin }) {
     sortBy: 'bid.highest:desc'
   })
   const [pagination, setPagination] = useState({})
+  const [searchInputValue, setSearchInputValue] = useState('');
 
   const itemsPerPage = 15
 
@@ -97,6 +99,15 @@ function Marketplace({ toggleFooter, openLogin }) {
     setFilters(prevState => ({ ...prevState, [name]: value }))
   }
 
+  function handleSubmit (e) {
+    e.preventDefault();
+    setFilters(prevState => ({ ...prevState, ['searchValue']: searchInputValue }))
+  }
+
+  function handleChangeInput (e){
+    setSearchInputValue(e.target.value)
+  }
+
   function toggleMap() {
     document.body.style.position = !isMapHidden ? 'static' : 'fixed'
     mapMounted.current = false
@@ -109,6 +120,7 @@ function Marketplace({ toggleFooter, openLogin }) {
       ...prevState,
       ...initialFilters
     }))
+    setSearchInputValue('')
   }
 
   function handleMapChange(bounds) {
@@ -238,15 +250,17 @@ function Marketplace({ toggleFooter, openLogin }) {
       <div className={styles.filters}>
         <div className={styles.filtersContainer}>
           <div className={styles.filtersContent}>
-            <Input
-              className={cn(styles.inputSearch, { [styles.inputSearchActive]: filters.searchValue !== '' } )}
-              type="search"
-              name="searchValue"
-              value={filters.searchValue}
-              onChange={handleChange}
-              size="small"
-              iconRight={<SearchIcon />}
-              placeholder="Enter an address" />
+            <form className = {styles.searchContainer} onSubmit={handleSubmit}>
+              <Input
+                className={cn(styles.inputSearch, { [styles.inputSearchActive]: filters.searchValue !== '' } )}
+                type="search"
+                name="searchValue"
+                size="small"
+                placeholder="Search for images"
+                value={searchInputValue}
+                onChange={handleChangeInput} />
+              <Button className={styles.btnSearch} htmlType="submit"><SearchIcon/></Button>
+            </form>
             <div className={styles.filterItems}>
               <CollectionFilter
                 className={styles.filter}
