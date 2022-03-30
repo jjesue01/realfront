@@ -101,11 +101,11 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   function handleSubmit (e) {
     e.preventDefault();
-    setFilters(prevState => ({ ...prevState, ['searchValue']: searchInputValue }))
+    setFilters(prevState => ({ ...prevState, searchValue: searchInputValue }))
   }
 
-  function handleChangeInput (e){
-    setSearchInputValue(e.target.value)
+  function handleChangeInput ({target : {value}}){
+    setSearchInputValue(value)
   }
 
   function toggleMap() {
