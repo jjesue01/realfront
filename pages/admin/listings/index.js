@@ -165,7 +165,7 @@ function Listings() {
             { rowsList }
           </div>
         </div>
-        <Pagination count={LIMIT_LISTINGS_PAGE} currentPage={filters.page} onNext={handleNextPage} onPrev={handlePrevPage}/>
+        <Pagination count={listings?.totalPages} currentPage={filters.page} onNext={handleNextPage} onPrev={handlePrevPage}/>
       </div> : 
       <div className={styles.noResultBlock}><p>No result</p></div>
     }
