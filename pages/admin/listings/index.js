@@ -10,7 +10,6 @@ import { useGetListingsQuery } from '../../../services/admin';
 import { download, scrollToTop } from '../../../utils';
 import Pagination from '../../../components/pagination/Pagination';
 import { useSelector } from 'react-redux';
-import FullscreenLoader from '../../../components/fullscreen-loader/FullscreenLoader'
 import Loader from '../../../components/loader/Loader';
 
 const LIMIT_LISTINGS_PAGE = 10;
@@ -126,19 +125,20 @@ function Listings() {
       <title>real - Admin. Listings Management</title>
     </Head>
     <div className={styles.title}>
-        <Input
-          className={cn(styles.inputSearch, { [styles.inputSearchActive]: filters.search !== '' } )}
-          type="search"
-          name="searchValue"
-          value={filters.search}
-          onChange={handleChangeSearch}
-          size="small"
-          iconRight={<SearchIcon />}
-          placeholder="Search"/>
-      <div className = {styles.filtersBlock}>
+    <div className = {styles.filtersBlock}>
         <Input type="date" value={filters.firstDate} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
         <Input type="date" value={filters.secondDate} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
-    </div>
+      </div>
+      <Input
+        className={cn(styles.inputSearch, { [styles.inputSearchActive]: filters.search !== '' } )}
+        type="search"
+        name="searchValue"
+        value={filters.search}
+        onChange={handleChangeSearch}
+        size="small"
+        iconRight={<SearchIcon />}
+        placeholder="Search"/>
+      
       
     </div>
     {isLoading ? <Loader opened={isLoading}  color="accent" className={styles.loader}/> : listings.docs && listings.docs[0] ?
