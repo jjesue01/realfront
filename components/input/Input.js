@@ -25,6 +25,7 @@ function Input({
   error,
   errorText,
   disabled,
+  noPast,
   ...otherProps
 }, ref) {
   const [isOpened, setOpened] = useState(false)
@@ -134,7 +135,7 @@ function Input({
                   name={name}
                   value={value}
                   onChange={handleDateChange} 
-                  noPast={otherProps?.noPast}/>
+                  noPast={noPast}/>
               }
               {
                 type === 'time' &&

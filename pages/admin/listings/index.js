@@ -7,10 +7,11 @@ import SearchIcon from "../../../public/icons/search-icon.svg";
 import DownloadIcon from '/public/icons/download.svg'
 import Input from '../../../components/input/Input';
 import { useGetListingsQuery } from '../../../services/admin';
-import { download, scrollToTop } from '../../../utils';
+import { dateToString, DAY_TIME, download, getFormattedDate, scrollToTop } from '../../../utils';
 import Pagination from '../../../components/pagination/Pagination';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/loader/Loader';
+import { getConfig } from '../../../app-config';
 
 const LIMIT_LISTINGS_PAGE = 10;
 
@@ -18,7 +19,7 @@ function ListingRow ({listing, token}) {
   function handleDownloadAssets() {
     const fileName = listing.assets[0].fileName
 
-    download(`https://nft-api-dev.homejab.com/admin/listings/${listing._id}/download`, fileName, token)
+    download(`${getConfig().API_URL}admin/listings/${listing._id}/download`, fileName, token)
   }
 
   return (<>
@@ -54,12 +55,11 @@ function Listings() {
   const [filters, setFilters] = useState({
     search : '',
     page : 1,
-    firstDate : '2021-11-01',
+    firstDate : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
     secondDate : new Date().toISOString().substring(0,10),
   });
 
-  const token = useSelector(state => state.auth.admin.token)
-
+  const token = useSelector(state => state.auth.admin.token);
 
   const {data : listings = [], refetch, isLoading} = useGetListingsQuery({search : filters.search, limit: LIMIT_LISTINGS_PAGE, page: filters.page, ipfsdate_from : filters.firstDate, ipfsdate_to : filters.secondDate});
 
@@ -116,7 +116,7 @@ function Listings() {
   const handleChangeSecondDate = (e) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      firstDate : e.target.value
+      secondDate : e.target.value
     }))
   }
 

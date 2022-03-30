@@ -4,6 +4,8 @@ import {execOnce} from "next/dist/shared/lib/utils";
 import {POLYGON_CHAINS} from "../fixtures";
 import {getConfig} from "../app-config";
 
+export const DAY_TIME = 86400000;
+
 export function debounce(func, wait, immediate) {
   let timeout;
 
