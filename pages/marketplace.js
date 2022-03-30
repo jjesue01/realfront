@@ -96,12 +96,12 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   function handleChange({ target: { name, value } }) {
-    setFilters(prevState => ({ ...prevState, [name]: value }))
+    setFilters(prevState => ({ ...prevState, [name]: value, page : 1 }))
   }
 
   function handleSubmit (e) {
     e.preventDefault();
-    setFilters(prevState => ({ ...prevState, searchValue: searchInputValue }))
+    setFilters(prevState => ({ ...prevState, searchValue: searchInputValue, page : 1}))
   }
 
   function handleChangeInput ({target : {value}}){
@@ -380,7 +380,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                     }
                   </div>
                   {
-                    isMapHidden &&
+                    isMapHidden && !!pagination.totalDocs &&
                       <div className={styles.paginationContainer}>
                         <Pagination
                           className={styles.pagination}
