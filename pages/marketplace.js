@@ -68,6 +68,8 @@ function Marketplace({ toggleFooter, openLogin }) {
   })
   const [pagination, setPagination] = useState({})
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [markers, setMarkers] = useState([]);
+  const [scrollPage, setScrollPage] = useState(0);
 
   const itemsPerPage = 15
 
@@ -110,6 +112,7 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   function toggleMap() {
     document.body.style.position = !isMapHidden ? 'static' : 'fixed'
+    if (!isMapHidden) observer.unobserve(loader.current);
     mapMounted.current = false
     setIsMapHidden(prevState => !prevState)
     toggleFooter()
@@ -163,6 +166,62 @@ function Marketplace({ toggleFooter, openLogin }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const loader = useRef(null);
+  const [observer, setObserver] = useState(null);
+
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0];
+    if (target.isIntersecting){
+      setScrollPage(prev => prev + 1)
+    }
+  }, []);
+
+  useEffect(() => {
+    const option = {
+      root : null,
+      rootMargin: "20px",
+      threshold : 0,
+    };
+    let Observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) Observer.observe(loader.current)
+    setObserver(Observer);
+  }, [handleObserver])
+
+  useEffect(() => {
+    if (loader.current !== null && observer) observer.observe(loader.current);
+  }, [loader.current])
+
+  useEffect(() => {
+    console.log('вызов');
+    if (pagination.totalPages >= scrollPage) observer.unobserve(loader.current);
+    if (scrollPage < 2) return;
+    const params = {
+      bounds: filters.bounds,
+        search: filters.searchValue,
+        city: filters.cities.map(({ value }) => value).join(),
+        price: [+filters.price.from || '', +filters.price.to || ''].join(),
+        tags: filters.more.types.join(),
+        sort: filters.sortBy,
+        keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
+        page : scrollPage,
+    }
+
+    if (filters.resources.length !== 0)
+      params.resource = filters.resources.join()
+
+      dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
+      .then(({ data, isLoading }) => {
+        if (!isLoading && data?.docs && mounted.current) {
+          const { docs, ...paginationInfo } = data
+          // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
+          console.log(paginationInfo, scrollPage);
+          setListings((prevState) => ([...prevState, ...data?.docs]))
+          setPagination(paginationInfo)
+          setLoading(false)
+        }
+      })
+  }, [scrollPage])
+
   useEffect(function filterData() {
     if (mapMounted.current || isMapHidden) {
       const { sortBy, ...currentFilters } = filters
@@ -176,7 +235,8 @@ function Marketplace({ toggleFooter, openLogin }) {
         price: [+filters.price.from || '', +filters.price.to || ''].join(),
         tags: filters.more.types.join(),
         sort: filters.sortBy,
-        keyword: filters.more.keywords.split(',').map(item => item.trim()).join()
+        keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
+        page : filters.page
       }
 
       if (filters.resources.length !== 0)
@@ -185,7 +245,6 @@ function Marketplace({ toggleFooter, openLogin }) {
       if (isMapHidden) {
         params.bounds = ''
         params.limit = itemsPerPage
-        params.page = filters.page
       }
 
       if (boundsChanged.current) {
@@ -194,6 +253,13 @@ function Marketplace({ toggleFooter, openLogin }) {
         setLoading(true)
       }
 
+      dispatch(listingsApi.endpoints.getMarkers.initiate({...params}))
+        .then(({data, isLoading}) => {
+          if (!isLoading && data.docs && mounted.current) {
+            setMarkers(data?.docs || []);
+          }
+        });
+      
       dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
         .then(({ data, isLoading }) => {
           if (!isLoading && data?.docs && mounted.current) {
@@ -202,8 +268,12 @@ function Marketplace({ toggleFooter, openLogin }) {
             setListings(data?.docs || [])
             setPagination(paginationInfo)
             setLoading(false)
+            setScrollPage(1);
+            console.log('привязка', observer.observe(loader.current));
+            scrollToTop();
           }
         })
+      
     }
   }, [dispatch, filters, isMapHidden])
 
@@ -300,7 +370,7 @@ function Marketplace({ toggleFooter, openLogin }) {
           !isMapHidden &&
           <div className={styles.mapContainer}>
             <Map
-              items={listings}
+              items={markers}
               activeItem={activeItem}
               onActiveItemChange={setActiveItem}
               onBoundsChange={handleMapChange} />
@@ -380,7 +450,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                     }
                   </div>
                   {
-                    isMapHidden && !!pagination.totalDocs &&
+                    isMapHidden ? (!!pagination.totalDocs &&
                       <div className={styles.paginationContainer}>
                         <Pagination
                           className={styles.pagination}
@@ -388,7 +458,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                           count={pagination?.totalPages}
                           onNext={handleNextPage}
                           onPrev={handlePrevPage} />
-                      </div>
+                      </div>) : <div ref={loader}/>
                   }
                 </div>
               </div>
