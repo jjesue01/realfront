@@ -69,7 +69,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   const [pagination, setPagination] = useState({})
   const [searchInputValue, setSearchInputValue] = useState('');
   const [markers, setMarkers] = useState([]);
-  const [scrollPage, setScrollPage] = useState(0);
+  const [scrollPage, setScrollPage] = useState(1);
 
   const itemsPerPage = 15
 
@@ -112,7 +112,6 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   function toggleMap() {
     document.body.style.position = !isMapHidden ? 'static' : 'fixed'
-    if (!isMapHidden) observer.unobserve(loader.current);
     mapMounted.current = false
     setIsMapHidden(prevState => !prevState)
     toggleFooter()
@@ -153,50 +152,10 @@ function Marketplace({ toggleFooter, openLogin }) {
       })
   }, [dispatch])
 
-  useEffect(function mount() {
-    return () => {
-      mounted.current = false
-    }
-  }, [])
-
-  useEffect(function hideFooter() {
-      toggleFooter()
-      mounted.current = true
-      document.body.style.position = 'fixed'
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const loader = useRef(null);
-  const [observer, setObserver] = useState(null);
-
-  const handleObserver = useCallback((entries) => {
-    const target = entries[0];
-    if (target.isIntersecting){
-      setScrollPage(prev => prev + 1)
-    }
-  }, []);
-
-  useEffect(() => {
-    const option = {
-      root : null,
-      rootMargin: "20px",
-      threshold : 0,
-    };
-    let Observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current) Observer.observe(loader.current)
-    setObserver(Observer);
-  }, [handleObserver])
-
-  useEffect(() => {
-    if (loader.current !== null && observer) observer.observe(loader.current);
-  }, [loader.current])
-
-  useEffect(() => {
-    console.log('вызов');
-    if (pagination.totalPages >= scrollPage) observer.unobserve(loader.current);
-    if (scrollPage < 2) return;
-    const params = {
-      bounds: filters.bounds,
+  function fetchData(){
+    if (scrollPage !== null) {
+      const params = {
+        bounds: filters.bounds,
         search: filters.searchValue,
         city: filters.cities.map(({ value }) => value).join(),
         price: [+filters.price.from || '', +filters.price.to || ''].join(),
@@ -214,16 +173,62 @@ function Marketplace({ toggleFooter, openLogin }) {
         if (!isLoading && data?.docs && mounted.current) {
           const { docs, ...paginationInfo } = data
           // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
-          console.log(paginationInfo, scrollPage);
+          if (data.nextPage === null) setScrollPage(null);
           setListings((prevState) => ([...prevState, ...data?.docs]))
           setPagination(paginationInfo)
           setLoading(false)
         }
       })
+    }
+  }
+
+  function scrollListingsToTop(top = 0) {
+    const scroll = document.getElementById('scrollView')
+    scroll.scrollTo({
+      top,
+      behavior: "smooth"
+    })
+  }
+
+  useEffect(() => {
+    if (scrollPage == 1 || scrollPage == null) return;
+    else fetchData(); 
   }, [scrollPage])
+
+  useEffect(() => {
+    function scrollInfinite (){
+      let block = document.getElementById('scrollView');
+
+      let heightScroll = block.scrollHeight;
+      let heightBlock = block.clientHeight + block.scrollTop + 100;
+
+      if (heightBlock >= heightScroll) setScrollPage(prev => {
+        if (prev === null) return prev;
+        return prev + 1
+      });
+    };
+    let block = document.getElementById('scrollView');
+    
+    block?.addEventListener("scroll", scrollInfinite);
+    return () => {block?.removeEventListener("scroll", scrollInfinite);}
+  }, [])
+
+  useEffect(function mount() {
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+
+  useEffect(function hideFooter() {
+      toggleFooter()
+      mounted.current = true
+      document.body.style.position = 'fixed'
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(function filterData() {
     if (mapMounted.current || isMapHidden) {
+      scrollListingsToTop();
       const { sortBy, ...currentFilters } = filters
 
       setShowReset(JSON.stringify({ ...currentFilters, bounds: '', page: 1 }) !== JSON.stringify(initialFilters))
@@ -267,10 +272,9 @@ function Marketplace({ toggleFooter, openLogin }) {
             // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
             setListings(data?.docs || [])
             setPagination(paginationInfo)
-            setLoading(false)
+            setLoading(false);
+            
             setScrollPage(1);
-            console.log('привязка', observer.observe(loader.current));
-            scrollToTop();
           }
         })
       
@@ -414,8 +418,8 @@ function Marketplace({ toggleFooter, openLogin }) {
                 </div>
               }
             </div>
-            <div className={styles.itemsContainer}>
-              <div className={styles.scrollContainer}>
+            <div className={styles.itemsContainer} >
+              <div className={styles.scrollContainer} id ={!isMapHidden ? "scrollView" : null}>
                 <div className={styles.itemsContent}>
                   {
                     !isMapHidden &&
@@ -433,7 +437,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                         size="small" />
                     </div>
                   }
-                  <div className={styles.itemsGrid}>
+                  <div className={styles.itemsGrid} >
                     {
                       listings.map(item => (
                         <PhotoItem
@@ -450,7 +454,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                     }
                   </div>
                   {
-                    isMapHidden ? (!!pagination.totalDocs &&
+                    isMapHidden && !!pagination.totalDocs &&
                       <div className={styles.paginationContainer}>
                         <Pagination
                           className={styles.pagination}
@@ -458,7 +462,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                           count={pagination?.totalPages}
                           onNext={handleNextPage}
                           onPrev={handlePrevPage} />
-                      </div>) : <div ref={loader}/>
+                      </div>
                   }
                 </div>
               </div>
