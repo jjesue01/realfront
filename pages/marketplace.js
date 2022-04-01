@@ -76,6 +76,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   const mounted = useRef(false)
   const mapMounted = useRef(false)
   const boundsChanged = useRef(false)
+  const scrollView = useRef(null);
 
   function handleNextPage() {
     if (pagination.nextPage) {
@@ -151,16 +152,15 @@ function Marketplace({ toggleFooter, openLogin }) {
   }, [dispatch])
 
   function fetchData(){
-    if (scrollPage !== null) {
-      const params = {
-        bounds: filters.bounds,
-        search: filters.searchValue,
-        city: filters.cities.map(({ value }) => value).join(),
-        price: [+filters.price.from || '', +filters.price.to || ''].join(),
-        tags: filters.more.types.join(),
-        sort: filters.sortBy,
-        keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
-        page : scrollPage,
+    const params = {
+      bounds: filters.bounds,
+      search: filters.searchValue,
+      city: filters.cities.map(({ value }) => value).join(),
+      price: [+filters.price.from || '', +filters.price.to || ''].join(),
+      tags: filters.more.types.join(),
+      sort: filters.sortBy,
+      keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
+      page : scrollPage,
     }
 
     if (filters.resources.length !== 0)
@@ -172,43 +172,31 @@ function Marketplace({ toggleFooter, openLogin }) {
           const { docs, ...paginationInfo } = data
           // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
           if (data.nextPage === null) setScrollPage(null);
-          setListings((prevState) => ([...prevState, ...data?.docs]))
+          setListings((prevState) => prevState.concat(docs));
           setPagination(paginationInfo)
           setLoading(false)
         }
       })
-    }
   }
 
   function scrollListingsToTop(top = 0) {
-    const scroll = document.getElementById('scrollView')
-    scroll.scrollTo({
-      top,
-    })
+    scrollView.current?.scrollTo({top})
+  }
+
+  function scrollInfinite (){
+    let heightScroll = scrollView?.current.scrollHeight;
+    let heightBlock = scrollView?.current.clientHeight + scrollView?.current.scrollTop;
+
+    if (heightBlock >= heightScroll) setScrollPage(prev => {
+      if (prev === null) return prev;
+      return prev + 1
+    });
   }
 
   useEffect(() => {
-    if (scrollPage == 1 || scrollPage == null) return;
-    else fetchData(); 
+    if (scrollPage === 1 || scrollPage === null || pagination.totalPages === 1) return;
+    fetchData(); 
   }, [scrollPage])
-
-  useEffect(() => {
-    function scrollInfinite (){
-      let block = document.getElementById('scrollView');
-
-      let heightScroll = block.scrollHeight;
-      let heightBlock = block.clientHeight + block.scrollTop;
-
-      if (heightBlock >= heightScroll) setScrollPage(prev => {
-        if (prev === null) return prev;
-        return prev + 1
-      });
-    };
-    let block = document.getElementById('scrollView');
-    
-    block?.addEventListener("scroll", scrollInfinite);
-    return () => {block?.removeEventListener("scroll", scrollInfinite);}
-  }, [])
 
   useEffect(function mount() {
     return () => {
@@ -415,7 +403,7 @@ function Marketplace({ toggleFooter, openLogin }) {
               }
             </div>
             <div className={styles.itemsContainer} >
-              <div className={styles.scrollContainer} id ={!isMapHidden ? "scrollView" : null}>
+              <div className={styles.scrollContainer} ref = {scrollView} onScroll={!isMapHidden ? scrollInfinite : null}>
                 <div className={styles.itemsContent}>
                   {
                     !isMapHidden &&
