@@ -98,10 +98,8 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   function handleChange({ target: { name, value } }) {
-    setFilters(prevState => {
-      scrollListingsToTop(); 
-      return { ...prevState, [name]: value, page : 1 
-    }})
+    scrollListingsToTop(); 
+    setFilters(prevState => ({ ...prevState, [name]: value, page : 1 }))
   }
 
   function handleSubmit (e) {
@@ -131,10 +129,8 @@ function Marketplace({ toggleFooter, openLogin }) {
   function handleMapChange(bounds) {
     mapMounted.current = true
     boundsChanged.current = true
-    setFilters(prevFilters => {
-      scrollListingsToTop();
-      return {...prevFilters,bounds}
-    })
+    scrollListingsToTop();
+    setFilters(prevFilters => ({...prevFilters,bounds}))
   }
 
   function handleMouseEnter(item) {
