@@ -98,7 +98,10 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   function handleChange({ target: { name, value } }) {
-    setFilters(prevState => ({ ...prevState, [name]: value, page : 1 }))
+    setFilters(prevState => {
+      scrollListingsToTop(); 
+      return { ...prevState, [name]: value, page : 1 
+    }})
   }
 
   function handleSubmit (e) {
@@ -128,11 +131,10 @@ function Marketplace({ toggleFooter, openLogin }) {
   function handleMapChange(bounds) {
     mapMounted.current = true
     boundsChanged.current = true
-
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      bounds
-    }))
+    setFilters(prevFilters => {
+      scrollListingsToTop();
+      return {...prevFilters,bounds}
+    })
   }
 
   function handleMouseEnter(item) {
@@ -186,7 +188,6 @@ function Marketplace({ toggleFooter, openLogin }) {
     const scroll = document.getElementById('scrollView')
     scroll.scrollTo({
       top,
-      behavior: "smooth"
     })
   }
 
@@ -200,7 +201,7 @@ function Marketplace({ toggleFooter, openLogin }) {
       let block = document.getElementById('scrollView');
 
       let heightScroll = block.scrollHeight;
-      let heightBlock = block.clientHeight + block.scrollTop + 100;
+      let heightBlock = block.clientHeight + block.scrollTop;
 
       if (heightBlock >= heightScroll) setScrollPage(prev => {
         if (prev === null) return prev;
@@ -228,7 +229,6 @@ function Marketplace({ toggleFooter, openLogin }) {
 
   useEffect(function filterData() {
     if (mapMounted.current || isMapHidden) {
-      scrollListingsToTop();
       const { sortBy, ...currentFilters } = filters
 
       setShowReset(JSON.stringify({ ...currentFilters, bounds: '', page: 1 }) !== JSON.stringify(initialFilters))
@@ -241,7 +241,6 @@ function Marketplace({ toggleFooter, openLogin }) {
         tags: filters.more.types.join(),
         sort: filters.sortBy,
         keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
-        page : filters.page
       }
 
       if (filters.resources.length !== 0)
@@ -250,6 +249,7 @@ function Marketplace({ toggleFooter, openLogin }) {
       if (isMapHidden) {
         params.bounds = ''
         params.limit = itemsPerPage
+        params.page = filters.page
       }
 
       if (boundsChanged.current) {
@@ -425,7 +425,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                     !isMapHidden &&
                     <div className={styles.itemsHeader}>
                       <Typography fontSize={16}>
-                        {listings.length || 'No'} results
+                        {markers.length || 'No'} results
                       </Typography>
                       <Select
                         className={styles.selectSort}
