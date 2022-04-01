@@ -1,30 +1,30 @@
 import React, {useState, useEffect, useMemo} from "react";
-import styles from '../styles/Profile.module.sass'
+import styles from '../../styles/Profile.module.sass'
 import Head from "next/head";
-import UserInfo from "../components/profile/user-info/UserInfo";
+import UserInfo from "../../components/profile/user-info/UserInfo";
 import cn from "classnames";
-import Typography from "../components/Typography";
-import PhotoItem from "../components/photo-item/PhotoItem";
-import TradingHistory from "../components/profile/trading-history/TradingHistory";
-import SearchIcon from "../public/icons/search-icon.svg";
-import Input from "../components/input/Input";
-import Select from "../components/select/Select";
-import Button from "../components/button/Button";
-import SideFilter from "../components/profile/filter/SideFilter";
-import {sortOptions} from "../components/profile/fixtures";
-import {buildFilterOptions, getSortedArray} from "../utils";
-import Tabs from "../components/tabs/Tabs";
+import Typography from "../../components/Typography";
+import PhotoItem from "../../components/photo-item/PhotoItem";
+import TradingHistory from "../../components/profile/trading-history/TradingHistory";
+import SearchIcon from "../../public/icons/search-icon.svg";
+import Input from "../../components/input/Input";
+import Select from "../../components/select/Select";
+import Button from "../../components/button/Button";
+import SideFilter from "../../components/profile/filter/SideFilter";
+import {sortOptions} from "../../components/profile/fixtures";
+import {buildFilterOptions, getSortedArray} from "../../utils";
+import Tabs from "../../components/tabs/Tabs";
 import {useRouter} from "next/router";
-import {useGetCurrentUserQuery} from "../services/auth";
-import {useGetListingsQuery} from "../services/listings";
+import {useGetCurrentUserQuery} from "../../services/auth";
+import {useGetListingsQuery} from "../../services/listings";
 import {
   useDeleteBidMutation,
   useGetMyBidsQuery,
   useGetProfileTransactionsQuery
-} from "../services/transactions";
-import FullscreenLoader from "../components/fullscreen-loader/FullscreenLoader";
-import Bids from "../components/profile/bids/Bids";
-import ConfirmationDialog from "../components/dialogs/confirmation-dialog/ConfirmationDialog";
+} from "../../services/transactions";
+import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
+import Bids from "../../components/profile/bids/Bids";
+import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 
 const tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
 
