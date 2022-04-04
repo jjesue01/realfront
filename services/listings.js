@@ -198,6 +198,16 @@ export const listingsApi = createApi({
           dispatch(pushToast({ type: 'error', message: 'Error while getting listing' }))
         }
       }
+    }),
+    getLeaderBoard: builder.query({
+      query: () => `/leaderboard`,
+      async onQueryStarted(arg, {dispatch, queryFulfilled}){
+        try {
+          await queryFulfilled
+        } catch (error){
+          dispatch(pushToast({type: 'error', message: 'Error while getting leaderboard'}))
+        }
+      }
     })
   }),
 })
@@ -214,5 +224,6 @@ export const {
   useGetListingsQuery,
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,
-  useGetTagsQuery
+  useGetTagsQuery,
+  useGetLeaderBoardQuery
 } = listingsApi
