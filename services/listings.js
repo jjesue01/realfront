@@ -198,6 +198,26 @@ export const listingsApi = createApi({
           dispatch(pushToast({ type: 'error', message: 'Error while getting listing' }))
         }
       }
+    }),
+    getPublishedByUserName: builder.query({
+      query: username => `/listings/user/${username}`,
+      async onQueryStarted(arg, {dispatch, queryFulfilled}){
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({type: 'error', message: 'Error while getting listing'}))
+        }
+      }
+    }),
+    getSoldByUserName: builder.query({
+      query: username => `/listings/user/${username}/sold`,
+      async onQueryStarted(arg, {dispatch, queryFulfilled}){
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({type: 'error', message: 'Error while getting sold listing'}))
+        }
+      }
     })
   }),
 })
@@ -214,5 +234,7 @@ export const {
   useGetListingsQuery,
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,
-  useGetTagsQuery
+  useGetTagsQuery,
+  useGetPublishedByUserNameQuery,
+  useGetSoldByUserNameQuery,
 } = listingsApi

@@ -11,15 +11,15 @@ import Select from "../../components/select/Select";
 import Button from "../../components/button/Button";
 import SideFilter from "../../components/profile/filter/SideFilter";
 import {sortOptions} from "../../components/profile/fixtures";
-import {getSortedArray} from "../../utils";
+import {buildFilterOptions, getSortedArray} from "../../utils";
 import Tabs from "../../components/tabs/Tabs";
 import {useRouter} from "next/router";
-import {useGetCurrentUserQuery} from "../../services/auth";
-import {useGetListingsQuery} from "../../services/listings";
+import {useGetPublishedByUserNameQuery, useGetSoldByUserNameQuery} from "../../services/listings";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
 import { getConfig } from "../../app-config";
+import Error from "../../components/error/Error";
 
-const tabs = ['sold', 'listed']
+const tabs = ['listed', 'sold']
 
 const initialFilters = {
   searchValue: '',
@@ -35,14 +35,13 @@ const initialFilters = {
   },
 }
 
-function ProfilePublic({prefetchedProfile = {}}) {
-  console.log(prefetchedProfile);
+function ProfilePublic({prefetchedProfile = {}, errorCode}) {
   const router = useRouter()
-  const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
-  const { data: soldListings, refetch: refetchSold } = useGetListingsQuery({ seller: user?._id }, { skip: !user?._id })
-  const isLoading = !user
+  const { data: soldListings, refetch: refetchSold } = useGetSoldByUserNameQuery(prefetchedProfile.username)
+  const { data : listings, refetch: refetchListing} = useGetPublishedByUserNameQuery(prefetchedProfile.username)
+  const isLoading = !prefetchedProfile || !soldListings || !listings
   const [filteredData, setFilteredData] = useState([])
-  const [currentTab, setCurrentTab] = useState('sold')
+  const [currentTab, setCurrentTab] = useState('listed')
   const [filterOpened, setFilterOpened] = useState(false)
   const [filtersCount, setFiltersCount] = useState(0)
   const [filters, setFilters] = useState({
@@ -50,12 +49,15 @@ function ProfilePublic({prefetchedProfile = {}}) {
     sortBy: 'price_low'
   })
   const [filterValues, setFilterValues] = useState([])
+  const [options, setOptions] = useState({
+    listed: { cities: [], tags: [] },
+    sold: { cities: [], tags: [] },
+  })
 
   const itemsList = filteredData.map((item) => (
     <PhotoItem
       key={item._id}
       data={item}
-      isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       favorite={currentTab === 'favorited'}
       type="full" />
   ))
@@ -76,10 +78,6 @@ function ProfilePublic({prefetchedProfile = {}}) {
 
   function toggleFilter() {
     setFilterOpened(prevState => !prevState)
-  }
-
-  function toggleCancelBidConfirmation() {
-    setCancelBidOpened(prevState => !prevState)
   }
 
   function handleDeleteValue(item) {
@@ -115,8 +113,13 @@ function ProfilePublic({prefetchedProfile = {}}) {
     let updatedFilterValues = []
     let updatedFiltersCount = 0
 
+    if (!prefetchedProfile || !soldListings || !listings) return;
+
     if (currentTab === 'sold')
       items = [...soldListings?.docs]
+
+    if (currentTab === 'listed')
+      items = [...listings?.docs]
 
     if (filters.searchValue !== '') {
       items = items.filter(({ name, address }) =>
@@ -209,7 +212,16 @@ function ProfilePublic({prefetchedProfile = {}}) {
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
     setFilterValues(updatedFilterValues)
-  }, [filters, currentTab, user])
+  }, [filters, currentTab, soldListings, listings])
+
+  useEffect(function initOptions() {
+    if (!listings || !soldListings) return;
+
+    setOptions({
+      listed: buildFilterOptions(listings.docs),
+      sold: buildFilterOptions(soldListings.docs),
+    })
+  }, [listings, soldListings])
 
   useEffect(function initTab() {
     const { query } = router;
@@ -223,16 +235,18 @@ function ProfilePublic({prefetchedProfile = {}}) {
   }, [currentTab])
 
   useEffect(function () {
-    refetchUser(),
     refetchSold()
-  }, [refetchUser, refetchSold])
+    refetchListing();
+  }, [refetchSold, refetchListing])
+
+  if (errorCode) return <Error/>;
 
   return (
     <main className={styles.root}>
       <Head>
         <title>HOMEJAB - My Profile</title>
       </Head>
-      <UserInfo user={user} />
+      <UserInfo user={prefetchedProfile} isPublic={true}/>
       <div className={styles.content}>
         <div className="container">
           <Tabs
@@ -242,7 +256,7 @@ function ProfilePublic({prefetchedProfile = {}}) {
             onChange={handleTabChange}
             tabs={tabs} />
           {
-            ['sold'].includes(currentTab) &&
+            ['listed', 'sold'].includes(currentTab) &&
             <div className={styles.filterControls}>
               <div className={styles.row}>
                 <Input
@@ -307,7 +321,7 @@ function ProfilePublic({prefetchedProfile = {}}) {
         </div>
       </div>
       <SideFilter
-        options={currentTab === 'collected'}
+        options={currentTab === 'listed' ? options.listed : options.sold}
         opened={filterOpened}
         onClose={toggleFilter}
         filters={filters}
@@ -321,10 +335,14 @@ export async function getServerSideProps({params: { id }}) {
   const prefetchedProfile = await fetch(getConfig().API_URL + 'users/username/' + id)
     .then(res => res.json())
     .catch(console.log)
+  let errorCode = null;
+
+  if(prefetchedProfile?.type === 'NotFound') errorCode = true;
 
   return {
     props: {
-      prefetchedProfile: prefetchedProfile || {}
+      prefetchedProfile: prefetchedProfile || {},
+      errorCode : errorCode,
     },
   }
 }
