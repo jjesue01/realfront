@@ -200,7 +200,7 @@ export const listingsApi = createApi({
       }
     }),
     getLeaderBoard: builder.query({
-      query: () => `/leaderboard`,
+      query: (params) => `/leaderboard`,
       async onQueryStarted(arg, {dispatch, queryFulfilled}){
         try {
           await queryFulfilled

@@ -5,30 +5,54 @@
   display: flex
   flex-direction: column
   padding-top: 82px
+.container
+  box-shadow: inset 0px 10px 4px -10px rgba(0,0,0, .2)
 .tableContainer
   padding-top: 24px
   width: 100%
-  box-shadow: inset 0px 10px 4px -10px rgba(0,0,0, .2)
+.description
+  width: 100%
+  max-width: 800px
+  margin: auto
+  padding: 0 20px
+  text-align: center
+.title
+  margin: 32px 0 8px 0
+  line-height: 44px
+  font-size: 40px
+  font-weight: 500
+.subtitle
+  margin-bottom: 10px
+  color: #707A83
+  font-size: 16px
+  font-weight: 400
 .table
   width: 100%
-  max-width: 1440px
+  max-width: 1200px
   padding: 0 40px 24px 40px
   margin: 0 auto
 .tableHeader
   display: flex
   align-items: center
-  justify-content: flex-start
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 20px
   p
     font-size: 20px
     font-weight: 600
-    line-height: 15px
+    line-height: 21px
     color: #878D97
 .col
+  box-sizing: border-box
+  padding: 8px
   width: 100%
   overflow: hidden
   margin-right: 20px
+  display: flex
+  flex-direction: row
+  justify-content: flex-start
+  cursor: pointer
   p
-    width: 100%
     white-space: nowrap
     text-overflow: ellipsis
     overflow: hidden
@@ -37,3 +61,31 @@
 .colUsername
   min-width: 400px
   max-width: 400px
+.colPrice
+  min-width: 160px
+  max-width: 160px
+.colItems
+  min-width: 110px
+  max-width: 110px
+.tableItem
+  width: 100%
+  height: 85px
+  border-top: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: space-between
+  transition: all 0.2s ease 0s
+  cursor: pointer
+  .col
+    p
+      font-size: 16px
+      color: #111
+  &:hover
+    box-shadow: rgba(4, 17, 29, 0.25) 0px 0px 8px 0px
+    background-color: #FBFDFF
+.icon
+  margin-left: 6px
+  path
+    fill: #878D97
+.iconActive
+  transform: rotate(180deg)
