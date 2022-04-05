@@ -5,20 +5,25 @@ import { useGetLeaderBoardQuery } from "../services/listings";
 import cn from 'classnames'
 import ArrowShortIcon from './../public/icons/arrow-sort.svg'
 import { getSortedArray } from "../utils";
+import Link from "next/link";
 
 const RowDetails = ({item}) => {
 
-  return (<div className={styles.tableItem}>
-    <div className={cn(styles.col, styles.colUsername)}>
-      <p>{item.name}</p>
+  return (
+  <Link href={`/profile/${item.name}`} passHref>
+    <div className={styles.tableItem}>
+      <div className={cn(styles.col, styles.colUsername)}>
+        <p>{item.name}</p>
+      </div>
+      <div className={cn(styles.col, styles.colPrice)}>
+        <p>{ item.floorPrice }</p>
+      </div>
+      <div className={cn(styles.col, styles.colItems)}>
+        <p>{ item.items }</p>
+      </div>
     </div>
-    <div className={cn(styles.col, styles.colPrice)}>
-      <p>{ item.floorPrice }</p>
-    </div>
-    <div className={cn(styles.col, styles.colItems)}>
-      <p>{ item.items }</p>
-    </div>
-  </div>)
+  </Link>
+  )
 }
 
 const Leaderboard = () => {
