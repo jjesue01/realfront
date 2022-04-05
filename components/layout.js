@@ -311,6 +311,9 @@ function Layout({ children }) {
                 <li>
                   <NavLink href="/faq">FAQ</NavLink>
                 </li>
+                <li>
+                  <NavLink href="/leaderboard">Leaderboard</NavLink>
+                </li>
               </ul>
               <div className={styles.actions}>
                 <Button onClick={handleOrderNFT} type="outlined">

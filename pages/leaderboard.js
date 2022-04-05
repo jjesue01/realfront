@@ -7,12 +7,13 @@ import ArrowShortIcon from './../public/icons/arrow-sort.svg'
 import { getSortedArray } from "../utils";
 import Link from "next/link";
 
-const RowDetails = ({item}) => {
+const RowDetails = ({item, index}) => {
 
   return (
   <Link href={`/profile/${item.name}`} passHref>
     <div className={styles.tableItem}>
       <div className={cn(styles.col, styles.colUsername)}>
+        <span className={styles.index}>{index + 1}</span>
         <p>{item.name}</p>
       </div>
       <div className={cn(styles.col, styles.colPrice)}>
@@ -33,7 +34,7 @@ const Leaderboard = () => {
   const [sortItems, setSortItems] = React.useState();
 
   const rowsList = sortItems?.map((item, index) => (
-    <RowDetails key={item._id} item={item} />
+    <RowDetails key={item._id} item={item} index={index}/>
   ))
 
   const onChangeActiveTab = (tab) => {
