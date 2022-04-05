@@ -97,7 +97,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
               </Link>
             </li>
             <li>
-              <Link href="/profile?tab=favorited">
+              <Link href={`/profile/${user?.username}?tab=favorited`}>
                 My Favorites
               </Link>
             </li>

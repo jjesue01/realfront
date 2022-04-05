@@ -26,6 +26,7 @@ import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoade
 import Bids from "../../components/profile/bids/Bids";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import { getConfig } from "../../app-config";
+import Error from "../../components/error/Error";
 
 let tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
 
@@ -53,8 +54,8 @@ function MyProfile({prefetchedProfile, errorCode}) {
   const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
   const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
   const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery()
-  const { data: soldListingsUserName, refetch: refetchSoldUserName } = useGetSoldByUserNameQuery(prefetchedProfile.username)
-  const { data : listings, refetch: refetchListing} = useGetPublishedByUserNameQuery(prefetchedProfile.username)
+  const { data: soldListingsUserName, refetch: refetchSoldUserName } = useGetSoldByUserNameQuery(prefetchedProfile.username, {skip : !prefetchedProfile.username})
+  const { data : listings, refetch: refetchListing} = useGetPublishedByUserNameQuery(prefetchedProfile.username, {skip : !prefetchedProfile.username})
   const [manualLoading, setManualLoading] = useState(false)
   const isLoading = !user || !collectedListings || !createdListings || !favoriteListings || isFetching || manualLoading || !soldListingsUserName || !listings
   const [filteredData, setFilteredData] = useState([])
@@ -325,7 +326,7 @@ function MyProfile({prefetchedProfile, errorCode}) {
     { 
       tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
       setIsPublic(false);
-      // setCurrentTab('collected');
+      setCurrentTab('collected');
     } else {
       tabs = ['listings', 'sold'];
       setIsPublic(true);
@@ -339,6 +340,8 @@ function MyProfile({prefetchedProfile, errorCode}) {
     if (query.tab)
       setCurrentTab(query.tab)
   }, [router])
+
+  if (errorCode) return <Error/>
 
   return (
     <main className={styles.root}>
