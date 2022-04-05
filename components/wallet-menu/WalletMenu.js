@@ -92,7 +92,7 @@ function WalletMenu({ opened, onLogOut, onClose, user, onAddFunds }) {
           </Button>
           <ul className={styles.links}>
             <li>
-              <Link href="/profile">
+              <Link href={`/profile/${user?.username}`}>
                 My Profile
               </Link>
             </li>

@@ -5,6 +5,7 @@ import UserInfo from "../../components/profile/user-info/UserInfo";
 import cn from "classnames";
 import Typography from "../../components/Typography";
 import PhotoItem from "../../components/photo-item/PhotoItem";
+import TradingHistory from "../../components/profile/trading-history/TradingHistory";
 import SearchIcon from "../../public/icons/search-icon.svg";
 import Input from "../../components/input/Input";
 import Select from "../../components/select/Select";
@@ -14,12 +15,19 @@ import {sortOptions} from "../../components/profile/fixtures";
 import {buildFilterOptions, getSortedArray} from "../../utils";
 import Tabs from "../../components/tabs/Tabs";
 import {useRouter} from "next/router";
-import {useGetPublishedByUserNameQuery, useGetSoldByUserNameQuery} from "../../services/listings";
+import {useGetCurrentUserQuery} from "../../services/auth";
+import {useGetListingsQuery, useGetPublishedByUserNameQuery, useGetSoldByUserNameQuery} from "../../services/listings";
+import {
+  useDeleteBidMutation,
+  useGetMyBidsQuery,
+  useGetProfileTransactionsQuery
+} from "../../services/transactions";
 import FullscreenLoader from "../../components/fullscreen-loader/FullscreenLoader";
+import Bids from "../../components/profile/bids/Bids";
+import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import { getConfig } from "../../app-config";
-import Error from "../../components/error/Error";
 
-const tabs = ['listed', 'sold']
+let tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
 
 const initialFilters = {
   searchValue: '',
@@ -35,13 +43,28 @@ const initialFilters = {
   },
 }
 
-function ProfilePublic({prefetchedProfile = {}, errorCode}) {
+function MyProfile({prefetchedProfile, errorCode}) {
   const router = useRouter()
-  const { data: soldListings, refetch: refetchSold } = useGetSoldByUserNameQuery(prefetchedProfile.username)
+  const [deleteBid] = useDeleteBidMutation()
+  const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
+  const { data: collectedListings, refetch: refetchCollected } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
+  const { data: createdListings, refetch: refetchCreated } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
+  const { data: soldListings, refetch: refetchSold } = useGetListingsQuery({ seller: user?._id }, { skip: !user?._id })
+  const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
+  const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
+  const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery()
+  const { data: soldListingsUserName, refetch: refetchSoldUserName } = useGetSoldByUserNameQuery(prefetchedProfile.username)
   const { data : listings, refetch: refetchListing} = useGetPublishedByUserNameQuery(prefetchedProfile.username)
-  const isLoading = !prefetchedProfile || !soldListings || !listings
+  const [manualLoading, setManualLoading] = useState(false)
+  const isLoading = !user || !collectedListings || !createdListings || !favoriteListings || isFetching || manualLoading || !soldListingsUserName || !listings
   const [filteredData, setFilteredData] = useState([])
-  const [currentTab, setCurrentTab] = useState('listed')
+  const [currentTab, setCurrentTab] = useState('collected')
+  const [options, setOptions] = useState({
+    collected: { cities: [], tags: [] },
+    created: { cities: [], tags: [] },
+    listings: { cities: [], tags: [] },
+    sold: { cities: [], tags: [] },
+  })
   const [filterOpened, setFilterOpened] = useState(false)
   const [filtersCount, setFiltersCount] = useState(0)
   const [filters, setFilters] = useState({
@@ -49,15 +72,24 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
     sortBy: 'price_low'
   })
   const [filterValues, setFilterValues] = useState([])
-  const [options, setOptions] = useState({
-    listed: { cities: [], tags: [] },
-    sold: { cities: [], tags: [] },
-  })
+  const [cancelBidOpened, setCancelBidOpened] = useState(false)
+  const [bidForDelete, setBidForDelete] = useState(null)
+  const [isPublic, setIsPublic] = useState(false);
+  
+
+  const pendingBids = useMemo(() => {
+    return bids?.docs?.filter(bid => !bid.status.includes('Close'))
+  }, [bids?.docs])
+
+  const closedBids = useMemo(() => {
+    return bids?.docs?.filter(bid => bid.status.includes('Close'))
+  }, [bids?.docs])
 
   const itemsList = filteredData.map((item) => (
     <PhotoItem
       key={item._id}
       data={item}
+      isOwn={item?.owner ? item.owner === user?._id : item?.creator?.ID === user?._id}
       favorite={currentTab === 'favorited'}
       type="full" />
   ))
@@ -78,6 +110,40 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
 
   function toggleFilter() {
     setFilterOpened(prevState => !prevState)
+  }
+
+  function toggleCancelBidConfirmation() {
+    setCancelBidOpened(prevState => !prevState)
+  }
+
+  function openCancelBid(bid) {
+    return function () {
+      setBidForDelete(bid)
+      toggleCancelBidConfirmation()
+    }
+  }
+
+  function handleCancelBid() {
+    const contract = require('/services/contract/index')[bidForDelete.listing?.blockchain]
+
+    if (bidForDelete) {
+      setManualLoading(true)
+
+      contract.revokeBid(bidForDelete.listing?.tokenID, bidForDelete.bidIndex , user.walletAddress)
+        .then(() => {
+          deleteBid({ id: bidForDelete._id }).unwrap()
+            .then(() => {
+              refetchBids()
+              setManualLoading(false)
+            })
+            .catch(() => {
+              setManualLoading(false)
+            })
+        })
+        .catch(() => {
+          setManualLoading(false)
+        })
+    }
   }
 
   function handleDeleteValue(item) {
@@ -113,13 +179,26 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
     let updatedFilterValues = []
     let updatedFiltersCount = 0
 
-    if (!prefetchedProfile || !soldListings || !listings) return;
+    if (currentTab === 'activity' || !user || !collectedListings || !createdListings || 
+                !favoriteListings || !listings || !soldListingsUserName) return;
+
+    if (currentTab === 'favorited') {
+      items = [...favoriteListings.docs]
+      setFilteredData(items)
+      return;
+    }
+
+    if (currentTab === 'collected')
+      items = [...collectedListings.docs]
+
+    if (currentTab === 'created')
+      items = [...createdListings.docs]
 
     if (currentTab === 'sold')
-      items = [...soldListings?.docs]
+      items = isPublic ? [...soldListingsUserName.docs] : [...soldListings.docs]
 
-    if (currentTab === 'listed')
-      items = [...listings?.docs]
+    if (currentTab === 'listings')
+      items = [...listings.docs]
 
     if (filters.searchValue !== '') {
       items = items.filter(({ name, address }) =>
@@ -212,41 +291,61 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
     setFilterValues(updatedFilterValues)
-  }, [filters, currentTab, soldListings, listings])
+  }, [filters, currentTab, user, createdListings, collectedListings, favoriteListings, options])
 
   useEffect(function initOptions() {
-    if (!listings || !soldListings) return;
+    if (!collectedListings || !createdListings || !listings || !soldListingsUserName) return;
 
     setOptions({
-      listed: buildFilterOptions(listings.docs),
-      sold: buildFilterOptions(soldListings.docs),
+      collected: buildFilterOptions(collectedListings.docs),
+      created: buildFilterOptions(createdListings.docs),
+      listings : buildFilterOptions(listings.docs),
+      sold : buildFilterOptions(soldListingsUserName.docs),
     })
-  }, [listings, soldListings])
-
-  useEffect(function initTab() {
-    const { query } = router;
-
-    if (query.tab)
-      setCurrentTab(query.tab)
-  }, [router])
+  }, [collectedListings, createdListings, listings, soldListingsUserName])
 
   useEffect(function resetFilters() {
     handleResetFilters()
   }, [currentTab])
 
   useEffect(function () {
+    refetchUser()
+    refetchCollected()
+    refetchCreated()
     refetchSold()
-    refetchListing();
-  }, [refetchSold, refetchListing])
+    refetchFavorite()
+    refetchTransactions()
+    refetchBids()
+    refetchListing()
+    refetchSoldUserName()
+  }, [refetchUser, refetchCollected, refetchCreated, refetchFavorite, refetchTransactions, refetchBids, refetchSold, refetchListing, refetchSoldUserName])
 
-  if (errorCode) return <Error/>;
+  useEffect(() => {
+    if (prefetchedProfile?._id === user?._id) 
+    { 
+      tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
+      setIsPublic(false);
+      // setCurrentTab('collected');
+    } else {
+      tabs = ['listings', 'sold'];
+      setIsPublic(true);
+      setCurrentTab('listings');
+    }
+  }, [prefetchedProfile, user])
+
+  useEffect(function initTab() {
+    const { query } = router;
+    console.log(router);
+    if (query.tab)
+      setCurrentTab(query.tab)
+  }, [router])
 
   return (
     <main className={styles.root}>
       <Head>
         <title>HOMEJAB - My Profile</title>
       </Head>
-      <UserInfo user={prefetchedProfile} isPublic={true}/>
+      <UserInfo user={prefetchedProfile} isPublic={isPublic}/>
       <div className={styles.content}>
         <div className="container">
           <Tabs
@@ -256,7 +355,7 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
             onChange={handleTabChange}
             tabs={tabs} />
           {
-            ['listed', 'sold'].includes(currentTab) &&
+            ['collected', 'created', 'sold', 'listings'].includes(currentTab) &&
             <div className={styles.filterControls}>
               <div className={styles.row}>
                 <Input
@@ -305,9 +404,9 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
               </div>
             </div>
           }
-          <div className={cn(styles.tabContent, { [styles.contentMargin]: ['sold'].includes(currentTab) })}>
+          <div className={cn(styles.tabContent, { [styles.contentMargin]: ['collected', 'created', 'sold'].includes(currentTab) })}>
             {
-              ['listed', 'sold'].includes(currentTab) &&
+              ['collected', 'created', 'favorited', 'sold', 'listings'].includes(currentTab) &&
                 <div className={styles.itemsContainer}>
                   <Typography fontSize={16} lHeight={20}>
                     { filteredData.length > 0 ? filteredData.length : 'No' } items
@@ -317,11 +416,36 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
                   </div>
                 </div>
             }
+            {
+              currentTab === 'activity' &&
+                <TradingHistory data={transactions} />
+            }
+            {
+              currentTab === 'my bids' &&
+                <>
+                  <Bids
+                    data={pendingBids}
+                    title="Pending bids"
+                    onCancel={openCancelBid}
+                    withTotal />
+                  <Bids
+                    className={styles.closedBids}
+                    data={closedBids}
+                    title="Closed bids" />
+                </>
+            }
           </div>
         </div>
       </div>
+      <ConfirmationDialog
+        opened={cancelBidOpened}
+        onClose={toggleCancelBidConfirmation}
+        onSubmit={handleCancelBid}
+        btnSubmitTitle={'Cancel'}
+        title={'Cancel bid'}
+        message={'Do you really want to cancel your bid?'} />
       <SideFilter
-        options={currentTab === 'listed' ? options.listed : options.sold}
+        options={options[currentTab]}
         opened={filterOpened}
         onClose={toggleFilter}
         filters={filters}
@@ -330,6 +454,8 @@ function ProfilePublic({prefetchedProfile = {}, errorCode}) {
     </main>
   )
 }
+
+export default MyProfile
 
 export async function getServerSideProps({params: { id }}) {
   const prefetchedProfile = await fetch(getConfig().API_URL + 'users/username/' + id)
@@ -346,5 +472,3 @@ export async function getServerSideProps({params: { id }}) {
     },
   }
 }
-
-export default ProfilePublic
