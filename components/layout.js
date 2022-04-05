@@ -31,21 +31,6 @@ import TwitterIcon from '/public/icons/twitter.svg'
 import YoutubeIcon from '/public/icons/youtube.svg'
 import PinterestIcon from '/public/icons/pinterest.svg'
 
-const accountLinks = [
-  {
-    name: 'My Profile',
-    link: '/profile'
-  },
-  {
-    name: 'My Favorites',
-    link: '/profile?tab=favorited'
-  },
-  {
-    name: 'My Account Settings',
-    link: '/settings'
-  },
-]
-
 const companyLinks = [
   {
     name: 'Our Story',
@@ -418,22 +403,25 @@ function Layout({ children }) {
                   </Typography>
                 </div>
                 <div className={styles.navLinks}>
-                  <div className={cn(styles.navCol, styles.colAccount)}>
+                  {auth?.user ? 
+                    <div className={cn(styles.navCol, styles.colAccount)}>
                     <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
                       My account
                     </Typography>
                     <ul className={styles.list}>
-                      {
-                        accountLinks.map(({ name, link }) => (
-                          <li key={name}>
-                            <Link href={link}>
-                              { name }
-                            </Link>
-                          </li>
-                        ))
-                      }
+                        <li>
+                          <Link href={`/profile/${auth.user.username}`}>My Profile</Link>
+                        </li>
+                        <li>
+                          <Link href={`/profile/${auth.user.username}?tab=favorited`}>My Favorites</Link>
+                        </li>
+                        <li>
+                          <Link href={`/settings`}>My Account Settings</Link>
+                        </li>
                     </ul>
-                  </div>
+                    </div> : null
+                  }
+                  
                   <div className={cn(styles.navCol, styles.colCompany)}>
                     <Typography fontSize={14} fontWeight={600} color={'#000'} lHeight={20}>
                       Company

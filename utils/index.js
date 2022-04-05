@@ -117,7 +117,6 @@ const privateRoutes = [
   '/photos/edit',
   '/photos/sell',
   '/settings',
-  '/profile',
 ]
 
 export function isPrivateRoute(pathname) {
