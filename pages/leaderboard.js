@@ -28,10 +28,10 @@ const RowDetails = ({item, index}) => {
 }
 
 const Leaderboard = () => {
-  const [sortBy, setSortBy] = useState(false);
+  const [sortOrder, setSortOrder] = useState(false);
   const [activeSortTab, setActiveSortTab] = useState('');
-  const {data : leaderboard} = useGetLeaderBoardQuery();
-  const [sortItems, setSortItems] = React.useState();
+  const [sortItems, setSortItems] = useState();
+  const {data : leaderboard} = useGetLeaderBoardQuery({sort : `${activeSortTab}:${sortOrder ? 'desc' : "asc"}`});
 
   const rowsList = sortItems?.map((item, index) => (
     <RowDetails key={item._id} item={item} index={index}/>
@@ -39,17 +39,13 @@ const Leaderboard = () => {
 
   const onChangeActiveTab = (tab) => {
     setActiveSortTab(tab);
-    if (activeSortTab === tab) setSortBy(prev => !prev);
-    else setSortBy(false);
+    if (activeSortTab === tab) setSortOrder(prev => !prev);
+    else setSortOrder(false);
   }
 
   useEffect(() => {
     setSortItems(leaderboard);
   }, [leaderboard])
-
-  useEffect(() => {
-    sortItems && setSortItems(prevState => getSortedArray(prevState, `${activeSortTab}_${sortBy ? 'high' : 'low'}`))
-  }, [sortBy, activeSortTab])
 
   return (
     <main className={styles.root}>
@@ -69,16 +65,16 @@ const Leaderboard = () => {
                     {
                     activeSortTab === 'name' && 
                     <div className={cn(styles.icon)}>
-                      <ArrowShortIcon className={cn({[styles.iconActive] : sortBy})}/>
+                      <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
                     </div>
                     }
                   </div>
-                  <div className={cn(styles.col, styles.colPrice)} onClick={() => onChangeActiveTab('floorPrice')}>
+                  <div className={cn(styles.col, styles.colPrice)} onClick={() => onChangeActiveTab('price')}>
                     <p>Floor Price</p>
                     {
-                    activeSortTab === 'floorPrice' && 
+                    activeSortTab === 'price' && 
                     <div className={cn(styles.icon)}>
-                      <ArrowShortIcon className={cn({[styles.iconActive] : sortBy})}/>
+                      <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
                     </div>
                     }
                   </div>
@@ -87,7 +83,7 @@ const Leaderboard = () => {
                     {
                     activeSortTab === 'items' && 
                     <div className={cn(styles.icon)}>
-                      <ArrowShortIcon className={cn({[styles.iconActive] : sortBy})}/>
+                      <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
                     </div>
                     }
                   </div>

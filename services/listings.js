@@ -200,9 +200,13 @@ export const listingsApi = createApi({
       }
     }),
     getLeaderBoard: builder.query({
-      query: (params) => `/leaderboard`,
+      query: (params) => ({
+        url : '/leaderboard',
+        params : params
+      }),
       async onQueryStarted(arg, {dispatch, queryFulfilled}){
         try {
+          console.log(await queryFulfilled);
           await queryFulfilled
         } catch (error){
           dispatch(pushToast({type: 'error', message: 'Error while getting leaderboard'}))
