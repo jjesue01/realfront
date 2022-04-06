@@ -68,12 +68,15 @@ function Marketplace({ toggleFooter, openLogin }) {
   })
   const [pagination, setPagination] = useState({})
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [markers, setMarkers] = useState([]);
+  const [scrollPage, setScrollPage] = useState(1);
 
   const itemsPerPage = 15
 
   const mounted = useRef(false)
   const mapMounted = useRef(false)
   const boundsChanged = useRef(false)
+  const scrollView = useRef(null);
 
   function handleNextPage() {
     if (pagination.nextPage) {
@@ -96,6 +99,7 @@ function Marketplace({ toggleFooter, openLogin }) {
   }
 
   function handleChange({ target: { name, value } }) {
+    scrollListingsToTop(); 
     setFilters(prevState => ({ ...prevState, [name]: value, page : 1 }))
   }
 
@@ -126,11 +130,8 @@ function Marketplace({ toggleFooter, openLogin }) {
   function handleMapChange(bounds) {
     mapMounted.current = true
     boundsChanged.current = true
-
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      bounds
-    }))
+    scrollListingsToTop();
+    setFilters(prevFilters => ({...prevFilters,bounds}))
   }
 
   function handleMouseEnter(item) {
@@ -149,6 +150,53 @@ function Marketplace({ toggleFooter, openLogin }) {
         setCitiesOptions(data)
       })
   }, [dispatch])
+
+  function fetchData(){
+    const params = {
+      bounds: filters.bounds,
+      search: filters.searchValue,
+      city: filters.cities.map(({ value }) => value).join(),
+      price: [+filters.price.from || '', +filters.price.to || ''].join(),
+      tags: filters.more.types.join(),
+      sort: filters.sortBy,
+      keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
+      page : scrollPage,
+    }
+
+    if (filters.resources.length !== 0)
+      params.resource = filters.resources.join()
+
+      dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
+      .then(({ data, isLoading }) => {
+        if (!isLoading && data?.docs && mounted.current) {
+          const { docs, ...paginationInfo } = data
+          // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
+          if (data.nextPage === null) setScrollPage(null);
+          setListings((prevState) => prevState.concat(docs));
+          setPagination(paginationInfo)
+          setLoading(false)
+        }
+      })
+  }
+
+  function scrollListingsToTop(top = 0) {
+    scrollView.current?.scrollTo({top})
+  }
+
+  function scrollInfinite (){
+    let heightScroll = scrollView?.current.scrollHeight;
+    let heightBlock = scrollView?.current.clientHeight + scrollView?.current.scrollTop;
+
+    if (heightBlock >= heightScroll) setScrollPage(prev => {
+      if (prev === null) return prev;
+      return prev + 1
+    });
+  }
+
+  useEffect(() => {
+    if (scrollPage === 1 || scrollPage === null || pagination.totalPages === 1) return;
+    fetchData(); 
+  }, [scrollPage])
 
   useEffect(function mount() {
     return () => {
@@ -176,7 +224,7 @@ function Marketplace({ toggleFooter, openLogin }) {
         price: [+filters.price.from || '', +filters.price.to || ''].join(),
         tags: filters.more.types.join(),
         sort: filters.sortBy,
-        keyword: filters.more.keywords.split(',').map(item => item.trim()).join()
+        keyword: filters.more.keywords.split(',').map(item => item.trim()).join(),
       }
 
       if (filters.resources.length !== 0)
@@ -194,6 +242,13 @@ function Marketplace({ toggleFooter, openLogin }) {
         setLoading(true)
       }
 
+      dispatch(listingsApi.endpoints.getMarkers.initiate({...params}))
+        .then(({data, isLoading}) => {
+          if (!isLoading && data.docs && mounted.current) {
+            setMarkers(data?.docs || []);
+          }
+        });
+      
       dispatch(listingsApi.endpoints.getPublishedListings.initiate({...params}))
         .then(({ data, isLoading }) => {
           if (!isLoading && data?.docs && mounted.current) {
@@ -201,9 +256,12 @@ function Marketplace({ toggleFooter, openLogin }) {
             // const sortedListings = getSortedArray(data?.docs || [], filters.sortBy)
             setListings(data?.docs || [])
             setPagination(paginationInfo)
-            setLoading(false)
+            setLoading(false);
+            
+            setScrollPage(1);
           }
         })
+      
     }
   }, [dispatch, filters, isMapHidden])
 
@@ -300,7 +358,7 @@ function Marketplace({ toggleFooter, openLogin }) {
           !isMapHidden &&
           <div className={styles.mapContainer}>
             <Map
-              items={listings}
+              items={markers}
               activeItem={activeItem}
               onActiveItemChange={setActiveItem}
               onBoundsChange={handleMapChange} />
@@ -344,14 +402,14 @@ function Marketplace({ toggleFooter, openLogin }) {
                 </div>
               }
             </div>
-            <div className={styles.itemsContainer}>
-              <div className={styles.scrollContainer}>
+            <div className={styles.itemsContainer} >
+              <div className={styles.scrollContainer} ref = {scrollView} onScroll={!isMapHidden ? scrollInfinite : null}>
                 <div className={styles.itemsContent}>
                   {
                     !isMapHidden &&
                     <div className={styles.itemsHeader}>
                       <Typography fontSize={16}>
-                        {listings.length || 'No'} results
+                        {markers.length || 'No'} results
                       </Typography>
                       <Select
                         className={styles.selectSort}
@@ -363,7 +421,7 @@ function Marketplace({ toggleFooter, openLogin }) {
                         size="small" />
                     </div>
                   }
-                  <div className={styles.itemsGrid}>
+                  <div className={styles.itemsGrid} >
                     {
                       listings.map(item => (
                         <PhotoItem

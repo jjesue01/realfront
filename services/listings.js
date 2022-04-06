@@ -167,7 +167,7 @@ export const listingsApi = createApi({
       query: (params = {}) => ({
         url: '/explore',
         params: {
-          limit: 1000,
+          limit: 10,
           ...params
         }
       }),
@@ -196,6 +196,22 @@ export const listingsApi = createApi({
           await queryFulfilled
         } catch (error) {
           dispatch(pushToast({ type: 'error', message: 'Error while getting listing' }))
+        }
+      }
+    }),
+    getMarkers: builder.query({
+      query: (params = {}) => ({
+        url: '/markers',
+        params: {
+          limit: 1000,
+          ...params
+        }
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting markers' }))
         }
       }
     }),

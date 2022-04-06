@@ -336,7 +336,7 @@ function MyProfile({prefetchedProfile, errorCode}) {
 
   useEffect(function initTab() {
     const { query } = router;
-    console.log(router);
+
     if (query.tab)
       setCurrentTab(query.tab)
   }, [router])
