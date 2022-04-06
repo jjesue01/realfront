@@ -14,7 +14,7 @@ import {useUpdateUserImagesMutation} from "../../../services/auth";
 import ButtonCircle from "../../button-circle/ButtonCircle";
 
 
-function UserInfo({ user }) {
+function UserInfo({ user, isPublic = false }) {
   const router = useRouter()
   const [updateUserImages] = useUpdateUserImagesMutation()
   const [logo, setLogo] = useState(null)
@@ -52,21 +52,25 @@ function UserInfo({ user }) {
             :
             <BannerBackground />
         }
-        <FileUploader
-          className={styles.editBanner}
-          onChange={handleBannerChange}
-          accept=".jpg,.jpeg,.png">
-          <ButtonCircle className={styles.btnEdit}>
-            <PenIcon />
-          </ButtonCircle>
-        </FileUploader>
+        {
+          !isPublic ? 
+            <FileUploader
+              className={styles.editBanner}
+              onChange={handleBannerChange}
+              accept=".jpg,.jpeg,.png">
+              <ButtonCircle className={styles.btnEdit}>
+                <PenIcon />
+              </ButtonCircle>
+            </FileUploader> : null
+        }
       </div>
       <div className="container">
         <div className={styles.info}>
           <FileUploader
             className={styles.userLogo}
             onChange={handleLogoChange}
-            accept=".jpg,.jpeg,.png">
+            accept=".jpg,.jpeg,.png"
+            disabled={isPublic}>
             {
               logo === null ?
                 <Image src="/icons/user.svg" width={50} height={50} alt="User" />
@@ -75,17 +79,18 @@ function UserInfo({ user }) {
                   <Image src={getImageUrl(logo)} layout="fill" objectFit="cover" alt="logo" />
                 </div>
             }
-            <div className={styles.editWrapper}>
-              <PenIcon /> Edit
-            </div>
           </FileUploader>
           <div className={styles.userNameContainer}>
             <Typography tag="h1" fontWeight={600} fontSize={36} lHeight={44}>
               { user?.username || 'John Doe' }
             </Typography>
-            <button onClick={goTo('/settings')} className={styles.btnSettings}>
-              <SettingsIcon />
-            </button>
+            {
+              !isPublic ? 
+                <button onClick={goTo('/settings')} className={styles.btnSettings}>
+                  <SettingsIcon />
+                </button> : null
+            }
+            
           </div>
           <div className={styles.walletIdContainer}>
             <Typography fontSize={16} lHeight={20} color={'#5F6774'}>

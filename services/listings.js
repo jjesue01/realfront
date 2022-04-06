@@ -167,7 +167,7 @@ export const listingsApi = createApi({
       query: (params = {}) => ({
         url: '/explore',
         params: {
-          limit: 1000,
+          limit: 10,
           ...params
         }
       }),
@@ -212,6 +212,42 @@ export const listingsApi = createApi({
           dispatch(pushToast({type: 'error', message: 'Error while getting leaderboard'}))
         }
       }
+    }),
+    getMarkers: builder.query({
+      query: (params = {}) => ({
+        url: '/markers',
+        params: {
+          limit: 1000,
+          ...params
+        }
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting markers' }))
+        }
+      }
+    }),
+    getPublishedByUserName: builder.query({
+      query: username => `/listings/user/${username}`,
+      async onQueryStarted(arg, {dispatch, queryFulfilled}){
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({type: 'error', message: 'Error while getting listing'}))
+        }
+      }
+    }),
+    getSoldByUserName: builder.query({
+      query: username => `/listings/user/${username}/sold`,
+      async onQueryStarted(arg, {dispatch, queryFulfilled}){
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({type: 'error', message: 'Error while getting sold listing'}))
+        }
+      }
     })
   }),
 })
@@ -229,5 +265,7 @@ export const {
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,
   useGetTagsQuery,
-  useGetLeaderBoardQuery
+  useGetLeaderBoardQuery,
+  useGetPublishedByUserNameQuery,
+  useGetSoldByUserNameQuery,
 } = listingsApi

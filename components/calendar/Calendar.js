@@ -47,7 +47,8 @@ class Calendar extends Component {
     callback: () => { },
     bookingParams: {},
     type: 'default',
-    forYear: false
+    forYear: false,
+    noPast : true
   };
 
   checkIsItPast = date => {
@@ -59,6 +60,7 @@ class Calendar extends Component {
   };
 
   getDaySettings = (date) => {
+    if (!this.props.noPast) return {date}
     const { past } = this.checkIsItPast(date);
     return {
       date,

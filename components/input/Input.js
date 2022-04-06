@@ -25,6 +25,7 @@ function Input({
   error,
   errorText,
   disabled,
+  noPast,
   ...otherProps
 }, ref) {
   const [isOpened, setOpened] = useState(false)
@@ -133,7 +134,8 @@ function Input({
                 <DatePicker
                   name={name}
                   value={value}
-                  onChange={handleDateChange} />
+                  onChange={handleDateChange} 
+                  noPast={noPast}/>
               }
               {
                 type === 'time' &&

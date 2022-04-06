@@ -5,25 +5,27 @@
   display: flex
   flex-direction: column
   padding-top: 82px
+.container
+  border-top: 1px solid #ECEFF4
 .tableContainer
   padding-top: 24px
   width: 100%
 .description
   width: 100%
   max-width: 800px
-  margin: auto
+  margin: 99px auto 70px auto
   padding: 0 20px
   text-align: center
-.title
-  margin: 32px 0 8px 0
-  line-height: 44px
-  font-size: 40px
-  font-weight: 500
-.subtitle
-  margin-bottom: 10px
-  color: #707A83
-  font-size: 16px
-  font-weight: 400
+  position: relative
+  &::before
+    content: ""
+    position: absolute
+    height: 4px
+    width: 60px
+    top: -25px
+    left: 50%
+    transform: translate(-50%, -50%)
+    background: #1DC3A6
 .table
   width: 100%
   max-width: 1200px
@@ -35,13 +37,9 @@
   justify-content: space-between
   align-items: center
   padding: 14px 0 20px 0
-  position: sticky
-  z-index: 10
-  top: 82px
-  background-color: #fff
   border-bottom: 1px solid #ECEFF4
   p
-    font-size: 20px
+    font-size: 12px
     font-weight: 600
     line-height: 21px
     color: #878D97
@@ -81,11 +79,12 @@
   cursor: pointer
   .col
     p
-      font-size: 16px
+      font-size: 14px
       color: #111
+      font-weight: 600
+      line-height: 17px
   &:hover
-    box-shadow: rgba(4, 17, 29, 0.25) 0px 0px 8px 0px
-    background-color: #FBFDFF
+    background-color: #F3F7F8
 .icon
   margin-left: 6px
   path
@@ -95,3 +94,25 @@
 .index
   color : #000
   margin-right: 8px
+.filtersBlock
+  padding: 0 40px
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto
+
+  display: flex
+  flex-direction: row
+
+  justify-content: space-between
+.filtersBlockLeft
+  display: flex
+  flex-direction: row
+.filter
+  min-width: 200px
+  max-width: 200px
+  &+&
+    margin-left: 30px
+.selectSortVolume
+  min-width: 250px
+  max-width: 250px
+  margin-left: 30px

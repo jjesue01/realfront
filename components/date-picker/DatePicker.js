@@ -5,7 +5,7 @@ import Day from "./Day";
 import ButtonCircle from "../button-circle/ButtonCircle"
 import ArrowShortSmall from '/public/icons/arrow-short-small.svg'
 
-function DatePicker({ name, onChange, value }) {
+function DatePicker({ name, onChange, value, noPast }) {
   const [date, setDate] = useState(new Date())
 
   function handleChangeMonth(direction) {
@@ -23,14 +23,14 @@ function DatePicker({ name, onChange, value }) {
     }).format(date)
   }
 
-  useEffect(function initValue() {
+  useEffect(function init() {
     setDate(new Date(value))
   }, [value])
 
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <p>{ getCurrentMonth() }</p>
+        <p>{getCurrentMonth()} </p>
         <div className={styles.actions}>
           <ButtonCircle onClick={handleChangeMonth(-1)}>
             <ArrowShortSmall />
@@ -46,7 +46,8 @@ function DatePicker({ name, onChange, value }) {
         month={date.getMonth() + 1}
         customData={{ value, onChange, name }}
         withNeighbors
-        daysOfWeek />
+        daysOfWeek 
+        noPast={noPast}/>
     </div>
   )
 }
