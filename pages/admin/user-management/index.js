@@ -78,6 +78,7 @@ function UserRow({ user }) {
 
 function UserManagement() {
   const [searchValue, setSearchValue] = useState('')
+  //TODO : узнать про пагинацию
   const { data: users = [], refetch } = useGetAllUsersQuery({ search: searchValue })
 
   const rowsList = users.map((user, index) => (

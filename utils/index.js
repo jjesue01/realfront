@@ -4,6 +4,8 @@ import {execOnce} from "next/dist/shared/lib/utils";
 import {POLYGON_CHAINS} from "../fixtures";
 import {getConfig} from "../app-config";
 
+export const DAY_TIME = 86400000;
+
 export function debounce(func, wait, immediate) {
   let timeout;
 
@@ -115,7 +117,6 @@ const privateRoutes = [
   '/photos/edit',
   '/photos/sell',
   '/settings',
-  '/profile',
 ]
 
 export function isPrivateRoute(pathname) {
@@ -227,10 +228,10 @@ export function buildPlace(address_components) {
   return place
 }
 
-export function download(url, filename) {
+export function download(url, filename, token) {
   fetch(url, {
     headers: {
-      'Authorization': getIdToken()
+      'Authorization': token || getIdToken()
     }
   })
     .then(response => response.blob())
