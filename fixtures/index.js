@@ -170,6 +170,10 @@ export const adminLinks = [
   {
     label: 'Listings Management',
     url: '/admin/listings'
+  },
+  {
+    label: 'Transactions Management',
+    url: '/admin/transactions'
   }
 ]
 

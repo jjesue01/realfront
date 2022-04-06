@@ -7,7 +7,7 @@ import SearchIcon from "../../../public/icons/search-icon.svg";
 import DownloadIcon from '/public/icons/download.svg'
 import Input from '../../../components/input/Input';
 import { useGetListingsQuery } from '../../../services/admin';
-import { dateToString, DAY_TIME, download, getFormattedDate, scrollToTop } from '../../../utils';
+import { dateToString, DAY_TIME, download, scrollToTop } from '../../../utils';
 import Pagination from '../../../components/pagination/Pagination';
 import { useSelector } from 'react-redux';
 import Loader from '../../../components/loader/Loader';
