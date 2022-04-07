@@ -9,8 +9,15 @@ import Image from "next/image";
 import Typography from "../components/Typography";
 import Select from "../components/select/Select";
 import { DAY_TIME } from "../utils";
+import Pagination from "../components/pagination/Pagination";
+
+const LIMIT_PER_PAGE = 50
 
 const sortOptionsDay = [
+  {
+    label: "All time",
+    value: new Date(0).toUTCString(),
+  },
   {
     label: "Last 24 hours",
     value: new Date(new Date().getTime() - DAY_TIME).toUTCString(),
@@ -22,10 +29,6 @@ const sortOptionsDay = [
   {
     label: "Last 30 days",
     value: new Date(new Date().getTime() - DAY_TIME * 30).toUTCString(),
-  },
-  {
-    label: "All time",
-    value: new Date(0).toUTCString(),
   },
 ]
 
@@ -124,10 +127,13 @@ const Leaderboard = () => {
     endDate: new Date().toUTCString(),
   })
   const {data : leaderboard} = useGetLeaderBoardQuery({...filters});
+  const [currentPage, setCurrentPage] = useState(1);
 
   const rowsList = leaderboard?.map((item, index) => (
     <RowDetails key={item._id} item={item} index={index}/>
-  ))
+  )).slice(LIMIT_PER_PAGE * (currentPage - 1), LIMIT_PER_PAGE * currentPage )
+
+  const countPage = Math.ceil(leaderboard?.length / LIMIT_PER_PAGE);
 
   const onChangeActiveTab = (tab) => () => {
     setActiveSortTab(tab);
@@ -136,11 +142,20 @@ const Leaderboard = () => {
   }
 
   const handleChange = ({target : {value, name}}) => {
-    console.log(value, name);
+    setCurrentPage(1)
     setFilters(prevState => ({ ...prevState, [name]: value }))
   }
 
+  const handleNextPage = () => {
+    if (currentPage < countPage) setCurrentPage(prev => prev + 1)
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1)
+  } 
+
   React.useEffect(() => {
+    setCurrentPage(1);
     setFilters(prevState => ({
       ...prevState,
       sort: `${activeSortTab}:${sortOrder ? 'desc' : 'asc'}`
@@ -208,7 +223,9 @@ const Leaderboard = () => {
               placeholder={'Sort By Volume'}
               />
           </div>
-          <div className={styles.tableContainer}>
+          {
+            rowsList && 
+            <div className={styles.tableContainer}>
             <div className={styles.table}>
               <div className={styles.tableHeader}>
                   <div className={cn(styles.col, styles.colNumber)}>
@@ -251,12 +268,18 @@ const Leaderboard = () => {
                     }
                   </div>
               </div>
-              
               <div className={styles.tableBody}>
                  { rowsList }
               </div>
             </div>
+            {
+              countPage > 1 && 
+              <div className={styles.pagination}>
+              <Pagination currentPage={currentPage} count={countPage} onNext={handleNextPage} onPrev={handlePrevPage}/>
+            </div>
+            }
           </div>
+          }
       </section>
     </main>
   )
