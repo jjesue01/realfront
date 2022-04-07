@@ -5,63 +5,61 @@ import { useGetLeaderBoardQuery } from "../services/listings";
 import cn from 'classnames'
 import ArrowShortIcon from './../public/icons/arrow-sort.svg'
 import Link from "next/link";
+import Image from "next/image";
 import Typography from "../components/Typography";
 import Select from "../components/select/Select";
+import { DAY_TIME } from "../utils";
 
 const sortOptionsDay = [
   {
     label: "Last 24 hours",
-    value: "1"
+    value: new Date(new Date().getTime() - DAY_TIME).toUTCString(),
   },
   {
     label: "Last 7 days",
-    value: "2",
+    value: new Date(new Date().getTime() - DAY_TIME * 7).toUTCString(),
   },
   {
     label: "Last 30 days",
-    value: "3",
+    value: new Date(new Date().getTime() - DAY_TIME * 30).toUTCString(),
   },
   {
     label: "All time",
-    value: "4",
+    value: new Date(0).toUTCString(),
   },
 ]
 
 const sortOptionsResource = [
   {
     label: "All resource",
-    value: "5"
+    value: ""
   },
   {
     label: "Photo",
-    value: "6",
+    value: "Image",
   },
   {
     label: "Video",
-    value: "7",
+    value: "Video",
   },
   {
     label: "360 Tour",
-    value: "8",
+    value: "360 Tour",
   }
 ]
 
 const sortOptionsChains = [
   {
     label: "All chains",
-    value: "9",
-  },
-  {
-    label: "Etherium",
-    value: "10",
+    value: "",
   },
   {
     label: "Polygon",
-    value: "11",
+    value: "polygon",
   },
   {
-    label: "Bitcoin",
-    value: "12",
+    label: "BSC",
+    value: "binance_smart_chain",
   },
 ]
 
@@ -81,12 +79,31 @@ const RowDetails = ({item, index}) => {
   return (
   <Link href={`/profile/${item.name}`} passHref>
     <div className={styles.tableItem}>
+      <div className={cn(styles.col, styles.colNumber)}>
+        <p>{index + 1}</p>
+      </div>
+      <div className={cn(styles.col, styles.colLogo)}>
+        <div className={styles.imageContainer}>
+          <div className={styles.imageWrapper}>
+            {
+              item?.userLogo &&
+              <Image src={item.userLogo} layout="fill" objectFit="cover" alt={item.name}/>
+            }
+          </div>
+        </div>
+        
+      </div>
       <div className={cn(styles.col, styles.colUsername)}>
-        <span className={styles.index}>{index + 1}</span>
         <p>{item.name}</p>
+      </div>
+      <div className={cn(styles.col, styles.colVolume)}>
+        <p>{item.volume}</p>
       </div>
       <div className={cn(styles.col, styles.colPrice)}>
         <p>{ item.floorPrice }</p>
+      </div>
+      <div className={cn(styles.col, styles.colOwners)}>
+        <p>{item.owners}</p>
       </div>
       <div className={cn(styles.col, styles.colItems)}>
         <p>{ item.items }</p>
@@ -99,10 +116,16 @@ const RowDetails = ({item, index}) => {
 const Leaderboard = () => {
   const [sortOrder, setSortOrder] = useState(false);
   const [activeSortTab, setActiveSortTab] = useState('');
-  const [sortItems, setSortItems] = useState();
-  const {data : leaderboard} = useGetLeaderBoardQuery({sort : `${activeSortTab}:${sortOrder ? 'desc' : "asc"}`});
+  const [filters, setFilters] = useState({
+    sort: '',
+    resource: '',
+    blockchain: '',
+    startDate: new Date(0).toUTCString(),
+    endDate: new Date().toUTCString(),
+  })
+  const {data : leaderboard} = useGetLeaderBoardQuery({...filters});
 
-  const rowsList = sortItems?.map((item, index) => (
+  const rowsList = leaderboard?.map((item, index) => (
     <RowDetails key={item._id} item={item} index={index}/>
   ))
 
@@ -113,12 +136,16 @@ const Leaderboard = () => {
   }
 
   const handleChange = ({target : {value, name}}) => {
-    console.log("заглушка", value, name);
+    console.log(value, name);
+    setFilters(prevState => ({ ...prevState, [name]: value }))
   }
 
-  useEffect(() => {
-    setSortItems(leaderboard);
-  }, [leaderboard])
+  React.useEffect(() => {
+    setFilters(prevState => ({
+      ...prevState,
+      sort: `${activeSortTab}:${sortOrder ? 'desc' : 'asc'}`
+    }))
+  },[activeSortTab, sortOrder])
 
   return (
     <main className={styles.root}>
@@ -148,46 +175,48 @@ const Leaderboard = () => {
             </Typography>
           </div>
           <div className={styles.filtersBlock}>
-            <div className={styles.filtersBlockLeft}>
-              <Select
-                className={cn(styles.selectSortDay, styles.filter)}
-                name="sortByDay"
-                value={sortOptionsDay[0]}
-                onChange={handleChange}
-                options={sortOptionsDay}
-                placeholder={'Sort By Day'}
-                />
-                <Select
-                  className={cn(styles.selectSortResource, styles.filter)}
-                  name="sortByResources"
-                  value={sortOptionsResource[0]}
-                  onChange={handleChange}
-                  options={sortOptionsResource}
-                  placeholder={'Sort By Resources'}
-                  />
-                <Select
-                  className={cn(styles.selectSortChains, styles.filter)}
-                  name="sortByChain"
-                  value={sortOptionsChains[0]}
-                  onChange={handleChange}
-                  options={sortOptionsChains}
-                  placeholder={'Sort By Chains'}
-                  />
-            </div>
-            <div className={styles.filtersBlockRight}>
+          <Select
+            className={cn(styles.selectSortDay, styles.filter)}
+            name="startDate"
+            value={filters.startDate}
+            onChange={handleChange}
+            options={sortOptionsDay}
+            placeholder={'Sort By Day'}
+            />
             <Select
-                className={cn(styles.selectSortVolume, styles.filter)}
-                name="sortByVolume"
-                value={sortOptionsVolume[0]}
-                onChange={handleChange}
-                options={sortOptionsVolume}
-                placeholder={'Sort By Volume'}
-                />
-            </div>
+              className={cn(styles.selectSortResource, styles.filter)}
+              name="resource"
+              value={filters.resource}
+              onChange={handleChange}
+              options={sortOptionsResource}
+              placeholder={'Sort By Resources'}
+              />
+            <Select
+              className={cn(styles.selectSortChains, styles.filter)}
+              name="blockchain"
+              value={filters.blockchain}
+              onChange={handleChange}
+              options={sortOptionsChains}
+              placeholder={'Sort By Chains'}
+              />
+            <Select
+              className={cn(styles.selectSortVolume)}
+              name="sortByVolume"
+              value={sortOptionsVolume[0]}
+              onChange={handleChange}
+              options={sortOptionsVolume}
+              placeholder={'Sort By Volume'}
+              />
           </div>
           <div className={styles.tableContainer}>
             <div className={styles.table}>
               <div className={styles.tableHeader}>
+                  <div className={cn(styles.col, styles.colNumber)}>
+                    <p>#</p>
+                  </div>
+                  <div className={cn(styles.col, styles.colLogo)}>
+                    <p>Logo</p>
+                  </div>
                   <div className={cn(styles.col, styles.colUsername)} onClick={onChangeActiveTab('name')}>
                     <p>Username</p>
                     {
@@ -197,6 +226,9 @@ const Leaderboard = () => {
                     </div>
                     }
                   </div>
+                  <div className={cn(styles.col, styles.colVolume)}>
+                    <p>Volume</p>
+                  </div>
                   <div className={cn(styles.col, styles.colPrice)} onClick={onChangeActiveTab('price')}>
                     <p>Floor Price</p>
                     {
@@ -205,6 +237,9 @@ const Leaderboard = () => {
                       <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
                     </div>
                     }
+                  </div>
+                  <div className={cn(styles.col, styles.colOwners)}>
+                    <p>Owners</p>
                   </div>
                   <div className={cn(styles.col, styles.colItems)} onClick={onChangeActiveTab('items')}>
                     <p>Items</p>

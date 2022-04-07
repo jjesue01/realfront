@@ -206,7 +206,6 @@ export const listingsApi = createApi({
       }),
       async onQueryStarted(arg, {dispatch, queryFulfilled}){
         try {
-          console.log(await queryFulfilled);
           await queryFulfilled
         } catch (error){
           dispatch(pushToast({type: 'error', message: 'Error while getting leaderboard'}))
