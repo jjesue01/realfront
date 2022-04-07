@@ -3,7 +3,6 @@ import Head from "next/head";
 import styles from '../styles/Leaderboard.module.sass'
 import { useGetLeaderBoardQuery } from "../services/listings";
 import cn from 'classnames'
-import ArrowShortIcon from './../public/icons/arrow-sort.svg'
 import Link from "next/link";
 import Image from "next/image";
 import Typography from "../components/Typography";
@@ -69,11 +68,11 @@ const sortOptionsChains = [
 const sortOptionsVolume = [
   {
     label: 'Volume: Low to High',
-    value: '13'
+    value: 'volume:desc'
   },
   {
     label: 'Volume: High to Low',
-    value: '14'
+    value: 'volume:asc'
   },
 ]
 
@@ -117,8 +116,6 @@ const RowDetails = ({item, index}) => {
 }
 
 const Leaderboard = () => {
-  const [sortOrder, setSortOrder] = useState(false);
-  const [activeSortTab, setActiveSortTab] = useState('');
   const [filters, setFilters] = useState({
     sort: '',
     resource: '',
@@ -135,12 +132,6 @@ const Leaderboard = () => {
 
   const countPage = Math.ceil(leaderboard?.length / LIMIT_PER_PAGE);
 
-  const onChangeActiveTab = (tab) => () => {
-    setActiveSortTab(tab);
-    if (activeSortTab === tab) setSortOrder(prev => !prev);
-    else setSortOrder(false);
-  }
-
   const handleChange = ({target : {value, name}}) => {
     setCurrentPage(1)
     setFilters(prevState => ({ ...prevState, [name]: value }))
@@ -154,13 +145,7 @@ const Leaderboard = () => {
     if (currentPage > 1) setCurrentPage(prev => prev - 1)
   } 
 
-  React.useEffect(() => {
-    setCurrentPage(1);
-    setFilters(prevState => ({
-      ...prevState,
-      sort: `${activeSortTab}:${sortOrder ? 'desc' : 'asc'}`
-    }))
-  },[activeSortTab, sortOrder])
+  console.log(filters)
 
   return (
     <main className={styles.root}>
@@ -216,8 +201,8 @@ const Leaderboard = () => {
               />
             <Select
               className={cn(styles.selectSortVolume)}
-              name="sortByVolume"
-              value={sortOptionsVolume[0]}
+              name="sort"
+              value={filters.sort}
               onChange={handleChange}
               options={sortOptionsVolume}
               placeholder={'Sort By Volume'}
@@ -234,38 +219,20 @@ const Leaderboard = () => {
                   <div className={cn(styles.col, styles.colLogo)}>
                     <p>Logo</p>
                   </div>
-                  <div className={cn(styles.col, styles.colUsername)} onClick={onChangeActiveTab('name')}>
+                  <div className={cn(styles.col, styles.colUsername)}>
                     <p>Username</p>
-                    {
-                    activeSortTab === 'name' && 
-                    <div className={cn(styles.icon)}>
-                      <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
-                    </div>
-                    }
                   </div>
                   <div className={cn(styles.col, styles.colVolume)}>
                     <p>Volume</p>
                   </div>
-                  <div className={cn(styles.col, styles.colPrice)} onClick={onChangeActiveTab('price')}>
+                  <div className={cn(styles.col, styles.colPrice)}>
                     <p>Floor Price</p>
-                    {
-                    activeSortTab === 'price' && 
-                    <div className={cn(styles.icon)}>
-                      <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
-                    </div>
-                    }
                   </div>
                   <div className={cn(styles.col, styles.colOwners)}>
                     <p>Owners</p>
                   </div>
-                  <div className={cn(styles.col, styles.colItems)} onClick={onChangeActiveTab('items')}>
+                  <div className={cn(styles.col, styles.colItems)}>
                     <p>Items</p>
-                    {
-                    activeSortTab === 'items' && 
-                    <div className={cn(styles.icon)}>
-                      <ArrowShortIcon className={cn({[styles.iconActive] : sortOrder})}/>
-                    </div>
-                    }
                   </div>
               </div>
               <div className={styles.tableBody}>

@@ -122,7 +122,7 @@ function Layout({ children }) {
         const credentials = { user, token }
         setConnectOpened(false)
         dispatch(setCredentials(credentials))
-        if (invite) router.push('/profile')
+        if (invite) router.push(`/profile/${auth.user.username}`)
       })
   }
 

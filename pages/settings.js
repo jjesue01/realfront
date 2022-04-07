@@ -87,7 +87,7 @@ function Settings() {
 
     updateUser(data).unwrap()
       .then(result => {
-        router.push('/profile')
+        router.push(`/profile/${$user.username}`)
       })
       .catch(({ data: { message } }) => {
         setIsSubmitting(false)
