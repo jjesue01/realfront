@@ -1,62 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../../../styles/Transactions.module.sass'
 import cn from 'classnames'
-import Image from "next/image";
-import { dateToString, DAY_TIME, getMoneyView, timeAgo } from '../../../utils';
+import { dateToString, DAY_TIME, getMoneyView, scrollToTop, timeAgo } from '../../../utils';
 import Typography from '../../../components/Typography';
 import Input from '../../../components/input/Input';
-
-const mockData = [
-  {
-    _id : "6225e6df6f76e2a85962beef",
-    from: "61ead2759e08d4543c81142b",
-    to: "61e7fe4386b62ed8f5fdde88",
-    date : "2022-03-07T11:05:03.219Z",
-    price: 10,
-    quantity: 1,
-    event: "Purchasing",
-    listingID : "6225e64f6f76e2a85962bdae",
-    tokenId : 95,
-  },
-  {
-    _id : "6225e6df6f76e2a85962beff",
-    from: "61ead2759e08d4543c81142b",
-    to: "61e7fe4386b62ed8f5fdde88",
-    date : "2022-03-07T11:05:03.219Z",
-    price: 10,
-    quantity: 1,
-    event: "Purchasing",
-    listingID : "6225e64f6f76e2a85962bdae",
-    tokenId : 95,
-  },
-  {
-    _id : "6225e6df6f76e2a85962besf",
-    from: "61ead2759e08d4543c81142b",
-    to: "61e7fe4386b62ed8f5fdde88",
-    date : "2022-03-07T11:05:03.219Z",
-    price: 10,
-    quantity: 1,
-    event: "Purchasing",
-    listingID : "6225e64f6f76e2a85962bdae",
-    tokenId : 95,
-  },
-]
+import { useGetTransactionsQuery } from '../../../services/admin';
+import Pagination from '../../../components/pagination/Pagination';
+import Loader from '../../../components/loader/Loader';
 
 function TransactionRow ({item = {}}) {
+  console.log(item);
   return (<>
     <div className={styles.tableItem}>
       <div className={cn(styles.col, styles.colEvent)}>
         <p>{item.event}</p>
       </div>
       <div className={cn(styles.col, styles.colItem)}>
-        {/* <div className={styles.imageContainer}>
-          <div className={styles.imageWrapper}>
-            {
-              item?.listingID?.thumnail &&
-              <Image src={item.listingID.thumnail} layout="fill" objectFit='cover' alt={item?.listingID?.name}/>
-            }
-          </div>
-        </div> */}
         <p>{item?.listingID}</p>
       </div>
       <div className={cn(styles.col, styles.colPrice)}>
@@ -80,25 +39,59 @@ function TransactionRow ({item = {}}) {
 
 function Transaction () {
   const [filters, setFilters] = useState({
-    firstDate : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
-    secondDate : new Date().toISOString().substring(0,10),
+    ipfsdate_from : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
+    ipfsdate_to : dateToString(new Date()),
+    page : 1
   });
+  const {data : transactions = [], refetch, isLoading} = useGetTransactionsQuery({...filters});
 
-  const rowsList = mockData?.map(item => <TransactionRow item={item} key={item._id}/>)
-  
+  const rowsList = transactions.docs && transactions.docs.map(item => <TransactionRow item={item} key={item._id}/>)
+
   const handleChangeFirstDate = (e) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      firstDate : e.target.value
+      ipfsdate_from : e.target.value
     }))
   }
 
   const handleChangeSecondDate = (e) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      secondDate : e.target.value
+      ipfsdate_to : e.target.value
     }))
   }
+
+  const handleNextPage = () => {
+    if (transactions.nextPage) {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        page: transactions.nextPage
+      }))
+      scrollToTop()
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (transactions.prevPage) {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        page: transactions.prevPage
+      }))
+      scrollToTop()
+    }
+  }
+
+  useEffect(function init() {
+    refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    setFilters(prevState => ({
+      ...prevState,
+      page: 1,
+    }))
+  }, [filters.ipfsdate_from, filters.ipfsdate_to])
 
   return (
     <div className={styles.root}>
@@ -107,39 +100,47 @@ function Transaction () {
           Trading history
         </Typography>
         <div className = {styles.filtersBlock}>
-          <Input type="date" value={filters.firstDate} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
-          <Input type="date" value={filters.secondDate} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
+          <Input type="date" value={filters.ipfsdate_from} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
+          <Input type="date" value={filters.ipfsdate_to} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
         </div>
       </div>
       
-      <div className={styles.table}>
-        <div className={styles.tableHeader}>
-          <div className={cn(styles.col, styles.colEvent)}>
-              <p>Event</p>
-          </div>
-          <div className={cn(styles.col, styles.colItem)}>
-            <p>Item</p>
-          </div>
-          <div className={cn(styles.col, styles.colPrice)}>
-            <p>Price</p>
-          </div>
-          <div className={cn(styles.col, styles.colQuantity)}>
-            <p>Quantity</p>
-          </div>
-          <div className={cn(styles.col, styles.colFrom)}>
-            <p>From</p>
-          </div>
-          <div className={cn(styles.col, styles.colTo)}>
-            <p>To</p>
-          </div>
-          <div className={cn(styles.col, styles.colDate)}>
-            <p>Date</p>
-          </div>
+      {
+        isLoading ? <Loader opened={isLoading}  color="accent" className={styles.loader}/> : transactions.docs && transactions.docs[0] ?
+          <>
+          <div className={styles.table}>
+            <div className={styles.tableHeader}>
+              <div className={cn(styles.col, styles.colEvent)}>
+                  <p>Event</p>
+              </div>
+              <div className={cn(styles.col, styles.colItem)}>
+                <p>Item</p>
+              </div>
+              <div className={cn(styles.col, styles.colPrice)}>
+                <p>Price</p>
+              </div>
+              <div className={cn(styles.col, styles.colQuantity)}>
+                <p>Quantity</p>
+              </div>
+              <div className={cn(styles.col, styles.colFrom)}>
+                <p>From</p>
+              </div>
+              <div className={cn(styles.col, styles.colTo)}>
+                <p>To</p>
+              </div>
+              <div className={cn(styles.col, styles.colDate)}>
+                <p>Date</p>
+              </div>
+            </div>
+            <div className={styles.tableBody}>
+              { rowsList }
+            </div>
         </div>
-          <div className={styles.tableBody}>
-            { rowsList }
-          </div>
-      </div>
+        <Pagination count={transactions?.totalPages} currentPage={filters.page} onNext={handleNextPage} onPrev={handlePrevPage}/>
+          </> :
+        <div className={styles.noResultBlock}><p>No result</p></div>
+      }
+      
     </div>
   )
 }  

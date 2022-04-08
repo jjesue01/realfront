@@ -55,25 +55,14 @@ function Listings() {
   const [filters, setFilters] = useState({
     search : '',
     page : 1,
-    firstDate : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
-    secondDate : new Date().toISOString().substring(0,10),
+    ipfsdate_from : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
+    ipfsdate_to : dateToString(new Date()),
+    limit: LIMIT_LISTINGS_PAGE
   });
 
   const token = useSelector(state => state.auth.admin.token);
 
-  const {data : listings = [], refetch, isLoading} = useGetListingsQuery({search : filters.search, limit: LIMIT_LISTINGS_PAGE, page: filters.page, ipfsdate_from : filters.firstDate, ipfsdate_to : filters.secondDate});
-
-  useEffect(function init() {
-    refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    setFilters(prevState => ({
-      ...prevState,
-      page: 1,
-    }))
-  }, [filters.search, filters.firstDate, filters.secondDate])
+  const {data : listings = [], refetch, isLoading} = useGetListingsQuery({...filters});
 
   const rowsList = listings.docs && listings.docs.map((listing) => (
     <ListingRow key={listing._id} listing={listing} token={token}/>
@@ -109,16 +98,28 @@ function Listings() {
   const handleChangeFirstDate = (e) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      firstDate : e.target.value
+      ipfsdate_from : e.target.value
     }))
   }
 
   const handleChangeSecondDate = (e) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      secondDate : e.target.value
+      ipfsdate_to : e.target.value
     }))
   }
+
+  useEffect(function init() {
+    refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    setFilters(prevState => ({
+      ...prevState,
+      page: 1,
+    }))
+  }, [filters.search, filters.ipfsdate_from, filters.ipfsdate_to])
 
   return <div>
     <Head>
@@ -126,8 +127,8 @@ function Listings() {
     </Head>
     <div className={styles.title}>
     <div className = {styles.filtersBlock}>
-        <Input type="date" value={filters.firstDate} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
-        <Input type="date" value={filters.secondDate} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
+        <Input type="date" value={filters.ipfsdate_from} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
+        <Input type="date" value={filters.ipfsdate_to} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
       </div>
       <Input
         className={cn(styles.inputSearch, { [styles.inputSearchActive]: filters.search !== '' } )}
