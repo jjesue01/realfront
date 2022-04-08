@@ -34,7 +34,7 @@ const sortOptionsDay = [
 const sortOptionsResource = [
   {
     label: "All resource",
-    value: ""
+    value: "all"
   },
   {
     label: "Photo",
@@ -53,7 +53,7 @@ const sortOptionsResource = [
 const sortOptionsChains = [
   {
     label: "All chains",
-    value: "",
+    value: "all",
   },
   {
     label: "Polygon",
@@ -141,9 +141,9 @@ const RowDetails = ({item, index}) => {
 
 const Leaderboard = () => {
   const [filters, setFilters] = useState({
-    sort: '',
-    resource: '',
-    blockchain: '',
+    sort: 'volume:desc',
+    resource: 'all',
+    blockchain: 'all',
     startDate: dateToString(new Date(0)),
     endDate: dateToString(new Date()),
   })
