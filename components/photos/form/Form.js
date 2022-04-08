@@ -247,7 +247,7 @@ function Form({ mode }) {
 
       deleteListing(router.query.id).unwrap()
         .then(result => {
-          router.push('/profile')
+          router.push(`/profile/${user.username}`)
         })
         .catch(result => {
           setDeleting(false)

@@ -57,6 +57,11 @@ function MobileMenu({ opened, onClose }) {
             FAQ
           </a>
         </Link>
+        <Link href="/leaderboard">
+          <a className={styles.menuItem}>
+            Leaderboard
+          </a>
+        </Link>
       </div>
     </div>
   )
