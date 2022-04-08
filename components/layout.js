@@ -64,7 +64,7 @@ function Layout({ children }) {
 
   const tempWalletAddress = useRef(null)
 
-  const isMobile = useBreakpoint(820)
+  const isMobile = useBreakpoint(850)
 
   function togglePopup() {
     setConnectOpened(prevState => !prevState)
@@ -122,7 +122,7 @@ function Layout({ children }) {
         const credentials = { user, token }
         setConnectOpened(false)
         dispatch(setCredentials(credentials))
-        if (invite) router.push('/profile')
+        if (invite) router.push(`/profile/${auth.user.username}`)
       })
   }
 
@@ -295,6 +295,9 @@ function Layout({ children }) {
                 </li>
                 <li>
                   <NavLink href="/faq">FAQ</NavLink>
+                </li>
+                <li>
+                  <NavLink href="/leaderboard">Leaderboard</NavLink>
                 </li>
               </ul>
               <div className={styles.actions}>

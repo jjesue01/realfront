@@ -350,7 +350,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   }
 
   function handleCloseCongratulations() {
-    router.push('/profile')
+    router.push(`/profile/${user.username}`)
   }
 
   useEffect(function init() {

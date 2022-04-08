@@ -199,6 +199,19 @@ export const listingsApi = createApi({
         }
       }
     }),
+    getLeaderBoard: builder.query({
+      query: (params) => ({
+        url : '/leaderboard',
+        params : params
+      }),
+      async onQueryStarted(arg, {dispatch, queryFulfilled}){
+        try {
+          await queryFulfilled
+        } catch (error){
+          dispatch(pushToast({type: 'error', message: 'Error while getting leaderboard'}))
+        }
+      }
+    }),
     getMarkers: builder.query({
       query: (params = {}) => ({
         url: '/markers',
@@ -251,6 +264,7 @@ export const {
   useGetPublishedListingsQuery,
   useGetListingByIdQuery,
   useGetTagsQuery,
+  useGetLeaderBoardQuery,
   useGetPublishedByUserNameQuery,
   useGetSoldByUserNameQuery,
 } = listingsApi
