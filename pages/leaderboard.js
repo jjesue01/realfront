@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Typography from "../components/Typography";
 import Select from "../components/select/Select";
-import { DAY_TIME } from "../utils";
+import { dateToString, DAY_TIME } from "../utils";
 import Pagination from "../components/pagination/Pagination";
 
 const LIMIT_PER_PAGE = 50
@@ -15,19 +15,19 @@ const LIMIT_PER_PAGE = 50
 const sortOptionsDay = [
   {
     label: "All time",
-    value: new Date(0).toUTCString(),
+    value: dateToString(new Date(0)),
   },
   {
     label: "Last 24 hours",
-    value: new Date(new Date().getTime() - DAY_TIME).toUTCString(),
+    value: dateToString(new Date(new Date().getTime() - DAY_TIME)),
   },
   {
     label: "Last 7 days",
-    value: new Date(new Date().getTime() - DAY_TIME * 7).toUTCString(),
+    value: dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
   },
   {
     label: "Last 30 days",
-    value: new Date(new Date().getTime() - DAY_TIME * 30).toUTCString(),
+    value: dateToString(new Date(new Date().getTime() - DAY_TIME * 30)),
   },
 ]
 
@@ -68,11 +68,35 @@ const sortOptionsChains = [
 const sortOptionsVolume = [
   {
     label: 'Volume: Low to High',
-    value: 'volume:desc'
+    value: 'volume:asc'
   },
   {
     label: 'Volume: High to Low',
-    value: 'volume:asc'
+    value: 'volume:desc'
+  },
+  {
+    label: 'Price: Low to High',
+    value: 'price:asc'
+  },
+  {
+    label: 'Price: High to Low',
+    value: 'price:desc'
+  },
+  {
+    label: 'Items: Low to High',
+    value: 'items:asc'
+  },
+  {
+    label: 'Items: High to Low',
+    value: 'items:desc'
+  },
+  {
+    label: 'Owners: Low to High',
+    value: 'owner:asc'
+  },
+  {
+    label: 'Owners: High to Low',
+    value: 'owner:desc'
   },
 ]
 
@@ -105,7 +129,7 @@ const RowDetails = ({item, index}) => {
         <p>{ item.floorPrice }</p>
       </div>
       <div className={cn(styles.col, styles.colOwners)}>
-        <p>{item.owners}</p>
+        <p>{item.owner}</p>
       </div>
       <div className={cn(styles.col, styles.colItems)}>
         <p>{ item.items }</p>
@@ -120,8 +144,8 @@ const Leaderboard = () => {
     sort: '',
     resource: '',
     blockchain: '',
-    startDate: new Date(0).toUTCString(),
-    endDate: new Date().toUTCString(),
+    startDate: dateToString(new Date(0)),
+    endDate: dateToString(new Date()),
   })
   const {data : leaderboard} = useGetLeaderBoardQuery({...filters});
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,8 +168,6 @@ const Leaderboard = () => {
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(prev => prev - 1)
   } 
-
-  console.log(filters)
 
   return (
     <main className={styles.root}>
