@@ -27,6 +27,7 @@ import Bids from "../../components/profile/bids/Bids";
 import ConfirmationDialog from "../../components/dialogs/confirmation-dialog/ConfirmationDialog";
 import { getConfig } from "../../app-config";
 import Error from "../../components/error/Error";
+import {useSelector} from "react-redux";
 
 let tabs = ['collected', 'created', 'sold', 'favorited', 'activity', 'my bids']
 
@@ -45,19 +46,20 @@ const initialFilters = {
 }
 
 function MyProfile({prefetchedProfile, errorCode}) {
+  let token = useSelector(state => state.auth.token);
   const router = useRouter()
   const [deleteBid] = useDeleteBidMutation()
-  const { data: user, refetch: refetchUser } = useGetCurrentUserQuery()
+  const { data: user, refetch: refetchUser } = useGetCurrentUserQuery({},{skip: !token})
   const { data: collectedListings, refetch: refetchCollected } = useGetListingsQuery({ owner: user?._id }, { skip: !user?._id })
   const { data: createdListings, refetch: refetchCreated } = useGetListingsQuery({ creator: user?._id }, { skip: !user?._id })
   const { data: soldListings, refetch: refetchSold } = useGetListingsQuery({ seller: user?._id }, { skip: !user?._id })
-  const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true })
-  const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery()
-  const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery()
+  const { data: favoriteListings, refetch: refetchFavorite } = useGetListingsQuery({ liked: true }, {skip: !user?._id})
+  const { data: transactions, refetch: refetchTransactions } = useGetProfileTransactionsQuery({},{skip: !user?._id})
+  const { data: bids, refetch: refetchBids, isFetching } = useGetMyBidsQuery({},{skip: !user?._id})
   const { data: soldListingsUserName, refetch: refetchSoldUserName } = useGetSoldByUserNameQuery(prefetchedProfile.username, {skip : !prefetchedProfile.username})
   const { data : listings, refetch: refetchListing} = useGetPublishedByUserNameQuery(prefetchedProfile.username, {skip : !prefetchedProfile.username})
-  const [manualLoading, setManualLoading] = useState(false)
-  const isLoading = !user || !collectedListings || !createdListings || !favoriteListings || isFetching || manualLoading || !soldListingsUserName || !listings
+  const [manualLoading, setManualLoading] = useState(false) 
+  const isLoading = !prefetchedProfile.username || manualLoading || !soldListingsUserName || !listings
   const [filteredData, setFilteredData] = useState([])
   const [currentTab, setCurrentTab] = useState('collected')
   const [options, setOptions] = useState({
