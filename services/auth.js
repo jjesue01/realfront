@@ -83,6 +83,16 @@ export const authApi = createApi({
       checkRegistration: builder.query({
         query: (walletAddress) => `/users/${walletAddress}/check`,
       }),
+      getUser: builder.query({
+        query: (id) => `/users/${id}`,
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled
+          } catch (error) {
+            dispatch(pushToast({ type: 'error', message: 'Error while getting user info' }))
+          }
+        }
+      }),
   }),
 })
 
@@ -90,5 +100,6 @@ export const {
   useLoginMutation,
   useGetCurrentUserQuery,
   useUpdateUserMutation,
-  useUpdateUserImagesMutation
+  useUpdateUserImagesMutation,
+  useGetUserQuery,
 } = authApi

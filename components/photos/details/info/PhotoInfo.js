@@ -20,6 +20,7 @@ import MediaFile from "../../../media-file/MediaFile";
 import {blockchainOptions, HOST_NAME} from "../../../../fixtures";
 import {getConfig} from "../../../../app-config";
 import Loader from "../../../loader/Loader";
+import { useGetUserQuery } from "../../../../services/auth";
 
 function PhotoInfo({
   listing,
@@ -37,6 +38,7 @@ function PhotoInfo({
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
+  const {data : owner} = useGetUserQuery(listing?.owner)
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
