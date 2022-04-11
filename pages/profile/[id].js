@@ -77,8 +77,7 @@ function MyProfile({prefetchedProfile, errorCode}) {
   const [filterValues, setFilterValues] = useState([])
   const [cancelBidOpened, setCancelBidOpened] = useState(false)
   const [bidForDelete, setBidForDelete] = useState(null)
-  const [isPublic, setIsPublic] = useState(false);
-  
+  const [isPublic, setIsPublic] = useState(false);  
 
   const pendingBids = useMemo(() => {
     return bids?.docs?.filter(bid => !bid.status.includes('Close'))
@@ -181,9 +180,14 @@ function MyProfile({prefetchedProfile, errorCode}) {
     let items = []
     let updatedFilterValues = []
     let updatedFiltersCount = 0
+    
+    if (!listings || !soldListingsUserName || !prefetchedProfile) return
 
-    if (currentTab === 'activity' || !user || !collectedListings || !createdListings || 
-                !favoriteListings || !listings || !soldListingsUserName) return;
+    if (!isPublic) {
+      if (currentTab === 'activity' || !user || !collectedListings || !createdListings || 
+          !favoriteListings || !listings || !soldListingsUserName) return;
+    }
+    
 
     if (currentTab === 'favorited') {
       items = [...favoriteListings.docs]
@@ -294,7 +298,7 @@ function MyProfile({prefetchedProfile, errorCode}) {
     setFiltersCount(updatedFiltersCount)
     setFilteredData([...items])
     setFilterValues(updatedFilterValues)
-  }, [filters, currentTab, user, createdListings, collectedListings, favoriteListings, options])
+  }, [filters, currentTab, user, createdListings, collectedListings, favoriteListings, options, listings, soldListingsUserName, prefetchedProfile])
 
   useEffect(function initOptions() {
     if (!collectedListings || !createdListings || !listings || !soldListingsUserName) return;
