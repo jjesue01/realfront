@@ -62,7 +62,7 @@ function PhotoDetails({ openLogin, openAddFunds, prefetchedListing = {} }) {
   const [cancelConfirmationOpened, setCancelConfirmation] = useState(false)
   const [cancelListingOpened, setCancelListingOpened] = useState(false)
   const [bidWarningOpened, setBidWarningOpened] = useState(false)
-  const [availableBid, setAvailableBid] = useState(null)
+  const [availableBid, setAvailableBid] = useState(null);
 
   const networkMessageShown = useRef(false)
   const pollingStarted = useRef(false)

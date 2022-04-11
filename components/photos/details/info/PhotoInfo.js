@@ -20,6 +20,8 @@ import MediaFile from "../../../media-file/MediaFile";
 import {blockchainOptions, HOST_NAME} from "../../../../fixtures";
 import {getConfig} from "../../../../app-config";
 import Loader from "../../../loader/Loader";
+import { useGetUserQuery } from "../../../../services/auth";
+import Link from "next/link";
 
 function PhotoInfo({
   listing,
@@ -37,6 +39,7 @@ function PhotoInfo({
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
+  const {data : owner} = useGetUserQuery(listing?.owner)
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
@@ -379,6 +382,19 @@ function PhotoInfo({
                 Details
               </Typography>
               <div className={styles.detailsContent}>
+              
+                {owner?.username && 
+                <div className={styles.field}>
+                  <div className={cn(styles.detailsCol, styles.colName)}>
+                    <p>Owner</p>
+                  </div>
+                  <Link href={`/profile/${owner?.username}`} passHref>
+                  <div className={cn(styles.detailsCol, styles.colContent, styles.colLink)}>
+                    <p>{ owner?.username }</p>
+                  </div>
+                  </Link>
+                </div>
+                }
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
                     <p>Address</p>

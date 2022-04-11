@@ -15,7 +15,7 @@ const LIMIT_PER_PAGE = 50
 const sortOptionsDay = [
   {
     label: "All time",
-    value: dateToString(new Date(0)),
+    value: dateToString(new Date(new Date(0).getTime())),
   },
   {
     label: "Last 24 hours",
@@ -144,8 +144,8 @@ const Leaderboard = () => {
     sort: 'volume:desc',
     resource: 'all',
     blockchain: 'all',
-    startDate: dateToString(new Date(0)),
-    endDate: dateToString(new Date()),
+    startDate: dateToString(new Date(new Date(0).getTime())),
+    endDate: new Date(),
   })
   const {data : leaderboard} = useGetLeaderBoardQuery({...filters});
   const [currentPage, setCurrentPage] = useState(1);
