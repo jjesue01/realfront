@@ -127,8 +127,20 @@ function Listings() {
     </Head>
     <div className={styles.title}>
     <div className = {styles.filtersBlock}>
-        <Input type="date" value={filters.ipfsdate_from} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
-        <Input type="date" value={filters.ipfsdate_to} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
+        <Input 
+          type="date" 
+          value={filters.ipfsdate_from} 
+          onChange={handleChangeFirstDate} 
+          noPast={false} 
+          className={styles.dateInput}
+        />
+        <Input 
+          type="date" 
+          value={filters.ipfsdate_to} 
+          onChange={handleChangeSecondDate} 
+          noPast={false} 
+          className={styles.dateInput}
+        />
       </div>
       <Input
         className={cn(styles.inputSearch, { [styles.inputSearchActive]: filters.search !== '' } )}

@@ -41,8 +41,8 @@ function TransactionRow ({item = {}}) {
 
 function Transaction () {
   const [filters, setFilters] = useState({
-    ipfsdate_from : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
-    ipfsdate_to : dateToString(new Date()),
+    startDate : dateToString(new Date(new Date().getTime() - DAY_TIME * 7)),
+    endDate : dateToString(new Date()),
     page : 1,
     size: 15,
   });
@@ -53,14 +53,14 @@ function Transaction () {
   const handleChangeFirstDate = ({target: {value}}) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      ipfsdate_from : value
+      startDate  : value
     }))
   }
 
   const handleChangeSecondDate = ({target: {value}}) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      ipfsdate_to : value
+      endDate  : value
     }))
   }
 
@@ -94,7 +94,7 @@ function Transaction () {
       ...prevState,
       page: 1,
     }))
-  }, [filters.ipfsdate_from, filters.ipfsdate_to])
+  }, [filters.startDate , filters.endDate ])
 
   return (
     <>
@@ -107,8 +107,20 @@ function Transaction () {
             Trading history
           </Typography>
           <div className = {styles.filtersBlock}>
-            <Input type="date" value={filters.ipfsdate_from} onChange={handleChangeFirstDate} noPast={false} className={styles.dateInput}/>
-            <Input type="date" value={filters.ipfsdate_to} onChange={handleChangeSecondDate} noPast={false} className={styles.dateInput}/>
+            <Input 
+              type="date" 
+              value={filters.startDate } 
+              onChange={handleChangeFirstDate} 
+              noPast={false} 
+              className={styles.dateInput}
+            />
+            <Input 
+              type="date" 
+              value={filters.endDate } 
+              onChange={handleChangeSecondDate} 
+              noPast={false} 
+              className={styles.dateInput}
+            />
           </div>
         </div>
         
