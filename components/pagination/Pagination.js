@@ -6,7 +6,7 @@ import cn from "classnames";
 
 function Pagination({ className, currentPage, count, onNext = () => {}, onPrev = () => {} }) {
   return (
-    <div className={styles.root}>
+    <div className={cn(className,styles.root)}>
       <Typography fontSize={14}>
         Page
       </Typography>

@@ -39,7 +39,7 @@ function PhotoInfo({
   const router = useRouter()
   const { id } = router.query
   const [likeListing] = useLikeListingMutation()
-  const {data : owner} = useGetUserQuery(listing?.owner)
+  const {data : owner} = useGetUserQuery(listing?.owner, {skip : !listing?.owner})
   const [isFavorite, setIsFavorite] = useState(false)
   const [likes, setLikes] = useState(0)
   const [menuOpened, setMenuOpened] = useState(false)
@@ -382,7 +382,18 @@ function PhotoInfo({
                 Details
               </Typography>
               <div className={styles.detailsContent}>
-              
+                {listing?.creator && 
+                <div className={styles.field}>
+                  <div className={cn(styles.detailsCol, styles.colName)}>
+                    <p>Created by</p>
+                  </div>
+                  <Link href={`/profile/${listing?.creator.username}`} passHref>
+                  <div className={cn(styles.detailsCol, styles.colContent, styles.colLink)}>
+                    <p>{ listing?.creator.username }</p>
+                  </div>
+                  </Link>
+                </div>
+                }
                 {owner?.username && 
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
