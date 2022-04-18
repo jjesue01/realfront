@@ -121,6 +121,19 @@ export const adminApi = createApi({
     //     }
     //   }
     // })
+    getTransactions: builder.query({
+      query: (params) => ({
+        url: `/admin/transactions`,
+        params
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          dispatch(pushToast({ type: 'error', message: 'Error while getting listings' }))
+        }
+      }
+    }),
   }),
 })
 
@@ -132,4 +145,5 @@ export const {
   useGetInvitesQuery,
   useGetAllUsersQuery,
   useSendInviteMutation,
+  useGetTransactionsQuery,
 } = adminApi
