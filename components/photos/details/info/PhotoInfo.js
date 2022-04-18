@@ -382,7 +382,18 @@ function PhotoInfo({
                 Details
               </Typography>
               <div className={styles.detailsContent}>
-              
+                {listing?.creator && 
+                <div className={styles.field}>
+                  <div className={cn(styles.detailsCol, styles.colName)}>
+                    <p>Created by</p>
+                  </div>
+                  <Link href={`/profile/${listing?.creator.username}`} passHref>
+                  <div className={cn(styles.detailsCol, styles.colContent, styles.colLink)}>
+                    <p>{ listing?.creator.username }</p>
+                  </div>
+                  </Link>
+                </div>
+                }
                 {owner?.username && 
                 <div className={styles.field}>
                   <div className={cn(styles.detailsCol, styles.colName)}>
