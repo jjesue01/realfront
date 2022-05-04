@@ -229,7 +229,12 @@ export const listingsApi = createApi({
       }
     }),
     getPublishedByUserName: builder.query({
-      query: username => `/listings/user/${username}`,
+      query: username => ({
+        url: `/listings/user/${username}`,
+        params: {
+          limit: 1000,
+        }
+      }),
       async onQueryStarted(arg, {dispatch, queryFulfilled}){
         try {
           await queryFulfilled
@@ -239,7 +244,12 @@ export const listingsApi = createApi({
       }
     }),
     getSoldByUserName: builder.query({
-      query: username => `/listings/user/${username}/sold`,
+      query: username => ({
+        url: `/listings/user/${username}/sold`,
+        params: {
+          limit: 1000,
+        }
+      }),
       async onQueryStarted(arg, {dispatch, queryFulfilled}){
         try {
           await queryFulfilled
