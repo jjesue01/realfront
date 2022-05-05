@@ -41,7 +41,7 @@ function UserDetails() {
     verified: false
   })
 
-
+  
   function goBack() {
     router.push('/admin/user-management')
   }
@@ -173,7 +173,11 @@ function UserDetails() {
                 <p>Last Login</p>
               </div>
               <div className={cn(styles.detailsCol, styles.colContent)}>
-                <p>{ getFormattedEndTime(user.lastLoginAt) }</p>
+                {
+                  user?.lastLoginAt ? (
+                    <p>{ getFormattedEndTime(user.lastLoginAt) }</p>
+                  ) : <p>&mdash;</p>
+                }
               </div>
             </div>
           </div>
