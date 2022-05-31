@@ -1,0 +1,110 @@
+.root
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto
+.container
+  width: 100%
+  background-color: #fff
+  padding: 16px
+  border: 1px solid #d3d9e1
+  border-radius: 4px
+.table
+  width: 100%
+.tableHeader
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding-bottom: 7px
+  p
+    font-size: 13px
+    font-weight: 600
+    line-height: 20px
+    color: #878D97
+.col
+  width: 100%
+  overflow: hidden
+  margin-right: 15px
+  p
+    width: 100%
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+  &:last-child
+    margin-right: 0
+.colName
+  min-width: 130px
+  max-width: 130px
+.colPhone
+  min-width: 90px
+  max-width: 90px
+.colEmail
+  min-width: 190px
+  max-width: 190px
+.colAddress
+  min-width: 200px
+  max-width: 200px
+.colDate
+  min-width: 110px
+  max-width: 110px
+.tableItem
+  width: 100%
+  height: 25px
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: space-between
+  cursor: pointer
+  &:hover
+    background-color: rgba(236,239,244, 0.5),
+  .col
+    p
+      font-size: 12px
+      color: #111
+  .colEvent, .colPrice, .colQuantity
+    p
+      font-weight: 600
+  .colDate
+    p
+      color: #878D97
+  .colItem
+    display: flex
+    align-items: center
+    justify-content: flex-start
+.imageContainer
+  padding: 9px 2px
+  border: 1px solid #ECEFF4
+  margin-right: 12px
+.imageWrapper
+  position: relative
+  width: 100%
+  height: 35px
+  min-width: 49px
+.title
+  width: 100%
+  display: flex
+  align-items: center
+.filtersBlock
+  margin-left: 24px
+  display: flex
+  flex-direction: row
+.dateInput
+  &+&
+    margin-left: 14px
+.noResultBlock
+  margin-top: 32px
+  font-size: 32px
+  text-align: center
+.loader
+  position: absolute
+  top: 50%
+  left: 50%
+  margin-left: 10%
+  transform: translate(-50%, -50%)
+.pagination
+  margin-top: 12px
+.button
+  height: 40px
+.blockButtons
+  display: flex
+  justify-content: space-between
