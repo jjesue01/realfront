@@ -29,10 +29,8 @@ export function FileUploader({ className, children, onChange, accept = '*', erro
     const resultFiles = []
 
     for (const file of files) {
-      if (Math.round(file.size / 1000) > MAX_KB_SIZE || accept !== '*' && !validateFormat(file)) {
+      if ((Math.round(file.size / 1000) > MAX_KB_SIZE || accept !== '*') && !validateFormat(file)) {
         return `File size should be less than ${MAX_KB_SIZE / 1000} MB and have supported format`
-        // dispatch(pushToast({ type: 'info', message: `}))
-        continue;
       }
 
       resultFiles.push(file)

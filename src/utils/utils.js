@@ -3,6 +3,7 @@ export function csvToArray(str, delimiter = ",") {
 
   let headers = headersString.map(item => item.match(/[A-Z][a-z]+/g).join("_").toLowerCase())
 
+  // eslint-disable-next-line
   let reg = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/
   const rows = str.slice(str.indexOf("\n") + 1).split('\n');
 
