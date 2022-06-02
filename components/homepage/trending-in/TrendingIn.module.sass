@@ -1,0 +1,135 @@
+.root
+  width: 100%
+  padding-top: 129px
+.header
+  display: flex
+  align-items: center
+  justify-content: space-between
+  a
+    font-size: 14px
+    font-weight: 600
+    color: #111111
+    text-decoration: underline
+.titleContainer
+  display: flex
+
+.sliderContainer
+  position: relative
+  width: 100%
+  max-width: 1440px
+  padding: 0 135px 99px
+  margin: 60px auto 0
+.collectionWrapper, .listingWrapper
+  width: 100%
+  padding: 0 15px
+.collection
+  width: 100%
+  max-width: 555px
+  background: #fff
+.mainImageWrapper
+  position: relative
+  overflow: hidden
+  width: 100%
+  height: 313px
+.collectionContent
+  min-height: 178px
+  width: 100%
+  padding: 25px 32px 24px
+  border: 1px solid #D3D9E1
+  border-top: none
+.collectionInfo
+  display: flex
+  align-items: center
+.collectionInfoImage
+  overflow: hidden
+  height: 50px
+  width: 50px
+  min-width: 50px
+  border-radius: 50%
+  margin-right: 20px
+.infoContent
+  width: 100%
+  span
+    text-transform: uppercase
+.arrow
+  position: absolute
+  top: 50%
+  width: 50px
+  min-width: 50px
+  height: 50px
+  outline: none
+  background: #FFFFFF
+  border: 1px solid #E1E3E5
+  border-radius: 50%
+  transform: translateY(-50%)
+  padding: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  cursor: pointer
+  svg
+    path
+      stroke: #9BA0A8
+.prevArrow
+  left: -80px
+  svg
+    transform: scale(0.8) rotate(-90deg) translateY(-2px)
+.nextArrow
+  right: -80px
+  svg
+    transform: scale(0.8) rotate(90deg) translateY(-2px)
+.noCollections
+  min-height: 491px
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+
+@media (max-width: 1200px)
+  .sliderContainer
+    padding: 0 110px 99px
+  .prevArrow
+    left: -70px
+  .nextArrow
+    right: -70px
+  .collectionContent
+    padding: 20px
+
+@media (max-width: 1100px)
+  .sliderContainer
+    padding: 0 0 99px
+
+@media (max-width: 900px)
+  .collectionWrapper
+    width: 100%
+    padding: 0 40px
+  .collection
+    max-width: 100%
+
+@media (max-width: 800px)
+  .root
+    padding-top: 90px
+  .titleContainer
+    button
+      span
+        font-size: 30px
+        line-height: 36px
+  .sliderContainer
+    padding-bottom: 60px
+
+@media (max-width: 700px)
+  .collectionWrapper
+    width: 100%
+    padding: 0 20px
+
+@media (max-width: 500px)
+  .titleContainer
+    flex-direction: column
+    align-items: flex-start
+    button
+      margin: 5px 0 0
+      span
+        font-size: 27px
+        line-height: 33px
+  .mainImageWrapper
+    height: 255px

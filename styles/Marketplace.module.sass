@@ -1,0 +1,304 @@
+.root
+  height: 100vh
+  width: 100%
+  display: flex
+  flex-direction: column
+  padding-top: 82px
+.rootFull
+  height: auto
+.filters
+  width: 100%
+  min-height: 73px
+  border-top: 1px solid #ECEFF4
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+.filtersContainer
+  width: 100%
+  max-width: 1440px
+  margin: 0 auto
+  padding: 0 45px 0 40px
+  display: flex
+  align-items: center
+  justify-content: space-between
+.filterItems
+  display: flex
+.content
+  width: 100%
+  min-height: 400px
+  flex: 1
+  display: flex
+  align-items: flex-start
+  justify-content: flex-start
+.mapContainer
+  position: relative
+  flex: 1
+  height: 100%
+  background: #f7f7f7
+.itemsWrapper
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+.items
+  width: 100%
+  max-width: 636px
+  height: 100%
+  border-left: 1px solid #ECEFF4
+  display: flex
+  flex-direction: column
+.btnShowMap
+  background: #FFFFFF
+  outline: none
+  padding: 0 16px
+  border: 1px solid #E3E5E9
+  width: 140px
+  height: 50px
+  display: flex
+  align-items: center
+  justify-content: space-between
+  border-radius: 30px
+  cursor: pointer
+  transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    background-color: #F3F7F8
+  span
+    display: block
+    margin-right: 13px
+  svg
+    transform: rotate(180deg)
+    path
+      stroke: #1DC3A6
+.itemsWide
+  max-width: 100%
+  border: none
+  padding-top: 16px
+  .scrollContainer
+    position: relative
+    height: auto
+    width: 100%
+    overflow: visible
+  .itemsContent
+    padding: 0
+  .titleContainer
+    padding: 0
+    margin-top: 32px
+    display: flex
+    align-items: center
+    justify-content: space-between
+    .itemsHeader
+      width: fit-content
+      p
+        margin-right: 40px
+        white-space: nowrap
+  .itemsGrid
+    grid-template-columns: repeat(3, 1fr)
+    grid-column-gap: 30px
+    grid-row-gap: 32px
+    .imageWrapper
+      height: 253px
+.imageWrapper
+  width: 100%
+.filtersContent
+  width: 100%
+  display: flex
+.searchContainer
+  display: flex
+  margin-right: 30px
+.btnSearch
+  min-width: 50px
+  height: 40px
+  padding: 4px 0 0 0
+  svg
+    transform: scale(0.8)
+.inputSearch
+  max-width: 373px
+  min-width: 300px
+  input
+    padding-left: 20px
+  svg
+    position: absolute
+    top: 50%
+    right: 20px
+    transform-origin: right
+    transform: translateY(-50%) scale(0.8)
+    path
+      transition: stroke 300ms cubic-bezier(0, 0, 0, 1)
+      stroke: #9BA0A8
+.inputSearchActive
+  svg path
+    stroke: #1DC3A6
+.filter
+  margin-right: 24px
+.resetFilters
+  display: flex
+  align-items: center
+  justify-content: center
+  transition: opacity 300ms cubic-bezier(0, 0, 0, 1)
+  opacity: 0
+  pointer-events: none
+  p
+    white-space: nowrap
+.resetFiltersShown
+  opacity: 1
+  pointer-events: auto
+.btnReset
+  padding: 0
+  width: 36px
+  min-width: 36px
+  height: 36px
+  background-color: #FFFFFF
+  position: relative
+  outline: none
+  border: 1px solid #D3D9E1
+  border-radius: 50%
+  margin-right: 16px
+  cursor: pointer
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: background-color, border-color
+  &::after, &::before
+    content: ""
+    position: absolute
+    top: 50%
+    left: 50%
+    width: 1px
+    height: 14px
+    background-color: #111
+    transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &::after
+    transform: translate(-50%, -50%) rotate(45deg)
+  &::before
+    transform: translate(-50%, -50%) rotate(-45deg)
+  &:hover
+    background-color: #1DC3A6
+    border-color: #1DC3A6
+    &::after, &::before
+      background-color: #FFFFFF
+.titleContainer
+  width: 100%
+  padding: 29px 29px 35px
+.itemsContainer
+  position: relative
+  flex: 1
+  padding-right: 5px
+  display: flex
+  flex-direction: column
+.scrollContainer
+  position: absolute
+  width: calc(100% - 5px)
+  height: 100%
+  flex: 1
+  overflow-y: auto
+  -webkit-overflow-scrolling: touch
+  &::-webkit-scrollbar
+    width: 7px
+  &::-webkit-scrollbar-track
+    background-color: #fff
+  &::-webkit-scrollbar-thumb
+    background-color: rgba(211, 217, 225, 0.6)
+    border-radius: 100px
+.itemsContent
+  width: 100%
+  padding: 0 20px 0 30px
+.itemsHeader
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+.itemsGrid
+  width: 100%
+  margin-top: 17px
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  grid-column-gap: 23px
+  grid-row-gap: 16px
+  padding-bottom: 32px
+.selectSort
+  max-width: 223px
+.btnHideMap
+  position: absolute
+  top: 16px
+  right: 16px
+  width: 140px
+  height: 50px
+  background-color: #fff
+  border: none
+  border-radius: 30px
+  outline: none
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1)
+  padding: 18px
+  display: flex
+  align-items: center
+  justify-content: space-between
+  cursor: pointer
+  transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    background-color: #F3F7F8
+.paginationContainer
+  width: 100%
+  padding: 90px 0 100px
+  display: flex
+  align-items: center
+  justify-content: flex-end
+.pagination
+  margin-right: -10px
+
+@media (max-width: 950px)
+  .filtersContainer
+    flex-direction: column
+    align-items: flex-start
+    padding: 20px 50px
+  .filtersContent
+    flex-direction: column
+  .filterItems
+    margin-top: 20px
+    .filter:last-child
+      margin-right: 0
+  .searchContainer
+    max-width: 556px
+  .inputSearch
+    max-width: 100%
+  .resetFilters
+    margin-top: 20px
+    opacity: 1
+    pointer-events: auto
+  .itemsWide
+    .itemsGrid
+      grid-template-columns: repeat(2, 1fr)
+    .titleContainer
+      margin-top: 0
+      flex-direction: column
+      align-items: flex-start
+      .itemsHeader
+        width: 100%
+        margin-top: 10px
+  .btnShowMap
+    display: none
+
+@media (max-width: 800px)
+  .filtersContainer
+    padding: 20px
+  .filterItems
+    width: 100%
+    flex-wrap: wrap
+  .searchContainer
+    max-width: 100%
+    margin-right: 0
+  .filter
+    width: calc(50% - 12px)
+    & > button
+      width: 100%
+    &:nth-child(2n)
+      margin-right: 0
+    &:nth-child(n + 3)
+      margin-top: 20px
+
+@media (max-width: 600px)
+  .itemsWide
+    .itemsGrid
+      grid-template-columns: repeat(1, 1fr)
+  .filter
+    width: 100%
+    margin: 20px 0 0
+    &:first-child
+      margin: 0

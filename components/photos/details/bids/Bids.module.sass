@@ -1,0 +1,122 @@
+.root
+  width: 100%
+.opened
+  .btnShowTable
+    svg
+      transform: rotate(0deg) scale(0.8)
+  .tableContainer
+    height: 247px
+.tableWrapper
+  border: 1px solid #D3D9E1
+.btnShowTable
+  width: 100%
+  height: 88px
+  background-color: #FFFFFF
+  border: none
+  outline: none
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 0 31px
+  cursor: pointer
+  svg
+    transition: transform 300ms cubic-bezier(0, 0, 0, 1)
+    transform: rotate(180deg) scale(0.8)
+    path
+      stroke: #9BA0A8
+.tableContainer
+  width: 100%
+  padding: 0 5px 0 31px
+  overflow: hidden
+  height: 0
+  transition: height 300ms cubic-bezier(0, 0, 0, 1)
+.table
+  width: 100%
+  padding-bottom: 24px
+.tableHeader
+  width: calc(100% - 21px)
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  padding-bottom: 7px
+  p
+    font-size: 12px
+    font-weight: 600
+    line-height: 15px
+    color: #878D97
+.col
+  width: 100%
+  overflow: hidden
+  margin-right: 20px
+  p
+    width: 100%
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+  &:last-child
+    margin-right: 0
+.colPrice
+  max-width: 163px
+.colDate
+  max-width: 254px
+.colWalletAddress
+  max-width: 140px
+.tableBody
+  width: 100%
+  max-height: 200px
+  overflow-y: auto
+  -webkit-overflow-scrolling: touch
+  &::-webkit-scrollbar
+    width: 5px
+  &::-webkit-scrollbar-track
+    background-color: #fff
+  &::-webkit-scrollbar-thumb
+    background-color: rgba(211, 217, 225, 0.6)
+    border-radius: 100px
+.tableItem
+  width: calc(100% - 21px)
+  height: 50px
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  &:last-child
+    border-bottom: none
+  .col
+    p
+      font-size: 14px
+      color: #111
+  .colPrice
+    p
+      font-weight: 600
+  .colDate
+    p
+      color: #878D97
+  .colWalletAddress
+    p
+      color: #000
+.noOffers
+  width: 100%
+  height: 147px
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  flex-direction: column
+.imageWrapper
+  width: 100px
+  height: 100px
+  border-radius: 50%
+  background: #F7FBFC
+  border: 1px solid #EAF1F3
+  display: flex
+  align-items: center
+  justify-content: center
+.btnOffer
+  min-width: 98px
+  height: 40px
+  margin: 16px auto 0
+  display: block
+
+@media (max-width: 460px)
+  .root
+    margin-top: 25px

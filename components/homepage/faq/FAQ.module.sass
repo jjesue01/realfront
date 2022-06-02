@@ -1,0 +1,133 @@
+.root
+  width: 100%
+  padding: 128px 0 100px
+.faqContainer
+  width: 100%
+  max-width: 848px
+  margin: 50px auto 0
+.question
+  width: 100%
+  border-bottom: 1px solid #D3D9E1
+.questionAbout
+  border: 1px solid #D3D9E1
+  margin-bottom: 24px
+  &:last-child
+    margin: 0
+  .btnQuestion
+    padding: 31px 98px 31px 31px
+    line-height: 24px
+    span
+      right: 32px
+      top: 50%
+      transform: translateY(-50%)
+  .answerContent
+    padding: 32px
+  .btnQuestionOpened
+    border-bottom: 1px solid #D3D9E1
+.answerWrapper
+  overflow: hidden
+  width: 100%
+  transition: height 300ms cubic-bezier(0, 0, 0, 1)
+.btnQuestion
+  width: 100%
+  position: relative
+  background: none
+  border: none
+  outline: none
+  cursor: pointer
+  padding: 24px 98px 24px 0
+  text-align: left
+  font-size: 20px
+  font-weight: 600
+  line-height: 36px
+  color: #111111
+.icon
+  position: absolute
+  top: 17px
+  right: 0
+  width: 50px
+  height: 50px
+  background-color: #FFFFFF
+  border: 1px solid #D3D9E1
+  border-radius: 50%
+  transition-property: background-color, border-color
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  &::before
+    content: ""
+    width: 18px
+    height: 2px
+    background-color: #ABC9C1
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    transition-property: transform, background-color
+    transition: 300ms cubic-bezier(0, 0, 0, 1)
+  &::after
+    content: ""
+    width: 2px
+    height: 18px
+    background: #ABC9C1
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    transition-property: transform, opacity,background-color
+    transition: 300ms cubic-bezier(0, 0, 0, 1)
+.btnQuestionOpened
+  span
+    background-color: #ABC9C1
+    border-color: #ABC9C1
+    &::before, &::after
+      background-color: #fff
+    &::before
+      transform: translate(-50%, -50%) rotate(360deg)
+    &::after
+      transform: translate(-50%, -50%) rotate(450deg)
+      opacity: 0
+.answerContent
+  width: 100%
+  padding: 0 32px 32px
+  p
+    font-family: 'Lato', sans-serif
+    font-size: 14px
+    line-height: 22px
+    font-weight: 400
+    color: rgba(55, 65, 81, 0.8)
+    padding-left: 8px
+    margin-bottom: 8px
+  h6
+    font-size: 16px
+    font-weight: 600
+    line-height: 22px
+    color: #111111
+    margin: 0
+.actions
+  width: 100%
+  margin-top: 60px
+  display: flex
+  justify-content: center
+
+@media (max-width: 800px)
+  .root
+    padding: 90px 0 70px
+  .faqContainer
+    margin-top: 20px
+
+@media (max-width: 700px)
+  .btnQuestion
+    font-size: 18px
+    line-height: 30px
+    padding: 20px 70px 20px 0
+  .icon
+    top: 10px
+  .answerContent
+    padding: 20px
+  .questionAbout
+    .btnQuestion
+      padding-left: 20px
+      span
+        right: 20px
+    .answerContent
+      padding: 20px
+

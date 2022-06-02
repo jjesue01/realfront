@@ -1,0 +1,34 @@
+.root
+  min-width: 300px
+  background: #FFFFFF
+  border-radius: 4px
+  border: 1px solid #D3D9E1
+.header
+  width: 100%
+  padding: 23px
+  display: flex
+.homeLink
+  line-height: 0
+ul.links
+  width: 100%
+  li
+    width: 100%
+    font-size: 16px
+    color: #111
+    transition: 300ms cubic-bezier(0, 0, 0, 1)
+    transition-property: background-color
+    a
+      display: flex
+      align-items: center
+      height: 45px
+      width: 100%
+      padding: 0 23px
+    &:last-child
+      margin-bottom: 0
+    &:hover
+      background-color: #F3F7F8
+.active
+  background-color: #F3F7F8
+  a
+    font-weight: bold
+    line-height: 16px

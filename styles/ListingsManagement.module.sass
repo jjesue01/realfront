@@ -1,0 +1,121 @@
+.tableContainer
+  width: 100%
+  margin-top: 20px
+.table
+  width: 100%
+  padding-bottom: 24px
+.tableHeader
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  padding-bottom: 7px
+  p
+    font-size: 12px
+    font-weight: 600
+    line-height: 15px
+    color: #878D97
+.col
+  width: 100%
+  overflow: hidden
+  margin-right: 20px
+  p
+    width: 100%
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+  &:last-child
+    margin-right: 0
+.colImage
+  max-width: 70px
+  min-width: 70px
+.colName
+  max-width: 250px
+.colAdress
+  max-width: 450px
+.colTokenId
+  min-width: 50px
+  max-width: 50px
+.colButton
+  max-width: 30px
+  min-width: 30px
+.logoContainer
+  padding: 9px 2px
+  border: 1px solid #ECEFF4
+  margin-right: 12px
+.logoWrapper
+  position: relative
+  width: 100%
+  height: 35px
+  min-width: 49px
+.tableBody
+  width: 100%
+.tableItem
+  width: 100%
+  height: 86px
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  &:last-child
+    border-bottom: none
+  .col
+    p
+      font-size: 14px
+      color: #111
+.btnIcon
+  background: none
+  border: none
+  outline: none
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 0
+  cursor: pointer
+  transition: fill 0.3s
+  &:hover
+    & svg path
+      fill: #64D6C2
+.inputSearch
+  min-width: 160px
+  max-width: 400px
+  input
+    padding-left: 20px
+    height: 50px
+  svg
+    position: absolute
+    top: 50%
+    right: 20px
+    transform-origin: right
+    transform: translateY(-50%) scale(0.8)
+    path
+      transition: stroke 300ms cubic-bezier(0, 0, 0, 1)
+      stroke: #9BA0A8
+.inputSearchActive
+  svg path
+    stroke: #1DC3A6
+.title
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+.filtersBlock
+  display: flex
+  flex-direction: row
+  align-items: center
+
+  margin-right: 45px
+.dateInput
+  min-width: 150px
+  &+&
+    margin-left: 15px
+.noResultBlock
+  margin-top: 32px
+  font-size: 32px
+  text-align: center
+.loader
+  position: absolute
+  top: 50%
+  left: 50%
+  margin-left: 10%
+  transform: translate(-50%, -50%)

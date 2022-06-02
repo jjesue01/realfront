@@ -1,0 +1,126 @@
+.hero
+  position: relative
+  width: 100%
+  background: linear-gradient(106.33deg, #E0EBED 24.91%, #FFFFFF 114.97%)
+  padding-top: 82px
+.bgImage
+  position: absolute
+  top: 0
+  left: 0
+  z-index: 1
+  pointer-events: none
+.content
+  position: relative
+  width: 100%
+  padding-left: 150px
+  display: flex
+  align-items: center
+  justify-content: space-between
+  z-index: 2
+  max-width: 1440px
+  margin: 0 auto
+.heroContent
+  width: 100%
+  max-width: 554px
+  margin-right: 60px
+  padding: 71px 15px 71px 0
+  h1
+    font-size: 42px
+    font-weight: 600
+    color: #111
+    line-height: 51px
+    max-width: 490px
+    margin-bottom: 32px
+  p
+    font-family: 'Lato', sans-serif
+    font-weight: 400
+    font-size: 18px
+    line-height: 32px
+    color: rgba(55, 65, 81, 0.8)
+.collectionItemContainer
+  width: 100%
+  padding-top: 71px
+.collectionItem
+  position: relative
+  width: 100%
+  background: #FFFFFF
+  box-shadow: 0 34px 40px rgba(78, 96, 91, 0.11)
+  height: 397px
+.collectionInfo
+  position: absolute
+  left: 0
+  bottom: 0
+  width: 100%
+  padding: 20px
+  display: flex
+  align-items: center
+  background: rgba(255, 255, 255, 0.96)
+  backdrop-filter: blur(20px)
+  -webkit-backdrop-filter: blur(20px)
+.collectionInfoImage
+  width: 50px
+  min-width: 50px
+  height: 50px
+  overflow: hidden
+  border-radius: 50%
+  margin-right: 20px
+.collectionDescription
+  width: 100%
+.collectionName
+  font-weight: 600
+  font-size: 14px
+  line-height: 17px
+  color: #111
+.collectionBy
+  font-weight: 600
+  font-size: 10px
+  line-height: 12px
+  margin-top: 8px
+  color: rgba(55, 65, 81, 0.5)
+.btnExplore
+  display: block
+  margin-top: 64px
+
+@media (max-width: 1440px)
+  .content
+    padding-left: 100px
+
+@media (max-width: 1200px)
+  .collectionItemContainer
+    padding-top: 0
+  .collectionItem
+    height: 486px
+  .collectionInfo
+    padding: 15px
+  .collectionInfoImage
+    width: 45px
+    min-width: 45px
+    height: 45px
+    margin-right: 15px
+  .collectionBy
+    margin-top: 5px
+
+@media (max-width: 1000px)
+  .content
+    padding-left: 50px
+  .heroContent
+    margin-right: 0
+
+@media (max-width: 850px)
+  .content
+    flex-direction: column
+    padding-left: 0
+  .heroContent
+    max-width: 100%
+    padding-left: 15px
+  .form
+    min-width: auto
+
+@media (max-width: 600px)
+  button.btnSubmit
+    min-width: 60px
+    span
+      display: none
+    svg
+      margin-right: 0
+

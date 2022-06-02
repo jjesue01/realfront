@@ -1,0 +1,116 @@
+.inputContainer
+  width: 100%
+  & > p
+    font-family: 'Lato', sans-serif
+    font-size: 14px
+    line-height: 22px
+    color: rgba(55, 65, 81, 0.8)
+    margin-top: 10px
+.inputWrapper
+  position: relative
+  width: 100%
+  transition: opacity 300ms cubic-bezier(0, 0, 0, 1)
+.input
+  width: 100%
+  height: 50px
+  padding: 0 16px
+  background: #FFFFFF
+  border: 1px solid rgba(195, 198, 203, 0.6)
+  outline: none
+  color: #000
+  font-size: 14px
+  font-weight: 400
+  -webkit-appearance: none
+  border-radius: 0
+  transition: border-color 300ms cubic-bezier(0, 0, 0, 1)
+  &::placeholder
+    color: rgba(55, 65, 81, 0.6)
+    font-weight: 400
+.small
+  height: 40px
+  padding: 0 16px
+.iconRight
+  padding-right: 40px
+.label
+  label
+    font-weight: 600
+    font-size: 16px
+    line-height: 20px
+  .inputWrapper
+    margin-top: 16px
+.urlPrefix
+  position: absolute
+  left: 16px
+  top: 50%
+  transform: translateY(-50%)
+  font-size: 14px
+  line-height: 17px
+  color: rgba(55, 65, 81, 0.6)
+.withUrlPrefix
+  padding-left: 212px
+.price
+  padding-left: 66px
+  font-weight: 600
+.currency
+  position: absolute
+  left: 16px
+  top: 50%
+  transform: translateY(-50%)
+  font-size: 14px
+  color: rgba(55, 65, 81, 0.6)
+  text-transform: uppercase
+.usd
+  position: absolute
+  right: 18px
+  top: 50%
+  transform: translateY(-50%)
+  font-size: 14px
+  color: rgba(55, 65, 81, 0.6)
+.error
+  border-color: red
+.errorText
+  position: absolute
+  top: calc(100% + 5px)
+  left: 0
+  font-size: 12px
+  color: red
+.disabled
+  .inputWrapper
+    opacity: 0.5
+    pointer-events: none
+.dropdown
+  position: absolute
+  top: 100%
+  left: 0
+  width: 100%
+  min-width: 340px
+  background: #FFFFFF
+  border: 1px solid #D3D9E1
+  box-shadow: 0 11px 24px rgba(0, 0, 0, 0.1)
+  transition: 200ms cubic-bezier(0, 0, 0, 1)
+  transition-property: opacity, transform
+  transform-origin: top left
+  opacity: 0
+  transform: scale(0.8)
+  pointer-events: none
+  z-index: 11
+.dropdownOpened
+  opacity: 1
+  transform: scale(1)
+  pointer-events: auto
+.closeLayer
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 10
+.iconLeft
+  padding-left: 55px
+.iconLeftWrapper
+  position: absolute
+  top: 50%
+  left: 16px
+  transform: translateY(-50%)
+  pointer-events: none
+  display: flex

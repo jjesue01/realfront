@@ -1,0 +1,111 @@
+.rootWrapper
+  position: relative
+div.btnMenu
+  position: absolute
+  top: 12px
+  right: 0
+.root
+  width: 100%
+  border: 1px solid #D3D9E1
+  background: #fff
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: box-shadow, border-color
+  cursor: pointer
+  &:hover
+    box-shadow: 0 34px 40px rgba(78, 96, 91, 0.11)
+.imageContainer
+  width: 100%
+.full
+  .header
+    height: 51px
+  .imageContainer
+    padding: 0 9px
+  .imageWrapper
+    border-radius: 4px
+    overflow: hidden
+  .itemData
+    display: flex
+    align-items: flex-start
+    justify-content: space-between
+    padding: 32px 23px 31px
+  .content, .priceContainer, .price
+    padding: 0
+    border: none
+  .content
+    & p:last-child
+      font-weight: 600
+      margin-top: 8px
+  .price
+    flex-direction: column
+    align-items: flex-end
+    & > p
+      margin-right: 0
+  .ethereum
+    margin-top: 8px
+  .btnMenu
+    top: 17px
+.header
+  height: 43px
+  width: 100%
+  padding-left: 16px
+  display: flex
+  align-items: center
+  justify-content: space-between
+.imageWrapper
+  position: relative
+  width: 100%
+.itemData
+  width: 100%
+.content
+  padding: 16px
+  overflow: hidden
+  display: grid
+.priceContainer
+  padding: 0 16px 17px
+.price
+  width: 100%
+  padding-top: 17px
+  border-top: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: flex-start
+.ethereum
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  span
+    font-size: 12px
+.iconWrapper
+  position: relative
+  display: flex
+.iconHeart
+  position: absolute
+  left: 1px
+  transition: opacity 300ms cubic-bezier(0, 0, 0, 1)
+  opacity: 0
+.btnFavorite
+  background: none
+  border: none
+  outline: none
+  padding: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  cursor: pointer
+  svg, span
+    pointer-events: none
+  path
+    transition: fill 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    path
+      fill: #FF6868
+.btnFavoriteActive
+  .iconHeart
+    opacity: 1
+  path
+    fill: #FF6868
+.collection
+  min-height: 15px
+.active
+  border-color: #1DC3A6
+  box-shadow: 0 34px 40px rgba(29, 195, 166, 0.3)

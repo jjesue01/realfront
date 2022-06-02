@@ -1,0 +1,110 @@
+.root
+  position: relative
+  margin-left: 13px
+  button
+    background: none
+    border: none
+    outline: none
+    display: flex
+    align-items: center
+    cursor: pointer
+    padding: 0
+    span
+      font-size: 36px
+      font-weight: 600
+      line-height: 44px
+      color: #1DC3A6
+      border-bottom: 1px solid #1DC3A6
+      margin-right: 13px
+    svg
+      transition: transform 300ms cubic-bezier(0, 0, 0, 1)
+      transform: rotate(180deg)
+.opened
+  button
+    svg
+      transform: rotate(0deg)
+  .picker
+    opacity: 1
+    transform: translateX(0)
+    pointer-events: auto
+.closeLayer
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 10
+.picker
+  position: absolute
+  top: calc(100% + 16px)
+  left: 0
+  width: 298px
+  height: 378px
+  background: #fff
+  border: 1px solid #D3D9E1
+  padding: 24px 0
+  box-shadow: 0 11px 24px rgba(0, 0, 0, 0.1)
+  z-index: 11
+  transition-property: opacity, transform
+  transition: 300ms cubic-bezier(0, 0, 0.2, 1)
+  opacity: 0
+  transform: translateX(50px)
+  pointer-events: none
+.header
+  padding: 0 24px 16px
+.inputWrapper
+  margin-top: 16px
+  position: relative
+  svg
+    position: absolute
+    top: 50%
+    right: 17px
+    transform-origin: right
+    transform: translateY(-50%) scale(0.8)
+    path
+      stroke: #9BA0A8
+.optionsWrapper
+  padding-right: 5px
+.optionsContent
+  width: 100%
+.optionsContainer
+  width: 100%
+  height: 254px
+  overflow-y: auto
+  -webkit-overflow-scrolling: touch
+  &::-webkit-scrollbar
+    width: 5px
+  &::-webkit-scrollbar-track
+    background-color: #fff
+  &::-webkit-scrollbar-thumb
+    background-color: rgba(211, 217, 225, 0.6)
+    border-radius: 100px
+.option
+  width: 100%
+  height: 40px
+  padding: 0 24px
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  background-color: #fff
+  transition: background-color 300ms cubic-bezier(0, 0, 0, 1)
+  cursor: pointer
+  p
+    transition: color 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    background-color: #F3F7F8
+    p
+      color: #111
+@media (max-width: 800px)
+  .root
+    button
+      span
+        font-size: 30px
+        line-height: 36px
+@media (max-width: 500px)
+  .root
+    margin: 5px 0 0
+    button
+      span
+        font-size: 27px
+        line-height: 33px

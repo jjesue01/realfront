@@ -1,0 +1,300 @@
+.root
+  width: 100%
+.row
+  width: 100%
+  display: flex
+  align-items: flex-start
+  justify-content: flex-start
+.column
+  width: 100%
+  max-width: 653px
+  margin-right: 30px
+.timer
+  margin-top: 0
+.offers
+  margin-top: 30px
+.content
+  flex: 1
+  width: 100%
+  min-width: 417px
+.mainInfo
+  width: 100%
+.collection
+  margin-right: 20px
+  min-width: 160px
+.header
+  width: 100%
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 35px
+.views, .stats, .actions
+  display: flex
+  align-items: center
+  justify-content: center
+.views
+  margin-right: 24px
+  p
+    white-space: nowrap
+    margin-left: 11px
+  img
+    min-width: 24px
+.btnOutlined
+  position: relative
+  background: #fff
+  outline: none
+  border: 1px solid #D3D9E1
+  border-radius: 30px
+  height: 40px
+  padding: 0 16px
+  display: flex
+  align-items: center
+  justify-content: center
+  cursor: pointer
+.btnMenu
+  width: 40px
+  min-width: 40px
+  margin-left: 12px
+  svg
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    circle
+      transition: fill 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    circle
+      fill: #1DC3A6
+button.btnMenuItem, .btnMenuItem
+  height: 45px
+  display: flex
+  width: 100%
+  align-items: center
+  text-align: left
+  border-bottom: 1px solid #ECEFF4 !important
+  cursor: pointer
+  &:hover
+    button
+      color: #111
+  &:last-child
+    border-bottom: none !important
+.btnMenuItem
+  button
+    pointer-events: none
+.btnMenuActive
+  circle
+    fill: #1DC3A6
+.itemActions
+  display: flex
+  margin: 32px 0
+  button
+    min-width: 145px
+    margin-right: 12px
+    &:last-child
+      margin: 0
+.itemActions.noMargin
+  margin: 0
+.price
+  margin: 40px 0 0
+  display: flex
+  align-items: center
+  justify-content: space-between
+  button
+    min-width: 115px
+.priceDetails
+  margin-top: 8px
+  display: flex
+  align-items: center
+  justify-content: flex-start
+.description
+  p
+    white-space: pre-wrap
+.tags
+  width: 100%
+  margin-top: 32px
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  flex-wrap: wrap
+.tag
+  height: 32px
+  padding: 0 15px
+  border: 1px solid #1DC3A6
+  border-radius: 30px
+  display: flex
+  align-items: center
+  justify-content: center
+  font-weight: 500
+  font-size: 10px
+  color: #111
+  text-transform: uppercase
+  margin-right: 12px
+  margin-bottom: 12px
+.details
+  width: 100%
+  margin-top: 20px
+.detailsContent
+  width: 100%
+  margin-top: 8px
+.field
+  width: 100%
+  height: 50px
+  border-bottom: 1px solid #D3D9E1
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  &:last-child
+    border-bottom: none
+.detailsCol
+  width: 100%
+  overflow: hidden
+  p
+    width: 100%
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+.colName
+  max-width: 100px
+  p
+    font-weight: 600
+    font-size: 12px
+    color: rgba(55, 65, 81, 0.8)
+.colContent
+  p
+    font-weight: 600
+    font-size: 14px
+    color: #000
+    text-transform: capitalize
+.iconWrapper
+  position: relative
+  display: flex
+  margin-right: 10px
+.iconHeart
+  position: absolute
+  left: 1px
+  transition: opacity 300ms cubic-bezier(0, 0, 0, 1)
+  opacity: 0
+.btnFavorite
+  path
+    transition: fill 300ms cubic-bezier(0, 0, 0, 1)
+  &:hover
+    path
+      fill: #FF6868
+.btnFavoriteActive
+  .iconHeart
+    opacity: 1
+  path
+    fill: #FF6868
+.tour
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+.rawPreviewContainer
+  position: relative
+  margin-top: 20px
+  max-width: fit-content
+  & > span
+    display: block
+    font-weight: 600
+    font-size: 14px
+    color: #1DC3A6
+    border: 1px solid #1DC3A6
+    padding: 7px 20px
+    border-radius: 30px
+    text-align: center
+    cursor: pointer
+    &:hover + .rawPreview
+      opacity: 1
+      transform: translate(-50%, 0)
+      pointer-events: auto
+.rawPreview
+  position: absolute
+  top: calc(100% + 10px)
+  left: 50%
+  width: 100%
+  min-width: 400px
+  padding: 23px
+  border: 1px solid #D3D9E1
+  border-radius: 4px
+  background-color: #fff
+  transition: 300ms cubic-bezier(0, 0, 0, 1)
+  transition-property: opacity, transform
+  transform: translate(-50%, 30px)
+  opacity: 0
+  box-shadow: 0 11px 24px rgb(0 0 0 / 10%)
+  pointer-events: none
+  z-index: 5
+.fileProcessing
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  opacity: 0
+  pointer-events: none
+  transition: opacity 300ms cubic-bezier(0, 0, 0, 1)
+  margin-top: 5px
+  &__opened
+    opacity: 1
+    pointer-events: auto
+  p
+    margin-left: 10px
+    font-weight: 600
+    font-size: 14px
+    color: #1DC3A6
+.loaderSmall
+  position: relative
+  width: 30px
+  height: 30px
+  & > div
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%) scale(0.35)
+@media (max-width: 1000px)
+  .row
+    flex-direction: column
+  .content
+    margin-top: 30px
+    display: flex
+    flex-direction: row-reverse
+  .details
+    margin-top: 0
+    margin-right: 30px
+    max-width: 350px
+
+@media (max-width: 860px)
+  .content
+    flex-direction: column
+    min-width: auto
+  .details
+    margin-top: 30px
+    margin-right: 0
+    max-width: 100%
+
+@media (max-width: 460px)
+  .header
+    flex-direction: column-reverse
+    align-items: flex-start
+    margin-bottom: 25px
+  .stats
+    width: 100%
+    justify-content: space-between
+  .collection
+    margin-top: 20px
+  .price
+    flex-direction: column
+    align-items: flex-start
+    margin: 25px 0
+    button
+      width: 100%
+      margin-top: 20px
+  .tags
+    margin-top: 20px
+  .details
+    margin-top: 20px
+.colLink
+  cursor: pointer
+  p
+    color: #6ea7e0
+    text-transform: none

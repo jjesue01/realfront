@@ -1,0 +1,158 @@
+.root
+  heihgt: 100vh
+  min-height: 700px
+  width: 100%
+  display: flex
+  flex-direction: column
+  padding-top: 82px
+.container
+  border-top: 1px solid #ECEFF4
+.tableContainer
+  padding-top: 24px
+  width: 100%
+.description
+  width: 100%
+  max-width: 800px
+  margin: 99px auto 70px auto
+  padding: 0 20px
+  text-align: center
+  position: relative
+  &::before
+    content: ""
+    position: absolute
+    height: 4px
+    width: 60px
+    top: -25px
+    left: 50%
+    transform: translate(-50%, -50%)
+    background: #1DC3A6
+.table
+  width: 100%
+  max-width: 1200px
+  padding: 0 40px 24px 40px
+  margin: 0 auto
+.tableHeader
+  display: flex
+  align-items: center
+  justify-content: space-between
+  align-items: center
+  padding: 14px 0 20px 0
+  border-bottom: 1px solid #ECEFF4
+  p
+    font-size: 12px
+    font-weight: 600
+    line-height: 21px
+    color: #878D97
+.col
+  box-sizing: border-box
+  padding: 8px
+  width: 100%
+  overflow: hidden
+  margin-right: 20px
+  display: flex
+  flex-direction: row
+  justify-content: flex-start
+  p
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+  &:last-child
+    margin-right: 0
+.colNumber
+  min-width: 25px
+  max-width: 35px
+.colLogo
+  min-width: 45px
+  max-width: 65px
+.colUsername
+  min-width: 400px
+.colVolume
+  min-width: 80px
+  max-width: 90px
+.colPrice
+  min-width: 80px
+  max-width: 90px
+.colOwners
+  min-width: 70px
+  max-width: 80px
+.colItems
+  min-width: 60px
+  max-width: 70px
+.tableItem
+  width: 100%
+  height: 65px
+  border-bottom: 1px solid #ECEFF4
+  display: flex
+  align-items: center
+  justify-content: space-between
+  transition: all 0.2s ease 0s
+  cursor: pointer
+  .col
+    p
+      font-size: 14px
+      color: #111
+      font-weight: 600
+      line-height: 17px
+  &:hover
+    background-color: #F3F7F8
+.icon
+  margin-left: 6px
+  path
+    fill: #878D97
+.iconActive
+  transform: rotate(180deg)
+.index
+  color : #000
+  margin-right: 8px
+.filtersBlock
+  padding: 0 40px
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto
+  display: flex
+  flex-direction: row
+.filter
+  min-width: 200px
+  max-width: 200px
+  margin-right: 30px
+.selectSortVolume
+  min-width: 250px
+  max-width: 250px
+  margin-left: auto
+.imageWrapper
+  position: relative
+  width: 100%
+  height: 42px
+  min-width: 42px
+  img
+    border-radius: 50%
+.pagination
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto 40px auto
+  display: flex
+  justify-content: flex-end
+    
+@media (max-width: 1000px)
+  .description
+    margin: 60px auto 20px auto
+  .colUsername
+    min-width: 100px
+  .filtersBlock
+    display: grid
+    grid-gap: 10px
+    justify-items: center
+    grid-template-columns: repeat(2, 1fr)
+  .filter
+    min-width: 250px
+    max-width: 250px
+    margin-bottom: 20px
+    margin-right: 0px
+  .selectSortVolume
+    margin: 0
+  
+@media (max-width: 800px)
+  .table
+    padding: 0 8px 24px 8px
+  .colLogo
+    display: none

@@ -1,0 +1,41 @@
+.root
+  width: 100%
+  padding: 129px 0 100px
+  background: #F3F7F8
+  margin-bottom: 100px
+.cities
+  margin-top: 60px
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+  grid-column-gap: 30px
+  grid-row-gap: 50px
+.city
+  width: 100%
+.cityImage
+  width: 100%
+  height: 250px
+  position: relative
+  overflow: hidden
+.actions
+  margin-top: 60px
+  width: 100%
+  display: flex
+  justify-content: center
+
+@media (max-width: 1000px)
+  .cities
+    grid-template-columns: repeat(2, 1fr)
+  .cityImage
+    height: 200px
+
+@media (max-width: 800px)
+  .root
+    padding: 90px 0 70px
+    margin-bottom: 70px
+
+@media (max-width: 700px)
+  .cities
+    grid-template-columns: repeat(1, 1fr)
+    margin-top: 50px
+  .cityImage
+    height: 250px

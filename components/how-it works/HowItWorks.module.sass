@@ -1,0 +1,65 @@
+.root
+  padding: 100px 0
+.stepsContainer
+  width: 100%
+  max-width: 1212px
+  margin: 60px auto 0
+  padding: 0 30px
+.steps
+  width: 100%
+  display: flex
+.step
+  width: 100%
+  max-width: 273px
+  margin-right: 20px
+  display: flex
+  align-items: center
+  flex-direction: column
+  &:last-child
+    margin: 0
+.stepImage
+  width: 175px
+  min-width: 175px
+  height: 175px
+  display: flex
+  align-items: center
+  justify-content: center
+  background: #F7FBFC
+  border: 1px solid #EAF1F3
+  border-radius: 50%
+.actions
+  width: 100%
+  margin-top: 60px
+  display: flex
+  align-items: center
+  justify-content: center
+  & > button
+    margin-left: 24px
+
+@media (max-width: 1050px)
+  .steps
+    flex-wrap: wrap
+  .step
+    margin-right: 0
+    max-width: 50%
+    &:nth-child(n + 3)
+      margin-top: 60px
+
+@media (max-width: 800px)
+  .root
+    padding: 80px 0 70px
+  .stepsContainer
+    margin-top: 50px
+
+@media (max-width: 700px)
+  .stepsContainer
+    padding: 0 20px
+  .steps
+    flex-direction: column
+  .step
+    max-width: 100%
+    margin-top: 40px
+    &:first-child
+      margin: 0
+    &:nth-child(n + 3)
+      margin-top: 40px
